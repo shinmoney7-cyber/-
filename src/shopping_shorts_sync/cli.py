@@ -13,6 +13,7 @@ from .search.orchestrator import match_and_upsert_product, search_all_sources, s
 from .state_store import StateStore
 from .sync import build_coupang_client, run_deeplink_stage, run_full_sync, run_inpock_stage
 from .tts.voices import VOICE_CATALOG, get_voice
+from .video.pipeline import generate_stitched_video
 
 
 def _setup_logging(config):
@@ -160,7 +161,7 @@ def search_run(keyword, limit, dry_run, headed):
 
 @search.command("match")
 @click.option("--keyword", required=True, help="Same keyword used with `search run`.")
-@click.option("--source", required=True, type=click.Choice(["naver", "daiso", "oliveyoung", "youtube"]))
+@click.option("--source", required=True, type=click.Choice(["naver", "youtube", "daiso", "oliveyoung", "instagram"]))
 @click.option("--index", required=True, type=int, help="0-based index into that source's results.")
 @click.option("--target-page", required=True, type=click.Choice(["harujin", "shinjh"]))
 @click.option("--category", required=True)
@@ -202,7 +203,7 @@ def pipeline():
 
 @pipeline.command("new-product")
 @click.option("--keyword", required=True)
-@click.option("--source", required=True, type=click.Choice(["naver", "daiso", "oliveyoung", "youtube"]))
+@click.option("--source", required=True, type=click.Choice(["naver", "youtube", "daiso", "oliveyoung", "instagram"]))
 @click.option("--index", required=True, type=int, help="0-based index into that source's results.")
 @click.option("--target-page", required=True, type=click.Choice(["harujin", "shinjh"]))
 @click.option("--category", required=True, help="e.g. 뷰티, 생활용품, 육아, 다이어트, 가전")
@@ -340,6 +341,38 @@ def script_select(product_id, candidate_id, input_path, script_file):
     state.apply_script(product, candidate.id, candidate.full_text)
     state.save()
     click.echo(f"applied candidate {candidate.id} for {product_id}")
+
+
+@cli.group()
+def video():
+    """Download 3 selected source videos and auto-stitch into one ("자동 짜깁기").
+
+    Sources are YouTube/Instagram video URLs (see `search run --source
+    youtube` / `--source instagram`). --live requires `yt-dlp` and
+    `ffmpeg` on PATH -- see docs/CALIBRATION.md. Downloading and reusing
+    someone else's video ("2차 창작") is a copyright judgment call the
+    owner has made for themselves; this tool only handles the mechanics.
+    """
+
+
+@video.command("stitch")
+@click.option("--product-id", required=True)
+@click.option("--url", "urls", multiple=True, required=True, help="Exactly 3 source video URLs -- repeat --url for each.")
+@click.option("--live/--dry-run", "live", default=False)
+def video_stitch(product_id, urls, live):
+    if len(urls) != 3:
+        raise click.ClickException(f"exactly 3 --url values required, got {len(urls)}")
+
+    config = load_config()
+    _setup_logging(config)
+    config = dataclasses.replace(config, video_mode="live" if live else "mock")
+
+    output_path = generate_stitched_video(list(urls), product_id, config)
+
+    state = StateStore(config.state_file_path)
+    state.record_video(product_id, str(output_path), list(urls))
+    state.save()
+    click.echo(f"stitched video -> {output_path}")
 
 
 @cli.group()

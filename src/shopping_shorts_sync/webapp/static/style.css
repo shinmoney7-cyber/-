@@ -55,6 +55,8 @@ body {
 }
 
 h1 { font-size: 1.4rem; margin: 8px 0 16px; }
+.inpock-links { font-size: 0.85rem; color: var(--muted); margin: -8px 0 16px; }
+.inpock-links a { color: var(--accent); }
 h2 { font-size: 1.1rem; margin: 16px 0 8px; }
 .hint, .empty { color: var(--muted); font-size: 0.9rem; }
 
@@ -164,6 +166,8 @@ code.deeplink { display: block; word-break: break-all; background: var(--bg); pa
 .hashtag-tags { font-size: 0.9rem; word-break: break-word; }
 
 .final-script { white-space: pre-wrap; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px; font-size: 0.95rem; }
+
+.video-preview { width: 100%; max-width: 100%; border-radius: 8px; margin-top: 8px; }
 
 .step-nav { display: flex; justify-content: space-between; margin-top: 16px; }
 .secondary-link { color: var(--accent); text-decoration: none; font-size: 0.95rem; }

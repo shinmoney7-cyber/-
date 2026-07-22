@@ -12,6 +12,7 @@ def client(tmp_path, monkeypatch):
 
     monkeypatch.setenv("STATE_FILE_PATH", str(tmp_path / "state.json"))
     monkeypatch.setenv("SCRIPTS_DIR", str(tmp_path / "scripts"))
+    monkeypatch.setenv("VIDEO_OUTPUT_DIR", str(tmp_path / "videos"))
     monkeypatch.setenv("COUPANG_API_MODE", "mock")
 
     app = create_app(products_path=str(products_path))
@@ -54,6 +55,32 @@ def test_full_flow_new_product_through_approve(client):
     dash = client.get("/")
     assert product_id.encode() in dash.data or "생활용품".encode() in dash.data
 
+    # video step: shows candidates from both youtube + instagram (mock)
+    video_page = client.get(f"/products/{product_id}?step=video")
+    assert video_page.status_code == 200
+    assert "youtube".encode() in video_page.data
+    assert "instagram".encode() in video_page.data
+
+    # stitch exactly 3 selected clips (mock)
+    stitch_resp = client.post(
+        f"/products/{product_id}/video/stitch",
+        data={
+            "video_url": [
+                "https://example.com/youtube/product/1",
+                "https://example.com/youtube/product/2",
+                "https://example.com/instagram/product/1",
+            ]
+        },
+        follow_redirects=False,
+    )
+    assert stitch_resp.status_code == 302
+
+    video_done_page = client.get(f"/products/{product_id}?step=video")
+    assert "짜깁기 완성".encode() in video_done_page.data
+
+    video_file_resp = client.get(f"/videos/{product_id}/stitched.mp4")
+    assert video_file_resp.status_code == 200
+
     # product/script step -> a script set was auto-generated
     script_page = client.get(f"/products/{product_id}?step=script")
     assert script_page.status_code == 200
@@ -84,12 +111,36 @@ def test_full_flow_new_product_through_approve(client):
     assert "쿠팡 파트너스".encode() in hashtags_page.data
     assert "[광고]".encode() in hashtags_page.data
 
-    # approve
+    # approve -> also auto-syncs to Inpock (mock)
     approve_resp = client.post(f"/products/{product_id}/approve", follow_redirects=False)
     assert approve_resp.status_code == 302
 
     approve_page = client.get(f"/products/{product_id}?step=approve")
     assert "승인 완료".encode() in approve_page.data
+    assert "인포크 자동 반영 완료".encode() in approve_page.data
+    assert "https://link.inpock.co.kr/harujin".encode() in approve_page.data
+
+    dash_page = client.get("/")
+    assert "https://link.inpock.co.kr/harujin".encode() in dash_page.data
+    assert "https://link.inpock.co.kr/shinjh".encode() in dash_page.data
+
+
+def test_video_stitch_rejects_wrong_number_of_urls(client):
+    resp = client.post(
+        "/products/new",
+        data={"keyword": "무선 청소기", "source": "daiso", "index": "0", "category": "생활용품", "target_page": "harujin"},
+    )
+    product_id = resp.headers["Location"].split("/products/")[1].split("?")[0]
+
+    stitch_resp = client.post(
+        f"/products/{product_id}/video/stitch",
+        data={"video_url": ["https://example.com/a", "https://example.com/b"]},
+        follow_redirects=False,
+    )
+    assert stitch_resp.status_code == 302
+
+    page = client.get(f"/products/{product_id}?step=video")
+    assert "짜깁기 완성".encode() not in page.data
 
 
 def test_approve_without_script_selection_does_not_set_approved(client):

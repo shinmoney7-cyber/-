@@ -3,6 +3,11 @@
 {% block content %}
 <h1>상품 대시보드</h1>
 
+<div class="inpock-links">
+  인포크: <a href="{{ inpock_pages.harujin }}" target="_blank" rel="noopener">harujin</a>
+  · <a href="{{ inpock_pages.shinjh }}" target="_blank" rel="noopener">shinjh</a>
+</div>
+
 {% if not rows %}
 <p class="empty">등록된 상품이 없습니다. <a href="{{ url_for('search') }}">새 상품 검색</a>부터 시작하세요.</p>
 {% else %}

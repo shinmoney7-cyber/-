@@ -79,6 +79,47 @@ Typecast 공개 문서 기반 추정치이며, `typecast.ai` 접속이 막혀 �
    텍스트만 사투리 표현으로 대체하는 방식인지 확인 (대본 자체에 사투리
    표현을 넣을지, TTS 엔진에 맡길지의 갈림길).
 
+## Instagram 검색 절차
+
+`src/shopping_shorts_sync/search/instagram.py`는 Instagram Graph API의
+해시태그 검색(`ig_hashtag_search` -> `{hashtag_id}/top_media`)을 쓴다.
+`graph.facebook.com` 접속이 막혀 있어 실제로 호출해보지 못했다.
+**유튜브보다 진입장벽이 훨씬 높다 -- `--live` 전 반드시 아래를 순서대로:**
+
+1. Instagram 계정을 **비즈니스 또는 크리에이터 계정**으로 전환하고
+   페이스북 페이지에 연결 (개인 계정으로는 이 API 자체를 못 씀).
+2. Meta for Developers에서 앱 생성 -> `instagram_basic` 권한 요청 ->
+   **App Review** 통과 전까지는 앱 소유자 본인 계정으로만 테스트 가능.
+3. `INSTAGRAM_ACCESS_TOKEN`(장기 토큰), `INSTAGRAM_IG_USER_ID` 발급 후
+   실제 호출 1회로 `data[].id`, `top_media`의
+   `media_type`/`media_url`/`thumbnail_url`/`permalink` 필드명이 맞는지 확인.
+4. 해시태그 검색은 **7일 롤링 기준 30개 해시태그**로 제한된다 -- 운영
+   물량(하루에 몇 개 상품을 처리할지)이 이 한도 안에 들어오는지 확인.
+5. 검색어(제품명)에 공백을 제거해 해시태그로 변환하는 지금 방식
+   (`search/instagram.py`의 `keyword.replace(" ", "")`)이 실제로 의미 있는
+   해시태그를 찾아내는지 확인 -- 안 되면 카테고리별 대표 해시태그 매핑표를
+   따로 만드는 걸 고려할 것.
+
+## 영상 다운로드 + 자동 짜깁기 절차
+
+`src/shopping_shorts_sync/video/downloader.py`(yt-dlp)와
+`stitcher.py`(ffmpeg)는 실제 영상 파일로 한 번도 테스트해보지 못했다
+(이 환경에 소스로 쓸 실제 영상을 내려받을 네트워크가 없음).
+**`--live` 전 반드시:**
+
+1. `yt-dlp`, `ffmpeg`를 설치하고 PATH에 있는지 확인 (`YTDLP_PATH`/
+   `FFMPEG_PATH`로 다른 경로 지정 가능).
+2. 유튜브 영상 URL 1개로 `video stitch`를 3개 URL(같은 영상 반복해도 됨)로
+   실행해보고, 실제로 `stitched.mp4`가 재생 가능한 파일로 나오는지 확인.
+3. 인스타그램 릴스/영상 URL도 yt-dlp가 다운로드 가능한지 별도 확인 (사이트별
+   지원 여부가 yt-dlp 버전에 따라 달라짐).
+4. 지금은 각 클립의 **처음 `VIDEO_CLIP_SECONDS`초만** 잘라서 이어붙인다 --
+   실제로 써보고 이 방식(처음부터 자르기)이 부자연스러우면 클립마다 하이라이트
+   구간을 고르는 기능으로 발전시킬 것.
+5. **다운로드한 영상을 재사용하는 것 자체가 저작권/각 플랫폼 약관 판단
+   영역이다** -- 이 도구는 기계적인 다운로드/합치기만 담당하고, 그 판단은
+   오너 본인의 몫이라는 전제로 만들어졌다.
+
 ## 확인이 필요한 열린 질문
 
 - 쿠팡파트너스 API의 정확한 HMAC 서명 포맷(헤더 이름, 날짜 포맷, 서명 대상 문자열에 쿼리

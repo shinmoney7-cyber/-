@@ -5,7 +5,10 @@ from dataclasses import dataclass
 
 from dotenv import load_dotenv
 
-_REDACT_KEYS = {"coupang_secret_key", "coupang_access_key", "inpock_password", "youtube_api_key", "typecast_api_key"}
+_REDACT_KEYS = {
+    "coupang_secret_key", "coupang_access_key", "inpock_password",
+    "youtube_api_key", "typecast_api_key", "instagram_access_token",
+}
 
 
 @dataclass(frozen=True)
@@ -24,10 +27,19 @@ class Config:
 
     youtube_api_key: str
 
+    instagram_access_token: str
+    instagram_ig_user_id: str
+
     typecast_api_key: str
     typecast_mode: str
     typecast_actor_id: str
     typecast_speed: float
+
+    video_mode: str
+    video_output_dir: str
+    video_clip_seconds: float
+    ytdlp_path: str
+    ffmpeg_path: str
 
     playwright_chromium_path: str
     state_file_path: str
@@ -56,10 +68,17 @@ def load_config(env_file: str | None = None) -> Config:
         naver_client_id=os.environ.get("NAVER_CLIENT_ID", ""),
         naver_client_secret=os.environ.get("NAVER_CLIENT_SECRET", ""),
         youtube_api_key=os.environ.get("YOUTUBE_API_KEY", ""),
+        instagram_access_token=os.environ.get("INSTAGRAM_ACCESS_TOKEN", ""),
+        instagram_ig_user_id=os.environ.get("INSTAGRAM_IG_USER_ID", ""),
         typecast_api_key=os.environ.get("TYPECAST_API_KEY", ""),
         typecast_mode=os.environ.get("TYPECAST_MODE", "mock"),
         typecast_actor_id=os.environ.get("TYPECAST_ACTOR_ID", "예슬"),
         typecast_speed=float(os.environ.get("TYPECAST_SPEED", "1.2")),
+        video_mode=os.environ.get("VIDEO_MODE", "mock"),
+        video_output_dir=os.environ.get("VIDEO_OUTPUT_DIR", "data/videos"),
+        video_clip_seconds=float(os.environ.get("VIDEO_CLIP_SECONDS", "5.0")),
+        ytdlp_path=os.environ.get("YTDLP_PATH", "yt-dlp"),
+        ffmpeg_path=os.environ.get("FFMPEG_PATH", "ffmpeg"),
         playwright_chromium_path=os.environ.get("PLAYWRIGHT_CHROMIUM_PATH", "/opt/pw-browsers/chromium"),
         state_file_path=os.environ.get("STATE_FILE_PATH", "data/state.json"),
         scripts_dir=os.environ.get("SCRIPTS_DIR", "data/scripts"),

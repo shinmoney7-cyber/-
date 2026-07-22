@@ -111,6 +111,27 @@ def test_record_voice_after_script_selected(tmp_path):
     assert state.voice_generated_at is not None
 
 
+def test_record_video_creates_entry_if_missing(tmp_path):
+    store = StateStore(tmp_path / "state.json")
+    store.record_video("p1", "/data/videos/p1/stitched.mp4", ["u1", "u2", "u3"])
+
+    state = store.get("p1")
+    assert state.stitched_video_path == "/data/videos/p1/stitched.mp4"
+    assert state.stitched_video_source_urls == ["u1", "u2", "u3"]
+    assert state.stitched_video_generated_at is not None
+
+
+def test_record_video_survives_save_reload(tmp_path):
+    path = tmp_path / "state.json"
+    store = StateStore(path)
+    store.record_video("p1", "/data/videos/p1/stitched.mp4", ["u1", "u2", "u3"])
+    store.save()
+
+    reloaded = StateStore(path)
+    assert reloaded.get("p1").stitched_video_path == "/data/videos/p1/stitched.mp4"
+    assert reloaded.get("p1").stitched_video_source_urls == ["u1", "u2", "u3"]
+
+
 def test_approve_requires_a_selected_script_first(tmp_path):
     store = StateStore(tmp_path / "state.json")
     store.record_deeplink(PRODUCT, "https://link.coupang.com/a/x")

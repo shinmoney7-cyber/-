@@ -30,6 +30,50 @@
   </div>
 </section>
 
+{% elif step == 'video' %}
+<section class="panel">
+  <p class="hint">유튜브 · 인스타그램에서 "{{ product.name }}" 관련 영상 최대 15개. 정확히 3개를 선택하고 생성하면 자동으로 이어붙인 미리보기 영상 1개가 만들어집니다.</p>
+
+  {% if pstate and pstate.stitched_video_path %}
+  <div class="notice ok-notice">
+    짜깁기 완성 ({{ pstate.stitched_video_generated_at }})<br>
+    <video controls class="video-preview" src="{{ url_for('serve_video', product_id=product.id, filename='stitched.mp4') }}"></video>
+  </div>
+  {% endif %}
+
+  <form method="post" action="{{ url_for('video_stitch', product_id=product.id) }}" id="video-select-form">
+    {% for source in ['youtube', 'instagram'] %}
+    <h2 class="source-heading">{{ source }} ({{ video_results.get(source, [])|length }})</h2>
+    <div class="card-grid">
+      {% for item in video_results.get(source, []) %}
+      <label class="result-card">
+        <input type="checkbox" name="video_url" value="{{ item.product_url }}" class="video-pick">
+        <div class="thumb" style="background-image: url('{{ item.image_url }}')"></div>
+        <div class="card-body">
+          <div class="card-title">{{ item.name }}</div>
+        </div>
+      </label>
+      {% endfor %}
+    </div>
+    {% endfor %}
+
+    <div class="field-row">
+      <label class="checkbox"><input type="checkbox" name="live"> 실전 연동(yt-dlp/ffmpeg 필요)</label>
+    </div>
+    <button type="submit" class="primary">선택한 3개로 짜깁기 생성</button>
+  </form>
+</section>
+<script>
+  (function () {
+    var boxes = document.querySelectorAll('.video-pick');
+    function refresh() {
+      var checked = document.querySelectorAll('.video-pick:checked').length;
+      boxes.forEach(function (b) { b.disabled = !b.checked && checked >= 3; });
+    }
+    boxes.forEach(function (b) { b.addEventListener('change', refresh); });
+  })();
+</script>
+
 {% elif step == 'script' %}
 <section class="panel">
   {% if not script_set %}
@@ -118,12 +162,20 @@
 
   {% if pstate and pstate.approved_at %}
   <p class="badge ok large">확인키 승인 완료 ({{ pstate.approved_at }}) — 배포 준비 완료</p>
+  {% if pstate.inpock_synced_at %}
+  <div class="notice ok-notice">
+    인포크 자동 반영 완료 ({{ pstate.inpock_synced_at }})<br>
+    <a href="{{ inpock_pages[product.target_page] }}" target="_blank" rel="noopener">{{ inpock_pages[product.target_page] }}</a> 에서 확인하세요.
+  </div>
+  {% endif %}
   <form method="post" action="{{ url_for('unapprove', product_id=product.id) }}">
     <button type="submit" class="secondary">승인 취소</button>
   </form>
   {% else %}
   <form method="post" action="{{ url_for('approve', product_id=product.id) }}">
-    <button type="submit" class="primary" {{ 'disabled' if not (pstate and pstate.selected_script_id) }}>확인키 승인 (배포 준비 완료로 표시)</button>
+    <p class="hint">승인하는 순간 인포크({{ product.target_page }}) 링크 카드에 자동 반영됩니다.</p>
+    <label class="checkbox"><input type="checkbox" name="live"> 실전 연동(인포크 로그인 정보 필요)</label>
+    <button type="submit" class="primary" {{ 'disabled' if not (pstate and pstate.selected_script_id) }}>확인키 승인 (배포 준비 완료로 표시 + 인포크 자동 반영)</button>
   </form>
   {% endif %}
 </section>

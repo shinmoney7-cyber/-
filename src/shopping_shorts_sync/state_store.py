@@ -32,6 +32,9 @@ class ProductState:
     voice_audio_url: str | None = None
     voice_actor_id: str | None = None
     voice_generated_at: str | None = None
+    stitched_video_path: str | None = None
+    stitched_video_source_urls: list = field(default_factory=list)
+    stitched_video_generated_at: str | None = None
     approved_at: str | None = None
 
 
@@ -126,6 +129,14 @@ class StateStore:
         state.voice_audio_url = audio_url
         state.voice_actor_id = actor_id
         state.voice_generated_at = _utcnow_iso()
+
+    def record_video(self, product_id: str, video_path: str, source_urls: list[str]) -> None:
+        """"영상중 3개를 선택하면 생성 클릭하면 바로...짜집기를 완성" step:
+        records the stitched preview video path for this product."""
+        state = self._products.setdefault(product_id, ProductState(coupang_url=""))
+        state.stitched_video_path = video_path
+        state.stitched_video_source_urls = list(source_urls)
+        state.stitched_video_generated_at = _utcnow_iso()
 
     def approve(self, product: Product) -> None:
         """Owner's final "확인키": video/thumbnail/script reviewed together

@@ -14,6 +14,15 @@ LOGIN_URL = "https://link.inpock.co.kr/login"  # TODO CALIBRATE: confirm real lo
 # simple template — could require clicking a page switcher in the dashboard).
 PAGE_EDITOR_URL_TEMPLATE = "https://link.inpock.co.kr/manage/{page_slug}"
 
+# The owner's two public-facing Inpock pages (what a viewer sees, as opposed
+# to PAGE_EDITOR_URL_TEMPLATE above which is the creator's edit view). These
+# are real, confirmed URLs -- no calibration needed.
+PUBLIC_PAGE_URL_TEMPLATE = "https://link.inpock.co.kr/{page_slug}"
+PUBLIC_PAGE_URLS = {
+    "harujin": PUBLIC_PAGE_URL_TEMPLATE.format(page_slug="harujin"),
+    "shinjh": PUBLIC_PAGE_URL_TEMPLATE.format(page_slug="shinjh"),
+}
+
 
 class LoginSelectors:
     EMAIL_INPUT = "input[type='email'], input[name='email']"  # TODO CALIBRATE

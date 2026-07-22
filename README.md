@@ -134,13 +134,15 @@ python -m shopping_shorts_sync web --input data/products.example.json --port 500
 1. **대시보드**: 등록된 상품 목록 + 쿠팡링크/대본선택/승인 상태 배지
 2. **상품 검색**: 네이버쇼핑/다이소몰/올리브영에서 검색 -> 5개씩 총 15개 그리드 ->
    하나 선택 시 쿠팡 자동매칭 + 대본 5개 자동생성 + 딥링크 생성이 한 번에 실행
-3. **상품 상세** (탭형 5단계, 각 단계에 이전/다음 내비게이션):
+3. **상품 상세** (탭형 6단계, 각 단계에 이전/다음 내비게이션):
    - 1) 상품정보 (썸네일, 쿠팡 딥링크, `[광고]` 표기 리마인더)
-   - 2) 대본선택 (AIDA 5개 후보, 설득요소 태그, 선택/재생성)
-   - 3) 음성생성 (타입캐스트 20개 보이스 카탈로그, 선택 즉시 생성)
-   - 4) 해시태그/배포 (인스타그램·쓰레드·유튜브·틱톡·네이버클립·토스·당근마켓·
+   - 2) 영상선택 (유튜브+인스타그램에서 관련 영상 최대 15개, 3개 선택 -> 자동
+     짜깁기 미리보기)
+   - 3) 대본선택 (AIDA 5개 후보, 설득요소 태그, 선택/재생성)
+   - 4) 음성생성 (타입캐스트 20개 보이스 카탈로그, 선택 즉시 생성)
+   - 5) 해시태그/배포 (인스타그램·쓰레드·유튜브·틱톡·네이버클립·토스·당근마켓·
      네이버블로그별 해시태그, 쿠팡파트너스 고지문구)
-   - 5) 최종승인 (썸네일+대본 완성본을 함께 보고 "확인키" 승인/취소)
+   - 6) 최종승인 (썸네일+대본 완성본을 함께 보고 "확인키" 승인 -> 인포크 자동 반영)
 
 ## 배포 (Render)
 
@@ -171,24 +173,47 @@ python -m shopping_shorts_sync web --input data/products.example.json --port 500
 배포가 끝나면 그 주소가 곧 "홈페이지 주소"이며, 별도 도메인 연결 없이 그 URL을
 그대로 몇 명에게 공유하면 된다.
 
-## YouTube 검색 ("2차 창작" 소재)
+## 영상 소재 검색 ("2차 창작") — 유튜브 · 인스타그램
 
-틱톡/도우인/샤오훙슈는 제품 키워드로 영상을 검색해오는 공개 API가 없지만, 유튜브는
-공식 Data API v3로 검색이 가능하다. `search`/`pipeline`의 `--source` 옵션에
-`youtube`를 추가해서 네이버/다이소/올리브영과 동일하게 다룬다 — 검색 결과(영상
-제목/썸네일/링크)를 "2차 창작"(리뷰 요약, 정보성 편집 등) 소재로 쓰고, 영상 제목을
-쿠팡 이름-매칭에 그대로 활용한다.
+틱톡/도우인/샤오훙슈는 제품 키워드로 영상을 검색해오는 공개 API가 없다. 대신
+**이용하기 쉬운 순서대로** 두 개의 실제 공식 API를 붙였다:
+
+1. **유튜브** (Data API v3) — API 키 발급만으로 바로 사용, 심사 없음. 가장 쉬움.
+2. **인스타그램** (Graph API 해시태그 검색) — 공식 API지만 비즈니스/크리에이터
+   계정 전환 + 페이스북 페이지 연결 + Meta 앱 심사가 필요해서 유튜브보다 훨씬
+   진입장벽이 높다 (`docs/CALIBRATION.md` 참고).
+
+`search`/`pipeline`의 `--source` 옵션에 둘 다 추가되어 네이버/다이소/올리브영과
+동일하게 다룬다 — 검색 결과(영상 제목/썸네일/링크)를 "2차 창작"(리뷰 요약, 정보성
+편집 등) 소재로 쓰고, 영상 제목을 쿠팡 이름-매칭에 그대로 활용한다.
 
 ```bash
 python -m shopping_shorts_sync search run --keyword "무선 청소기" --source youtube --dry-run
-python -m shopping_shorts_sync pipeline new-product --keyword "무선 청소기" \
-  --source youtube --index 0 --target-page harujin --category 생활용품 \
-  --input data/products.example.json --dry-run
+python -m shopping_shorts_sync search run --keyword "무선 청소기" --source instagram --dry-run
 ```
 
-`YOUTUBE_API_KEY` 없이는 `--dry-run`(mock)만 가능. 실제 유튜브 영상을 다운로드해서
-편집(자동 짜깁기)하는 부분은 이 저장소 범위 밖이다 — 저작권/2차 창작 관련 판단과
-실제 다운로드·인코딩 파이프라인은 별도로 구축해야 한다.
+`YOUTUBE_API_KEY`/`INSTAGRAM_ACCESS_TOKEN`+`INSTAGRAM_IG_USER_ID` 없이는
+`--dry-run`(mock)만 가능.
+
+## 영상 자동 짜깁기
+
+웹 대시보드 2단계("영상선택")에서 유튜브+인스타그램 검색 결과 중 정확히 3개를
+고르면, `yt-dlp`로 다운로드 후 각 클립을 `VIDEO_CLIP_SECONDS`초(기본 5초)만 잘라
+`ffmpeg`로 이어붙인 미리보기 영상 1개를 만든다.
+
+```bash
+python -m shopping_shorts_sync video stitch --product-id harujin-vacuum-01 \
+  --url "https://www.youtube.com/watch?v=aaa" \
+  --url "https://www.youtube.com/watch?v=bbb" \
+  --url "https://www.instagram.com/p/ccc/" \
+  --dry-run
+```
+
+`--dry-run`(기본값)은 yt-dlp/ffmpeg 없이도 동작 (더미 파일로 파이프라인만 검증).
+`--live`는 `yt-dlp`/`ffmpeg`가 PATH에 있어야 하고, 실제 영상 파일로는 테스트해보지
+못했으니 `docs/CALIBRATION.md`를 먼저 볼 것. **남의 영상을 다운로드해서 재사용하는
+것 자체는 저작권/2차 창작 관련 판단 영역이며, 이 도구는 기계적인 다운로드·합치기만
+담당한다** — 그 판단은 오너 본인의 몫이다.
 
 ## 음성 생성 (Typecast TTS)
 
@@ -211,13 +236,23 @@ python -m shopping_shorts_sync tts generate --product-id harujin-vacuum-01 \
 웹 대시보드에서는 2단계(대본선택) 다음이 바로 3단계(음성생성)라, 대본을 고르면
 "음성으로 바로 다음 자동연동"(오너 요구사항) 흐름 그대로 이어진다.
 
+## 인포크 자동 반영
+
+두 인포크 계정(`https://link.inpock.co.kr/harujin`, `.../shinjh`)은 대시보드
+상단에 항상 링크로 노출된다. 웹 대시보드 6단계("최종승인")에서 "확인키" 승인을
+누르는 순간, 그 상품의 `target_page`(harujin/shinjh)에 맞는 인포크 링크 카드에
+자동으로 반영된다(`run_inpock_stage` 재사용, 기본은 mock). 실전 연동은 승인 폼의
+"실전 연동" 체크박스 + 인포크 로그인 정보(`INPOCK_EMAIL`/`INPOCK_PASSWORD`)가
+필요하고, `docs/CALIBRATION.md`의 셀렉터 보정이 먼저다.
+
 ## 현재 스코프에 포함되지 않은 것
 
 이 프로젝트는 실제로 동작하는 부분(쿠팡파트너스 딥링크 API, 상품명 자동 매칭,
-대본 자동생성, 유튜브 검색, 타입캐스트 TTS, 인포크 RPA 동기화)과 현실적으로
-불가능하거나 별도 구축이 필요한 부분을 명확히 구분한다. **틱톡/도우인/샤오훙슈에서의
-실시간 영상 검색(공개 API 없음)과, 검색된 영상을 실제로 다운로드해서 자동
-짜깁기하는 영상 합성 파이프라인**은 이 저장소에는 구현되어 있지 않다.
+대본 자동생성, 유튜브/인스타그램 검색, 영상 다운로드+자동짜깁기, 타입캐스트 TTS,
+인포크 RPA 동기화)과 현실적으로 불가능한 부분을 명확히 구분한다. **틱톡/도우인/
+샤오훙슈에서의 실시간 영상 검색**은 여전히 이 저장소에 구현되어 있지 않다 —
+세 플랫폼 모두 키워드로 영상을 검색해오는 공개 API 자체가 없다(도우인/샤오훙슈는
+접근 자체가 막혀 있고, 틱톡 공식 API는 리서치용이라 이 용도로 못 씀).
 
 ## 입력 파일 형식
 
