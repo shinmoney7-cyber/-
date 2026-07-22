@@ -12,6 +12,7 @@ from .scriptgen import generate_candidates, generate_hashtags
 from .search.orchestrator import match_and_upsert_product, search_all_sources, search_one_source
 from .state_store import StateStore
 from .sync import build_coupang_client, run_deeplink_stage, run_full_sync, run_inpock_stage
+from .tts.voices import VOICE_CATALOG, get_voice
 
 
 def _setup_logging(config):
@@ -159,7 +160,7 @@ def search_run(keyword, limit, dry_run, headed):
 
 @search.command("match")
 @click.option("--keyword", required=True, help="Same keyword used with `search run`.")
-@click.option("--source", required=True, type=click.Choice(["naver", "daiso", "oliveyoung"]))
+@click.option("--source", required=True, type=click.Choice(["naver", "daiso", "oliveyoung", "youtube"]))
 @click.option("--index", required=True, type=int, help="0-based index into that source's results.")
 @click.option("--target-page", required=True, type=click.Choice(["harujin", "shinjh"]))
 @click.option("--category", required=True)
@@ -201,7 +202,7 @@ def pipeline():
 
 @pipeline.command("new-product")
 @click.option("--keyword", required=True)
-@click.option("--source", required=True, type=click.Choice(["naver", "daiso", "oliveyoung"]))
+@click.option("--source", required=True, type=click.Choice(["naver", "daiso", "oliveyoung", "youtube"]))
 @click.option("--index", required=True, type=int, help="0-based index into that source's results.")
 @click.option("--target-page", required=True, type=click.Choice(["harujin", "shinjh"]))
 @click.option("--category", required=True, help="e.g. 뷰티, 생활용품, 육아, 다이어트, 가전")
@@ -229,7 +230,7 @@ def pipeline_new_product(keyword, source, index, target_page, category, input_pa
         return
     click.echo(f"1/3 matched {selected.name!r} -> {product.coupang_url} (product {product.id})")
 
-    script_path = default_script_path(product.id)
+    script_path = default_script_path(product.id, base_dir=config.scripts_dir)
     if script_path.exists() and not force:
         click.echo(f"2/3 script already exists at {script_path}, leaving it as-is (use --force to regenerate)")
     else:
@@ -272,7 +273,7 @@ def script():
 @click.option("--file", "script_file", type=click.Path(), default=None)
 @click.option("--force", is_flag=True, help="Overwrite an existing script file (loses any hand edits/selection).")
 def script_generate(product_id, name, category, script_file, force):
-    path = script_file or default_script_path(product_id)
+    path = script_file or default_script_path(product_id, base_dir=load_config().scripts_dir)
     if path.exists() and not force:
         raise click.ClickException(f"{path} already exists (use --force to overwrite)")
 
@@ -305,7 +306,7 @@ def script_hashtags(name, category):
 @click.option("--product-id", required=True)
 @click.option("--file", "script_file", type=click.Path(exists=True), default=None)
 def script_show(product_id, script_file):
-    path = script_file or default_script_path(product_id)
+    path = script_file or default_script_path(product_id, base_dir=load_config().scripts_dir)
     script_set = load_script_set(path)
     for candidate in script_set.candidates:
         marker = " (selected)" if candidate.id == script_set.selected_id else ""
@@ -324,12 +325,12 @@ def script_show(product_id, script_file):
 def script_select(product_id, candidate_id, input_path, script_file):
     from .script_store import save_script_set
 
-    path = script_file or default_script_path(product_id)
+    config = load_config()
+    path = script_file or default_script_path(product_id, base_dir=config.scripts_dir)
     script_set = load_script_set(path)
     candidate = script_set.select(candidate_id)  # raises if candidate_id is invalid
     save_script_set(path, script_set)
 
-    config = load_config()
     products = {p.id: p for p in load_products(input_path)}
     product = products.get(product_id)
     if product is None:
@@ -339,6 +340,51 @@ def script_select(product_id, candidate_id, input_path, script_file):
     state.apply_script(product, candidate.id, candidate.full_text)
     state.save()
     click.echo(f"applied candidate {candidate.id} for {product_id}")
+
+
+@cli.group()
+def tts():
+    """Typecast TTS generation for a product's selected script.
+
+    Requires a script already selected via `script select` first. Voice
+    catalog is 20 fixed options (표준 + 경상도/전라도/충청도/강원도 satoori,
+    각 남/여 x 20-30대/40-60대); only 예슬 (표준_여성_20-30대) is a
+    confirmed real Typecast actor id -- see docs/CALIBRATION.md before
+    --live use with any other voice.
+    """
+
+
+@tts.command("voices")
+def tts_voices():
+    for v in VOICE_CATALOG:
+        flag = "" if v.calibrated else " (미검증, calibrate 필요)"
+        click.echo(f"{v.label}: actor_id={v.actor_id}{flag}")
+
+
+@tts.command("generate")
+@click.option("--product-id", required=True)
+@click.option("--voice-label", type=click.Choice([v.label for v in VOICE_CATALOG]), default=None, help="20개 보이스 카탈로그 중 선택. 생략 시 TYPECAST_ACTOR_ID 기본값 사용.")
+@click.option("--live/--dry-run", "live", default=False, help="Call the real Typecast API instead of the mock client.")
+def tts_generate(product_id, voice_label, live):
+    from .tts import build_tts_client
+
+    config = load_config()
+    _setup_logging(config)
+    config = dataclasses.replace(config, typecast_mode="live" if live else "mock")
+
+    state = StateStore(config.state_file_path)
+    product_state = state.get(product_id)
+    if product_state is None or not product_state.script_text:
+        raise click.ClickException(f"product {product_id!r} has no selected script yet -- run `script select` first")
+
+    actor_id = get_voice(voice_label).actor_id if voice_label else config.typecast_actor_id
+
+    client = build_tts_client(config)
+    result = client.synthesize(product_state.script_text, actor_id=actor_id, speed=config.typecast_speed)
+
+    state.record_voice(product_id, result.audio_url, actor_id)
+    state.save()
+    click.echo(f"voice generated ({actor_id}) -> {result.audio_url}")
 
 
 @cli.group()

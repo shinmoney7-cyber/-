@@ -63,6 +63,36 @@
   {% endif %}
 </section>
 
+{% elif step == 'voice' %}
+<section class="panel">
+  {% if not pstate or not pstate.script_text %}
+  <p class="empty">먼저 2단계에서 대본을 선택하세요.</p>
+  {% else %}
+  <p class="hint">타입캐스트 음성 20종 (표준 + 경상도/전라도/충청도/강원도 사투리 x 남/여 x 20-30대/40-60대). "예슬"(표준_여성_20-30대)만 검증된 실제 보이스이고, 나머지는 실전 연동 전 보정이 필요합니다.</p>
+
+  {% if pstate.voice_audio_url %}
+  <div class="notice ok-notice">
+    <strong>{{ pstate.voice_actor_id }}</strong> 음성 생성 완료 ({{ pstate.voice_generated_at }})<br>
+    <code class="deeplink">{{ pstate.voice_audio_url }}</code>
+  </div>
+  {% endif %}
+
+  <form method="post" action="{{ url_for('voice_generate', product_id=product.id) }}">
+    <div class="field-row">
+      <label>보이스 선택
+        <select name="voice_label" required>
+          {% for v in voices %}
+          <option value="{{ v.label }}" {{ 'selected' if pstate.voice_actor_id == v.actor_id }}>{{ v.label }}{{ '' if v.calibrated else ' (미검증)' }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label class="checkbox"><input type="checkbox" name="live"> 실전 연동(API 키 필요)</label>
+    </div>
+    <button type="submit" class="primary">{{ '다시 생성' if pstate.voice_audio_url else '음성 생성' }}</button>
+  </form>
+  {% endif %}
+</section>
+
 {% elif step == 'hashtags' %}
 <section class="panel">
   <div class="notice">{{ disclosure }}</div>

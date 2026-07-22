@@ -11,6 +11,7 @@ def client(tmp_path, monkeypatch):
     products_path.write_text("[]", encoding="utf-8")
 
     monkeypatch.setenv("STATE_FILE_PATH", str(tmp_path / "state.json"))
+    monkeypatch.setenv("SCRIPTS_DIR", str(tmp_path / "scripts"))
     monkeypatch.setenv("COUPANG_API_MODE", "mock")
 
     app = create_app(products_path=str(products_path))
@@ -61,6 +62,22 @@ def test_full_flow_new_product_through_approve(client):
     # select candidate 1
     select_resp = client.post(f"/products/{product_id}/scripts/1/select", follow_redirects=False)
     assert select_resp.status_code == 302
+    assert "step=voice" in select_resp.headers["Location"]
+
+    # voice step: generate TTS (mock)
+    voice_page = client.get(f"/products/{product_id}?step=voice")
+    assert "표준_여성_20-30대".encode() in voice_page.data
+
+    voice_resp = client.post(
+        f"/products/{product_id}/voice/generate",
+        data={"voice_label": "표준_여성_20-30대"},
+        follow_redirects=False,
+    )
+    assert voice_resp.status_code == 302
+    assert "step=hashtags" in voice_resp.headers["Location"]
+
+    voice_done_page = client.get(f"/products/{product_id}?step=voice")
+    assert "음성 생성 완료".encode() in voice_done_page.data
 
     # hashtags step shows disclosure + ad label
     hashtags_page = client.get(f"/products/{product_id}?step=hashtags")

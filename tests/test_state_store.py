@@ -1,3 +1,5 @@
+import pytest
+
 from shopping_shorts_sync.models import Product
 from shopping_shorts_sync.state_store import StateStore
 
@@ -90,6 +92,23 @@ def test_apply_script_survives_save_reload(tmp_path):
 
     reloaded = StateStore(path)
     assert reloaded.get("p1").selected_script_id == 2
+
+
+def test_record_voice_requires_existing_entry(tmp_path):
+    store = StateStore(tmp_path / "state.json")
+    with pytest.raises(KeyError):
+        store.record_voice("p1", "https://example.com/a.mp3", "예슬")
+
+
+def test_record_voice_after_script_selected(tmp_path):
+    store = StateStore(tmp_path / "state.json")
+    store.apply_script(PRODUCT, candidate_id=1, script_text="x")
+    store.record_voice("p1", "https://example.com/a.mp3", "예슬")
+
+    state = store.get("p1")
+    assert state.voice_audio_url == "https://example.com/a.mp3"
+    assert state.voice_actor_id == "예슬"
+    assert state.voice_generated_at is not None
 
 
 def test_approve_requires_a_selected_script_first(tmp_path):

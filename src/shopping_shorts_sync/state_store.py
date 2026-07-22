@@ -29,6 +29,9 @@ class ProductState:
     selected_script_id: int | None = None
     script_text: str | None = None
     script_applied_at: str | None = None
+    voice_audio_url: str | None = None
+    voice_actor_id: str | None = None
+    voice_generated_at: str | None = None
     approved_at: str | None = None
 
 
@@ -114,6 +117,15 @@ class StateStore:
         state.selected_script_id = candidate_id
         state.script_text = script_text
         state.script_applied_at = _utcnow_iso()
+
+    def record_voice(self, product_id: str, audio_url: str, actor_id: str) -> None:
+        """"음성으로 바로 다음 자동연동" step: records the generated TTS
+        audio for the product's currently-selected script. Requires the
+        product to already have an entry (i.e. a script was selected)."""
+        state = self._products[product_id]
+        state.voice_audio_url = audio_url
+        state.voice_actor_id = actor_id
+        state.voice_generated_at = _utcnow_iso()
 
     def approve(self, product: Product) -> None:
         """Owner's final "확인키": video/thumbnail/script reviewed together

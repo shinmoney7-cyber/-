@@ -10,6 +10,9 @@ from .mock import MockSearchClient
 from .models import SearchResult
 from .naver import NaverShopClient
 from .oliveyoung import OliveYoungRPAClient
+from .youtube import YouTubeSearchClient
+
+SOURCES = ("naver", "daiso", "oliveyoung", "youtube")
 
 
 def search_all_sources(
@@ -19,13 +22,11 @@ def search_all_sources(
     `limit` results each. dry_run uses deterministic mock clients for all
     three (no network, no browser)."""
     if dry_run:
-        return {
-            source: MockSearchClient(source).search(keyword, limit=limit)
-            for source in ("naver", "daiso", "oliveyoung")
-        }
+        return {source: MockSearchClient(source).search(keyword, limit=limit) for source in SOURCES}
 
     naver_client = NaverShopClient(config.naver_client_id, config.naver_client_secret)
     results = {"naver": naver_client.search(keyword, limit=limit)}
+    results["youtube"] = YouTubeSearchClient(config.youtube_api_key).search(keyword, limit=limit)
 
     with launch_browser(
         headless=config.inpock_headless, chromium_path=config.playwright_chromium_path
@@ -40,7 +41,7 @@ def search_all_sources(
 def search_one_source(
     source: str, keyword: str, config: Config, dry_run: bool = True, limit: int = 5
 ) -> list[SearchResult]:
-    if source not in ("naver", "daiso", "oliveyoung"):
+    if source not in SOURCES:
         raise ValueError(f"unknown search source: {source!r}")
 
     if dry_run:
@@ -50,6 +51,8 @@ def search_one_source(
         return NaverShopClient(config.naver_client_id, config.naver_client_secret).search(
             keyword, limit=limit
         )
+    if source == "youtube":
+        return YouTubeSearchClient(config.youtube_api_key).search(keyword, limit=limit)
 
     rpa_client_cls = DaisoRPAClient if source == "daiso" else OliveYoungRPAClient
     with launch_browser(

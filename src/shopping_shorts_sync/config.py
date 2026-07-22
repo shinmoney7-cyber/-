@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 from dotenv import load_dotenv
 
-_REDACT_KEYS = {"coupang_secret_key", "coupang_access_key", "inpock_password"}
+_REDACT_KEYS = {"coupang_secret_key", "coupang_access_key", "inpock_password", "youtube_api_key", "typecast_api_key"}
 
 
 @dataclass(frozen=True)
@@ -22,8 +22,16 @@ class Config:
     naver_client_id: str
     naver_client_secret: str
 
+    youtube_api_key: str
+
+    typecast_api_key: str
+    typecast_mode: str
+    typecast_actor_id: str
+    typecast_speed: float
+
     playwright_chromium_path: str
     state_file_path: str
+    scripts_dir: str
     log_level: str
 
     def redacted_dict(self) -> dict:
@@ -47,7 +55,13 @@ def load_config(env_file: str | None = None) -> Config:
         inpock_headless=os.environ.get("INPOCK_HEADLESS", "true").strip().lower() in ("1", "true", "yes"),
         naver_client_id=os.environ.get("NAVER_CLIENT_ID", ""),
         naver_client_secret=os.environ.get("NAVER_CLIENT_SECRET", ""),
+        youtube_api_key=os.environ.get("YOUTUBE_API_KEY", ""),
+        typecast_api_key=os.environ.get("TYPECAST_API_KEY", ""),
+        typecast_mode=os.environ.get("TYPECAST_MODE", "mock"),
+        typecast_actor_id=os.environ.get("TYPECAST_ACTOR_ID", "예슬"),
+        typecast_speed=float(os.environ.get("TYPECAST_SPEED", "1.2")),
         playwright_chromium_path=os.environ.get("PLAYWRIGHT_CHROMIUM_PATH", "/opt/pw-browsers/chromium"),
         state_file_path=os.environ.get("STATE_FILE_PATH", "data/state.json"),
+        scripts_dir=os.environ.get("SCRIPTS_DIR", "data/scripts"),
         log_level=os.environ.get("LOG_LEVEL", "INFO"),
     )

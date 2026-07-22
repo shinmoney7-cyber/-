@@ -5,8 +5,9 @@ script generation, state tracking) calls the same functions the CLI uses,
 so there is exactly one implementation of each piece of business logic.
 
 Flow mirrors the owner's spec: search -> pick a product -> auto Coupang
-link + auto 5-candidate script -> pick a script candidate -> hashtags per
-platform -> final review ("확인키") -> approve.
+link + auto 5-candidate script -> pick a script candidate -> generate TTS
+voice (Typecast) -> hashtags per platform -> final review ("확인키") ->
+approve.
 """
 from __future__ import annotations
 
@@ -22,12 +23,15 @@ from ..scriptgen import AD_LABEL, AD_LABEL_POSITION, COUPANG_PARTNERS_DISCLOSURE
 from ..search.orchestrator import match_and_upsert_product, search_all_sources, search_one_source
 from ..state_store import StateStore
 from ..sync import build_coupang_client, run_deeplink_stage
+from ..tts import build_tts_client
+from ..tts.voices import VOICE_CATALOG, get_voice
 
 STEPS = [
     ("product", "1. 상품정보"),
     ("script", "2. 대본선택"),
-    ("hashtags", "3. 해시태그/배포"),
-    ("approve", "4. 최종승인"),
+    ("voice", "3. 음성생성"),
+    ("hashtags", "4. 해시태그/배포"),
+    ("approve", "5. 최종승인"),
 ]
 
 CATEGORY_CHOICES = ["뷰티", "생활용품", "육아", "다이어트", "가전"]
@@ -117,7 +121,7 @@ def create_app(products_path: str = "data/products.example.json") -> Flask:
         if product is None:
             return redirect(url_for("search", keyword=keyword))
 
-        script_path = default_script_path(product.id)
+        script_path = default_script_path(product.id, base_dir=config.scripts_dir)
         if not script_path.exists():
             candidates = generate_candidates(product.name, category)
             save_script_set(script_path, ScriptSet(product_id=product.id, candidates=candidates))
@@ -146,7 +150,7 @@ def create_app(products_path: str = "data/products.example.json") -> Flask:
         state = _state()
         pstate = state.get(product_id)
 
-        script_path = default_script_path(product_id)
+        script_path = default_script_path(product_id, base_dir=_config().scripts_dir)
         script_set = load_script_set(script_path) if script_path.exists() else None
 
         hashtags = generate_hashtags(product.name, product.category)
@@ -165,6 +169,7 @@ def create_app(products_path: str = "data/products.example.json") -> Flask:
             disclosure=COUPANG_PARTNERS_DISCLOSURE,
             ad_label=AD_LABEL,
             ad_label_position=AD_LABEL_POSITION,
+            voices=VOICE_CATALOG,
         )
 
     @app.post("/products/<product_id>/scripts/generate")
@@ -174,7 +179,7 @@ def create_app(products_path: str = "data/products.example.json") -> Flask:
         if product is None:
             return redirect(url_for("dashboard"))
 
-        script_path = default_script_path(product_id)
+        script_path = default_script_path(product_id, base_dir=_config().scripts_dir)
         candidates = generate_candidates(product.name, product.category)
         save_script_set(script_path, ScriptSet(product_id=product_id, candidates=candidates))
         return redirect(url_for("product_detail", product_id=product_id, step="script"))
@@ -186,13 +191,34 @@ def create_app(products_path: str = "data/products.example.json") -> Flask:
         if product is None:
             return redirect(url_for("dashboard"))
 
-        script_path = default_script_path(product_id)
+        script_path = default_script_path(product_id, base_dir=_config().scripts_dir)
         script_set = load_script_set(script_path)
         candidate = script_set.select(candidate_id)
         save_script_set(script_path, script_set)
 
         state = _state()
         state.apply_script(product, candidate.id, candidate.full_text)
+        state.save()
+
+        return redirect(url_for("product_detail", product_id=product_id, step="voice"))
+
+    @app.post("/products/<product_id>/voice/generate")
+    def voice_generate(product_id):
+        voice_label = request.form["voice_label"]
+        live = request.form.get("live") == "on"
+
+        config = _config()
+        config = dataclasses.replace(config, typecast_mode="live" if live else "mock")
+
+        state = _state()
+        pstate = state.get(product_id)
+        if pstate is None or not pstate.script_text:
+            return redirect(url_for("product_detail", product_id=product_id, step="script"))
+
+        actor_id = get_voice(voice_label).actor_id
+        client = build_tts_client(config)
+        result = client.synthesize(pstate.script_text, actor_id=actor_id, speed=config.typecast_speed)
+        state.record_voice(product_id, result.audio_url, actor_id)
         state.save()
 
         return redirect(url_for("product_detail", product_id=product_id, step="hashtags"))

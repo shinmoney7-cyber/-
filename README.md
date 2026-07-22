@@ -141,14 +141,53 @@ python -m shopping_shorts_sync web --input data/products.example.json --port 500
      네이버블로그별 해시태그, 쿠팡파트너스 고지문구)
    - 4) 최종승인 (썸네일+대본 완성본을 함께 보고 "확인키" 승인/취소)
 
+## YouTube 검색 ("2차 창작" 소재)
+
+틱톡/도우인/샤오훙슈는 제품 키워드로 영상을 검색해오는 공개 API가 없지만, 유튜브는
+공식 Data API v3로 검색이 가능하다. `search`/`pipeline`의 `--source` 옵션에
+`youtube`를 추가해서 네이버/다이소/올리브영과 동일하게 다룬다 — 검색 결과(영상
+제목/썸네일/링크)를 "2차 창작"(리뷰 요약, 정보성 편집 등) 소재로 쓰고, 영상 제목을
+쿠팡 이름-매칭에 그대로 활용한다.
+
+```bash
+python -m shopping_shorts_sync search run --keyword "무선 청소기" --source youtube --dry-run
+python -m shopping_shorts_sync pipeline new-product --keyword "무선 청소기" \
+  --source youtube --index 0 --target-page harujin --category 생활용품 \
+  --input data/products.example.json --dry-run
+```
+
+`YOUTUBE_API_KEY` 없이는 `--dry-run`(mock)만 가능. 실제 유튜브 영상을 다운로드해서
+편집(자동 짜깁기)하는 부분은 이 저장소 범위 밖이다 — 저작권/2차 창작 관련 판단과
+실제 다운로드·인코딩 파이프라인은 별도로 구축해야 한다.
+
+## 음성 생성 (Typecast TTS)
+
+캡컷은 외부에서 호출 가능한 공개 API가 없어서, 대신 공개 API가 있는 **타입캐스트
+(Typecast)**로 대본 음성을 생성한다. 보이스는 20종 카탈로그
+(`src/shopping_shorts_sync/tts/voices.py`) — 표준 + 경상도/전라도/충청도/강원도
+사투리 x 남/여 x 20-30대/40-60대. 이 중 "예슬"(표준_여성_20-30대)만 실제로 확인된
+보이스이고 나머지 19개는 자리표시자이니 실전 연동 전 `docs/CALIBRATION.md`를 먼저
+볼 것.
+
+```bash
+# 카탈로그 확인
+python -m shopping_shorts_sync tts voices
+
+# 대본 선택 후("script select") 음성 생성 -> data/state.json에 자동 반영
+python -m shopping_shorts_sync tts generate --product-id harujin-vacuum-01 \
+  --voice-label 표준_여성_20-30대
+```
+
+웹 대시보드에서는 2단계(대본선택) 다음이 바로 3단계(음성생성)라, 대본을 고르면
+"음성으로 바로 다음 자동연동"(오너 요구사항) 흐름 그대로 이어진다.
+
 ## 현재 스코프에 포함되지 않은 것
 
 이 프로젝트는 실제로 동작하는 부분(쿠팡파트너스 딥링크 API, 상품명 자동 매칭,
-대본 자동생성, 인포크 RPA 동기화)과 현실적으로 불가능하거나 별도 계약/비용이 필요한
-부분을 명확히 구분한다. **틱톡/도우인/샤오훙슈에서의 실시간 영상 검색·자동 짜깁기
-영상 합성·캡컷 연동 TTS(사투리 포함)·실제 SNS 자동 게시**는 각 플랫폼의 공식 API가
-없거나(도우인/샤오훙슈), 자동화 정책상 막혀 있거나(캡컷), 별도 영상 처리 파이프라인이
-필요한 영역이라 이 저장소에는 구현되어 있지 않다.
+대본 자동생성, 유튜브 검색, 타입캐스트 TTS, 인포크 RPA 동기화)과 현실적으로
+불가능하거나 별도 구축이 필요한 부분을 명확히 구분한다. **틱톡/도우인/샤오훙슈에서의
+실시간 영상 검색(공개 API 없음)과, 검색된 영상을 실제로 다운로드해서 자동
+짜깁기하는 영상 합성 파이프라인**은 이 저장소에는 구현되어 있지 않다.
 
 ## 입력 파일 형식
 

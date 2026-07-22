@@ -152,6 +152,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 code.deeplink { display: block; word-break: break-all; background: var(--bg); padding: 6px 8px; border-radius: 6px; font-size: 0.85rem; margin-bottom: 4px; }
 
 .notice { background: var(--todo-bg); color: var(--todo-fg); padding: 10px 12px; border-radius: 8px; font-size: 0.85rem; margin: 10px 0; }
+.notice.ok-notice { background: var(--ok-bg); color: var(--ok-fg); }
 
 .script-card { border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 12px; background: var(--bg); }
 .script-card.selected { outline: 2px solid var(--accent); }

@@ -49,6 +49,36 @@
    실제로 틀린 매칭이 자주 나오면 상위 몇 개를 보여주고 확인받는 방식으로 바꾸는 걸
    고려할 것.
 
+## YouTube 검색 절차
+
+`src/shopping_shorts_sync/search/youtube.py`는 공식 YouTube Data API v3
+(`search.list`)를 쓰므로 셀렉터 보정은 필요 없지만, 이 환경은
+`googleapis.com` 접속이 막혀 있어 실제 응답 스펙을 확인하지 못했다.
+
+1. `YOUTUBE_API_KEY` 발급 후 (Google Cloud Console -> YouTube Data API v3
+   사용 설정 -> API 키 생성) 실제 호출 1회로 `items[].id.videoId`,
+   `items[].snippet.title/thumbnails.high.url` 필드명이 맞는지 확인.
+2. 쿼터 제한(기본 일일 10,000 유닛, `search.list` 1회당 100 유닛)이
+   운영 물량에 충분한지 확인.
+
+## Typecast TTS 절차
+
+`src/shopping_shorts_sync/tts/typecast_client.py`의 엔드포인트/응답 스키마는
+Typecast 공개 문서 기반 추정치이며, `typecast.ai` 접속이 막혀 있어 실제로
+호출해보지 못했다. **`--live`로 처음 실행하기 전 반드시:**
+
+1. `TYPECAST_API_KEY` 발급 후 실제 `POST /api/speak` 호출 1회로 요청 바디
+   필드명(`text`/`lang`/`actor_id`/`speed_x`)과 응답 구조(동기 응답인지,
+   `speak_v2_url`로 폴링해야 하는지)가 맞는지 확인하고 다르면
+   `typecast_client.py`의 `SPEAK_ENDPOINT`/파싱 로직을 갱신.
+2. `src/shopping_shorts_sync/tts/voices.py`의 `VOICE_CATALOG` 중
+   `예슬`(표준_여성_20-30대) 외 19개는 전부 `TODO_CALIBRATE_*` 자리표시자다.
+   Typecast 대시보드에서 실제 배우 목록을 확인해서 경상도/전라도/충청도/
+   강원도 사투리 및 남성 보이스에 맞는 실제 `actor_id`로 교체할 것.
+3. 사투리 보이스가 실제로 사투리 억양을 지원하는지, 아니면 표준어 억양에
+   텍스트만 사투리 표현으로 대체하는 방식인지 확인 (대본 자체에 사투리
+   표현을 넣을지, TTS 엔진에 맡길지의 갈림길).
+
 ## 확인이 필요한 열린 질문
 
 - 쿠팡파트너스 API의 정확한 HMAC 서명 포맷(헤더 이름, 날짜 포맷, 서명 대상 문자열에 쿼리
