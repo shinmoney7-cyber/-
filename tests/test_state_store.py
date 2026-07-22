@@ -70,3 +70,23 @@ def test_reset_removes_entry(tmp_path):
     assert store.reset("p1") is True
     assert store.get("p1") is None
     assert store.reset("p1") is False
+
+
+def test_apply_script_records_selection(tmp_path):
+    store = StateStore(tmp_path / "state.json")
+    store.apply_script(PRODUCT, candidate_id=3, script_text="hook\ninterest\ndesire\naction")
+
+    state = store.get("p1")
+    assert state.selected_script_id == 3
+    assert state.script_text == "hook\ninterest\ndesire\naction"
+    assert state.script_applied_at is not None
+
+
+def test_apply_script_survives_save_reload(tmp_path):
+    path = tmp_path / "state.json"
+    store = StateStore(path)
+    store.apply_script(PRODUCT, candidate_id=2, script_text="x")
+    store.save()
+
+    reloaded = StateStore(path)
+    assert reloaded.get("p1").selected_script_id == 2

@@ -42,6 +42,25 @@ python -m shopping_shorts_sync state show
 python -m shopping_shorts_sync state reset --product-id harujin-vacuum-01
 ```
 
+## 대본 선택 워크플로우
+
+상품마다 AIDA(주의-흥미-욕망-행동) 구조의 대본 후보를 **정확히 5개** 만들어
+`data/scripts/<product_id>.json`에 저장한다. 후보는 이 도구가 자동 생성하지 않고
+사람이(또는 대화 중 Claude가) 직접 작성해서 파일에 채워 넣는다.
+
+```bash
+# 상품의 5개 대본 후보 확인
+python -m shopping_shorts_sync script show --product-id harujin-vacuum-01
+
+# 하나를 선택 -> 즉시 data/state.json에 자동 반영("연동")
+python -m shopping_shorts_sync script select --product-id harujin-vacuum-01 \
+  --candidate-id 3 --input data/products.example.json
+```
+
+이미지(`products.json`의 `thumbnail`)와 대본(`data/scripts/*.json`)은 둘 다 평범한
+JSON 파일이라 직접 열어서 수정하면 된다. 수정 후에는 `script select`를 다시 실행해서
+반영한다.
+
 `--dry-run`을 빼고 `COUPANG_API_MODE=live` + 실제 키, 그리고 인포크 계정 정보를 채우면
 실제로 동작한다 (단, 위 CALIBRATION 절차를 먼저 거친 뒤).
 

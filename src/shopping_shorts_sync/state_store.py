@@ -26,6 +26,9 @@ class ProductState:
     inpock_synced_at: str | None = None
     status: str = "new"
     last_error: str | None = None
+    selected_script_id: int | None = None
+    script_text: str | None = None
+    script_applied_at: str | None = None
 
 
 class StateStore:
@@ -101,6 +104,15 @@ class StateStore:
         state = self._products.setdefault(product.id, ProductState(coupang_url=product.coupang_url))
         state.status = "error"
         state.last_error = error
+
+    def apply_script(self, product: Product, candidate_id: int, script_text: str) -> None:
+        """Records the owner's selection of one of the 5 script candidates as
+        immediately active for this product ("자동 연동"). Independent of the
+        Coupang/Inpock sync status tracked above."""
+        state = self._products.setdefault(product.id, ProductState(coupang_url=product.coupang_url))
+        state.selected_script_id = candidate_id
+        state.script_text = script_text
+        state.script_applied_at = _utcnow_iso()
 
     def reset(self, product_id: str) -> bool:
         return self._products.pop(product_id, None) is not None
