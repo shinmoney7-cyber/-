@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}대시보드 - 쇼폼쇼핑{% endblock %}
+{% block content %}
+<h1>상품 대시보드</h1>
+
+{% if not rows %}
+<p class="empty">등록된 상품이 없습니다. <a href="{{ url_for('search') }}">새 상품 검색</a>부터 시작하세요.</p>
+{% else %}
+<div class="card-grid">
+  {% for row in rows %}
+  <a class="product-card" href="{{ url_for('product_detail', product_id=row.product.id) }}">
+    <div class="thumb" style="background-image: url('{{ row.product.thumbnail }}')"></div>
+    <div class="card-body">
+      <div class="card-title">{{ row.product.name }}</div>
+      <div class="card-category">{{ row.product.category }}</div>
+      <div class="badges">
+        <span class="badge {{ 'ok' if row.deeplink_ready else 'todo' }}">쿠팡링크 {{ '완료' if row.deeplink_ready else '대기' }}</span>
+        <span class="badge {{ 'ok' if row.script_selected else 'todo' }}">대본 {{ '선택됨' if row.script_selected else '미선택' }}</span>
+        <span class="badge {{ 'ok' if row.approved else 'todo' }}">{{ '승인완료' if row.approved else '승인대기' }}</span>
+      </div>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

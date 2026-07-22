@@ -90,3 +90,28 @@ def test_apply_script_survives_save_reload(tmp_path):
 
     reloaded = StateStore(path)
     assert reloaded.get("p1").selected_script_id == 2
+
+
+def test_approve_requires_a_selected_script_first(tmp_path):
+    store = StateStore(tmp_path / "state.json")
+    store.record_deeplink(PRODUCT, "https://link.coupang.com/a/x")
+    try:
+        store.approve(PRODUCT)
+        assert False, "expected ValueError"
+    except ValueError:
+        pass
+
+
+def test_approve_after_script_selected(tmp_path):
+    store = StateStore(tmp_path / "state.json")
+    store.apply_script(PRODUCT, candidate_id=1, script_text="x")
+    store.approve(PRODUCT)
+    assert store.get("p1").approved_at is not None
+
+
+def test_unapprove_clears_approval(tmp_path):
+    store = StateStore(tmp_path / "state.json")
+    store.apply_script(PRODUCT, candidate_id=1, script_text="x")
+    store.approve(PRODUCT)
+    store.unapprove("p1")
+    assert store.get("p1").approved_at is None

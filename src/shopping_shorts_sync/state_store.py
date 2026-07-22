@@ -29,6 +29,7 @@ class ProductState:
     selected_script_id: int | None = None
     script_text: str | None = None
     script_applied_at: str | None = None
+    approved_at: str | None = None
 
 
 class StateStore:
@@ -113,6 +114,19 @@ class StateStore:
         state.selected_script_id = candidate_id
         state.script_text = script_text
         state.script_applied_at = _utcnow_iso()
+
+    def approve(self, product: Product) -> None:
+        """Owner's final "확인키": video/thumbnail/script reviewed together
+        and approved for deployment. Requires a script already selected."""
+        state = self._products.get(product.id)
+        if state is None or state.selected_script_id is None:
+            raise ValueError(f"product {product.id!r} has no selected script yet -- nothing to approve")
+        state.approved_at = _utcnow_iso()
+
+    def unapprove(self, product_id: str) -> None:
+        state = self._products.get(product_id)
+        if state is not None:
+            state.approved_at = None
 
     def reset(self, product_id: str) -> bool:
         return self._products.pop(product_id, None) is not None

@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}{{ product.name }} - 쇼폼쇼핑{% endblock %}
+{% block content %}
+<h1>{{ product.name }}</h1>
+
+<nav class="stepper">
+  {% for s, label in steps %}
+  <a class="step {{ 'active' if s == step else '' }}" href="{{ url_for('product_detail', product_id=product.id, step=s) }}">{{ label }}</a>
+  {% endfor %}
+</nav>
+
+{% if step == 'product' %}
+<section class="panel">
+  <div class="thumb large" style="background-image: url('{{ product.thumbnail }}')"></div>
+  <dl class="kv">
+    <dt>카테고리</dt><dd>{{ product.category }}</dd>
+    <dt>노출 페이지</dt><dd>{{ product.target_page }}</dd>
+    <dt>쿠팡 파트너스 딥링크</dt>
+    <dd>
+      {% if pstate and pstate.deeplink %}
+        <code class="deeplink">{{ pstate.deeplink }}</code>
+        <span class="badge ok">자동연동 완료</span>
+      {% else %}
+        <span class="badge todo">아직 생성 안 됨</span>
+      {% endif %}
+    </dd>
+  </dl>
+  <div class="notice">
+    <strong>{{ ad_label }}</strong> 문구를 영상 화면 {{ ad_label_position }}에 반드시 삽입하세요.
+  </div>
+</section>
+
+{% elif step == 'script' %}
+<section class="panel">
+  {% if not script_set %}
+  <form method="post" action="{{ url_for('script_generate', product_id=product.id) }}">
+    <p>아직 대본이 없습니다. AIDA + 7가지 설득요소 프레임워크로 5개를 자동 생성합니다.</p>
+    <button type="submit" class="primary">대본 5개 자동 생성</button>
+  </form>
+  {% else %}
+  <p class="hint">AIDA(주의-흥미-욕망-행동) 구조, 욕망 단계에 7가지 설득요소 중 하나씩 적용됨.</p>
+  {% for c in script_set.candidates %}
+  <div class="script-card {{ 'selected' if script_set.selected_id == c.id else '' }}">
+    <div class="script-head">
+      <span class="badge">후보 {{ c.id }}</span>
+      {% if c.technique %}<span class="badge technique">{{ c.technique }}</span>{% endif %}
+      {% if script_set.selected_id == c.id %}<span class="badge ok">선택됨</span>{% endif %}
+    </div>
+    <p><strong>A (주의)</strong> {{ c.attention }}</p>
+    <p><strong>I (흥미)</strong> {{ c.interest }}</p>
+    <p><strong>D (욕망)</strong> {{ c.desire }}</p>
+    <p><strong>A (행동)</strong> {{ c.action }}</p>
+    {% if script_set.selected_id != c.id %}
+    <form method="post" action="{{ url_for('script_select', product_id=product.id, candidate_id=c.id) }}">
+      <button type="submit">이 대본 선택</button>
+    </form>
+    {% endif %}
+  </div>
+  {% endfor %}
+  <form method="post" action="{{ url_for('script_generate', product_id=product.id) }}" onsubmit="return confirm('기존 대본을 새로 생성된 5개로 덮어씁니다. 계속할까요?');">
+    <button type="submit" class="secondary">5개 다시 생성</button>
+  </form>
+  {% endif %}
+</section>
+
+{% elif step == 'hashtags' %}
+<section class="panel">
+  <div class="notice">{{ disclosure }}</div>
+  <div class="notice"><strong>{{ ad_label }}</strong> 문구를 영상 화면 {{ ad_label_position }}에 반드시 삽입하세요.</div>
+  {% for key, label in platforms %}
+  <div class="hashtag-block">
+    <div class="hashtag-platform">{{ label }}</div>
+    <div class="hashtag-tags">{{ hashtags[key]|join(' ') }}</div>
+  </div>
+  {% endfor %}
+</section>
+
+{% elif step == 'approve' %}
+<section class="panel">
+  <h2>최종 확인</h2>
+  <div class="thumb large" style="background-image: url('{{ product.thumbnail }}')"></div>
+  {% if pstate and pstate.script_text %}
+  <pre class="final-script">{{ pstate.script_text }}</pre>
+  {% else %}
+  <p class="empty">먼저 2단계에서 대본을 선택하세요.</p>
+  {% endif %}
+  <div class="notice"><strong>{{ ad_label }}</strong> 문구 포함 여부, 쿠팡 파트너스 고지 문구 포함 여부를 확인 후 승인하세요.</div>
+
+  {% if pstate and pstate.approved_at %}
+  <p class="badge ok large">확인키 승인 완료 ({{ pstate.approved_at }}) — 배포 준비 완료</p>
+  <form method="post" action="{{ url_for('unapprove', product_id=product.id) }}">
+    <button type="submit" class="secondary">승인 취소</button>
+  </form>
+  {% else %}
+  <form method="post" action="{{ url_for('approve', product_id=product.id) }}">
+    <button type="submit" class="primary" {{ 'disabled' if not (pstate and pstate.selected_script_id) }}>확인키 승인 (배포 준비 완료로 표시)</button>
+  </form>
+  {% endif %}
+</section>
+{% endif %}
+
+<div class="step-nav">
+  {% if prev_step %}<a class="secondary-link" href="{{ url_for('product_detail', product_id=product.id, step=prev_step) }}">← 이전</a>{% endif %}
+  {% if next_step %}<a class="secondary-link" href="{{ url_for('product_detail', product_id=product.id, step=next_step) }}">다음 →</a>{% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}상품 검색 - 쇼폼쇼핑{% endblock %}
+{% block content %}
+<h1>상품 검색</h1>
+<p class="hint">네이버쇼핑 · 다이소몰 · 올리브영에서 검색합니다 (미리보기는 mock 데이터).</p>
+
+<form class="search-form" method="get" action="{{ url_for('search') }}">
+  <input type="text" name="keyword" placeholder="검색어 (예: 무선 청소기)" value="{{ keyword }}" required>
+  <button type="submit">검색</button>
+</form>
+
+{% if results %}
+<form method="post" action="{{ url_for('products_new') }}" id="pick-form">
+  <input type="hidden" name="keyword" value="{{ keyword }}">
+
+  <div class="field-row">
+    <label>카테고리
+      <select name="category" required>
+        {% for c in categories %}<option value="{{ c }}">{{ c }}</option>{% endfor %}
+      </select>
+    </label>
+    <label>노출 페이지
+      <select name="target_page" required>
+        {% for t in target_pages %}<option value="{{ t }}">{{ t }}</option>{% endfor %}
+      </select>
+    </label>
+    <label class="checkbox"><input type="checkbox" name="live"> 실전 연동(API 키 필요)</label>
+  </div>
+
+  {% for source, items in results.items() %}
+  <h2 class="source-heading">{{ source }} ({{ items|length }})</h2>
+  <div class="card-grid">
+    {% for item in items %}
+    <label class="result-card">
+      <input type="radio" name="pick" value="{{ source }}:{{ loop.index0 }}" required
+             onclick="document.getElementById('source').value='{{ source }}';document.getElementById('index').value='{{ loop.index0 }}';">
+      <div class="thumb" style="background-image: url('{{ item.image_url }}')"></div>
+      <div class="card-body">
+        <div class="card-title">{{ item.name }}</div>
+        {% if item.price %}<div class="card-price">{{ item.price }}</div>{% endif %}
+      </div>
+    </label>
+    {% endfor %}
+  </div>
+  {% endfor %}
+
+  <input type="hidden" id="source" name="source" value="">
+  <input type="hidden" id="index" name="index" value="">
+  <button type="submit" class="primary">선택한 상품으로 시작 (쿠팡 자동연동 + 대본 자동생성)</button>
+</form>
+{% elif keyword %}
+<p class="empty">검색 결과가 없습니다.</p>
+{% endif %}
+{% endblock %}

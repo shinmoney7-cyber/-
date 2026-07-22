@@ -28,6 +28,11 @@ class ScriptCandidate:
     interest: str
     desire: str
     action: str
+    # Which of the 7 persuasion elements the desire stage uses (empty for
+    # hand-authored candidates predating this field, e.g. the two example
+    # fixtures). One of: desire, loss_aversion, social_proof, authority,
+    # curiosity_gap, quantified_benefit, family_narrative.
+    technique: str = ""
 
     @property
     def full_text(self) -> str:
@@ -44,6 +49,7 @@ class ScriptCandidate:
             interest=raw["interest"],
             desire=raw["desire"],
             action=raw["action"],
+            technique=raw.get("technique", ""),
         )
 
 

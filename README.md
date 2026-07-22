@@ -66,24 +66,89 @@ python -m shopping_shorts_sync search match --keyword "무선 청소기" \
 다이소몰/올리브영 RPA와 쿠팡 이름-매칭 RPA 모두 `docs/CALIBRATION.md`의 셀렉터 보정이
 끝나기 전까지는 `--dry-run`으로만 쓸 것.
 
-## 대본 선택 워크플로우
+## 대본 자동생성 (AIDA + 7가지 설득요소)
 
-상품마다 AIDA(주의-흥미-욕망-행동) 구조의 대본 후보를 **정확히 5개** 만들어
-`data/scripts/<product_id>.json`에 저장한다. 후보는 이 도구가 자동 생성하지 않고
-사람이(또는 대화 중 Claude가) 직접 작성해서 파일에 채워 넣는다.
+상품마다 AIDA(주의-흥미-욕망-행동) 구조의 대본 후보를 **정확히 5개** 자동 생성해서
+`data/scripts/<product_id>.json`에 저장한다. 욕망(D) 단계는 7가지 설득요소 중
+카테고리에 맞는 5개를 하나씩 적용한다: 욕망 그 자체(base), 손실회피, 사회적 증거,
+권위/전문가 인용, 호기심 갭, 이득의 수치화, 가족 서사. 카테고리는 뷰티/생활용품/
+육아/다이어트/가전을 지원하며 각 카테고리별 타겟 욕망 리스트를 내장하고 있다
+(`src/shopping_shorts_sync/scriptgen.py`). 같은 상품명+카테고리는 항상 같은 5개를
+만드는 결정적(deterministic) 템플릿 생성기라, 이미 하나를 선택한 상태에서 재생성해도
+후보 내용이 갑자기 바뀌어 놀랄 일이 없다.
 
 ```bash
+# 상품명/카테고리로 대본 5개 자동 생성
+python -m shopping_shorts_sync script generate --product-id harujin-vacuum-01 \
+  --name "무선 청소기 XYZ" --category 가전
+
 # 상품의 5개 대본 후보 확인
 python -m shopping_shorts_sync script show --product-id harujin-vacuum-01
 
 # 하나를 선택 -> 즉시 data/state.json에 자동 반영("연동")
 python -m shopping_shorts_sync script select --product-id harujin-vacuum-01 \
   --candidate-id 3 --input data/products.example.json
+
+# 플랫폼별 해시태그 + 쿠팡파트너스 고지문구 + [광고] 표기 안내
+python -m shopping_shorts_sync script hashtags --name "무선 청소기 XYZ" --category 가전
 ```
 
-이미지(`products.json`의 `thumbnail`)와 대본(`data/scripts/*.json`)은 둘 다 평범한
-JSON 파일이라 직접 열어서 수정하면 된다. 수정 후에는 `script select`를 다시 실행해서
-반영한다.
+생성된 후보는 평범한 JSON 파일(`data/scripts/*.json`)이라 직접 열어서 손으로 다듬어도
+된다. 손으로 다듬은 뒤 `script generate`를 다시 돌리면 덮어쓰므로, 재생성하려면
+`--force`를 명시해야 한다. 이미지(`products.json`의 `thumbnail`)도 마찬가지로 직접
+수정 가능.
+
+### 표기 규칙 (필수)
+
+- **`[광고]`**: 영상 화면 우측 상단에 항상 삽입 (owner 규칙, `scriptgen.AD_LABEL`).
+- **쿠팡 파트너스 고지문구**: "이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른
+  일정액의 수수료를 제공받습니다." — 설명란/본문에 항상 표기 (`scriptgen.COUPANG_PARTNERS_DISCLOSURE`).
+
+두 가지 모두 `script generate`, `script hashtags`, `pipeline new-product` 실행 시
+콘솔에 리마인더로 출력되고, 웹 대시보드의 상품/해시태그/승인 단계 화면에도 항상
+표시된다.
+
+## 한 번에: 검색 -> 쿠팡 자동매칭 -> 대본 자동생성 -> 딥링크
+
+`pipeline new-product`는 검색 결과 선택 하나로 나머지 세 단계(쿠팡 이름-매칭 자동
+연동, AIDA 대본 5개 자동생성, 쿠팡파트너스 딥링크 실제 생성)를 이어서 처리한다.
+
+```bash
+python -m shopping_shorts_sync pipeline new-product --keyword "무선 청소기" \
+  --source daiso --index 0 --target-page harujin --category 생활용품 \
+  --input data/products.example.json --dry-run
+```
+
+## 웹 대시보드 (모바일 대응)
+
+검색 -> 상품 선택(쿠팡 자동연동 + 대본 자동생성) -> 대본 선택 -> 플랫폼별 해시태그
+-> 최종 확인("확인키") 승인까지 이어지는 모바일 반응형 웹 대시보드. CLI가 쓰는
+동일한 함수를 그대로 호출하므로 로직은 하나뿐이다.
+
+```bash
+python -m shopping_shorts_sync web --input data/products.example.json --port 5000
+```
+
+브라우저에서 `http://127.0.0.1:5000` 접속. 화면 구성:
+
+1. **대시보드**: 등록된 상품 목록 + 쿠팡링크/대본선택/승인 상태 배지
+2. **상품 검색**: 네이버쇼핑/다이소몰/올리브영에서 검색 -> 5개씩 총 15개 그리드 ->
+   하나 선택 시 쿠팡 자동매칭 + 대본 5개 자동생성 + 딥링크 생성이 한 번에 실행
+3. **상품 상세** (탭形 4단계, 각 단계에 이전/다음 내비게이션):
+   - 1) 상품정보 (썸네일, 쿠팡 딥링크, `[광고]` 표기 리마인더)
+   - 2) 대본선택 (AIDA 5개 후보, 설득요소 태그, 선택/재생성)
+   - 3) 해시태그/배포 (인스타그램·쓰레드·유튜브·틱톡·네이버클립·토스·당근마켓·
+     네이버블로그별 해시태그, 쿠팡파트너스 고지문구)
+   - 4) 최종승인 (썸네일+대본 완성본을 함께 보고 "확인키" 승인/취소)
+
+## 현재 스코프에 포함되지 않은 것
+
+이 프로젝트는 실제로 동작하는 부분(쿠팡파트너스 딥링크 API, 상품명 자동 매칭,
+대본 자동생성, 인포크 RPA 동기화)과 현실적으로 불가능하거나 별도 계약/비용이 필요한
+부분을 명확히 구분한다. **틱톡/도우인/샤오훙슈에서의 실시간 영상 검색·자동 짜깁기
+영상 합성·캡컷 연동 TTS(사투리 포함)·실제 SNS 자동 게시**는 각 플랫폼의 공식 API가
+없거나(도우인/샤오훙슈), 자동화 정책상 막혀 있거나(캡컷), 별도 영상 처리 파이프라인이
+필요한 영역이라 이 저장소에는 구현되어 있지 않다.
 
 ## 입력 파일 형식
 
