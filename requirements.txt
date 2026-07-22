@@ -3,6 +3,7 @@ python-dotenv>=1.0
 click>=8.1
 playwright>=1.40
 flask>=3.0
+gunicorn>=21.2
 
 # dev/test
 pytest>=8.0

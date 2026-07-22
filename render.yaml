@@ -1,0 +1,42 @@
+services:
+  - type: web
+    name: shopping-shorts-sync
+    env: python
+    plan: starter
+    buildCommand: "pip install -r requirements.txt && pip install ."
+    startCommand: "gunicorn wsgi:app"
+    disk:
+      name: shopping-shorts-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      # /var/data is the persistent disk above -- products/scripts/state
+      # written here survive redeploys and restarts, unlike the repo's
+      # own data/ directory (which resets to git's committed content on
+      # every deploy).
+      - key: PRODUCTS_PATH
+        value: /var/data/products.json
+      - key: STATE_FILE_PATH
+        value: /var/data/state.json
+      - key: SCRIPTS_DIR
+        value: /var/data/scripts
+      - key: COUPANG_API_MODE
+        value: mock
+      - key: TYPECAST_MODE
+        value: mock
+      - key: LOG_LEVEL
+        value: INFO
+      # 실제 키가 준비되면 Render 대시보드 Environment 탭에서 값만 채우고
+      # 위 두 MODE를 live로 바꾸면 된다. Render에는 절대 시크릿을 커밋하지 말 것.
+      - key: COUPANG_ACCESS_KEY
+        sync: false
+      - key: COUPANG_SECRET_KEY
+        sync: false
+      - key: NAVER_CLIENT_ID
+        sync: false
+      - key: NAVER_CLIENT_SECRET
+        sync: false
+      - key: YOUTUBE_API_KEY
+        sync: false
+      - key: TYPECAST_API_KEY
+        sync: false
