@@ -12,7 +12,7 @@ from pathlib import Path
 
 import pytest
 
-from shopping_shorts_sync.inpock.browser import launch_browser
+from shopping_shorts_sync.browser import launch_browser
 from shopping_shorts_sync.inpock.rpa import InpockRPAClient, LinkCard
 
 FIXTURES = Path(__file__).resolve().parent.parent / "fixtures" / "inpock_fixture_site"

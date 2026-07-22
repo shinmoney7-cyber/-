@@ -5,7 +5,7 @@ import logging
 from .config import Config
 from .coupang.client import CoupangPartnersClient
 from .coupang.mock_client import MockCoupangClient
-from .inpock.browser import launch_browser
+from .browser import launch_browser
 from .inpock.mock_rpa import MockInpockRPAClient
 from .inpock.rpa import InpockRPAClient, product_to_card
 from .models import Product

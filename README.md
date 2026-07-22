@@ -42,6 +42,30 @@ python -m shopping_shorts_sync state show
 python -m shopping_shorts_sync state reset --product-id harujin-vacuum-01
 ```
 
+`--dry-run`을 빼고 `COUPANG_API_MODE=live` + 실제 키, 그리고 인포크 계정 정보를 채우면
+실제로 동작한다 (단, 위 CALIBRATION 절차를 먼저 거친 뒤).
+
+## 상품 검색 + 쿠팡 자동매칭
+
+네이버 쇼핑(공식 API)·다이소몰·올리브영(RPA)에서 키워드로 검색해서 상품명/이미지를
+보여주고, 그중 하나를 고르면 **쿠팡닷컴을 이름으로 검색해서 상위 1개 결과를 자동으로
+매칭**해 `products.json`에 새 상품으로 추가한다. 쿠팡파트너스 API에는 이름 검색 기능이
+없어서(딥링크 API는 이미 아는 URL을 변환만 함) 이 매칭도 RPA로 한다 — 이름 유사도
+기반이라 가끔 다른 상품이 걸릴 수 있음을 감안하고 오너가 자동 적용을 선택했다.
+
+```bash
+# 3개 소스에서 키워드로 검색 (dry-run: 목 데이터, 네트워크/브라우저 불필요)
+python -m shopping_shorts_sync search run --keyword "무선 청소기" --dry-run
+
+# 결과 중 하나를 골라 쿠팡 매칭 -> products.json에 자동 upsert("연동")
+python -m shopping_shorts_sync search match --keyword "무선 청소기" \
+  --source daiso --index 0 --target-page harujin --category 생활용품 \
+  --input data/products.example.json --dry-run
+```
+
+다이소몰/올리브영 RPA와 쿠팡 이름-매칭 RPA 모두 `docs/CALIBRATION.md`의 셀렉터 보정이
+끝나기 전까지는 `--dry-run`으로만 쓸 것.
+
 ## 대본 선택 워크플로우
 
 상품마다 AIDA(주의-흥미-욕망-행동) 구조의 대본 후보를 **정확히 5개** 만들어
@@ -61,9 +85,6 @@ python -m shopping_shorts_sync script select --product-id harujin-vacuum-01 \
 JSON 파일이라 직접 열어서 수정하면 된다. 수정 후에는 `script select`를 다시 실행해서
 반영한다.
 
-`--dry-run`을 빼고 `COUPANG_API_MODE=live` + 실제 키, 그리고 인포크 계정 정보를 채우면
-실제로 동작한다 (단, 위 CALIBRATION 절차를 먼저 거친 뒤).
-
 ## 입력 파일 형식
 
 `data/products.example.json` / `data/products.example.csv` 참고. 각 상품은
@@ -82,6 +103,7 @@ URL), `category`, `target_page`(`harujin` 또는 `shinjh`), `enabled` 필드를 
 pytest
 ```
 
-모든 테스트는 목(mock) 기반이라 네트워크 접근 없이 통과해야 한다. `test_inpock_rpa.py`는
-`fixtures/inpock_fixture_site/`의 가짜 페이지를 사용하는 **구조 테스트**이며, 실제
-link.inpock.co.kr 사이트를 검증하지 않는다.
+모든 테스트는 목(mock) 기반이라 네트워크 접근 없이 통과해야 한다. `test_inpock_rpa.py`,
+`test_search_rpa.py`는 각각 `fixtures/inpock_fixture_site/`,
+`fixtures/{daiso,oliveyoung,coupang}_fixture_site/`의 가짜 페이지를 사용하는
+**구조 테스트**이며, 실제 사이트를 검증하지 않는다.

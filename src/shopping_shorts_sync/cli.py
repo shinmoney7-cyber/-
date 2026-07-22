@@ -8,6 +8,7 @@ import click
 from .config import load_config
 from .input_loader import load_products
 from .script_store import default_script_path, load_script_set
+from .search.orchestrator import match_and_upsert_product, search_all_sources, search_one_source
 from .state_store import StateStore
 from .sync import build_coupang_client, run_deeplink_stage, run_full_sync, run_inpock_stage
 
@@ -82,7 +83,7 @@ def inpock_sync(input_path, page_filter, dry_run, headed, force_create):
         rpa_client = MockInpockRPAClient()
         outcomes = run_inpock_stage(products, rpa_client, state, force_create=force_create)
     else:
-        from .inpock.browser import launch_browser
+        from .browser import launch_browser
         from .inpock.rpa import InpockRPAClient
 
         with launch_browser(
@@ -123,6 +124,66 @@ def sync_all(input_path, dry_run, headed, force, force_create):
     )
     _print_outcomes("deeplink generate", deeplink_outcomes)
     _print_outcomes("inpock sync", inpock_outcomes)
+
+
+@cli.group()
+def search():
+    """Search Naver/Daiso/Olive Young and auto-match results to a Coupang product.
+
+    Daiso/Olive Young (RPA) and the Coupang matching step all use
+    best-effort, uncalibrated selectors -- see docs/CALIBRATION.md before
+    running --live against the real sites.
+    """
+
+
+@search.command("run")
+@click.option("--keyword", required=True)
+@click.option("--limit", default=5, show_default=True)
+@click.option("--dry-run/--live", "dry_run", default=True)
+@click.option("--headed/--headless", "headed", default=False)
+def search_run(keyword, limit, dry_run, headed):
+    config = load_config()
+    _setup_logging(config)
+    config = dataclasses.replace(config, inpock_headless=not headed)
+
+    results = search_all_sources(keyword, config, dry_run=dry_run, limit=limit)
+    for source, items in results.items():
+        click.echo(f"-- {source} --")
+        for i, item in enumerate(items):
+            price = f" ({item.price})" if item.price else ""
+            click.echo(f"  [{i}] {item.name}{price}")
+            click.echo(f"      image: {item.image_url}")
+            click.echo(f"      url:   {item.product_url}")
+
+
+@search.command("match")
+@click.option("--keyword", required=True, help="Same keyword used with `search run`.")
+@click.option("--source", required=True, type=click.Choice(["naver", "daiso", "oliveyoung"]))
+@click.option("--index", required=True, type=int, help="0-based index into that source's results.")
+@click.option("--target-page", required=True, type=click.Choice(["harujin", "shinjh"]))
+@click.option("--category", required=True)
+@click.option("--input", "input_path", required=True, type=click.Path(), help="products.json to upsert the match into.")
+@click.option("--dry-run/--live", "dry_run", default=True)
+@click.option("--headed/--headless", "headed", default=False)
+def search_match(keyword, source, index, target_page, category, input_path, dry_run, headed):
+    config = load_config()
+    _setup_logging(config)
+    config = dataclasses.replace(config, inpock_headless=not headed)
+
+    results = search_one_source(source, keyword, config, dry_run=dry_run)
+    if index >= len(results):
+        raise click.ClickException(f"index {index} out of range, {source} returned {len(results)} result(s)")
+    selected = results[index]
+
+    product = match_and_upsert_product(
+        selected, target_page, category, config, input_path, dry_run=dry_run
+    )
+    if product is None:
+        click.echo(f"no coupang match found for {selected.name!r}")
+        return
+
+    click.echo(f"matched {selected.name!r} -> {product.coupang_url}")
+    click.echo(f"upserted product {product.id} into {input_path}")
 
 
 @cli.group()

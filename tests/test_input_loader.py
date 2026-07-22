@@ -1,6 +1,7 @@
 import pytest
 
-from shopping_shorts_sync.input_loader import InputLoadError, load_products
+from shopping_shorts_sync.input_loader import InputLoadError, load_products, upsert_product
+from shopping_shorts_sync.models import Product
 
 
 def test_load_example_json():
@@ -53,3 +54,47 @@ def test_id_auto_derived_when_omitted(tmp_path):
     )
     products = load_products(f)
     assert products[0].id  # non-empty, deterministically derived
+
+
+def _product(id_="p1", name="Test"):
+    return Product(
+        id=id_,
+        name=name,
+        coupang_url="https://www.coupang.com/vp/products/1",
+        thumbnail="https://example.com/x.jpg",
+        category="test",
+        target_page="harujin",
+    )
+
+
+def test_upsert_product_creates_new_file(tmp_path):
+    path = tmp_path / "products.json"
+    upsert_product(path, _product())
+
+    products = load_products(path)
+    assert len(products) == 1
+    assert products[0].id == "p1"
+
+
+def test_upsert_product_appends_to_existing(tmp_path):
+    path = tmp_path / "products.json"
+    upsert_product(path, _product(id_="p1"))
+    upsert_product(path, _product(id_="p2"))
+
+    products = load_products(path)
+    assert {p.id for p in products} == {"p1", "p2"}
+
+
+def test_upsert_product_replaces_matching_id(tmp_path):
+    path = tmp_path / "products.json"
+    upsert_product(path, _product(id_="p1", name="Old Name"))
+    upsert_product(path, _product(id_="p1", name="New Name"))
+
+    products = load_products(path)
+    assert len(products) == 1
+    assert products[0].name == "New Name"
+
+
+def test_upsert_product_rejects_csv():
+    with pytest.raises(InputLoadError):
+        upsert_product("data/products.example.csv", _product())
