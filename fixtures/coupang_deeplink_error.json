@@ -1,0 +1,12 @@
+{
+  "rCode": "0",
+  "rMessage": "",
+  "data": [
+    {
+      "originalUrl": "https://www.coupang.com/vp/products/0000000000",
+      "shortenUrl": null,
+      "landingUrl": null,
+      "errorMessage": "deeplink generation is not supported for this product"
+    }
+  ]
+}

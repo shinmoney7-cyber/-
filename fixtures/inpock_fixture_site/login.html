@@ -1,0 +1,25 @@
+<!--
+  Hand-built approximation of an Inpock-style login form.
+  This is NOT a copy of the real link.inpock.co.kr site (this sandbox's
+  network policy blocks reaching that host, so the real DOM could not be
+  inspected). It exists only so InpockRPAClient's Playwright steps can be
+  exercised structurally. See docs/CALIBRATION.md before trusting selectors
+  against the real site.
+-->
+<!DOCTYPE html>
+<html lang="ko">
+<head><meta charset="utf-8"><title>로그인</title></head>
+<body>
+  <form id="login-form">
+    <input type="email" name="email" placeholder="이메일">
+    <input type="password" name="password" placeholder="비밀번호">
+    <button type="submit">로그인</button>
+  </form>
+  <script>
+    document.getElementById('login-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      document.body.innerHTML = '<div id="dashboard">대시보드</div>';
+    });
+  </script>
+</body>
+</html>

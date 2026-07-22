@@ -1,0 +1,3 @@
+id,name,coupang_url,thumbnail,category,target_page,enabled
+harujin-vacuum-01,무선 청소기 XYZ,https://www.coupang.com/vp/products/1234567890?itemId=111&vendorItemId=222,https://example.com/images/vacuum-xyz.jpg,가전,harujin,true
+shinjh-serum-01,수분 세럼 ABC,https://www.coupang.com/vp/products/9876543210?itemId=333&vendorItemId=444,https://example.com/images/serum-abc.jpg,뷰티,shinjh,true

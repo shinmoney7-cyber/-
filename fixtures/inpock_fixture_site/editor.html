@@ -1,0 +1,44 @@
+<!--
+  Hand-built approximation of an Inpock-style link-card editor.
+  NOT verified against the real site (network to link.inpock.co.kr is
+  blocked in this sandbox). Placeholder for structural RPA testing only.
+  See docs/CALIBRATION.md.
+-->
+<!DOCTYPE html>
+<html lang="ko">
+<head><meta charset="utf-8"><title>링크 편집</title></head>
+<body>
+  <div id="card-list"></div>
+  <button id="add-link-button">링크 추가</button>
+
+  <div id="card-form" style="display:none">
+    <input type="text" name="title" placeholder="제목">
+    <input type="text" name="url" placeholder="URL">
+    <input type="text" name="thumbnail" placeholder="이미지 URL">
+    <button id="save-button">저장</button>
+  </div>
+
+  <script>
+    document.getElementById('add-link-button').addEventListener('click', function () {
+      document.getElementById('card-form').style.display = 'block';
+    });
+
+    document.getElementById('save-button').addEventListener('click', function () {
+      var title = document.querySelector('input[name="title"]').value;
+      var url = document.querySelector('input[name="url"]').value;
+      var thumb = document.querySelector('input[name="thumbnail"]').value;
+
+      var card = document.createElement('div');
+      card.className = 'link-card';
+      card.setAttribute('data-testid', 'link-card');
+      card.innerHTML =
+        '<span class="card-title">' + title + '</span>' +
+        '<span class="card-url">' + url + '</span>' +
+        '<span class="card-thumbnail">' + thumb + '</span>';
+      document.getElementById('card-list').appendChild(card);
+
+      document.getElementById('card-form').style.display = 'none';
+    });
+  </script>
+</body>
+</html>
