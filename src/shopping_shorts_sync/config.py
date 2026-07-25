@@ -5,7 +5,14 @@ from dataclasses import dataclass
 
 from dotenv import load_dotenv
 
-_REDACT_KEYS = {"coupang_secret_key", "coupang_access_key", "inpock_password", "openai_api_key"}
+_REDACT_KEYS = {
+    "coupang_secret_key",
+    "coupang_access_key",
+    "inpock_password",
+    "openai_api_key",
+    "tiktok_access_token",
+    "instagram_access_token",
+}
 
 
 @dataclass(frozen=True)
@@ -24,6 +31,12 @@ class Config:
 
     openai_api_key: str
     openai_model: str
+
+    tiktok_access_token: str
+    instagram_access_token: str
+    instagram_business_account_id: str
+    youtube_client_secrets_file: str
+    youtube_token_file: str
 
     playwright_chromium_path: str
     state_file_path: str
@@ -52,6 +65,11 @@ def load_config(env_file: str | None = None) -> Config:
         naver_client_secret=os.environ.get("NAVER_CLIENT_SECRET", ""),
         openai_api_key=os.environ.get("OPENAI_API_KEY", ""),
         openai_model=os.environ.get("OPENAI_MODEL", "gpt-4o-mini"),
+        tiktok_access_token=os.environ.get("TIKTOK_ACCESS_TOKEN", ""),
+        instagram_access_token=os.environ.get("INSTAGRAM_ACCESS_TOKEN", ""),
+        instagram_business_account_id=os.environ.get("INSTAGRAM_BUSINESS_ACCOUNT_ID", ""),
+        youtube_client_secrets_file=os.environ.get("YOUTUBE_CLIENT_SECRETS_FILE", ""),
+        youtube_token_file=os.environ.get("YOUTUBE_TOKEN_FILE", "data/youtube_token.json"),
         playwright_chromium_path=os.environ.get("PLAYWRIGHT_CHROMIUM_PATH", "/opt/pw-browsers/chromium"),
         state_file_path=os.environ.get("STATE_FILE_PATH", "data/state.json"),
         log_level=os.environ.get("LOG_LEVEL", "INFO"),

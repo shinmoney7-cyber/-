@@ -293,5 +293,36 @@ def state_reset(product_id):
     click.echo(f"removed: {removed}")
 
 
+@cli.group()
+def publish():
+    """Upload a generated video to social platforms (TikTok / Instagram / YouTube).
+
+    Use --dry-run (default) to test without real API calls.
+    --live requires the relevant platform tokens in .env.
+    """
+
+
+@publish.command("video")
+@click.option("--video-path", required=True, type=click.Path(exists=True), help="Local path to the .mp4 file.")
+@click.option("--caption", required=True, help="Post caption / description.")
+@click.option("--product-name", required=True, help="Product name for the video title.")
+@click.option("--platform", "platforms", multiple=True, default=["tiktok", "instagram", "youtube"],
+              type=click.Choice(["tiktok", "instagram", "youtube"]), show_default=True)
+@click.option("--dry-run/--live", "dry_run", default=True)
+def publish_video(video_path, caption, product_name, platforms, dry_run):
+    """Upload a video to one or more platforms."""
+    from .publisher.orchestrator import build_publishers, publish_to_all
+    config = load_config()
+    _setup_logging(config)
+
+    publishers = build_publishers(config, dry_run=dry_run, platforms=list(platforms))
+    results = publish_to_all(publishers, video_path, caption, product_name)
+
+    for platform, result in results.items():
+        status = "OK" if result.success else "FAIL"
+        detail = result.post_url or result.error or ""
+        click.echo(f"  [{status}] {platform}: {detail}")
+
+
 if __name__ == "__main__":
     cli()
