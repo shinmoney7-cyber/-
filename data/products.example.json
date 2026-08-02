@@ -16,5 +16,14 @@
     "category": "뷰티",
     "target_page": "shinjh",
     "enabled": true
+  },
+  {
+    "id": "beplain-01",
+    "name": "비플레인 녹두 모공 클렌징 밀크 밤 100ml",
+    "coupang_url": "https://www.coupang.com/vp/products/8129129815",
+    "thumbnail": "",
+    "category": "뷰티",
+    "target_page": "shinjh",
+    "enabled": true
   }
 ]
