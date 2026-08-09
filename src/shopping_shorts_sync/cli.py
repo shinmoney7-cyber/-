@@ -11,6 +11,10 @@ from .script_store import default_script_path, load_script_set
 from .search.orchestrator import match_and_upsert_product, search_all_sources, search_one_source
 from .state_store import StateStore
 from .sync import build_coupang_client, run_deeplink_stage, run_full_sync, run_inpock_stage
+from .meta.accounts import AccountConfig, MultiAccountPublisher, ACCOUNTS
+from .meta.mock_client import MockMultiAccountPublisher
+from .publish_store import PublishStore, PipelineStatus
+from .content.pipeline import build_pipeline, ProductBrief
 
 
 def _setup_logging(config):
@@ -258,6 +262,264 @@ def state_reset(product_id):
     removed = store.reset(product_id)
     store.save()
     click.echo(f"removed: {removed}")
+
+
+def _build_account_configs(config) -> list[AccountConfig]:
+    return [
+        AccountConfig(
+            name="mom_moneytip",
+            ig_user_id=config.meta_mom_moneytip_ig_user_id,
+            threads_user_id=config.meta_mom_moneytip_threads_user_id,
+            access_token=config.meta_mom_moneytip_access_token,
+        ),
+        AccountConfig(
+            name="showpingkkultem",
+            ig_user_id=config.meta_showpingkkultem_ig_user_id,
+            threads_user_id=config.meta_showpingkkultem_threads_user_id,
+            access_token=config.meta_showpingkkultem_access_token,
+        ),
+        AccountConfig(
+            name="haru_moneytip",
+            ig_user_id=config.meta_haru_moneytip_ig_user_id,
+            threads_user_id=config.meta_haru_moneytip_threads_user_id,
+            access_token=config.meta_haru_moneytip_access_token,
+        ),
+    ]
+
+
+def _build_publisher(config, dry_run: bool) -> MultiAccountPublisher:
+    accounts = _build_account_configs(config)
+    if dry_run or config.meta_api_mode != "live":
+        return MockMultiAccountPublisher(accounts, api_version=config.meta_api_version)
+    return MultiAccountPublisher(accounts, api_version=config.meta_api_version)
+
+
+# ── publish 커맨드 그룹 ────────────────────────────────────────────────────
+
+
+@cli.group()
+def publish():
+    """콘텐츠 생성 → 영상 업로드 → Instagram·Threads 게시 파이프라인."""
+
+
+@publish.command("run")
+@click.option("--product-id", required=True, help="products.json 내 상품 ID.")
+@click.option("--input", "input_path", required=True, type=click.Path(exists=True))
+@click.option("--hook", required=True, help="3초 후킹 문구.")
+@click.option("--problem", required=True, help="문제 제기/공감 문구.")
+@click.option("--feature1", required=True, help="핵심 기능 1.")
+@click.option("--feature2", required=True, help="핵심 기능 2.")
+@click.option("--proof", required=True, help="검증 가능한 신뢰 근거.")
+@click.option("--cta", required=True, help="행동 유도 문구.")
+@click.option("--inpock-url", required=True, help="상품에 정확히 대응하는 인포크 URL.")
+@click.option("--duration", default=30, type=click.Choice(["15", "30", "50"]), help="대본 길이(초).")
+@click.option("--dry-run/--live", "dry_run", default=True,
+              help="--dry-run: mock 클라이언트 사용 (API 미호출). --live: 실제 API 호출.")
+@click.option("--skip-approve", is_flag=True, help="미리보기 없이 바로 게시 (자동화 전용).")
+def publish_run(product_id, input_path, hook, problem, feature1, feature2, proof, cta,
+                inpock_url, duration, dry_run, skip_approve):
+    """상품 브리프를 입력받아 콘텐츠 생성 → 3개 계정 × 2 플랫폼 게시 전 과정을 실행한다."""
+    config = load_config()
+    _setup_logging(config)
+
+    products = {p.id: p for p in load_products(input_path)}
+    product = products.get(product_id)
+    if product is None:
+        raise click.ClickException(f"product {product_id!r} not found in {input_path}")
+    if not inpock_url:
+        raise click.ClickException("LINK_BLOCKED: --inpock-url 이 없으면 진행할 수 없습니다.")
+
+    pub_store = PublishStore(config.publish_state_file_path)
+    rec = pub_store.create(product.id, product.name, product.category)
+    rec.set_status(PipelineStatus.FACT_CHECKED)
+    rec.inpock_url = inpock_url
+    pub_store.save()
+
+    brief = ProductBrief(
+        product_id=product.id,
+        name=product.name,
+        category=product.category,
+        hook=hook,
+        problem=problem,
+        feature_1=feature1,
+        feature_2=feature2,
+        proof=proof,
+        cta=cta,
+        inpock_url=inpock_url,
+    )
+    rec.set_status(PipelineStatus.SCRIPTED)
+    pub_store.save()
+
+    # ── 콘텐츠 생성 ──────────────────────────────────────────────────────
+    pipeline = build_pipeline(config, dry_run=dry_run)
+    click.echo(f"[콘텐츠 생성] {product.name} ({'dry-run' if dry_run else 'live'})")
+    try:
+        assets = pipeline.run(brief, script_duration=int(duration))
+    except Exception as exc:
+        rec.add_error(f"content pipeline failed: {exc}")
+        rec.set_status(PipelineStatus.FAILED)
+        pub_store.save()
+        raise click.ClickException(f"콘텐츠 생성 실패: {exc}") from exc
+
+    rec.set_status(PipelineStatus.ASSETS_READY)
+    rec.video_path = assets.video_path
+    rec.thumbnail_path = assets.thumbnail_path
+    rec.captions = assets.captions
+    pub_store.save()
+
+    rec.set_status(PipelineStatus.RENDERED)
+    pub_store.save()
+
+    if assets.video_url:
+        rec.video_url = assets.video_url
+        rec.set_status(PipelineStatus.LINK_READY)
+        pub_store.save()
+
+    # ── 미리보기 및 승인 ──────────────────────────────────────────────────
+    if not skip_approve:
+        click.echo("\n── 게시 미리보기 ──────────────────────────────────────────")
+        click.echo(f"  상품: {product.name}")
+        click.echo(f"  영상: {assets.video_path}")
+        click.echo(f"  URL : {assets.video_url}")
+        click.echo(f"  인포크: {inpock_url}")
+        for account, caption in assets.captions.items():
+            click.echo(f"\n  [{account}]\n{caption[:120]}…")
+        click.echo()
+        click.confirm("위 내용으로 6개 목적지(3계정 × Instagram+Threads)에 게시하시겠습니까?",
+                      abort=True)
+
+    rec.set_status(PipelineStatus.APPROVED)
+    pub_store.save()
+
+    # ── 게시 ─────────────────────────────────────────────────────────────
+    if not assets.video_url:
+        raise click.ClickException("영상 URL이 없어 게시할 수 없습니다. 스토리지를 확인하세요.")
+
+    publisher = _build_publisher(config, dry_run)
+    click.echo(f"\n[게시 시작] {'dry-run' if dry_run else 'live'}")
+    results = publisher.publish(assets.video_url, assets.captions)
+
+    for result in results:
+        rec.record_destination(result.account, result.platform, result)
+        icon = "✅" if result.ok else "❌"
+        detail = result.post_url or result.error or ""
+        click.echo(f"  {icon} {result.account} / {result.platform}: {detail}")
+
+    if rec.all_published():
+        rec.set_status(PipelineStatus.PUBLISHED)
+    else:
+        rec.add_error("일부 목적지 게시 실패")
+        rec.set_status(PipelineStatus.FAILED)
+    pub_store.save()
+
+    # ── 검증 ─────────────────────────────────────────────────────────────
+    # 실제 게시 확인: post_id 가 있을 때만 검증 완료로 표시
+    all_verified = True
+    for result in results:
+        if result.ok and result.post_id:
+            rec.verify_destination(result.account, result.platform, result.post_url)
+        else:
+            all_verified = False
+
+    if all_verified:
+        rec.set_status(PipelineStatus.VERIFIED)
+    pub_store.save()
+
+    # ── 결과 출력 ─────────────────────────────────────────────────────────
+    click.echo(f"\n최종 상태: {rec.pipeline_status}")
+    _print_publish_table(rec.summary_rows())
+
+
+def _print_publish_table(rows: list[dict]) -> None:
+    headers = ["destination", "status", "post_url", "error"]
+    click.echo("\n── 게시 결과 ──────────────────────────────────────────────")
+    for row in rows:
+        dest = row.get("destination", "")
+        status = row.get("status", "")
+        url = (row.get("post_url") or "")[:60]
+        err = (row.get("error") or "")[:60]
+        click.echo(f"  {dest:<35} [{status:<9}] {url or err}")
+
+
+@publish.command("status")
+@click.option("--product-id", default=None)
+def publish_status(product_id):
+    """게시 파이프라인 상태를 조회한다."""
+    config = load_config()
+    store = PublishStore(config.publish_state_file_path)
+    records = store.all()
+    if product_id:
+        rec = records.get(product_id)
+        if rec is None:
+            click.echo(f"상품 {product_id!r} 의 게시 이력이 없습니다.")
+            return
+        _print_publish_table(rec.summary_rows())
+        return
+    for pid, rec in records.items():
+        click.echo(f"{pid} ({rec.product_name}): {rec.pipeline_status}")
+
+
+@publish.command("reset")
+@click.option("--product-id", required=True)
+def publish_reset(product_id):
+    """특정 상품의 게시 이력을 초기화한다."""
+    config = load_config()
+    store = PublishStore(config.publish_state_file_path)
+    removed = store.reset(product_id)
+    store.save()
+    click.echo(f"{'삭제됨' if removed else '이력 없음'}: {product_id}")
+
+
+# ── meta 커맨드 그룹 ──────────────────────────────────────────────────────
+
+
+@cli.group()
+def meta():
+    """Meta 계정 연결 검증 및 토큰 갱신."""
+
+
+@meta.command("verify-accounts")
+@click.option("--dry-run/--live", "dry_run", default=True)
+def meta_verify_accounts(dry_run):
+    """3개 계정 × Instagram+Threads 연결 상태를 확인한다."""
+    config = load_config()
+    publisher = _build_publisher(config, dry_run)
+    statuses = publisher.verify_accounts()
+    for s in statuses:
+        icon = "✅" if s.get("ok") else "❌"
+        acct = s.get("account", "")
+        plat = s.get("platform", "")
+        detail = s.get("user_id") or s.get("error", "")
+        click.echo(f"  {icon} {acct:<20} {plat:<10} {detail}")
+
+
+@meta.command("refresh-tokens")
+@click.option("--dry-run/--live", "dry_run", default=True)
+def meta_refresh_tokens(dry_run):
+    """장기 액세스 토큰을 갱신한다 (60일마다 필요)."""
+    if dry_run:
+        click.echo("[dry-run] 토큰 갱신 시뮬레이션 — 실제 API 미호출")
+        return
+
+    config = load_config()
+    from .meta.instagram import InstagramClient
+    from .meta.threads import ThreadsClient
+
+    accounts = _build_account_configs(config)
+    for account in accounts:
+        try:
+            ig = InstagramClient(account.access_token, api_version=config.meta_api_version)
+            result = ig.refresh_long_lived_token(config.meta_app_secret)
+            click.echo(f"✅ {account.name}/instagram token refreshed, expires_in={result.get('expires_in')}s")
+        except Exception as exc:
+            click.echo(f"❌ {account.name}/instagram refresh failed: {exc}")
+
+        try:
+            t = ThreadsClient(account.access_token, api_version=config.meta_api_version)
+            result = t.refresh_long_lived_token()
+            click.echo(f"✅ {account.name}/threads token refreshed, expires_in={result.get('expires_in')}s")
+        except Exception as exc:
+            click.echo(f"❌ {account.name}/threads refresh failed: {exc}")
 
 
 if __name__ == "__main__":
