@@ -1,19 +1,51 @@
 [
   {
-    "id": "harujin-vacuum-01",
-    "name": "1. 무선 청소기",
+    "id": "harujin-detergent-01",
+    "name": "1. LG피지 세탁세제",
+    "description": "모락셀라균 99.9% 제거로 퀴퀴한 냄새를 잡는 고농축 세탁세제 2.1L",
     "coupang_url": "https://www.coupang.com/vp/products/REPLACE_ME",
     "thumbnail": "",
-    "category": "가전",
+    "category": "생활용품",
+    "target_page": "harujin",
+    "enabled": true
+  },
+  {
+    "id": "harujin-airfryer-01",
+    "name": "2. 아이닉 에어프라이어 7L",
+    "description": "올스텐 내조 소재로 안전하고 7L 대용량으로 4인 가족 요리에 최적인 에어프라이어",
+    "coupang_url": "https://www.coupang.com/vp/products/REPLACE_ME",
+    "thumbnail": "",
+    "category": "주방용품",
     "target_page": "harujin",
     "enabled": true
   },
   {
     "id": "shinjh-serum-01",
-    "name": "1. 수분 세럼",
+    "name": "1. 토리든 히알루론산 세럼",
+    "description": "5가지 분자량 히알루론산으로 피부 속부터 채워주는 국민 수분 세럼 50ml",
     "coupang_url": "https://www.coupang.com/vp/products/REPLACE_ME",
     "thumbnail": "",
     "category": "뷰티",
+    "target_page": "shinjh",
+    "enabled": true
+  },
+  {
+    "id": "shinjh-vitamin-01",
+    "name": "2. 종근당건강 원데이21 종합비타민",
+    "description": "21가지 필수 영양소를 하루 한 알로 간편하게 섭취하는 프리미엄 종합비타민 60정",
+    "coupang_url": "https://www.coupang.com/vp/products/REPLACE_ME",
+    "thumbnail": "",
+    "category": "건강식품",
+    "target_page": "shinjh",
+    "enabled": true
+  },
+  {
+    "id": "shinjh-ramen-01",
+    "name": "3. 농심 신라면 20개입",
+    "description": "40년 전통 한국 대표 라면, 쫄깃한 면발과 얼큰한 국물로 전 세계가 사랑하는 베스트셀러",
+    "coupang_url": "https://www.coupang.com/vp/products/REPLACE_ME",
+    "thumbnail": "",
+    "category": "음식",
     "target_page": "shinjh",
     "enabled": true
   }
