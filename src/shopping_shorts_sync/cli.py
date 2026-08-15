@@ -7,10 +7,17 @@ import click
 
 from .config import load_config
 from .input_loader import load_products
+from .models import TARGET_PAGES
 from .script_store import default_script_path, load_script_set
 from .search.orchestrator import match_and_upsert_product, search_all_sources, search_one_source
 from .state_store import StateStore
-from .sync import build_coupang_client, run_deeplink_stage, run_full_sync, run_inpock_stage
+from .sync import (
+    build_coupang_client,
+    run_deeplink_stage,
+    run_full_sync,
+    run_inpock_stage,
+    _run_inpock_live,
+)
 
 
 def _setup_logging(config):
@@ -26,18 +33,21 @@ def _print_outcomes(label: str, outcomes) -> None:
 
 @click.group()
 def cli():
-    """Coupang Partners deeplink generation -> Inpock link-card sync."""
+    """Coupang Partners deeplink 생성 → Inpock 링크카드 동기화."""
 
+
+# ── deeplink ─────────────────────────────────────────────────────────────────
 
 @cli.group()
 def deeplink():
-    """Coupang Partners deeplink operations."""
+    """Coupang Partners deeplink 작업."""
 
 
 @deeplink.command("generate")
 @click.option("--input", "input_path", required=True, type=click.Path(exists=True))
-@click.option("--live/--dry-run", "live", default=False, help="Call the real Coupang API instead of the mock client.")
-@click.option("--force", is_flag=True, help="Regenerate deeplinks even if state says they're already up to date.")
+@click.option("--live/--dry-run", "live", default=False,
+              help="실제 Coupang API 호출. 기본은 mock.")
+@click.option("--force", is_flag=True, help="이미 생성된 딥링크도 재생성.")
 def deeplink_generate(input_path, live, force):
     config = load_config()
     _setup_logging(config)
@@ -55,17 +65,26 @@ def deeplink_generate(input_path, live, force):
     _print_outcomes("deeplink generate", outcomes)
 
 
+# ── inpock ───────────────────────────────────────────────────────────────────
+
 @cli.group()
 def inpock():
-    """Inpock link-card sync operations."""
+    """Inpock 링크카드 동기화."""
 
 
 @inpock.command("sync")
 @click.option("--input", "input_path", required=True, type=click.Path(exists=True))
-@click.option("--page", "page_filter", type=click.Choice(["harujin", "shinjh"]), default=None)
-@click.option("--dry-run/--live", "dry_run", default=True, help="Dry-run uses a mock RPA client; --live drives a real browser.")
-@click.option("--headed/--headless", "headed", default=False)
-@click.option("--force-create", is_flag=True, help="Skip the existing-card lookup and always create a new card.")
+@click.option(
+    "--page", "page_filter",
+    type=click.Choice(list(TARGET_PAGES)),
+    default=None,
+    help="특정 페이지만 동기화. 생략 시 전체(harujin + shinjh).",
+)
+@click.option("--dry-run/--live", "dry_run", default=True,
+              help="--live 시 실제 브라우저로 Inpock 자동화.")
+@click.option("--headed/--headless", "headed", default=False,
+              help="--headed 로 브라우저 창 띄워서 진행 상황 확인.")
+@click.option("--force-create", is_flag=True, help="기존 카드 탐색 없이 항상 새로 생성.")
 def inpock_sync(input_path, page_filter, dry_run, headed, force_create):
     config = load_config()
     _setup_logging(config)
@@ -79,36 +98,28 @@ def inpock_sync(input_path, page_filter, dry_run, headed, force_create):
 
     if dry_run:
         from .inpock.mock_rpa import MockInpockRPAClient
-
         rpa_client = MockInpockRPAClient()
         outcomes = run_inpock_stage(products, rpa_client, state, force_create=force_create)
     else:
-        from .browser import launch_browser
-        from .inpock.rpa import InpockRPAClient
-
-        with launch_browser(
-            headless=config.inpock_headless, chromium_path=config.playwright_chromium_path
-        ) as browser:
-            page = browser.new_page()
-            rpa_client = InpockRPAClient(page, config.inpock_email, config.inpock_password)
-            rpa_client.login()
-            outcomes = run_inpock_stage(products, rpa_client, state, force_create=force_create)
+        outcomes = _run_inpock_live(products, config, state, force_create=force_create)
 
     state.save()
     _print_outcomes("inpock sync", outcomes)
 
 
+# ── sync all (full pipeline) ──────────────────────────────────────────────────
+
 @cli.group("sync")
 def sync_group():
-    """Full pipeline: Coupang deeplink generation followed by Inpock sync."""
+    """딥링크 생성 + Inpock 동기화 풀 파이프라인."""
 
 
 @sync_group.command("all")
 @click.option("--input", "input_path", required=True, type=click.Path(exists=True))
 @click.option("--dry-run/--live", "dry_run", default=True)
 @click.option("--headed/--headless", "headed", default=False)
-@click.option("--force", is_flag=True, help="Regenerate deeplinks even if already up to date.")
-@click.option("--force-create", is_flag=True, help="Skip the existing-card lookup in the Inpock stage.")
+@click.option("--force", is_flag=True, help="딥링크도 강제 재생성.")
+@click.option("--force-create", is_flag=True, help="Inpock 카드 기존 탐색 생략, 항상 새로 생성.")
 def sync_all(input_path, dry_run, headed, force, force_create):
     config = load_config()
     _setup_logging(config)
@@ -126,14 +137,11 @@ def sync_all(input_path, dry_run, headed, force, force_create):
     _print_outcomes("inpock sync", inpock_outcomes)
 
 
+# ── search ────────────────────────────────────────────────────────────────────
+
 @cli.group()
 def search():
-    """Search Naver/Daiso/Olive Young and auto-match results to a Coupang product.
-
-    Daiso/Olive Young (RPA) and the Coupang matching step all use
-    best-effort, uncalibrated selectors -- see docs/CALIBRATION.md before
-    running --live against the real sites.
-    """
+    """Naver/Daiso/Olive Young 검색 후 Coupang 매칭."""
 
 
 @search.command("run")
@@ -157,12 +165,12 @@ def search_run(keyword, limit, dry_run, headed):
 
 
 @search.command("match")
-@click.option("--keyword", required=True, help="Same keyword used with `search run`.")
+@click.option("--keyword", required=True)
 @click.option("--source", required=True, type=click.Choice(["naver", "daiso", "oliveyoung"]))
-@click.option("--index", required=True, type=int, help="0-based index into that source's results.")
-@click.option("--target-page", required=True, type=click.Choice(["harujin", "shinjh"]))
+@click.option("--index", required=True, type=int)
+@click.option("--target-page", required=True, type=click.Choice(list(TARGET_PAGES)))
 @click.option("--category", required=True)
-@click.option("--input", "input_path", required=True, type=click.Path(), help="products.json to upsert the match into.")
+@click.option("--input", "input_path", required=True, type=click.Path())
 @click.option("--dry-run/--live", "dry_run", default=True)
 @click.option("--headed/--headless", "headed", default=False)
 def search_match(keyword, source, index, target_page, category, input_path, dry_run, headed):
@@ -172,29 +180,25 @@ def search_match(keyword, source, index, target_page, category, input_path, dry_
 
     results = search_one_source(source, keyword, config, dry_run=dry_run)
     if index >= len(results):
-        raise click.ClickException(f"index {index} out of range, {source} returned {len(results)} result(s)")
+        raise click.ClickException(f"index {index} 범위 초과, {source} 결과: {len(results)}개")
     selected = results[index]
 
     product = match_and_upsert_product(
         selected, target_page, category, config, input_path, dry_run=dry_run
     )
     if product is None:
-        click.echo(f"no coupang match found for {selected.name!r}")
+        click.echo(f"{selected.name!r}에 대한 Coupang 매칭 결과 없음")
         return
 
-    click.echo(f"matched {selected.name!r} -> {product.coupang_url}")
-    click.echo(f"upserted product {product.id} into {input_path}")
+    click.echo(f"매칭: {selected.name!r} → {product.coupang_url}")
+    click.echo(f"{input_path} 에 product {product.id} 추가/갱신 완료")
 
+
+# ── script ────────────────────────────────────────────────────────────────────
 
 @cli.group()
 def script():
-    """5-candidate AIDA script review/selection per product.
-
-    Candidates are authored by hand (data/scripts/<product_id>.json, exactly
-    5 entries) rather than generated by this tool. `script select` is the
-    "선택 즉시 자동 연동" step: it marks one candidate as active and applies
-    it to data/state.json immediately.
-    """
+    """AIDA 스크립트 후보 조회/선택."""
 
 
 @script.command("show")
@@ -215,31 +219,33 @@ def script_show(product_id, script_file):
 @script.command("select")
 @click.option("--product-id", required=True)
 @click.option("--candidate-id", required=True, type=int)
-@click.option("--input", "input_path", required=True, type=click.Path(exists=True), help="Product list file (same one used for deeplink/inpock sync).")
+@click.option("--input", "input_path", required=True, type=click.Path(exists=True))
 @click.option("--file", "script_file", type=click.Path(exists=True), default=None)
 def script_select(product_id, candidate_id, input_path, script_file):
     from .script_store import save_script_set
 
     path = script_file or default_script_path(product_id)
     script_set = load_script_set(path)
-    candidate = script_set.select(candidate_id)  # raises if candidate_id is invalid
+    candidate = script_set.select(candidate_id)
     save_script_set(path, script_set)
 
     config = load_config()
     products = {p.id: p for p in load_products(input_path)}
     product = products.get(product_id)
     if product is None:
-        raise click.ClickException(f"product {product_id!r} not found in {input_path}")
+        raise click.ClickException(f"product {product_id!r} 을 {input_path} 에서 찾을 수 없음")
 
     state = StateStore(config.state_file_path)
     state.apply_script(product, candidate.id, candidate.full_text)
     state.save()
-    click.echo(f"applied candidate {candidate.id} for {product_id}")
+    click.echo(f"{product_id} 에 candidate {candidate.id} 적용 완료")
 
+
+# ── state ─────────────────────────────────────────────────────────────────────
 
 @cli.group()
 def state():
-    """Inspect or reset the local sync state file."""
+    """로컬 동기화 상태 파일 조회/초기화."""
 
 
 @state.command("show")

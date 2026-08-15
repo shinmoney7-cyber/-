@@ -1,0 +1,20 @@
+[
+  {
+    "id": "harujin-vacuum-01",
+    "name": "1. 무선 청소기",
+    "coupang_url": "https://www.coupang.com/vp/products/REPLACE_ME",
+    "thumbnail": "",
+    "category": "가전",
+    "target_page": "harujin",
+    "enabled": true
+  },
+  {
+    "id": "shinjh-serum-01",
+    "name": "1. 수분 세럼",
+    "coupang_url": "https://www.coupang.com/vp/products/REPLACE_ME",
+    "thumbnail": "",
+    "category": "뷰티",
+    "target_page": "shinjh",
+    "enabled": true
+  }
+]
