@@ -146,6 +146,36 @@ class InpockRPAClient:
             self.page.wait_for_load_state("domcontentloaded", timeout=15_000)
             self._debug_shot("login_4_after_submit")
             logger.info("inpock: post-submit url=%s", self.page.url)
+
+            # Some flows show a post-auth account-picker as a SECOND step after
+            # the initial credential form (e.g. fresh session → email/pw → picker → admin).
+            if "login" in self.page.url:
+                logger.info("inpock: still on login URL — checking for post-auth account picker")
+                post_picker_clicked = False
+                try:
+                    for selector in (
+                        f"button:has-text('{self.email}')",
+                        f"li:has-text('{self.email}')",
+                        f"a:has-text('{self.email}')",
+                    ):
+                        locator = self.page.locator(selector).first
+                        if locator.count() > 0:
+                            locator.click(timeout=3_000)
+                            post_picker_clicked = True
+                            logger.info("inpock: clicked post-auth account picker (%s) for %r", selector, self.email)
+                            break
+                    if not post_picker_clicked:
+                        self.page.locator(f"text={self.email}").first.click(timeout=3_000)
+                        post_picker_clicked = True
+                        logger.info("inpock: clicked post-auth account picker (text=) for %r", self.email)
+                except Exception as pick_exc:
+                    logger.debug("inpock: post-auth picker click failed: %s", pick_exc)
+
+                if post_picker_clicked:
+                    self.page.wait_for_load_state("domcontentloaded", timeout=15_000)
+                    self._debug_shot("login_5_after_second_picker")
+                    logger.info("inpock: post-second-picker url=%s", self.page.url)
+
             if "login" in self.page.url:
                 raise InpockRPAError("login failed: still on login page after submit — check credentials")
             if not self._is_on_admin():
