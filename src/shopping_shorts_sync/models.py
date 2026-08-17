@@ -61,6 +61,9 @@ class Product:
             enabled=enabled,
         )
 
-    def content_hash(self, deeplink: str) -> str:
-        payload = "|".join([self.name, self.thumbnail, self.category, deeplink])
+    def content_hash(self, deeplink: str, number: int | None = None) -> str:
+        parts = [self.name, self.thumbnail, self.category, deeplink]
+        if number is not None:
+            parts.insert(0, str(number))
+        payload = "|".join(parts)
         return hashlib.sha256(payload.encode("utf-8")).hexdigest()

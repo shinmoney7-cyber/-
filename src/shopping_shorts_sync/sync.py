@@ -59,6 +59,14 @@ def run_inpock_stage(
     products: list[Product], rpa_client, state: StateStore, force_create: bool = False
 ) -> list[tuple[Product, str, str | None]]:
     """Returns (product, outcome, detail) tuples. outcome in {created, updated, skipped, error}."""
+    # Assign sequential 1-based numbers per target_page for enabled products.
+    page_counters: dict[str, int] = {}
+    page_numbers: dict[str, int] = {}
+    for product in products:
+        if product.enabled:
+            page_counters[product.target_page] = page_counters.get(product.target_page, 0) + 1
+            page_numbers[product.id] = page_counters[product.target_page]
+
     outcomes: list[tuple[Product, str, str | None]] = []
 
     for product in products:
@@ -71,14 +79,15 @@ def run_inpock_stage(
             outcomes.append((product, "skipped", "no deeplink yet"))
             continue
 
-        if not state.needs_inpock_sync(product):
+        number = page_numbers.get(product.id)
+        if not state.needs_inpock_sync(product, number=number):
             outcomes.append((product, "skipped", "already in sync"))
             continue
 
         try:
-            card = product_to_card(product, product_state.deeplink)
+            card = product_to_card(product, product_state.deeplink, number=number)
             action = rpa_client.sync_card(product.target_page, card, force_create=force_create)
-            state.record_inpock_sync(product)
+            state.record_inpock_sync(product, number=number)
             outcomes.append((product, action, None))
         except Exception as exc:  # noqa: BLE001 - one product's RPA failure must not abort the run
             logger.exception("inpock sync failed for product %s", product.id)
