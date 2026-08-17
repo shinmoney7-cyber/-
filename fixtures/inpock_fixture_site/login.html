@@ -1,17 +1,23 @@
 <!--
   Fixture that approximates the real link.inpock.co.kr/user/login page.
-  The real page shows previously-authenticated Google account buttons.
-  Clicking the button navigates to the admin page without an email/password form.
-  See docs/CALIBRATION.md — selectors here are approximations, not real ones.
+  The real page has an 아이디 (ID) text field and a 비밀번호 (password) field —
+  NOT Google OAuth. Confirmed from live site screenshot.
+  See docs/CALIBRATION.md.
 -->
 <!DOCTYPE html>
 <html lang="ko">
 <head><meta charset="utf-8"><title>로그인</title></head>
 <body>
-  <div class="account-list">
-    <button class="account-btn" onclick="window.location.href='admin.html'">
-      test@example.com
-    </button>
-  </div>
+  <form id="login-form" action="admin.html" method="get">
+    <label>아이디<input type="text" name="id" placeholder="아이디"></label>
+    <label>비밀번호<input type="password" name="password" placeholder="비밀번호"></label>
+    <button type="submit">로그인</button>
+  </form>
+  <script>
+    document.getElementById('login-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      window.location.href = 'admin.html';
+    });
+  </script>
 </body>
 </html>

@@ -37,8 +37,8 @@ def rpa_client():
         yield client
 
 
-def test_login_via_account_button(rpa_client):
-    """Login flow: click account button on login page, land on admin page."""
+def test_login_via_id_password_form(rpa_client):
+    """Login flow: fill 아이디/비밀번호 form on login page, land on admin page."""
     rpa_client.login()
     assert rpa_client._is_on_admin()
 

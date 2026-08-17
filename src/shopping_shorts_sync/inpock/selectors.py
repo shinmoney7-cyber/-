@@ -20,18 +20,12 @@ LINK_EDIT_URL_TEMPLATE = "https://link.inpock.co.kr/admin/block/link/edit?link_i
 
 
 class LoginSelectors:
-    # Button shown on the Inpock login page for a previously authenticated account.
-    # The button text contains the account email or display name.
-    ACCOUNT_BUTTON = "button"  # TODO CALIBRATE: narrow to the account-picker button, e.g. "button.google-account-item"
-
-    # "Login with Google" button shown when no cached session exists.
-    GOOGLE_LOGIN_BUTTON = "button"  # TODO CALIBRATE: e.g. "a[href*='google'], button[class*='google']"
-
-    # Google OAuth page inputs (accounts.google.com) — only reached on first login.
-    GOOGLE_EMAIL_INPUT = "input[type='email']"
-    GOOGLE_NEXT_BUTTON = "#identifierNext, button[type='submit']"
-    GOOGLE_PASSWORD_INPUT = "input[type='password']"
-    GOOGLE_SIGNIN_BUTTON = "#passwordNext, button[type='submit']"
+    # /user/login has a standard 아이디 + 비밀번호 form (confirmed from live site screenshot).
+    # The label says "아이디" (account ID), input is a plain text field.
+    ID_INPUT = "input[name='id'], input[name='username'], input[type='text']"  # TODO CALIBRATE: confirm name attr
+    PASSWORD_INPUT = "input[type='password']"
+    # "로그인" submit button — the gray button above "무료 회원가입"
+    LOGIN_BUTTON = "button[type='submit']"  # TODO CALIBRATE: may need ":has-text('로그인')"
 
     # Element present after a successful admin login.
     LOGIN_SUCCESS_INDICATOR = "nav, [class*='sidebar'], [class*='admin']"  # TODO CALIBRATE

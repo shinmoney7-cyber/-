@@ -70,12 +70,14 @@ class InpockRPAClient:
         return bool(self.admin_menu_url) and url.startswith(self.admin_menu_url)
 
     def login(self) -> None:
-        """Log in to Inpock.
+        """Log in to Inpock using the 아이디/비밀번호 form at /user/login.
 
-        Flow:
-        1. Navigate to admin — if the session is already active, return early.
-        2. Otherwise go to /user/login and try to click a cached account button.
-        3. If that fails, fall back to the full Google OAuth form flow.
+        The login page (confirmed from live site) is a standard ID + password form —
+        NOT Google OAuth. The redirect param on the URL returns the browser to
+        /admin/menu on success.
+
+        If a persistent browser context is used, subsequent runs that still have a
+        valid session will land directly on admin and skip the form.
         """
         try:
             self.page.goto(self.admin_menu_url, wait_until="domcontentloaded", timeout=10_000)
@@ -87,64 +89,14 @@ class InpockRPAClient:
 
         try:
             self.page.goto(self.login_url, wait_until="domcontentloaded")
-            if not self._try_account_picker_login():
-                self._try_google_oauth_login()
-            self.page.wait_for_selector(LoginSelectors.LOGIN_SUCCESS_INDICATOR, timeout=20_000)
+            self.page.fill(LoginSelectors.ID_INPUT, self.email)
+            self.page.fill(LoginSelectors.PASSWORD_INPUT, self.password)
+            self.page.click(LoginSelectors.LOGIN_BUTTON)
+            self.page.wait_for_selector(LoginSelectors.LOGIN_SUCCESS_INDICATOR, timeout=15_000)
             logger.info("inpock: login successful, url=%s", self.page.url)
         except Exception as exc:
             self._on_failure("login")
             raise InpockRPAError(f"login failed: {exc}") from exc
-
-    def _try_account_picker_login(self) -> bool:
-        """Click a cached account button on the inpock login page.
-
-        Returns True if login succeeded (landed on an admin URL).
-
-        TODO CALIBRATE: narrow LoginSelectors.ACCOUNT_BUTTON to match only the
-        account picker items so we don't accidentally click unrelated buttons.
-        """
-        try:
-            buttons = self.page.query_selector_all(LoginSelectors.ACCOUNT_BUTTON)
-            for btn in buttons:
-                text = btn.inner_text().strip()
-                if not text:
-                    continue
-                # Prefer button whose text contains our email, but accept any button
-                # on the login page as a last resort (there may be only one account).
-                if self.email.lower() in text.lower() or len(buttons) == 1:
-                    btn.click()
-                    self.page.wait_for_url("**/admin**", timeout=8_000)
-                    if self._is_on_admin():
-                        return True
-        except Exception:
-            pass
-        return False
-
-    def _try_google_oauth_login(self) -> None:
-        """Complete the Google OAuth flow with email + password.
-
-        TODO CALIBRATE: confirm LoginSelectors.GOOGLE_LOGIN_BUTTON matches
-        the "구글로 로그인" or "Google로 계속" button on the inpock login page.
-        """
-        try:
-            self.page.click(LoginSelectors.GOOGLE_LOGIN_BUTTON)
-            self.page.wait_for_url("*accounts.google.com*", timeout=10_000)
-        except Exception as exc:
-            self._on_failure("google_redirect")
-            raise InpockRPAError(f"could not reach Google OAuth page: {exc}") from exc
-
-        try:
-            self.page.fill(LoginSelectors.GOOGLE_EMAIL_INPUT, self.email)
-            self.page.click(LoginSelectors.GOOGLE_NEXT_BUTTON)
-            self.page.wait_for_selector(LoginSelectors.GOOGLE_PASSWORD_INPUT, timeout=5_000)
-            self.page.fill(LoginSelectors.GOOGLE_PASSWORD_INPUT, self.password)
-            self.page.click(LoginSelectors.GOOGLE_SIGNIN_BUTTON)
-        except Exception as exc:
-            self._on_failure("google_oauth")
-            raise InpockRPAError(f"Google OAuth failed: {exc}") from exc
-
-        # Wait to be redirected back to inpock after OAuth
-        self.page.wait_for_url("*link.inpock.co.kr*", timeout=20_000)
 
     # ------------------------------------------------------------------
     # Admin navigation
