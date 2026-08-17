@@ -24,8 +24,8 @@ class LoginSelectors:
     # The label says "아이디" (account ID), input is a plain text field.
     ID_INPUT = "input[name='id'], input[name='username'], input[type='text']"  # TODO CALIBRATE: confirm name attr
     PASSWORD_INPUT = "input[type='password']"
-    # "로그인" submit button — the gray button above "무료 회원가입"
-    LOGIN_BUTTON = "button[type='submit']"  # TODO CALIBRATE: may need ":has-text('로그인')"
+    # Orange "로그인" button confirmed from live site screenshot — matched by text content
+    LOGIN_BUTTON = "button:has-text('로그인')"
 
     # Element present after a successful admin login.
     LOGIN_SUCCESS_INDICATOR = "nav, [class*='sidebar'], [class*='admin']"  # TODO CALIBRATE
