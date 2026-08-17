@@ -100,25 +100,52 @@ class InpockRPAClient:
 
         try:
             self.page.goto(self.login_url, wait_until="domcontentloaded")
+            self._debug_shot("login_1_picker_page")
+            logger.info("inpock: login page loaded, url=%s", self.page.url)
 
-            # Step 1: try account picker — click the item that contains the account slug.
+            # Step 1: try account picker — find a button/li/a whose text IS the account slug.
+            picker_clicked = False
             try:
-                self.page.locator(f"text={self.email}").first.click(timeout=3_000)
-                logger.info("inpock: clicked account picker item for %r", self.email)
-                self.page.wait_for_selector(LoginSelectors.PASSWORD_INPUT, timeout=5_000)
-            except Exception:
-                # No picker found (or picker click failed) — fall back to direct form fill.
-                logger.debug("inpock: account picker not found, falling back to direct form fill")
+                # Use get_by_text for precise matching inside clickable elements
+                for selector in (f"button:has-text('{self.email}')", f"li:has-text('{self.email}')", f"a:has-text('{self.email}')"):
+                    locator = self.page.locator(selector).first
+                    if locator.count() > 0:
+                        locator.click(timeout=3_000)
+                        picker_clicked = True
+                        logger.info("inpock: clicked account picker (%s) for %r", selector, self.email)
+                        break
+                if not picker_clicked:
+                    # Broad text fallback
+                    self.page.locator(f"text={self.email}").first.click(timeout=3_000)
+                    picker_clicked = True
+                    logger.info("inpock: clicked account picker (text=) for %r", self.email)
+            except Exception as pick_exc:
+                logger.debug("inpock: account picker click failed (%s), trying direct form fill", pick_exc)
+
+            self._debug_shot("login_2_after_picker")
+
+            if picker_clicked:
+                # Wait for the password form to appear after the picker click.
+                try:
+                    self.page.wait_for_selector(LoginSelectors.PASSWORD_INPUT, timeout=7_000)
+                    logger.info("inpock: password form appeared after picker click")
+                except Exception:
+                    logger.warning("inpock: password form did not appear within 7s after picker click")
+            else:
+                # Direct form: fill both ID and password.
                 try:
                     self.page.fill(LoginSelectors.ID_INPUT, self.email)
                 except Exception:
                     pass
 
+            self._debug_shot("login_3_before_submit")
             self.page.fill(LoginSelectors.PASSWORD_INPUT, self.password)
             self.page.click(LoginSelectors.LOGIN_BUTTON)
             # After login, site may redirect to /inpockhome (not /admin directly).
             # Wait for navigation to settle, then go to admin explicitly.
             self.page.wait_for_load_state("domcontentloaded", timeout=15_000)
+            self._debug_shot("login_4_after_submit")
+            logger.info("inpock: post-submit url=%s", self.page.url)
             if "login" in self.page.url:
                 raise InpockRPAError("login failed: still on login page after submit — check credentials")
             if not self._is_on_admin():
@@ -363,6 +390,13 @@ class InpockRPAClient:
             )
         new_id = self.create_link(page_slug, card)
         return ("created", new_id)
+
+    def _debug_shot(self, label: str) -> None:
+        try:
+            DEBUG_DIR.mkdir(parents=True, exist_ok=True)
+            self.page.screenshot(path=str(DEBUG_DIR / f"{label}.png"))
+        except Exception:
+            pass
 
     def _on_failure(self, label: str) -> None:
         if not self.screenshot_on_failure:
