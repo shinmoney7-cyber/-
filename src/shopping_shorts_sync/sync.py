@@ -125,7 +125,7 @@ def run_full_sync(
         chromium_path=config.playwright_chromium_path,
     ) as context:
         page = context.new_page()
-        rpa_client = InpockRPAClient(page, config.inpock_email, config.inpock_password)
+        rpa_client = InpockRPAClient(page, config.inpock_account, config.inpock_password)
         rpa_client.login()
         inpock_outcomes = run_inpock_stage(products, rpa_client, state, force_create=force_create)
 

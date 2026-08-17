@@ -70,14 +70,25 @@ class InpockRPAClient:
         return bool(self.admin_menu_url) and url.startswith(self.admin_menu_url)
 
     def login(self) -> None:
-        """Log in to Inpock using the 아이디/비밀번호 form at /user/login.
+        """Log in to Inpock.
 
-        The login page (confirmed from live site) is a standard ID + password form —
-        NOT Google OAuth. The redirect param on the URL returns the browser to
-        /admin/menu on success.
+        The real /user/login page shows an ACCOUNT PICKER listing registered
+        accounts (harujin, shinjh, …).  Clicking an account navigates to the
+        standard 아이디/비밀번호 form with the 아이디 field pre-filled.
 
-        If a persistent browser context is used, subsequent runs that still have a
-        valid session will land directly on admin and skip the form.
+        Flow:
+          1. Navigate to /user/login.
+          2. Click the account button matching ``self.email`` (the account slug,
+             e.g. "harujin") by text content.
+          3. Wait for the password input to appear.
+          4. Fill the password and click 로그인.
+          5. Wait for redirect to /admin/**.
+
+        If no account picker item is found (e.g. a simple test fixture), falls
+        back to filling both ID and password fields directly.
+
+        ``self.email`` should contain the Inpock account slug (e.g. "harujin"),
+        not an email address.  Set INPOCK_ACCOUNT=harujin in your .env.
         """
         try:
             self.page.goto(self.admin_menu_url, wait_until="domcontentloaded", timeout=10_000)
@@ -89,12 +100,22 @@ class InpockRPAClient:
 
         try:
             self.page.goto(self.login_url, wait_until="domcontentloaded")
-            self.page.fill(LoginSelectors.ID_INPUT, self.email)
+
+            # Step 1: try account picker — click the item that contains the account slug.
+            try:
+                self.page.locator(f"text={self.email}").first.click(timeout=3_000)
+                logger.info("inpock: clicked account picker item for %r", self.email)
+                self.page.wait_for_selector(LoginSelectors.PASSWORD_INPUT, timeout=5_000)
+            except Exception:
+                # No picker found (or picker click failed) — fall back to direct form fill.
+                logger.debug("inpock: account picker not found, falling back to direct form fill")
+                try:
+                    self.page.fill(LoginSelectors.ID_INPUT, self.email)
+                except Exception:
+                    pass
+
             self.page.fill(LoginSelectors.PASSWORD_INPUT, self.password)
             self.page.click(LoginSelectors.LOGIN_BUTTON)
-            # Wait for redirect to admin after successful login.
-            # The login URL carries ?redirect=%2Fadmin%2Fmenu, so a successful
-            # login navigates to /admin/menu automatically.
             self.page.wait_for_url("**/admin**", timeout=15_000)
             logger.info("inpock: login successful, url=%s", self.page.url)
         except Exception as exc:

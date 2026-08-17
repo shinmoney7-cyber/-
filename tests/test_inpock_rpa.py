@@ -28,7 +28,7 @@ def rpa_client():
         page = browser.new_page()
         client = InpockRPAClient(
             page,
-            email="test@example.com",
+            email="harujin",
             password="hunter2",
             login_url=LOGIN_URL,
             admin_menu_url=ADMIN_URL,

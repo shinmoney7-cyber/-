@@ -15,7 +15,7 @@ class Config:
     coupang_api_mode: str
     coupang_batch_size: int
 
-    inpock_email: str
+    inpock_account: str  # Inpock account slug (e.g. "harujin"), set INPOCK_ACCOUNT in .env
     inpock_password: str
     inpock_headless: bool
 
@@ -43,7 +43,7 @@ def load_config(env_file: str | None = None) -> Config:
         coupang_secret_key=os.environ.get("COUPANG_SECRET_KEY", ""),
         coupang_api_mode=os.environ.get("COUPANG_API_MODE", "mock"),
         coupang_batch_size=int(os.environ.get("COUPANG_BATCH_SIZE", "50")),
-        inpock_email=os.environ.get("INPOCK_EMAIL", ""),
+        inpock_account=os.environ.get("INPOCK_ACCOUNT") or os.environ.get("INPOCK_EMAIL", ""),
         inpock_password=os.environ.get("INPOCK_PASSWORD", ""),
         inpock_headless=os.environ.get("INPOCK_HEADLESS", "true").strip().lower() in ("1", "true", "yes"),
         naver_client_id=os.environ.get("NAVER_CLIENT_ID", ""),

@@ -20,15 +20,18 @@ LINK_EDIT_URL_TEMPLATE = "https://link.inpock.co.kr/admin/block/link/edit?link_i
 
 
 class LoginSelectors:
-    # /user/login has a standard 아이디 + 비밀번호 form (confirmed from live site screenshot).
-    # The label says "아이디" (account ID), input is a plain text field.
-    ID_INPUT = "input[name='id'], input[name='username'], input[type='text']"  # TODO CALIBRATE: confirm name attr
+    # /user/login first shows an ACCOUNT PICKER listing registered accounts
+    # (harujin, shinjh, mom2_store, harunews …).  Clicking one navigates to
+    # the standard 아이디/비밀번호 form with the 아이디 field pre-filled.
+    # The code clicks the account by text match (page.locator(f"text={account}")),
+    # so no separate constant is needed here.
+
+    # After clicking an account on the picker, the ID/password form appears.
+    # The 아이디 field is already filled; we only need to fill the password.
+    ID_INPUT = "input[name='id'], input[name='username'], input[type='text']"  # fallback if no picker
     PASSWORD_INPUT = "input[type='password']"
     # Orange "로그인" button confirmed from live site screenshot — matched by text content
     LOGIN_BUTTON = "button:has-text('로그인')"
-
-    # Element present after a successful admin login.
-    LOGIN_SUCCESS_INDICATOR = "nav, [class*='sidebar'], [class*='admin']"  # TODO CALIBRATE
 
 
 class AdminSelectors:
