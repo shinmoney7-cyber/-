@@ -1,36 +1,62 @@
 """All Inpock DOM selectors, isolated in one place.
 
-Every value here is a best-effort placeholder, NOT verified against the real
-link.inpock.co.kr site: this project's build environment had network egress
-to that host blocked by policy, so the live DOM could never be inspected.
-Before running against a real account, follow docs/CALIBRATION.md to replace
-every `# TODO CALIBRATE` value with the real selector.
+Values marked # TODO CALIBRATE have not been verified against the live
+link.inpock.co.kr site. Run `sss inpock sync --live --headed` against your
+real account and update any selector that causes a step to fail. See
+docs/CALIBRATION.md for the workflow.
+
+What IS known from direct observation:
+- Login URL: /user/login  (shows previously-authenticated account buttons)
+- Admin URL: /admin/menu  (block list for the current page)
+- Edit URL:  /admin/block/link/edit?link_id=<id>  (per-link edit form)
+- Account switcher in the left sidebar for switching between harujin / shinjh
+- Clicking the link thumbnail navigates to the edit URL above
 """
 from __future__ import annotations
 
-LOGIN_URL = "https://link.inpock.co.kr/login"  # TODO CALIBRATE: confirm real login URL
-
-# TODO CALIBRATE: confirm the real per-page editor URL pattern (may not be a
-# simple template — could require clicking a page switcher in the dashboard).
-PAGE_EDITOR_URL_TEMPLATE = "https://link.inpock.co.kr/manage/{page_slug}"
+LOGIN_URL = "https://link.inpock.co.kr/user/login"
+ADMIN_MENU_URL = "https://link.inpock.co.kr/admin/menu"
+LINK_EDIT_URL_TEMPLATE = "https://link.inpock.co.kr/admin/block/link/edit?link_id={link_id}"
 
 
 class LoginSelectors:
-    EMAIL_INPUT = "input[type='email'], input[name='email']"  # TODO CALIBRATE
-    PASSWORD_INPUT = "input[type='password'], input[name='password']"  # TODO CALIBRATE
-    SUBMIT_BUTTON = "button[type='submit']"  # TODO CALIBRATE
-    LOGIN_SUCCESS_INDICATOR = "#dashboard"  # TODO CALIBRATE
+    # Button shown on the Inpock login page for a previously authenticated account.
+    # The button text contains the account email or display name.
+    ACCOUNT_BUTTON = "button"  # TODO CALIBRATE: narrow to the account-picker button, e.g. "button.google-account-item"
+
+    # "Login with Google" button shown when no cached session exists.
+    GOOGLE_LOGIN_BUTTON = "button"  # TODO CALIBRATE: e.g. "a[href*='google'], button[class*='google']"
+
+    # Google OAuth page inputs (accounts.google.com) — only reached on first login.
+    GOOGLE_EMAIL_INPUT = "input[type='email']"
+    GOOGLE_NEXT_BUTTON = "#identifierNext, button[type='submit']"
+    GOOGLE_PASSWORD_INPUT = "input[type='password']"
+    GOOGLE_SIGNIN_BUTTON = "#passwordNext, button[type='submit']"
+
+    # Element present after a successful admin login.
+    LOGIN_SUCCESS_INDICATOR = "nav, [class*='sidebar'], [class*='admin']"  # TODO CALIBRATE
 
 
-class EditorSelectors:
-    ADD_LINK_BUTTON = "#add-link-button"  # TODO CALIBRATE
-    TITLE_INPUT = "input[name='title']"  # TODO CALIBRATE
-    URL_INPUT = "input[name='url']"  # TODO CALIBRATE
-    THUMBNAIL_URL_INPUT = "input[name='thumbnail']"  # TODO CALIBRATE
-    SAVE_BUTTON = "#save-button"  # TODO CALIBRATE
+class AdminSelectors:
+    # Sidebar links / buttons for switching the active page (harujin, shinjh, …).
+    # The element's inner text should contain the page slug.
+    PAGE_SWITCHER_ITEM = "nav a, nav button, [class*='sidebar'] a, [class*='sidebar'] button"  # TODO CALIBRATE
 
-    # Secondary/best-effort: used only to try to detect an already-existing
-    # card so we don't blindly duplicate. Not trusted as the primary
-    # idempotency source (state_store.py is) until calibrated.
-    EXISTING_CARD_ITEM = "[data-testid='link-card']"  # TODO CALIBRATE
-    CARD_TITLE_TEXT = ".card-title"  # TODO CALIBRATE
+    # Anchor tags that link to the per-link edit page.  Used to discover all
+    # existing link cards and their link_ids on the currently-displayed page.
+    # Pattern observed: href="/admin/block/link/edit?link_id=7074950"
+    LINK_EDIT_ANCHOR = "a[href*='/admin/block/link/edit']"  # TODO CALIBRATE: confirm href pattern
+
+    # Button to add a new link block on the admin page.
+    ADD_LINK_BUTTON = "button"  # TODO CALIBRATE: e.g. "button:has-text('추가')" or "[class*='add-block']"
+
+
+class LinkEditSelectors:
+    # Form fields on /admin/block/link/edit
+    TITLE_INPUT = "input[name='title'], input[placeholder*='제목'], input[id*='title']"  # TODO CALIBRATE
+    URL_INPUT = "input[name='url'], input[type='url'], input[placeholder*='http']"  # TODO CALIBRATE
+    THUMBNAIL_URL_INPUT = (
+        "input[name='thumbnail'], input[name='image_url'], input[placeholder*='이미지']"  # TODO CALIBRATE
+    )
+    # Save button on the edit page ("수정 완료")
+    SAVE_BUTTON = "button[type='submit'], button[class*='submit']"  # TODO CALIBRATE: "button:has-text('수정 완료')"

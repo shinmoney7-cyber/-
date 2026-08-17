@@ -23,6 +23,7 @@ class Config:
     naver_client_secret: str
 
     playwright_chromium_path: str
+    inpock_session_dir: str
     state_file_path: str
     log_level: str
 
@@ -48,6 +49,7 @@ def load_config(env_file: str | None = None) -> Config:
         naver_client_id=os.environ.get("NAVER_CLIENT_ID", ""),
         naver_client_secret=os.environ.get("NAVER_CLIENT_SECRET", ""),
         playwright_chromium_path=os.environ.get("PLAYWRIGHT_CHROMIUM_PATH", "/opt/pw-browsers/chromium"),
+        inpock_session_dir=os.environ.get("INPOCK_SESSION_DIR", "data/browser_session"),
         state_file_path=os.environ.get("STATE_FILE_PATH", "data/state.json"),
         log_level=os.environ.get("LOG_LEVEL", "INFO"),
     )
