@@ -44,6 +44,7 @@ def launch_persistent_context(
             user_data_dir=user_data_dir,
             headless=headless,
             executable_path=executable_path,
+            args=["--disable-save-password-bubble", "--disable-features=PasswordLeakDetection"],
         )
         try:
             yield context

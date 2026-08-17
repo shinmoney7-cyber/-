@@ -92,7 +92,10 @@ class InpockRPAClient:
             self.page.fill(LoginSelectors.ID_INPUT, self.email)
             self.page.fill(LoginSelectors.PASSWORD_INPUT, self.password)
             self.page.click(LoginSelectors.LOGIN_BUTTON)
-            self.page.wait_for_selector(LoginSelectors.LOGIN_SUCCESS_INDICATOR, timeout=15_000)
+            # Wait for redirect to admin after successful login.
+            # The login URL carries ?redirect=%2Fadmin%2Fmenu, so a successful
+            # login navigates to /admin/menu automatically.
+            self.page.wait_for_url("**/admin**", timeout=15_000)
             logger.info("inpock: login successful, url=%s", self.page.url)
         except Exception as exc:
             self._on_failure("login")
