@@ -1,0 +1,16 @@
+{
+  "rCode": "0",
+  "rMessage": "",
+  "data": [
+    {
+      "originalUrl": "https://www.coupang.com/vp/products/1234567890?itemId=111&vendorItemId=222",
+      "shortenUrl": "https://link.coupang.com/a/mockAbC123",
+      "landingUrl": "https://www.coupang.com/vp/products/1234567890?itemId=111&vendorItemId=222"
+    },
+    {
+      "originalUrl": "https://www.coupang.com/vp/products/9876543210?itemId=333&vendorItemId=444",
+      "shortenUrl": "https://link.coupang.com/a/mockDeF456",
+      "landingUrl": "https://www.coupang.com/vp/products/9876543210?itemId=333&vendorItemId=444"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+[project]
+name = "shopping-shorts-sync"
+version = "0.1.0"
+description = "Generates Coupang Partners affiliate deep links and syncs them onto Inpock link-in-bio pages"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

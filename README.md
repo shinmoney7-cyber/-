@@ -1,0 +1,109 @@
+# shopping-shorts-sync
+
+쿠팡 상품 URL로부터 쿠팡파트너스 제휴 딥링크를 자동 생성하고, 그 결과를 인포크
+(Inpock) 링크 카드에 자동 반영하는 도구.
+
+- https://link.inpock.co.kr/harujin
+- https://link.inpock.co.kr/shinjh
+
+## 현재 상태 / 중요 제약
+
+- 쿠팡파트너스 API 키는 아직 발급 전이다. 키가 없어도 `COUPANG_API_MODE=mock`(기본값)으로
+  전체 파이프라인을 드라이런할 수 있다.
+- 인포크에는 공개 API가 없어 브라우저 자동화(Playwright)로 링크 카드를 등록/수정한다.
+  이 프로젝트를 만든 환경에서는 `link.inpock.co.kr` 접속이 네트워크 정책으로 막혀 있어서
+  실제 로그인/편집기 화면의 DOM을 확인하지 못했다. **실제 계정으로 처음 실행하기 전에
+  반드시 [docs/CALIBRATION.md](docs/CALIBRATION.md)를 먼저 따라 셀렉터를 보정할 것.**
+
+## 설치
+
+```bash
+pip install -r requirements.txt
+cp .env.example .env   # 값 채우기
+```
+
+Playwright는 `playwright install`을 실행하지 않는다 — `.env`의
+`PLAYWRIGHT_CHROMIUM_PATH`가 가리키는, 이미 설치된 Chromium을 사용한다.
+
+## 사용법
+
+```bash
+# 상품 목록 -> 쿠팡파트너스 딥링크 생성 (기본은 mock 모드)
+python -m shopping_shorts_sync deeplink generate --input data/products.example.json
+
+# 인포크 페이지에 링크 카드 동기화 (dry-run: 브라우저 없이 시뮬레이션)
+python -m shopping_shorts_sync inpock sync --input data/products.example.json --dry-run
+
+# 전체 파이프라인 (쿠팡 딥링크 생성 + 인포크 동기화)
+python -m shopping_shorts_sync sync all --input data/products.example.json --dry-run
+
+# 저장된 동기화 상태 확인/초기화
+python -m shopping_shorts_sync state show
+python -m shopping_shorts_sync state reset --product-id harujin-vacuum-01
+```
+
+`--dry-run`을 빼고 `COUPANG_API_MODE=live` + 실제 키, 그리고 인포크 계정 정보를 채우면
+실제로 동작한다 (단, 위 CALIBRATION 절차를 먼저 거친 뒤).
+
+## 상품 검색 + 쿠팡 자동매칭
+
+네이버 쇼핑(공식 API)·다이소몰·올리브영(RPA)에서 키워드로 검색해서 상품명/이미지를
+보여주고, 그중 하나를 고르면 **쿠팡닷컴을 이름으로 검색해서 상위 1개 결과를 자동으로
+매칭**해 `products.json`에 새 상품으로 추가한다. 쿠팡파트너스 API에는 이름 검색 기능이
+없어서(딥링크 API는 이미 아는 URL을 변환만 함) 이 매칭도 RPA로 한다 — 이름 유사도
+기반이라 가끔 다른 상품이 걸릴 수 있음을 감안하고 오너가 자동 적용을 선택했다.
+
+```bash
+# 3개 소스에서 키워드로 검색 (dry-run: 목 데이터, 네트워크/브라우저 불필요)
+python -m shopping_shorts_sync search run --keyword "무선 청소기" --dry-run
+
+# 결과 중 하나를 골라 쿠팡 매칭 -> products.json에 자동 upsert("연동")
+python -m shopping_shorts_sync search match --keyword "무선 청소기" \
+  --source daiso --index 0 --target-page harujin --category 생활용품 \
+  --input data/products.example.json --dry-run
+```
+
+다이소몰/올리브영 RPA와 쿠팡 이름-매칭 RPA 모두 `docs/CALIBRATION.md`의 셀렉터 보정이
+끝나기 전까지는 `--dry-run`으로만 쓸 것.
+
+## 대본 선택 워크플로우
+
+상품마다 AIDA(주의-흥미-욕망-행동) 구조의 대본 후보를 **정확히 5개** 만들어
+`data/scripts/<product_id>.json`에 저장한다. 후보는 이 도구가 자동 생성하지 않고
+사람이(또는 대화 중 Claude가) 직접 작성해서 파일에 채워 넣는다.
+
+```bash
+# 상품의 5개 대본 후보 확인
+python -m shopping_shorts_sync script show --product-id harujin-vacuum-01
+
+# 하나를 선택 -> 즉시 data/state.json에 자동 반영("연동")
+python -m shopping_shorts_sync script select --product-id harujin-vacuum-01 \
+  --candidate-id 3 --input data/products.example.json
+```
+
+이미지(`products.json`의 `thumbnail`)와 대본(`data/scripts/*.json`)은 둘 다 평범한
+JSON 파일이라 직접 열어서 수정하면 된다. 수정 후에는 `script select`를 다시 실행해서
+반영한다.
+
+## 입력 파일 형식
+
+`data/products.example.json` / `data/products.example.csv` 참고. 각 상품은
+`id`(생략 시 쿠팡 URL 기반 해시로 자동 생성), `name`, `coupang_url`, `thumbnail`(이미지
+URL), `category`, `target_page`(`harujin` 또는 `shinjh`), `enabled` 필드를 가진다.
+
+## 상태/멱등성
+
+`data/state.json`(git-ignore 대상)에 상품별 생성된 딥링크와 마지막 동기화 시점, 필드
+해시를 기록한다. 같은 입력으로 재실행해도 변경된 상품만 다시 처리하고, 이미 동기화된
+상품은 건너뛴다.
+
+## 테스트
+
+```bash
+pytest
+```
+
+모든 테스트는 목(mock) 기반이라 네트워크 접근 없이 통과해야 한다. `test_inpock_rpa.py`,
+`test_search_rpa.py`는 각각 `fixtures/inpock_fixture_site/`,
+`fixtures/{daiso,oliveyoung,coupang}_fixture_site/`의 가짜 페이지를 사용하는
+**구조 테스트**이며, 실제 사이트를 검증하지 않는다.
