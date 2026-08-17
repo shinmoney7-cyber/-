@@ -192,24 +192,54 @@ class InpockRPAClient:
     def goto_admin(self, page_slug: str) -> None:
         """Navigate to the admin page and switch to the specified page."""
         if not self._is_on_admin():
-            self.page.goto(self.admin_menu_url)
+            self.page.goto(self.admin_menu_url, wait_until="domcontentloaded")
+        # Give the Next.js SPA time to render after navigation.
+        try:
+            self.page.wait_for_load_state("networkidle", timeout=10_000)
+        except Exception:
+            pass
+        self._debug_shot(f"goto_admin_{page_slug}")
         self._switch_to_page(page_slug)
 
     def _switch_to_page(self, page_slug: str) -> None:
         """Click the sidebar item for page_slug to make that page's blocks active.
 
-        TODO CALIBRATE: AdminSelectors.PAGE_SWITCHER_ITEM should match only the
-        sidebar page-switcher items, not every nav link on the page.
+        Tries multiple selector strategies to find the account switcher element.
+        TODO CALIBRATE: if page switching still fails, inspect the sidebar DOM and
+        update AdminSelectors.PAGE_SWITCHER_ITEM.
         """
         try:
+            # Strategy 1: configured selector (broad nav/sidebar scan)
             items = self.page.query_selector_all(AdminSelectors.PAGE_SWITCHER_ITEM)
             for item in items:
                 text = item.inner_text().strip().lower()
                 if page_slug.lower() in text:
                     item.click()
-                    self.page.wait_for_timeout(1_000)
-                    logger.info("inpock: switched to page %r", page_slug)
+                    self.page.wait_for_timeout(1_500)
+                    logger.info("inpock: switched to page %r via PAGE_SWITCHER_ITEM", page_slug)
                     return
+
+            # Strategy 2: any clickable element whose visible text is exactly the slug
+            for tag in ("button", "a", "li", "span", "div"):
+                try:
+                    loc = self.page.locator(f"{tag}:has-text('{page_slug}')").first
+                    if loc.count() > 0:
+                        loc.click(timeout=2_000)
+                        self.page.wait_for_timeout(1_500)
+                        logger.info("inpock: switched to page %r via <%s> text match", page_slug, tag)
+                        return
+                except Exception:
+                    continue
+
+            # Strategy 3: text= locator (Playwright's full-text search)
+            try:
+                self.page.locator(f"text={page_slug}").first.click(timeout=2_000)
+                self.page.wait_for_timeout(1_500)
+                logger.info("inpock: switched to page %r via text= locator", page_slug)
+                return
+            except Exception:
+                pass
+
             logger.warning(
                 "inpock: page switcher item for %r not found; staying on current page "
                 "(AdminSelectors.PAGE_SWITCHER_ITEM may need calibration)",
@@ -262,35 +292,94 @@ class InpockRPAClient:
         """Return {card_title: link_id} for all link cards visible on the current admin page.
 
         Discovers cards by looking for anchor elements whose href contains
-        '/admin/block/link/edit?link_id='. Titles are extracted from the surrounding DOM.
+        'link_id='. Titles are extracted from the surrounding DOM.
 
-        TODO CALIBRATE: if AdminSelectors.LINK_EDIT_ANCHOR produces no results, open
-        the admin page in a headed browser and inspect the thumbnail anchor's href.
+        TODO CALIBRATE: if this returns empty, open debug/admin_scan_empty.html,
+        search for 'link_id' and check the href/data-attribute pattern on card elements.
         """
-        result: dict[str, str] = {}
+        # Wait for the Next.js SPA to finish rendering before scanning.
         try:
-            anchors = self.page.query_selector_all(AdminSelectors.LINK_EDIT_ANCHOR)
-            for anchor in anchors:
-                href = anchor.get_attribute("href") or ""
-                if "link_id=" not in href:
-                    continue
+            self.page.wait_for_load_state("networkidle", timeout=10_000)
+        except Exception:
+            pass
+        self.page.wait_for_timeout(2_000)
+
+        result: dict[str, str] = {}
+
+        # Strategy 1: JS evaluation — finds ALL anchors with link_id in href regardless of selector
+        try:
+            js_links: list[dict] = self.page.evaluate(
+                """() => {
+                    const out = [];
+                    document.querySelectorAll('a[href]').forEach(a => {
+                        const href = a.getAttribute('href') || '';
+                        if (href.includes('link_id=')) {
+                            // Walk up to find a title element near this anchor
+                            let title = '';
+                            let node = a;
+                            for (let i = 0; i < 8; i++) {
+                                if (!node.parentElement) break;
+                                node = node.parentElement;
+                                const el = node.querySelector(
+                                    '[class*="title"],[class*="name"],[class*="label"],p,span,h2,h3,h4'
+                                );
+                                if (el) { title = el.innerText.trim(); if (title) break; }
+                            }
+                            if (!title && a.parentElement) title = a.parentElement.innerText.trim();
+                            out.push({href, title});
+                        }
+                    });
+                    return out;
+                }"""
+            )
+            for item in js_links:
+                href = item.get("href", "")
                 link_id = href.split("link_id=")[-1].split("&")[0].strip()
                 if not link_id:
                     continue
-                title = self._get_card_title_near_anchor(anchor)
+                title = (item.get("title") or "").strip()
                 result[title] = link_id
-                logger.debug("inpock: discovered card title=%r link_id=%s", title, link_id)
+                logger.debug("inpock: JS-discovered card title=%r link_id=%s", title, link_id)
         except Exception:
-            logger.exception("inpock: failed to scan page link IDs")
+            logger.exception("inpock: JS link scan failed, falling back to CSS selector")
+
+        # Strategy 2: CSS selector fallback (catches elements missed by Strategy 1)
+        if not result:
+            try:
+                anchors = self.page.query_selector_all(AdminSelectors.LINK_EDIT_ANCHOR)
+                for anchor in anchors:
+                    href = anchor.get_attribute("href") or ""
+                    if "link_id=" not in href:
+                        continue
+                    link_id = href.split("link_id=")[-1].split("&")[0].strip()
+                    if not link_id:
+                        continue
+                    title = self._get_card_title_near_anchor(anchor)
+                    result[title] = link_id
+                    logger.debug("inpock: CSS-discovered card title=%r link_id=%s", title, link_id)
+            except Exception:
+                logger.exception("inpock: CSS link scan failed")
 
         if not result:
-            # Save page HTML + screenshot so we can calibrate the selectors.
+            # Save page HTML + screenshot and log all hrefs for selector calibration.
             try:
                 DEBUG_DIR.mkdir(parents=True, exist_ok=True)
                 self.page.screenshot(path=str(DEBUG_DIR / "admin_scan_empty.png"))
-                (DEBUG_DIR / "admin_scan_empty.html").write_text(
-                    self.page.content(), encoding="utf-8"
-                )
+                html_content = self.page.content()
+                (DEBUG_DIR / "admin_scan_empty.html").write_text(html_content, encoding="utf-8")
+                # Log a sample of all hrefs visible on the page to help calibrate
+                try:
+                    all_hrefs: list[str] = self.page.evaluate(
+                        "() => Array.from(document.querySelectorAll('a[href]')).map(a => a.getAttribute('href')).filter(Boolean)"
+                    )
+                    admin_hrefs = [h for h in all_hrefs if "admin" in h or "block" in h or "link" in h]
+                    logger.warning(
+                        "inpock: link map empty — current URL=%s | admin-related hrefs found: %s",
+                        self.page.url,
+                        admin_hrefs[:20] or "(none — page may not have rendered yet)",
+                    )
+                except Exception:
+                    pass
                 logger.warning(
                     "inpock: link map empty — debug files saved to %s/ "
                     "(check admin_scan_empty.html for correct LINK_EDIT_ANCHOR selector)",
