@@ -116,7 +116,13 @@ class InpockRPAClient:
 
             self.page.fill(LoginSelectors.PASSWORD_INPUT, self.password)
             self.page.click(LoginSelectors.LOGIN_BUTTON)
-            self.page.wait_for_url("**/admin**", timeout=15_000)
+            # After login, site may redirect to /inpockhome (not /admin directly).
+            # Wait for navigation to settle, then go to admin explicitly.
+            self.page.wait_for_load_state("domcontentloaded", timeout=15_000)
+            if "login" in self.page.url:
+                raise InpockRPAError("login failed: still on login page after submit — check credentials")
+            if not self._is_on_admin():
+                self.page.goto(self.admin_menu_url, wait_until="domcontentloaded", timeout=10_000)
             logger.info("inpock: login successful, url=%s", self.page.url)
         except Exception as exc:
             self._on_failure("login")
