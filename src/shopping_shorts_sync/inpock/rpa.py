@@ -225,6 +225,23 @@ class InpockRPAClient:
                 logger.debug("inpock: discovered card title=%r link_id=%s", title, link_id)
         except Exception:
             logger.exception("inpock: failed to scan page link IDs")
+
+        if not result:
+            # Save page HTML + screenshot so we can calibrate the selectors.
+            try:
+                DEBUG_DIR.mkdir(parents=True, exist_ok=True)
+                self.page.screenshot(path=str(DEBUG_DIR / "admin_scan_empty.png"))
+                (DEBUG_DIR / "admin_scan_empty.html").write_text(
+                    self.page.content(), encoding="utf-8"
+                )
+                logger.warning(
+                    "inpock: link map empty — debug files saved to %s/ "
+                    "(check admin_scan_empty.html for correct LINK_EDIT_ANCHOR selector)",
+                    DEBUG_DIR,
+                )
+            except Exception:
+                pass
+
         return result
 
     def _find_link_id_for_card(self, card: LinkCard, existing: dict[str, str]) -> str | None:
@@ -338,11 +355,11 @@ class InpockRPAClient:
             return ("updated", found_id)
 
         if not force_create:
-            logger.warning(
-                "inpock: no existing card found for %r on %s "
-                "(AdminSelectors.LINK_EDIT_ANCHOR may need calibration). Creating.",
-                card.title,
-                page_slug,
+            raise InpockRPAError(
+                f"no existing card found for {card.title!r} on {page_slug} "
+                "and force_create is not set. "
+                "Check debug/admin_scan_empty.html for the correct LINK_EDIT_ANCHOR selector, "
+                "or re-run with --force-create to create a new card."
             )
         new_id = self.create_link(page_slug, card)
         return ("created", new_id)
