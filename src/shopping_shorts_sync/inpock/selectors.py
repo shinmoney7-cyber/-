@@ -15,7 +15,7 @@ What IS known from direct observation:
 from __future__ import annotations
 
 LOGIN_URL = "https://link.inpock.co.kr/user/login"
-ADMIN_MENU_URL = "https://link.inpock.co.kr/admin/menu"
+ADMIN_MENU_URL = "https://link.inpock.co.kr/admin/myinpocklink"
 LINK_EDIT_URL_TEMPLATE = "https://link.inpock.co.kr/admin/block/link/edit?link_id={link_id}"
 
 
