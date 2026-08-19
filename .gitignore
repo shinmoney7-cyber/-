@@ -1,5 +1,7 @@
 .env
 data/state.json
+data/publish_state.json
+data/content/
 debug/
 __pycache__/
 *.pyc
