@@ -2,6 +2,9 @@ requests>=2.31
 python-dotenv>=1.0
 click>=8.1
 playwright>=1.40
+openai>=1.0
+google-api-python-client>=2.100
+google-auth-oauthlib>=1.1
 
 # dev/test
 pytest>=8.0
