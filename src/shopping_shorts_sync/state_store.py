@@ -36,6 +36,15 @@ class ProductState:
     stitched_video_source_urls: list = field(default_factory=list)
     stitched_video_generated_at: str | None = None
     approved_at: str | None = None
+    tiktok_post_url: str | None = None
+    tiktok_published_at: str | None = None
+    tiktok_publish_error: str | None = None
+    youtube_post_url: str | None = None
+    youtube_published_at: str | None = None
+    youtube_publish_error: str | None = None
+    instagram_post_url: str | None = None
+    instagram_published_at: str | None = None
+    instagram_publish_error: str | None = None
 
 
 class StateStore:
@@ -137,6 +146,21 @@ class StateStore:
         state.stitched_video_path = video_path
         state.stitched_video_source_urls = list(source_urls)
         state.stitched_video_generated_at = _utcnow_iso()
+
+    def record_publish(self, product_id: str, platform: str, result) -> None:
+        """Records the outcome of a `publish` stage call (TikTok/YouTube/
+        Instagram) for this product. `result` is a publisher.PublishResult
+        (duck-typed here to avoid a state_store -> publisher import)."""
+        if platform not in ("tiktok", "youtube", "instagram"):
+            raise ValueError(f"unknown publish platform {platform!r}")
+
+        state = self._products.setdefault(product_id, ProductState(coupang_url=""))
+        if result.success:
+            setattr(state, f"{platform}_post_url", result.post_url)
+            setattr(state, f"{platform}_published_at", _utcnow_iso())
+            setattr(state, f"{platform}_publish_error", None)
+        else:
+            setattr(state, f"{platform}_publish_error", result.error)
 
     def approve(self, product: Product) -> None:
         """Owner's final "확인키": video/thumbnail/script reviewed together

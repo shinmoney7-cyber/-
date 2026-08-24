@@ -21,6 +21,7 @@ from ..input_loader import load_products
 from ..inpock.mock_rpa import MockInpockRPAClient
 from ..inpock.selectors import PUBLIC_PAGE_URLS
 from ..models import Product
+from ..publisher import PUBLISH_PLATFORMS, build_publisher, public_video_url
 from ..script_store import ScriptSet, default_script_path, load_script_set, save_script_set
 from ..scriptgen import AD_LABEL, AD_LABEL_POSITION, COUPANG_PARTNERS_DISCLOSURE, generate_candidates, generate_hashtags
 from ..search.orchestrator import VIDEO_SOURCES, match_and_upsert_product, search_all_sources, search_one_source
@@ -180,6 +181,7 @@ def create_app(products_path: str = "data/products.example.json") -> Flask:
             next_step=next_step,
             hashtags=hashtags,
             platforms=DEPLOY_PLATFORMS,
+            publish_platforms=PUBLISH_PLATFORMS,
             disclosure=COUPANG_PARTNERS_DISCLOSURE,
             ad_label=AD_LABEL,
             ad_label_position=AD_LABEL_POSITION,
@@ -267,6 +269,36 @@ def create_app(products_path: str = "data/products.example.json") -> Flask:
         client = build_tts_client(config)
         result = client.synthesize(pstate.script_text, actor_id=actor_id, speed=config.typecast_speed)
         state.record_voice(product_id, result.audio_url, actor_id)
+        state.save()
+
+        return redirect(url_for("product_detail", product_id=product_id, step="hashtags"))
+
+    @app.post("/products/<product_id>/publish/<platform>")
+    def publish_video(product_id, platform):
+        if platform not in PUBLISH_PLATFORMS:
+            return redirect(url_for("product_detail", product_id=product_id, step="hashtags"))
+
+        products = _products()
+        product = products.get(product_id)
+        state = _state()
+        pstate = state.get(product_id)
+        if pstate is None or not pstate.stitched_video_path or not pstate.script_text:
+            return redirect(url_for("product_detail", product_id=product_id, step="hashtags"))
+
+        live = request.form.get("live") == "on"
+        config = _config()
+
+        video_path = pstate.stitched_video_path
+        if platform == "instagram" and live:
+            resolved_url = public_video_url(config, product_id, video_path)
+            if resolved_url is None:
+                return redirect(url_for("product_detail", product_id=product_id, step="hashtags"))
+            video_path = resolved_url
+
+        publisher = build_publisher(platform, config, dry_run=not live)
+        result = publisher.publish(video_path, pstate.script_text, product.name if product else product_id)
+
+        state.record_publish(product_id, platform, result)
         state.save()
 
         return redirect(url_for("product_detail", product_id=product_id, step="hashtags"))

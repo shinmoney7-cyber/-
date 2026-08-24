@@ -155,3 +155,53 @@ def test_unapprove_clears_approval(tmp_path):
     store.approve(PRODUCT)
     store.unapprove("p1")
     assert store.get("p1").approved_at is None
+
+
+class _Result:
+    def __init__(self, success, post_url=None, error=None):
+        self.success = success
+        self.post_url = post_url
+        self.error = error
+
+
+def test_record_publish_success_records_url_and_clears_error(tmp_path):
+    store = StateStore(tmp_path / "state.json")
+    store.record_publish("p1", "tiktok", _Result(success=False, error="boom"))
+    assert store.get("p1").tiktok_publish_error == "boom"
+
+    store.record_publish("p1", "tiktok", _Result(success=True, post_url="https://tiktok.com/@x/video/1"))
+    state = store.get("p1")
+    assert state.tiktok_post_url == "https://tiktok.com/@x/video/1"
+    assert state.tiktok_published_at is not None
+    assert state.tiktok_publish_error is None
+
+
+def test_record_publish_failure_records_error_only(tmp_path):
+    store = StateStore(tmp_path / "state.json")
+    store.record_publish("p1", "youtube", _Result(success=False, error="quota exceeded"))
+    state = store.get("p1")
+    assert state.youtube_publish_error == "quota exceeded"
+    assert state.youtube_post_url is None
+    assert state.youtube_published_at is None
+
+
+def test_record_publish_creates_entry_if_missing(tmp_path):
+    store = StateStore(tmp_path / "state.json")
+    store.record_publish("new-product", "instagram", _Result(success=True, post_url="https://instagram.com/p/1/"))
+    assert store.get("new-product").instagram_post_url == "https://instagram.com/p/1/"
+
+
+def test_record_publish_unknown_platform_raises(tmp_path):
+    store = StateStore(tmp_path / "state.json")
+    with pytest.raises(ValueError):
+        store.record_publish("p1", "threads", _Result(success=True))
+
+
+def test_record_publish_survives_save_reload(tmp_path):
+    path = tmp_path / "state.json"
+    store = StateStore(path)
+    store.record_publish("p1", "youtube", _Result(success=True, post_url="https://youtube.com/watch?v=1"))
+    store.save()
+
+    reloaded = StateStore(path)
+    assert reloaded.get("p1").youtube_post_url == "https://youtube.com/watch?v=1"

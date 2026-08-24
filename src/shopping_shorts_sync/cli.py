@@ -421,6 +421,60 @@ def tts_generate(product_id, voice_label, live):
 
 
 @cli.group()
+def publish():
+    """Publish a product's stitched video to TikTok/YouTube/Instagram.
+
+    Requires a stitched video (`video stitch`) and a selected script
+    (`script select`) first. TikTok needs app-review approval before it can
+    post anywhere but the developer's own test account; YouTube needs a
+    one-time local OAuth consent to produce a token file; Instagram needs a
+    **public HTTPS URL** for the video, not a local path -- see
+    docs/CALIBRATION.md before --live use with any of the three.
+    """
+
+
+@publish.command("run")
+@click.option("--product-id", required=True)
+@click.option("--platform", required=True, type=click.Choice(["tiktok", "youtube", "instagram"]))
+@click.option("--product-name", default=None, help="Used as the YouTube video title (max 100 chars). Defaults to --product-id.")
+@click.option("--dry-run/--live", "dry_run", default=True, help="Dry-run skips the real API call and records a placeholder result.")
+@click.option("--video-url", default=None, help="Public HTTPS URL for the video (Instagram --live only; overrides PUBLIC_BASE_URL).")
+def publish_run(product_id, platform, product_name, dry_run, video_url):
+    from .publisher import build_publisher, public_video_url
+
+    config = load_config()
+    _setup_logging(config)
+
+    state = StateStore(config.state_file_path)
+    product_state = state.get(product_id)
+    if product_state is None or not product_state.stitched_video_path:
+        raise click.ClickException(f"product {product_id!r} has no stitched video yet -- run `video stitch` first")
+    if not product_state.script_text:
+        raise click.ClickException(f"product {product_id!r} has no selected script yet -- run `script select` first")
+
+    video_path = product_state.stitched_video_path
+    if platform == "instagram" and not dry_run:
+        video_path = video_url or public_video_url(config, product_id, video_path)
+        if not video_path:
+            raise click.ClickException(
+                "PUBLIC_BASE_URL is not set -- Instagram needs a public HTTPS URL for "
+                "the video, not a local path. Set PUBLIC_BASE_URL to the deployed "
+                "webapp's base URL, or pass --video-url explicitly."
+            )
+
+    publisher = build_publisher(platform, config, dry_run=dry_run)
+    result = publisher.publish(video_path, product_state.script_text, product_name or product_id)
+
+    state.record_publish(product_id, platform, result)
+    state.save()
+
+    if result.success:
+        click.echo(f"published to {platform}: {result.post_url or result.post_id}")
+    else:
+        raise click.ClickException(f"publish to {platform} failed: {result.error}")
+
+
+@cli.group()
 def state():
     """Inspect or reset the local sync state file."""
 

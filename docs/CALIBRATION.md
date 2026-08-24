@@ -120,6 +120,60 @@ Typecast 공개 문서 기반 추정치이며, `typecast.ai` 접속이 막혀 �
    영역이다** -- 이 도구는 기계적인 다운로드/합치기만 담당하고, 그 판단은
    오너 본인의 몫이라는 전제로 만들어졌다.
 
+## 발행(퍼블리싱) 절차
+
+`src/shopping_shorts_sync/publisher/`의 `tiktok.py`/`youtube.py`/
+`instagram.py`는 각 플랫폼의 공식 API를 쓰지만, 이 환경은
+`open.tiktokapis.com`/`googleapis.com`/`graph.facebook.com` 접속이 모두
+막혀 있어 실제로 한 번도 호출해보지 못했다. `publish run`(CLI)과 대시보드
+5단계의 "지금 발행" 버튼은 기본이 `--dry-run`(체크박스 미체크)이라 API 키
+없이도 흐름 확인이 가능하지만, **`--live`(실전 연동)로 처음 실행하기 전
+반드시 아래를 플랫폼별로 확인할 것.**
+
+### TikTok
+
+1. TikTok for Developers에서 앱 생성 -> Content Posting API 스코프 신청.
+   **App Review 통과 전에는 개발자 본인 테스트 계정으로만 게시 가능** --
+   운영 계정으로 쓰려면 리뷰 통과가 먼저.
+2. `TIKTOK_ACCESS_TOKEN` 발급 후 실제 `init` 호출 1회로 응답 구조
+   (`data.publish_id`/`data.upload_url`, 에러 시 `error.code`/`error.message`
+   필드명)가 `tiktok.py`의 가정과 맞는지 확인.
+3. 청크 업로드(`PUT` + `Content-Range` 헤더)가 실제로 10MiB 단위로
+   맞는지, 혹은 TikTok 쪽 권장 청크 크기가 다른지 확인.
+
+### YouTube
+
+1. Google Cloud Console에서 OAuth 클라이언트(데스크톱 앱 유형)를 만들고
+   `client_secret.json`을 내려받아 `YOUTUBE_CLIENT_SECRETS_FILE` 경로에
+   둔다.
+2. **OAuth 동의 화면은 브라우저가 없는 서버(Render 등)에서 직접 열 수
+   없다** -- 로컬 PC에서 `publish run --platform youtube --live` (또는
+   동일 자격증명으로 `YouTubePublisher._get_credentials()`)를 한 번
+   실행해 브라우저 동의를 마치고, 그 결과로 생성되는 토큰 파일
+   (`YOUTUBE_TOKEN_FILE`, 기본 `data/youtube_token.json`)을 서버의 같은
+   경로에 그대로 올려서 재사용한다. Render라면 영구 디스크
+   (`/var/data/youtube_token.json`)에 올려두면 재배포에도 유지된다.
+3. 업로드 성공 후 `response.id`/`snippet`/`status` 필드명이
+   `youtube.py`의 가정과 맞는지, 쇼츠로 인식되려면 세로 영상 + 60초 이하
+   조건이 실제로 충족되는지 확인.
+
+### Instagram
+
+1. `search/instagram.py`용 계정 설정에 더해 **`instagram_content_publish`
+   권한**까지 App Review에서 승인받아야 게시가 된다 (검색 절차의
+   `instagram_basic`보다 진입장벽이 높음).
+2. **로컬 파일 경로를 그대로 못 쓴다** -- Instagram Graph API는 영상
+   컨테이너를 만들 때 공개 HTTPS URL을 요구한다. `PUBLIC_BASE_URL`을
+   배포된 웹앱의 실제 base URL로 설정하면 `publish run`/대시보드가
+   기존 `/videos/<product_id>/<filename>` 라우트(webapp에 이미 있음)로
+   URL을 자동 구성한다 -- 즉 웹앱이 실제로 배포되어 있어야 `--live`
+   Instagram 발행이 가능하다. 로컬에서만 테스트할 때는 `--video-url`로
+   ngrok 등 임시 공개 URL을 직접 넘길 것.
+3. 컨테이너 생성 -> `status_code` 폴링(`FINISHED`/`ERROR`) -> `media_publish`
+   흐름이 실제 응답과 맞는지, 폴링 간격(`_POLL_INTERVAL_S`=5초)·최대
+   횟수(`_POLL_MAX_ATTEMPTS`=24회, 총 2분)가 실제 처리 시간에 충분한지
+   확인.
+
 ## 확인이 필요한 열린 질문
 
 - 쿠팡파트너스 API의 정확한 HMAC 서명 포맷(헤더 이름, 날짜 포맷, 서명 대상 문자열에 쿼리

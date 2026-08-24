@@ -141,10 +141,35 @@
 <section class="panel">
   <div class="notice">{{ disclosure }}</div>
   <div class="notice"><strong>{{ ad_label }}</strong> 문구를 영상 화면 {{ ad_label_position }}에 반드시 삽입하세요.</div>
+
+  {% if not pstate or not pstate.stitched_video_path or not pstate.script_text %}
+  <p class="empty">자동 발행은 2단계(영상)와 3단계(대본)를 먼저 완료해야 사용할 수 있습니다. 아래는 해시태그만 확인하세요.</p>
+  {% endif %}
+
   {% for key, label in platforms %}
   <div class="hashtag-block">
     <div class="hashtag-platform">{{ label }}</div>
     <div class="hashtag-tags">{{ hashtags[key]|join(' ') }}</div>
+
+    {% if key in publish_platforms and pstate and pstate.stitched_video_path and pstate.script_text %}
+    {% set post_url = pstate.tiktok_post_url if key == 'tiktok' else (pstate.youtube_post_url if key == 'youtube' else pstate.instagram_post_url) %}
+    {% set published_at = pstate.tiktok_published_at if key == 'tiktok' else (pstate.youtube_published_at if key == 'youtube' else pstate.instagram_published_at) %}
+    {% set publish_error = pstate.tiktok_publish_error if key == 'tiktok' else (pstate.youtube_publish_error if key == 'youtube' else pstate.instagram_publish_error) %}
+
+    {% if published_at %}
+    <div class="notice ok-notice">
+      발행 완료 ({{ published_at }})
+      {% if post_url %}<br><a href="{{ post_url }}" target="_blank" rel="noopener">{{ post_url }}</a>{% endif %}
+    </div>
+    {% elif publish_error %}
+    <div class="notice error-notice">발행 실패: {{ publish_error }}</div>
+    {% endif %}
+
+    <form method="post" action="{{ url_for('publish_video', product_id=product.id, platform=key) }}" class="publish-form">
+      <label class="checkbox"><input type="checkbox" name="live"> 실전 연동(API 키 필요{{ ', 공개 URL 필요' if key == 'instagram' }})</label>
+      <button type="submit" class="secondary">{{ '다시 발행' if published_at else '지금 발행' }}</button>
+    </form>
+    {% endif %}
   </div>
   {% endfor %}
 </section>

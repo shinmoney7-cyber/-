@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 _REDACT_KEYS = {
     "coupang_secret_key", "coupang_access_key", "inpock_password",
     "youtube_api_key", "typecast_api_key", "instagram_access_token",
+    "tiktok_access_token",
 }
 
 
@@ -40,6 +41,11 @@ class Config:
     video_clip_seconds: float
     ytdlp_path: str
     ffmpeg_path: str
+
+    tiktok_access_token: str
+    youtube_client_secrets_file: str
+    youtube_token_file: str
+    public_base_url: str
 
     playwright_chromium_path: str
     state_file_path: str
@@ -79,6 +85,10 @@ def load_config(env_file: str | None = None) -> Config:
         video_clip_seconds=float(os.environ.get("VIDEO_CLIP_SECONDS", "5.0")),
         ytdlp_path=os.environ.get("YTDLP_PATH", "yt-dlp"),
         ffmpeg_path=os.environ.get("FFMPEG_PATH", "ffmpeg"),
+        tiktok_access_token=os.environ.get("TIKTOK_ACCESS_TOKEN", ""),
+        youtube_client_secrets_file=os.environ.get("YOUTUBE_CLIENT_SECRETS_FILE", ""),
+        youtube_token_file=os.environ.get("YOUTUBE_TOKEN_FILE", "data/youtube_token.json"),
+        public_base_url=os.environ.get("PUBLIC_BASE_URL", ""),
         playwright_chromium_path=os.environ.get("PLAYWRIGHT_CHROMIUM_PATH", "/opt/pw-browsers/chromium"),
         state_file_path=os.environ.get("STATE_FILE_PATH", "data/state.json"),
         scripts_dir=os.environ.get("SCRIPTS_DIR", "data/scripts"),

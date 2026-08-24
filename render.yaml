@@ -26,6 +26,14 @@ services:
         value: mock
       - key: LOG_LEVEL
         value: INFO
+      # PUBLIC_BASE_URL: this service's own public URL, e.g.
+      # https://shopping-shorts-sync.onrender.com -- needed by the
+      # Instagram publish stage to build a public HTTPS video URL from the
+      # /videos/<id>/<file> route (Instagram won't accept a local path).
+      - key: PUBLIC_BASE_URL
+        sync: false
+      - key: YOUTUBE_TOKEN_FILE
+        value: /var/data/youtube_token.json
       # 실제 키가 준비되면 Render 대시보드 Environment 탭에서 값만 채우고
       # 위 두 MODE를 live로 바꾸면 된다. Render에는 절대 시크릿을 커밋하지 말 것.
       - key: COUPANG_ACCESS_KEY
@@ -39,4 +47,12 @@ services:
       - key: YOUTUBE_API_KEY
         sync: false
       - key: TYPECAST_API_KEY
+        sync: false
+      - key: TIKTOK_ACCESS_TOKEN
+        sync: false
+      - key: YOUTUBE_CLIENT_SECRETS_FILE
+        sync: false
+      - key: INSTAGRAM_ACCESS_TOKEN
+        sync: false
+      - key: INSTAGRAM_IG_USER_ID
         sync: false

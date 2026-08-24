@@ -236,6 +236,29 @@ python -m shopping_shorts_sync tts generate --product-id harujin-vacuum-01 \
 웹 대시보드에서는 2단계(대본선택) 다음이 바로 3단계(음성생성)라, 대본을 고르면
 "음성으로 바로 다음 자동연동"(오너 요구사항) 흐름 그대로 이어진다.
 
+## 발행 (TikTok / YouTube / Instagram)
+
+영상 짜깁기(`video stitch`)와 대본 선택(`script select`)이 끝난 상품은 각
+플랫폼 공식 API로 바로 발행할 수 있다. 기본은 `--dry-run`(API 호출 없이
+결과만 기록)이고, `--live`로 실제 게시된다 — 셋 다 앱 리뷰/OAuth 동의/공개
+URL 등 사전 준비가 필요하니 `docs/CALIBRATION.md`의 "발행(퍼블리싱) 절차"를
+먼저 볼 것.
+
+```bash
+# dry-run (기본): API 호출 없이 상태만 기록
+python -m shopping_shorts_sync publish run --product-id harujin-vacuum-01 --platform tiktok
+
+# 실전 연동
+python -m shopping_shorts_sync publish run --product-id harujin-vacuum-01 \
+  --platform youtube --live
+```
+
+웹 대시보드 5단계("해시태그/배포")에서는 8개 플랫폼 해시태그 중 틱톡/유튜브/
+인스타그램 3개에만 "지금 발행" 버튼이 노출된다(나머지 5개는 여전히 해시태그
+안내만 제공하는 수동 게시 전제). 인스타그램은 로컬 영상 경로를 그대로 못 쓰고
+공개 HTTPS URL이 필요해서, `PUBLIC_BASE_URL`(배포된 웹앱의 base URL)이
+설정돼 있어야 `--live` 발행이 가능하다.
+
 ## 인포크 자동 반영
 
 두 인포크 계정(`https://link.inpock.co.kr/harujin`, `.../shinjh`)은 대시보드

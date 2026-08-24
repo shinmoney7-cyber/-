@@ -110,6 +110,16 @@ def test_full_flow_new_product_through_approve(client):
     hashtags_page = client.get(f"/products/{product_id}?step=hashtags")
     assert "쿠팡 파트너스".encode() in hashtags_page.data
     assert "[광고]".encode() in hashtags_page.data
+    assert "지금 발행".encode() in hashtags_page.data
+
+    # publish (dry-run, no "live" field) to tiktok/youtube/instagram
+    for platform in ("tiktok", "youtube", "instagram"):
+        publish_resp = client.post(f"/products/{product_id}/publish/{platform}", follow_redirects=False)
+        assert publish_resp.status_code == 302
+
+    published_page = client.get(f"/products/{product_id}?step=hashtags")
+    assert "발행 완료".encode() in published_page.data
+    assert "다시 발행".encode() in published_page.data
 
     # approve -> also auto-syncs to Inpock (mock)
     approve_resp = client.post(f"/products/{product_id}/approve", follow_redirects=False)
@@ -141,6 +151,31 @@ def test_video_stitch_rejects_wrong_number_of_urls(client):
 
     page = client.get(f"/products/{product_id}?step=video")
     assert "짜깁기 완성".encode() not in page.data
+
+
+def test_publish_without_video_or_script_is_a_no_op(client):
+    resp = client.post(
+        "/products/new",
+        data={"keyword": "무선 청소기", "source": "daiso", "index": "0", "category": "생활용품", "target_page": "harujin"},
+    )
+    product_id = resp.headers["Location"].split("/products/")[1].split("?")[0]
+
+    publish_resp = client.post(f"/products/{product_id}/publish/tiktok", follow_redirects=False)
+    assert publish_resp.status_code == 302
+
+    page = client.get(f"/products/{product_id}?step=hashtags")
+    assert "발행 완료".encode() not in page.data
+
+
+def test_publish_unknown_platform_is_a_no_op(client):
+    resp = client.post(
+        "/products/new",
+        data={"keyword": "무선 청소기", "source": "daiso", "index": "0", "category": "생활용품", "target_page": "harujin"},
+    )
+    product_id = resp.headers["Location"].split("/products/")[1].split("?")[0]
+
+    publish_resp = client.post(f"/products/{product_id}/publish/threads", follow_redirects=False)
+    assert publish_resp.status_code == 302
 
 
 def test_approve_without_script_selection_does_not_set_approved(client):
