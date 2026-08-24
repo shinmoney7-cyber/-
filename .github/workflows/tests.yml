@@ -20,5 +20,14 @@ jobs:
           pip install -r requirements.txt
           pip install -e .
 
+      - name: Install Playwright Chromium
+        id: playwright
+        run: |
+          playwright install --with-deps chromium
+          CHROMIUM_PATH=$(python3 -c "from playwright.sync_api import sync_playwright; p = sync_playwright().start(); print(p.chromium.executable_path); p.stop()")
+          echo "chromium_path=$CHROMIUM_PATH" >> "$GITHUB_OUTPUT"
+
       - name: Run tests
         run: pytest
+        env:
+          PLAYWRIGHT_CHROMIUM_PATH: ${{ steps.playwright.outputs.chromium_path }}
