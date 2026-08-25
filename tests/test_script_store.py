@@ -21,7 +21,7 @@ def _candidate(i):
 def test_load_example_fixture():
     script_set = load_script_set("data/scripts/harujin-vacuum-01.json")
     assert len(script_set.candidates) == 5
-    assert script_set.selected_id is None
+    assert script_set.selected_id == 3  # candidate 3 이미 선택됨
 
 
 def test_exactly_five_candidates_required():

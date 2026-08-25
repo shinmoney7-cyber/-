@@ -30,6 +30,7 @@ class Product:
     thumbnail: str
     category: str
     target_page: str
+    description: str = ""
     enabled: bool = True
 
     @staticmethod
@@ -58,6 +59,7 @@ class Product:
             thumbnail=raw.get("thumbnail", ""),
             category=raw.get("category", ""),
             target_page=target_page,
+            description=raw.get("description", ""),
             enabled=enabled,
         )
 

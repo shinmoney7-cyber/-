@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from itertools import groupby
 
 from .config import Config
 from .coupang.client import CoupangPartnersClient
@@ -27,7 +28,7 @@ def build_coupang_client(config: Config):
 def run_deeplink_stage(
     products: list[Product], client, state: StateStore, force: bool = False
 ) -> list[tuple[Product, str, str | None]]:
-    """Returns (product, outcome, detail) tuples. outcome in {generated, skipped, error}."""
+    """(product, outcome, detail) 리스트 반환. outcome: generated | skipped | error"""
     to_process = [p for p in products if p.enabled and (force or state.needs_deeplink(p))]
     outcomes: list[tuple[Product, str, str | None]] = []
 
@@ -89,10 +90,56 @@ def run_inpock_stage(
             action = rpa_client.sync_card(product.target_page, card, force_create=force_create)
             state.record_inpock_sync(product, number=number)
             outcomes.append((product, action, None))
-        except Exception as exc:  # noqa: BLE001 - one product's RPA failure must not abort the run
+        except Exception as exc:
             logger.exception("inpock sync failed for product %s", product.id)
             state.record_inpock_error(product, str(exc))
             outcomes.append((product, "error", str(exc)))
+
+    return outcomes
+
+
+def _run_inpock_live(
+    products: list[Product],
+    config: Config,
+    state: StateStore,
+    force_create: bool = False,
+) -> list[tuple[Product, str, str | None]]:
+    """2계정 지원: target_page 별로 묶어 각 계정으로 로그인 후 동기화."""
+    outcomes: list[tuple[Product, str, str | None]] = []
+
+    # target_page 기준으로 그룹화 (순서 유지)
+    by_page: dict[str, list[Product]] = {}
+    for p in products:
+        by_page.setdefault(p.target_page, []).append(p)
+
+    def _chromium_path() -> str | None:
+        return config.playwright_chromium_path or None
+
+    with launch_browser(headless=config.inpock_headless, chromium_path=_chromium_path()) as browser:
+        page = browser.new_page()
+        current_email: str | None = None
+        rpa_client: InpockRPAClient | None = None
+
+        for page_slug, page_products in by_page.items():
+            email, password = config.inpock_credentials_for(page_slug)
+
+            if email != current_email:
+                # 계정 전환 필요
+                if current_email is not None and rpa_client is not None:
+                    logger.info("계정 전환: %s → %s", current_email, email)
+                    rpa_client.logout()
+
+                rpa_client = InpockRPAClient(page, email, password)
+                rpa_client.login()
+                current_email = email
+            else:
+                # 같은 계정 — rpa_client 재사용, 로그인 불필요
+                assert rpa_client is not None
+
+            page_outcomes = run_inpock_stage(
+                page_products, rpa_client, state, force_create=force_create
+            )
+            outcomes.extend(page_outcomes)
 
     return outcomes
 
@@ -113,16 +160,8 @@ def run_full_sync(
     if dry_run:
         rpa_client = MockInpockRPAClient()
         inpock_outcomes = run_inpock_stage(products, rpa_client, state, force_create=force_create)
-        state.save()
-        return deeplink_outcomes, inpock_outcomes
-
-    with launch_browser(
-        headless=config.inpock_headless, chromium_path=config.playwright_chromium_path
-    ) as browser:
-        page = browser.new_page()
-        rpa_client = InpockRPAClient(page, config.inpock_email, config.inpock_password)
-        rpa_client.login()
-        inpock_outcomes = run_inpock_stage(products, rpa_client, state, force_create=force_create)
+    else:
+        inpock_outcomes = _run_inpock_live(products, config, state, force_create=force_create)
 
     state.save()
     return deeplink_outcomes, inpock_outcomes
