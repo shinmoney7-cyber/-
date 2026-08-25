@@ -86,16 +86,16 @@ class StateStore:
         state.status = "error"
         state.last_error = error
 
-    def needs_inpock_sync(self, product: Product) -> bool:
+    def needs_inpock_sync(self, product: Product, number: int | None = None) -> bool:
         state = self._products.get(product.id)
         if state is None or not state.deeplink:
             return False  # nothing to sync yet, deeplink stage runs first
-        current_hash = product.content_hash(state.deeplink)
+        current_hash = product.content_hash(state.deeplink, number=number)
         return state.content_hash != current_hash or not state.inpock_synced_at
 
-    def record_inpock_sync(self, product: Product) -> None:
+    def record_inpock_sync(self, product: Product, number: int | None = None) -> None:
         state = self._products[product.id]
-        state.content_hash = product.content_hash(state.deeplink)
+        state.content_hash = product.content_hash(state.deeplink, number=number)
         state.inpock_synced_at = _utcnow_iso()
         state.status = "synced"
         state.last_error = None

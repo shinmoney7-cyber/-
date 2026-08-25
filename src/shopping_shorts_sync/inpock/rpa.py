@@ -280,5 +280,6 @@ class InpockRPAClient:
             logger.exception("스크린샷 저장 실패 (%s)", label)
 
 
-def product_to_card(product: Product, deeplink: str) -> LinkCard:
-    return LinkCard(title=product.name, url=deeplink, thumbnail=product.thumbnail)
+def product_to_card(product: Product, deeplink: str, number: int | None = None) -> LinkCard:
+    title = f"{number}. {product.name}" if number is not None else product.name
+    return LinkCard(title=title, url=deeplink, thumbnail=product.thumbnail)
