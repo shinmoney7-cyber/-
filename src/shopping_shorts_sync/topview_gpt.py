@@ -1,26 +1,36 @@
-"""TopView.ai + OpenAI GPT integration.
+"""TopView.ai + Google Gemini integration.
 
-Generates a 15-second shopping-shorts script via GPT, then formats it as a
-TopView-ready payload. TopView.ai has no public API; the payload is returned
-for manual submission or RPA-based upload.
-
-Requires: OPENAI_API_KEY environment variable.
+Uses the same GOOGLE_API_KEY as GoogleShopClient — no separate API key needed.
+Generates a 15-second shopping-shorts script, subtitles, hashtags, and BGM
+suggestion via Gemini, then formats everything as a TopView-ready payload.
 """
 from __future__ import annotations
 
+import json
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import requests
 
-OPENAI_API_URL = "https://api.openai.com/v1/chat/completions"
-
-_SYSTEM_PROMPT = (
-    "당신은 인스타 릴스·유튜브 쇼츠·틱톡용 15초 쇼핑 숏츠 대본 전문가입니다. "
-    "사용자가 제품 정보를 주면 15초 안에 끝나는 한국어 대본을 만들어주세요. "
-    "형식: [0-3초] 인트로 후킹 / [3-12초] 제품 핵심 포인트 / [12-15초] CTA. "
-    "자막 텍스트, 배경음악 분위기, 화면 구성을 간략히 포함하세요."
+GEMINI_API_URL = (
+    "https://generativelanguage.googleapis.com/v1beta/models"
+    "/{model}:generateContent"
 )
+
+_SYSTEM_PROMPT = """당신은 인스타 릴스·유튜브 쇼츠·틱톡용 15초 쇼핑 숏츠 콘텐츠 전문가입니다.
+제품 정보를 받으면 아래 JSON 형식으로만 응답하세요. 다른 텍스트는 절대 포함하지 마세요.
+
+{
+  "script": {
+    "scene1": {"time": "0-3초", "action": "화면 구성 설명", "subtitle": "자막 텍스트", "hook": "후킹 포인트"},
+    "scene2": {"time": "3-12초", "action": "화면 구성 설명", "subtitle": "자막 텍스트", "key_points": ["포인트1", "포인트2"]},
+    "scene3": {"time": "12-15초", "action": "화면 구성 설명", "subtitle": "자막 텍스트", "cta": "CTA 문구"}
+  },
+  "subtitles": ["씬1 자막", "씬2 자막", "씬3 자막"],
+  "bgm": "배경음악 분위기 설명 (예: 경쾌한 비트 BPM 120, 팝/일렉트로닉 분위기)",
+  "hashtags": ["#해시태그1", "#해시태그2", "#해시태그3", "#해시태그4", "#해시태그5",
+               "#해시태그6", "#해시태그7", "#해시태그8", "#해시태그9", "#해시태그10"]
+}"""
 
 
 class TopviewGptError(RuntimeError):
@@ -32,8 +42,11 @@ class TopviewScript:
     product_name: str
     product_url: str
     image_url: str
-    script: str          # GPT가 생성한 15초 대본
-    topview_payload: dict  # TopView 입력용 딕셔너리
+    script: dict           # 씬별 구조화 대본
+    subtitles: list[str]   # 씬별 자막
+    bgm: str               # 배경음악 제안
+    hashtags: list[str]    # 해시태그 10개+
+    topview_payload: dict  # TopView 입력용 패키지
 
 
 def generate_script(
@@ -41,35 +54,39 @@ def generate_script(
     product_url: str,
     image_url: str,
     price: str | None = None,
-    model: str = "gpt-4o-mini",
+    model: str = "gemini-2.0-flash",
     api_key: str | None = None,
     timeout: float = 30.0,
 ) -> TopviewScript:
-    """GPT로 15초 쇼핑 숏츠 대본을 생성하고 TopView 입력 패키지를 반환합니다."""
-    key = api_key or os.environ.get("OPENAI_API_KEY", "")
-    if not key:
-        raise TopviewGptError("OPENAI_API_KEY is required")
+    """Gemini로 15초 쇼핑 숏츠 패키지(대본·자막·해시태그·BGM)를 생성합니다.
 
-    price_line = f"가격: {price}원" if price else ""
-    user_content = (
+    GOOGLE_API_KEY 하나만 있으면 됩니다 — OpenAI 키 불필요.
+    """
+    key = api_key or os.environ.get("GOOGLE_API_KEY", "")
+    if not key:
+        raise TopviewGptError("GOOGLE_API_KEY is required")
+
+    price_line = f"가격: {price}원" if price else "가격: 미정"
+    user_text = (
         f"제품명: {product_name}\n"
         f"제품 URL: {product_url}\n"
         f"이미지 URL: {image_url}\n"
-        f"{price_line}\n"
-        "위 제품의 15초 쇼핑 숏츠 대본을 작성해주세요."
+        f"{price_line}\n\n"
+        "위 제품의 15초 쇼핑 숏츠 패키지를 JSON으로 만들어주세요."
     )
 
+    url = GEMINI_API_URL.format(model=model)
     response = requests.post(
-        OPENAI_API_URL,
-        headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+        url,
+        params={"key": key},
         json={
-            "model": model,
-            "messages": [
-                {"role": "system", "content": _SYSTEM_PROMPT},
-                {"role": "user", "content": user_content},
-            ],
-            "max_tokens": 600,
-            "temperature": 0.8,
+            "system_instruction": {"parts": [{"text": _SYSTEM_PROMPT}]},
+            "contents": [{"role": "user", "parts": [{"text": user_text}]}],
+            "generationConfig": {
+                "temperature": 0.8,
+                "maxOutputTokens": 1024,
+                "responseMimeType": "application/json",
+            },
         },
         timeout=timeout,
     )
@@ -77,15 +94,30 @@ def generate_script(
     body = response.json()
 
     if "error" in body:
-        raise TopviewGptError(body["error"].get("message", "unknown OpenAI error"))
+        raise TopviewGptError(body["error"].get("message", "unknown Gemini error"))
 
-    script_text = body["choices"][0]["message"]["content"].strip()
+    raw_text = body["candidates"][0]["content"]["parts"][0]["text"]
+
+    try:
+        data = json.loads(raw_text)
+    except json.JSONDecodeError as exc:
+        raise TopviewGptError(f"Gemini returned non-JSON: {raw_text[:200]}") from exc
+
+    script = data.get("script", {})
+    subtitles = data.get("subtitles", [])
+    bgm = data.get("bgm", "")
+    hashtags = data.get("hashtags", [])
 
     topview_payload = {
         "product_name": product_name,
         "product_url": product_url,
         "image_url": image_url,
-        "script": script_text,
+        "script_scene1": script.get("scene1", {}),
+        "script_scene2": script.get("scene2", {}),
+        "script_scene3": script.get("scene3", {}),
+        "subtitles": subtitles,
+        "bgm": bgm,
+        "hashtags": hashtags,
         "duration_seconds": 15,
     }
 
@@ -93,6 +125,9 @@ def generate_script(
         product_name=product_name,
         product_url=product_url,
         image_url=image_url,
-        script=script_text,
+        script=script,
+        subtitles=subtitles,
+        bgm=bgm,
+        hashtags=hashtags,
         topview_payload=topview_payload,
     )
