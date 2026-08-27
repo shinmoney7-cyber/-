@@ -8,19 +8,42 @@
 <html lang="ko">
 <head><meta charset="utf-8"><title>링크 편집</title></head>
 <body>
+  <!-- Page navigation bar -->
+  <nav id="page-nav">
+    <button id="prev-page-button" data-testid="prev-page">이전 페이지</button>
+    <span id="current-page-label">페이지 1</span>
+    <button id="next-page-button" data-testid="next-page">다음 페이지</button>
+  </nav>
+
   <div id="card-list"></div>
   <button id="add-link-button">링크 추가</button>
 
   <div id="card-form" style="display:none">
     <input type="text" name="title" placeholder="제목">
     <input type="text" name="url" placeholder="URL">
-    <input type="text" name="thumbnail" placeholder="이미지 URL">
+    <div id="image-area">
+      <input type="text" name="thumbnail" placeholder="이미지 URL">
+      <img id="thumbnail-preview" src="" alt="이미지 미리보기" style="display:none;max-width:200px;">
+    </div>
     <button id="save-button">저장</button>
   </div>
 
   <script>
+    var currentPage = 1;
+
     document.getElementById('add-link-button').addEventListener('click', function () {
       document.getElementById('card-form').style.display = 'block';
+    });
+
+    document.querySelector('input[name="thumbnail"]').addEventListener('input', function () {
+      var preview = document.getElementById('thumbnail-preview');
+      if (this.value) {
+        preview.src = this.value;
+        preview.style.display = 'block';
+      } else {
+        preview.src = '';
+        preview.style.display = 'none';
+      }
     });
 
     document.getElementById('save-button').addEventListener('click', function () {
@@ -38,6 +61,18 @@
       document.getElementById('card-list').appendChild(card);
 
       document.getElementById('card-form').style.display = 'none';
+    });
+
+    document.getElementById('prev-page-button').addEventListener('click', function () {
+      if (currentPage > 1) {
+        currentPage -= 1;
+        document.getElementById('current-page-label').textContent = '페이지 ' + currentPage;
+      }
+    });
+
+    document.getElementById('next-page-button').addEventListener('click', function () {
+      currentPage += 1;
+      document.getElementById('current-page-label').textContent = '페이지 ' + currentPage;
     });
   </script>
 </body>

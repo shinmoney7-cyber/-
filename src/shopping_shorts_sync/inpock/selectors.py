@@ -27,7 +27,14 @@ class EditorSelectors:
     TITLE_INPUT = "input[name='title']"  # TODO CALIBRATE
     URL_INPUT = "input[name='url']"  # TODO CALIBRATE
     THUMBNAIL_URL_INPUT = "input[name='thumbnail']"  # TODO CALIBRATE
+    THUMBNAIL_PREVIEW = "#thumbnail-preview"  # TODO CALIBRATE
+    IMAGE_AREA = "#image-area"  # TODO CALIBRATE
     SAVE_BUTTON = "#save-button"  # TODO CALIBRATE
+
+    # Page navigation
+    PREV_PAGE_BUTTON = "[data-testid='prev-page']"  # TODO CALIBRATE
+    NEXT_PAGE_BUTTON = "[data-testid='next-page']"  # TODO CALIBRATE
+    CURRENT_PAGE_LABEL = "#current-page-label"  # TODO CALIBRATE
 
     # Secondary/best-effort: used only to try to detect an already-existing
     # card so we don't blindly duplicate. Not trusted as the primary

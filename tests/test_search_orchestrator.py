@@ -14,9 +14,9 @@ def _config():
     return load_config(env_file="/nonexistent/.env")
 
 
-def test_search_all_sources_dry_run_returns_all_three():
+def test_search_all_sources_dry_run_returns_all_sources():
     results = search_all_sources("무선 청소기", _config(), dry_run=True, limit=3)
-    assert set(results.keys()) == {"naver", "daiso", "oliveyoung"}
+    assert set(results.keys()) == {"naver", "daiso", "oliveyoung", "google"}
     assert all(len(v) == 3 for v in results.values())
 
 

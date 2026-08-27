@@ -68,6 +68,20 @@ class InpockRPAClient:
             self._on_failure(f"goto_page_editor_{page_slug}")
             raise InpockRPAError(f"navigating to {page_slug} editor failed: {exc}") from exc
 
+    def go_to_next_page(self) -> None:
+        try:
+            self.page.click(EditorSelectors.NEXT_PAGE_BUTTON)
+        except Exception as exc:
+            self._on_failure("go_to_next_page")
+            raise InpockRPAError(f"next page navigation failed: {exc}") from exc
+
+    def go_to_prev_page(self) -> None:
+        try:
+            self.page.click(EditorSelectors.PREV_PAGE_BUTTON)
+        except Exception as exc:
+            self._on_failure("go_to_prev_page")
+            raise InpockRPAError(f"prev page navigation failed: {exc}") from exc
+
     def find_existing_card(self, title: str):
         """Best-effort DOM search for a card with a matching title.
 
