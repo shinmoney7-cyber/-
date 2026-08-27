@@ -6,6 +6,7 @@ from ..input_loader import upsert_product
 from ..models import Product, derive_product_id
 from .coupang_match import CoupangMatchRPAClient, MockCoupangMatchClient
 from .daiso import DaisoRPAClient
+from .google import GoogleShopClient
 from .mock import MockSearchClient
 from .models import SearchResult
 from .naver import NaverShopClient
@@ -15,17 +16,21 @@ from .oliveyoung import OliveYoungRPAClient
 def search_all_sources(
     keyword: str, config: Config, dry_run: bool = True, limit: int = 5
 ) -> dict[str, list[SearchResult]]:
-    """Searches Naver Shopping, Daiso Mall, and Olive Young for `keyword`,
-    `limit` results each. dry_run uses deterministic mock clients for all
-    three (no network, no browser)."""
+    """Searches Naver Shopping, Daiso Mall, Olive Young, and Google Shopping for
+    `keyword`, `limit` results each. dry_run uses deterministic mock clients
+    for all sources (no network, no browser)."""
     if dry_run:
         return {
             source: MockSearchClient(source).search(keyword, limit=limit)
-            for source in ("naver", "daiso", "oliveyoung")
+            for source in ("naver", "daiso", "oliveyoung", "google")
         }
 
     naver_client = NaverShopClient(config.naver_client_id, config.naver_client_secret)
     results = {"naver": naver_client.search(keyword, limit=limit)}
+
+    if config.google_api_key and config.google_cx:
+        google_client = GoogleShopClient(config.google_api_key, config.google_cx)
+        results["google"] = google_client.search(keyword, limit=limit)
 
     with launch_browser(
         headless=config.inpock_headless, chromium_path=config.playwright_chromium_path
@@ -40,7 +45,7 @@ def search_all_sources(
 def search_one_source(
     source: str, keyword: str, config: Config, dry_run: bool = True, limit: int = 5
 ) -> list[SearchResult]:
-    if source not in ("naver", "daiso", "oliveyoung"):
+    if source not in ("naver", "daiso", "oliveyoung", "google"):
         raise ValueError(f"unknown search source: {source!r}")
 
     if dry_run:
@@ -48,6 +53,11 @@ def search_one_source(
 
     if source == "naver":
         return NaverShopClient(config.naver_client_id, config.naver_client_secret).search(
+            keyword, limit=limit
+        )
+
+    if source == "google":
+        return GoogleShopClient(config.google_api_key, config.google_cx).search(
             keyword, limit=limit
         )
 

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-SOURCES = ("naver", "daiso", "oliveyoung")
+SOURCES = ("naver", "daiso", "oliveyoung", "google")
 
 
 @dataclass(frozen=True)
