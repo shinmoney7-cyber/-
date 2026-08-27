@@ -1,7 +1,7 @@
 # google-shorts
 
-**GOOGLE_API_KEY 하나로** 구글 쇼핑 검색 + Gemini 대본/자막/해시태그/BGM 생성 + TopView 패키지까지 모두 처리하는 스킬.
-OpenAI 등 외부 서비스 불필요 — Google만 사용.
+구글 쇼핑 검색 → Gemini 대본/자막/해시태그/BGM → TopView 패키지를
+**CLI 한 줄**로 처리하는 스킬. GOOGLE_API_KEY 하나로 전부 동작.
 
 ## 트리거
 
@@ -12,102 +12,94 @@ OpenAI 등 외부 서비스 불필요 — Google만 사용.
 ## 필요 환경변수 (2개뿐)
 
 ```
-GOOGLE_API_KEY=...   # Custom Search + Gemini 공용 키
+GOOGLE_API_KEY=...   # Custom Search + Gemini 공용
 GOOGLE_CX=...        # Programmable Search Engine ID
 ```
 
-## 실행 절차
+## 사용 방법
 
-### 1단계 — 상품 정보 확인
+### 기본 실행 (테스트 — API 키 없이)
 
-사용자가 제공한 정보를 파악한다. 없는 항목은 질문한다:
-- **키워드** (필수): 구글 쇼핑 검색어
-- **가격** (선택): 없으면 "가격 미정" 처리
-
-### 2단계 — 구글 쇼핑 검색
-
-```python
-from shopping_shorts_sync.config import load_config
-from shopping_shorts_sync.search.orchestrator import search_one_source
-
-config = load_config()
-hits = search_one_source("google", "<키워드>", config, dry_run=False, limit=5)
-top = hits[0]  # 상위 1개 선택 (여러 개면 사용자에게 선택지 제시)
+```bash
+python -m shopping_shorts_sync google-shorts run -k "선크림"
 ```
 
-### 3단계 — Gemini로 전체 패키지 생성
+### 실제 실행 (Google + Gemini API 호출)
 
-`generate_script()`를 호출한다. 내부적으로 `gemini-2.0-flash`를 사용하며,
-**같은 GOOGLE_API_KEY**로 호출된다.
-
-```python
-from shopping_shorts_sync.topview_gpt import generate_script
-
-result = generate_script(
-    product_name=top.name,
-    product_url=top.product_url,   # 또는 쿠팡 딥링크
-    image_url=top.image_url,
-    price=top.price,
-    # model="gemini-2.0-flash"  # 기본값
-)
+```bash
+python -m shopping_shorts_sync google-shorts run -k "선크림 SPF50" --live
 ```
 
-**생성되는 항목**
+### 옵션 전체
 
-| 필드 | 내용 |
-|------|------|
-| `result.script` | 씬별 구조화 대본 (scene1/2/3 딕셔너리) |
-| `result.subtitles` | 씬별 자막 텍스트 리스트 |
-| `result.bgm` | 배경음악 분위기 설명 |
-| `result.hashtags` | 해시태그 10개 이상 |
-| `result.topview_payload` | TopView 입력용 전체 패키지 |
+| 옵션 | 기본값 | 설명 |
+|------|--------|------|
+| `-k / --keyword` | 필수 | 구글 쇼핑 검색어 |
+| `--limit` | 5 | 검색 결과 최대 개수 |
+| `--index` | 0 | 사용할 결과 인덱스 |
+| `--dry-run / --live` | dry-run | dry: 모의 데이터 / live: 실제 API |
+| `--no-coupang` | off | 쿠팡 매칭 건너뛰기 |
+| `--model` | gemini-2.0-flash | Gemini 모델 변경 |
+| `--json-out` | off | TopView 패키지를 JSON으로 출력 |
 
-### 4단계 — 결과 출력
+### 검색 결과만 먼저 확인
 
+```bash
+python -m shopping_shorts_sync google-shorts search -k "선크림" --live
 ```
-## 🎬 [상품명] 쇼핑쇼츠 패키지
+→ 결과 목록 확인 후 `--index 2` 처럼 원하는 상품 번호 지정
 
-### 대본
-[0-3초] 화면: ... | 자막: "..."
-[3-12초] 화면: ... | 자막: "..."
-[12-15초] 화면: ... | 자막: "..." | CTA: ...
+### JSON 출력 (TopView 붙여넣기용)
 
-### 자막
-- "..."
-- "..."
-- "..."
-
-### 배경음악
-...
-
-### 해시태그
-#... #... #...
-
-### TopView 패키지 (복붙용)
-product_name: ...
-product_url: ...
-image_url: ...
-subtitles: [...]
-duration_seconds: 15
+```bash
+python -m shopping_shorts_sync google-shorts run -k "선크림" --live --json-out
 ```
 
-### 5단계 — 선택적 후속 작업
+## 출력 예시
 
-- "다른 제품도 만들까요?"
-- "Inpock에 이 카드를 자동 등록할까요?"
-- "더 정교한 대본을 원하면 model='gemini-1.5-pro'로 재생성할까요?"
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎬  무선 청소기 PRO  쇼핑쇼츠 패키지
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-## 오류 처리
+▶ 대본 (15초)
+  [0-3초]  자막: "이거 실화임?"
+            화면: 먼지 앞에 청소기 등장
+  [3-12초] 자막: "흡입력 25,000Pa / 배터리 60분"
+            화면: 카펫·소파·틈새 청소 연속 전환
+  [12-15초] 자막: "지금 59,000원"
+             화면: 링크 클릭 유도 손 제스처
 
-| 상황 | 대응 |
-|------|------|
-| GOOGLE_API_KEY 없음 | "`.env`에 GOOGLE_API_KEY와 GOOGLE_CX를 추가하세요 — 한 키로 검색과 AI 생성 모두 됩니다" |
-| 검색 결과 없음 | 다른 키워드 제안 |
-| Gemini 호출 실패 | 에러 메시지 출력 후 재시도 여부 물어봄 |
+▶ 자막 목록
+  1. 이거 실화임?
+  2. 흡입력 25,000Pa / 배터리 60분
+  3. 지금 59,000원
 
-## 참조 모듈
+▶ 배경음악
+  경쾌한 비트 BPM 120, 팝 분위기
 
+▶ 해시태그
+  #무선청소기  #청소기추천  #쇼핑  #할인  #가성비
+  #홈리빙  #청소  #생활가전  #숏츠  #쿠팡
+
+▶ TopView 입력 정보
+  이미지 URL : https://...
+  제품 URL   : https://link.coupang.com/...
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+## Claude에게 요청하는 방법
+
+사용자가 "구글 플로우로 선크림 대본 만들어줘" 라고 하면:
+
+1. 키워드를 파악한다 (`선크림`)
+2. `google-shorts search` 로 결과 목록을 먼저 보여준다
+3. 사용자가 원하는 인덱스를 확인하거나 0번으로 진행한다
+4. `google-shorts run -k "선크림" --live` 를 실행해 전체 패키지를 출력한다
+5. 결과를 보여주고 "Inpock에 등록할까요?" 를 제안한다
+
+## 참조 파일
+
+- `src/shopping_shorts_sync/cli.py` — `google_shorts_group` 커맨드 그룹
 - `src/shopping_shorts_sync/search/google.py` — GoogleShopClient
-- `src/shopping_shorts_sync/search/orchestrator.py` — search_one_source
-- `src/shopping_shorts_sync/topview_gpt.py` — generate_script (Gemini 기반)
-- `src/shopping_shorts_sync/config.py` — load_config
+- `src/shopping_shorts_sync/topview_gpt.py` — generate_script (Gemini)

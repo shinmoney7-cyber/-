@@ -49,6 +49,24 @@ class TopviewScript:
     topview_payload: dict  # TopView 입력용 패키지
 
 
+def _mock_script(product_name: str, product_url: str, image_url: str) -> TopviewScript:
+    script = {
+        "scene1": {"time": "0-3초", "action": "제품 클로즈업", "subtitle": f"이거 실화?", "hook": "강한 후킹"},
+        "scene2": {"time": "3-12초", "action": "사용 장면", "subtitle": f"{product_name} 핵심 포인트", "key_points": ["품질", "가성비"]},
+        "scene3": {"time": "12-15초", "action": "링크 유도", "subtitle": "지금 바로 구매", "cta": "링크 클릭"},
+    }
+    subtitles = ["이거 실화?", f"{product_name} 핵심 포인트", "지금 바로 구매"]
+    hashtags = ["#쇼핑", "#할인", "#추천", "#숏츠", "#틱톡", "#인스타", "#가성비", "#리뷰", "#언박싱", "#구매"]
+    bgm = "경쾌한 팝 비트 BPM 120 (dry-run 모의 데이터)"
+    return TopviewScript(
+        product_name=product_name, product_url=product_url, image_url=image_url,
+        script=script, subtitles=subtitles, bgm=bgm, hashtags=hashtags,
+        topview_payload={"product_name": product_name, "product_url": product_url,
+                         "image_url": image_url, "script": script, "subtitles": subtitles,
+                         "bgm": bgm, "hashtags": hashtags, "duration_seconds": 15},
+    )
+
+
 def generate_script(
     product_name: str,
     product_url: str,
@@ -57,11 +75,16 @@ def generate_script(
     model: str = "gemini-2.0-flash",
     api_key: str | None = None,
     timeout: float = 30.0,
+    dry_run: bool = False,
 ) -> TopviewScript:
     """Gemini로 15초 쇼핑 숏츠 패키지(대본·자막·해시태그·BGM)를 생성합니다.
 
     GOOGLE_API_KEY 하나만 있으면 됩니다 — OpenAI 키 불필요.
+    dry_run=True 이면 API를 호출하지 않고 모의 데이터를 반환합니다.
     """
+    if dry_run:
+        return _mock_script(product_name, product_url, image_url)
+
     key = api_key or os.environ.get("GOOGLE_API_KEY", "")
     if not key:
         raise TopviewGptError("GOOGLE_API_KEY is required")
