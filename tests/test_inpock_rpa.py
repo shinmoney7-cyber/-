@@ -67,3 +67,22 @@ def test_sync_card_creates_when_no_existing_card(rpa_client):
     card = LinkCard(title="Fresh Product", url="https://link.coupang.com/a/z", thumbnail="")
     action = rpa_client.sync_card("harujin", card, force_create=True)
     assert action == "created"
+
+
+def test_page_navigation_next_and_prev(rpa_client):
+    rpa_client.goto_page_editor("harujin")
+    rpa_client.go_to_next_page()
+    label = rpa_client.page.query_selector("#current-page-label")
+    assert label is not None
+    assert "2" in label.inner_text()
+
+    rpa_client.go_to_prev_page()
+    assert "1" in label.inner_text()
+
+
+def test_image_area_and_url_input_present(rpa_client):
+    rpa_client.goto_page_editor("harujin")
+    rpa_client.page.click("#add-link-button")
+    assert rpa_client.page.query_selector("input[name='url']") is not None
+    assert rpa_client.page.query_selector("#image-area") is not None
+    assert rpa_client.page.query_selector("input[name='thumbnail']") is not None
