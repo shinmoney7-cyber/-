@@ -24,6 +24,7 @@ class Config:
 
     google_api_key: str
     google_cx: str
+    openai_api_key: str
 
     playwright_chromium_path: str
     state_file_path: str
@@ -52,6 +53,7 @@ def load_config(env_file: str | None = None) -> Config:
         naver_client_secret=os.environ.get("NAVER_CLIENT_SECRET", ""),
         google_api_key=os.environ.get("GOOGLE_API_KEY", ""),
         google_cx=os.environ.get("GOOGLE_CX", ""),
+        openai_api_key=os.environ.get("OPENAI_API_KEY", ""),
         playwright_chromium_path=os.environ.get("PLAYWRIGHT_CHROMIUM_PATH", "/opt/pw-browsers/chromium"),
         state_file_path=os.environ.get("STATE_FILE_PATH", "data/state.json"),
         log_level=os.environ.get("LOG_LEVEL", "INFO"),

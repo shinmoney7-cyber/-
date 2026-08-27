@@ -12,7 +12,7 @@ from .script_store import default_script_path, load_script_set
 from .search.orchestrator import match_and_upsert_product, match_to_coupang, search_all_sources, search_one_source
 from .state_store import StateStore
 from .sync import build_coupang_client, run_deeplink_stage, run_full_sync, run_inpock_stage
-from .topview_gpt import TopviewGptError, generate_script
+from .topview_gpt import TopviewGptError, generate_script, generate_script_gpt
 
 
 def _setup_logging(config):
@@ -275,10 +275,14 @@ def google_shorts_group():
               help="--dry-run: 모의 데이터 사용 (API 키 불필요) / --live: 실제 Google+Gemini API 호출")
 @click.option("--no-coupang", "skip_coupang", is_flag=True,
               help="쿠팡 매칭 건너뛰기 — 구글 결과 URL을 그대로 사용")
-@click.option("--model", default="gemini-2.0-flash", show_default=True,
-              help="Gemini 모델 (예: gemini-1.5-pro)")
+@click.option("--engine", type=click.Choice(["gemini", "gpt"]), default="gemini", show_default=True,
+              help="AI 엔진 선택: gemini (GOOGLE_API_KEY) 또는 gpt (OPENAI_API_KEY)")
+@click.option("--model", default=None, show_default=False,
+              help="AI 모델 지정 (기본값: gemini=gemini-2.0-flash, gpt=gpt-4o-mini)")
+@click.option("--no-script", "no_script", is_flag=True,
+              help="AI 대본 생성 없이 TopView 입력 정보만 출력 (TopView only 모드)")
 @click.option("--json-out", "json_out", is_flag=True, help="TopView 패키지를 JSON으로 출력")
-def google_shorts_run(keyword, limit, index, dry_run, skip_coupang, model, json_out):
+def google_shorts_run(keyword, limit, index, dry_run, skip_coupang, engine, model, no_script, json_out):
     """구글 쇼핑 검색 후 Gemini로 15초 숏츠 패키지를 생성합니다.
 
     \b
@@ -322,20 +326,59 @@ def google_shorts_run(keyword, limit, index, dry_run, skip_coupang, model, json_
         else:
             click.echo("  ⚠️  쿠팡 매칭 실패 → 구글 결과 URL 사용")
 
-    # 3. Gemini 대본/자막/해시태그 생성
-    click.echo(f"✍️  Gemini({model})로 숏츠 패키지 생성 중...")
-    try:
-        result = generate_script(
-            product_name=top.name,
-            product_url=product_url,
-            image_url=top.image_url,
-            price=top.price,
-            model=model,
-            api_key=config.google_api_key or None,
-            dry_run=dry_run,
-        )
-    except TopviewGptError as exc:
-        raise click.ClickException(str(exc))
+    # 3. AI 대본/자막/해시태그 생성 (no_script 모드면 건너뜀)
+    if no_script:
+        topview_payload = {
+            "product_name": top.name,
+            "product_url": product_url,
+            "image_url": top.image_url,
+            "price": top.price,
+        }
+        if json_out:
+            click.echo(json.dumps(topview_payload, ensure_ascii=False, indent=2))
+            return
+        click.echo("\n" + "━" * 50)
+        click.echo(f"📦  {top.name}  TopView 입력 정보")
+        click.echo("━" * 50)
+        click.echo(f"  제품명  : {top.name}")
+        if top.price:
+            click.echo(f"  가격    : {top.price}원")
+        click.echo(f"  이미지  : {top.image_url}")
+        click.echo(f"  URL     : {product_url}")
+        click.echo("━" * 50)
+        click.echo("💡 위 정보를 TopView.ai에 직접 붙여넣으세요.")
+        return
+
+    if engine == "gpt":
+        gpt_model = model or "gpt-4o-mini"
+        click.echo(f"✍️  OpenAI GPT({gpt_model})로 숏츠 패키지 생성 중...")
+        try:
+            result = generate_script_gpt(
+                product_name=top.name,
+                product_url=product_url,
+                image_url=top.image_url,
+                price=top.price,
+                model=gpt_model,
+                api_key=config.openai_api_key or None,
+                dry_run=dry_run,
+            )
+        except TopviewGptError as exc:
+            raise click.ClickException(str(exc))
+    else:
+        gemini_model = model or "gemini-2.0-flash"
+        click.echo(f"✍️  Gemini({gemini_model})로 숏츠 패키지 생성 중...")
+        try:
+            result = generate_script(
+                product_name=top.name,
+                product_url=product_url,
+                image_url=top.image_url,
+                price=top.price,
+                model=gemini_model,
+                api_key=config.google_api_key or None,
+                dry_run=dry_run,
+            )
+        except TopviewGptError as exc:
+            raise click.ClickException(str(exc))
 
     # 4. 출력
     if json_out:
