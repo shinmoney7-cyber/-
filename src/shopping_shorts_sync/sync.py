@@ -9,6 +9,7 @@ from .browser import launch_browser
 from .inpock.mock_rpa import MockInpockRPAClient
 from .inpock.rpa import InpockRPAClient, product_to_card
 from .instagram.client import InstagramClient, next_scheduled_timestamp
+from .instagram.dm_client import InstagramDMClient, MockInstagramDMClient
 from .instagram.mock_client import MockInstagramClient
 from .models import Product
 from .state_store import StateStore
@@ -107,12 +108,40 @@ def build_instagram_client(config: Config, target_page: str):
     return MockInstagramClient()
 
 
+def build_dm_client(config: Config, target_page: str):
+    if config.instagram_api_mode == "live":
+        user_id, access_token = config.instagram_credentials(target_page)
+        return InstagramDMClient(user_id, access_token)
+    return MockInstagramDMClient()
+
+
+def send_preview_dm(product: Product, caption: str, deeplink: str, config: Config) -> None:
+    """DMs the account owner a preview of the scheduled post before it goes live."""
+    owner_igsid = config.instagram_owner_igsid(product.target_page)
+    if not owner_igsid:
+        logger.warning("owner IGSID not configured for %s — skipping preview DM", product.target_page)
+        return
+    preview = (
+        f"[미리보기 - {product.target_page}]\n"
+        f"상품: {product.name}\n"
+        f"링크: {deeplink}\n\n"
+        f"--- 캡션 ---\n{caption}"
+    )
+    dm_client = build_dm_client(config, product.target_page)
+    result = dm_client.send_text(owner_igsid, preview)
+    if result.ok:
+        logger.info("preview DM sent to owner (%s) for product %s", product.target_page, product.id)
+    else:
+        logger.warning("preview DM failed for %s: %s", product.id, result.error)
+
+
 def run_instagram_stage(
     products: list[Product],
     config: Config,
     state: StateStore,
     force: bool = False,
     scheduled_publish_time: int | None = None,
+    preview_dm: bool = True,
 ) -> list[tuple[Product, str, str | None]]:
     """Returns (product, outcome, detail) tuples. outcome in {posted, skipped, error}."""
     outcomes: list[tuple[Product, str, str | None]] = []
@@ -143,6 +172,8 @@ def run_instagram_stage(
                 config.instagram_default_cta,
                 config.instagram_disclaimer,
             )
+            if preview_dm:
+                send_preview_dm(product, caption, product_state.deeplink, config)
             sched_ts = scheduled_publish_time or next_scheduled_timestamp(
                 config.instagram_schedule_hour, config.instagram_schedule_minute
             )

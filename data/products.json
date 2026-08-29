@@ -6,7 +6,8 @@
     "thumbnail": "",
     "category": "주방용품",
     "target_page": "harujin",
-    "enabled": true
+    "enabled": true,
+    "instagram_keyword": ""
   },
   {
     "id": "shinjh-rolpan-01",
@@ -15,7 +16,8 @@
     "thumbnail": "",
     "category": "주방용품",
     "target_page": "shinjh",
-    "enabled": true
+    "enabled": true,
+    "instagram_keyword": ""
   },
   {
     "id": "harujin-watermelon-01",
@@ -24,7 +26,8 @@
     "thumbnail": "",
     "category": "과일",
     "target_page": "harujin",
-    "enabled": true
+    "enabled": true,
+    "instagram_keyword": "수박"
   },
   {
     "id": "shinjh-watermelon-01",
@@ -33,6 +36,27 @@
     "thumbnail": "",
     "category": "과일",
     "target_page": "shinjh",
-    "enabled": true
+    "enabled": true,
+    "instagram_keyword": "수박"
+  },
+  {
+    "id": "harujin-etude-tint-01",
+    "name": "에뛰드 픽싱 틴트, 5호 미드나잇 모브, 1개",
+    "coupang_url": "https://www.coupang.com/vp/products/8208570575?itemId=7552911378&vendorItemId=86902496162",
+    "thumbnail": "",
+    "category": "뷰티",
+    "target_page": "harujin",
+    "enabled": true,
+    "instagram_keyword": "에뛰드"
+  },
+  {
+    "id": "shinjh-etude-tint-01",
+    "name": "에뛰드 픽싱 틴트, 5호 미드나잇 모브, 1개",
+    "coupang_url": "https://www.coupang.com/vp/products/8208570575?itemId=7552911378&vendorItemId=86902496162",
+    "thumbnail": "",
+    "category": "뷰티",
+    "target_page": "shinjh",
+    "enabled": true,
+    "instagram_keyword": "에뛰드"
   }
 ]

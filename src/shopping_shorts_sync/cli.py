@@ -268,7 +268,13 @@ def instagram():
     metavar="YYYY-MM-DD HH:MM",
     help="KST datetime to schedule the post. Omit to use the default (next 09:00 KST).",
 )
-def instagram_post(input_path, page_filter, dry_run, force, preview_only, schedule_str):
+@click.option(
+    "--preview-dm/--no-preview-dm",
+    "preview_dm",
+    default=True,
+    help="DM the account owner a preview before scheduling (default: on).",
+)
+def instagram_post(input_path, page_filter, dry_run, force, preview_only, schedule_str, preview_dm):
     from .instagram.client import parse_schedule_time
 
     config = load_config()
@@ -307,10 +313,55 @@ def instagram_post(input_path, page_filter, dry_run, force, preview_only, schedu
     from .state_store import StateStore
     store = StateStore(config.state_file_path)
     outcomes = run_instagram_stage(
-        products, config, store, force=force, scheduled_publish_time=scheduled_publish_time
+        products,
+        config,
+        store,
+        force=force,
+        scheduled_publish_time=scheduled_publish_time,
+        preview_dm=preview_dm,
     )
     store.save()
     _print_outcomes("instagram post", outcomes)
+
+
+@instagram.command("webhook")
+@click.option("--input", "input_path", required=True, type=click.Path(exists=True), help="products.json — keyword map is built from this file at startup.")
+@click.option("--host", default="0.0.0.0", show_default=True)
+@click.option("--port", default=8080, show_default=True)
+@click.option("--dry-run/--live", "dry_run", default=True, help="--dry-run: mock DM client (no messages sent); --live: calls Meta Graph API.")
+def instagram_webhook(input_path, host, port, dry_run):
+    """Run the Instagram comment-webhook server.
+
+    \b
+    Register this URL in Meta for Developers → Webhooks → Instagram:
+      https://<your-public-host>/instagram/webhook
+    Subscribe to the `comments` field.
+    Set INSTAGRAM_WEBHOOK_VERIFY_TOKEN to the same secret used in Meta's dashboard.
+
+    When a follower comments a registered keyword (set per-product in products.json
+    via `instagram_keyword`) the server DMs them the Coupang deeplink automatically.
+    """
+    try:
+        import uvicorn
+    except ImportError:
+        raise click.ClickException("uvicorn is required: pip install uvicorn")
+
+    from .instagram.webhook import create_app
+
+    config = load_config()
+    _setup_logging(config)
+
+    if not dry_run:
+        import dataclasses
+        config = dataclasses.replace(config, instagram_api_mode="live")
+
+    if not config.instagram_webhook_verify_token:
+        click.echo("WARNING: INSTAGRAM_WEBHOOK_VERIFY_TOKEN is not set — webhook verification will fail.", err=True)
+
+    app = create_app(config, input_path)
+    click.echo(f"Starting webhook server on {host}:{port} ({'live' if not dry_run else 'dry-run'} mode)")
+    click.echo(f"Register callback: https://<your-host>/instagram/webhook")
+    uvicorn.run(app, host=host, port=port)
 
 
 @cli.group()
