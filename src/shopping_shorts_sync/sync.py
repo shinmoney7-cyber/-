@@ -8,6 +8,8 @@ from .coupang.mock_client import MockCoupangClient
 from .browser import launch_browser
 from .inpock.mock_rpa import MockInpockRPAClient
 from .inpock.rpa import InpockRPAClient, product_to_card
+from .instagram.client import InstagramClient, next_scheduled_timestamp
+from .instagram.mock_client import MockInstagramClient
 from .models import Product
 from .state_store import StateStore
 
@@ -83,6 +85,78 @@ def run_inpock_stage(
         except Exception as exc:  # noqa: BLE001 - one product's RPA failure must not abort the run
             logger.exception("inpock sync failed for product %s", product.id)
             state.record_inpock_error(product, str(exc))
+            outcomes.append((product, "error", str(exc)))
+
+    return outcomes
+
+
+def build_instagram_caption(product: Product, deeplink: str, cta: str, disclaimer: str) -> str:
+    tags = f"#{product.category.replace(' ', '')}" if product.category else ""
+    parts = [product.name, "", cta]
+    if tags:
+        parts += ["", tags, "#쿠팡파트너스"]
+    if disclaimer:
+        parts += ["", disclaimer]
+    return "\n".join(parts)
+
+
+def build_instagram_client(config: Config, target_page: str):
+    if config.instagram_api_mode == "live":
+        user_id, access_token = config.instagram_credentials(target_page)
+        return InstagramClient(user_id, access_token)
+    return MockInstagramClient()
+
+
+def run_instagram_stage(
+    products: list[Product],
+    config: Config,
+    state: StateStore,
+    force: bool = False,
+    scheduled_publish_time: int | None = None,
+) -> list[tuple[Product, str, str | None]]:
+    """Returns (product, outcome, detail) tuples. outcome in {posted, skipped, error}."""
+    outcomes: list[tuple[Product, str, str | None]] = []
+
+    for product in products:
+        if not product.enabled:
+            outcomes.append((product, "skipped", "disabled"))
+            continue
+
+        product_state = state.get(product.id)
+        if product_state is None or not product_state.deeplink:
+            outcomes.append((product, "skipped", "no deeplink yet"))
+            continue
+
+        if not product.thumbnail:
+            outcomes.append((product, "skipped", "thumbnail required for Instagram post"))
+            continue
+
+        if not force and not state.needs_instagram_post(product):
+            outcomes.append((product, "skipped", "already posted"))
+            continue
+
+        try:
+            client = build_instagram_client(config, product.target_page)
+            caption = build_instagram_caption(
+                product,
+                product_state.deeplink,
+                config.instagram_default_cta,
+                config.instagram_disclaimer,
+            )
+            sched_ts = scheduled_publish_time or next_scheduled_timestamp(
+                config.instagram_schedule_hour, config.instagram_schedule_minute
+            )
+            result = client.post_image(product.id, product.thumbnail, caption, sched_ts)
+            if result.ok:
+                state.record_instagram_post(product, result.media_id, result.scheduled_publish_time)
+                detail = result.permalink or str(sched_ts)
+                outcomes.append((product, "scheduled" if result.is_scheduled else "posted", detail))
+            else:
+                state.record_instagram_error(product, result.error or "unknown error")
+                outcomes.append((product, "error", result.error))
+        except Exception as exc:  # noqa: BLE001
+            logger.exception("instagram post failed for product %s", product.id)
+            state.record_instagram_error(product, str(exc))
             outcomes.append((product, "error", str(exc)))
 
     return outcomes

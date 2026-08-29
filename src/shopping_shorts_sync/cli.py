@@ -10,7 +10,14 @@ from .input_loader import load_products
 from .script_store import default_script_path, load_script_set
 from .search.orchestrator import match_and_upsert_product, search_all_sources, search_one_source
 from .state_store import StateStore
-from .sync import build_coupang_client, run_deeplink_stage, run_full_sync, run_inpock_stage
+from .sync import (
+    build_coupang_client,
+    build_instagram_caption,
+    run_deeplink_stage,
+    run_full_sync,
+    run_inpock_stage,
+    run_instagram_stage,
+)
 
 
 def _setup_logging(config):
@@ -235,6 +242,75 @@ def script_select(product_id, candidate_id, input_path, script_file):
     state.apply_script(product, candidate.id, candidate.full_text)
     state.save()
     click.echo(f"applied candidate {candidate.id} for {product_id}")
+
+
+@cli.group()
+def instagram():
+    """Instagram feed posting via Meta Graph API.
+
+    Each target_page (harujin, shinjh) maps to its own Instagram Business/Creator
+    account configured via INSTAGRAM_{PAGE}_USER_ID and INSTAGRAM_{PAGE}_ACCESS_TOKEN.
+    CTA and the legal disclaimer are inserted into every caption automatically.
+    Run --dry-run first to preview captions without calling the API.
+    """
+
+
+@instagram.command("post")
+@click.option("--input", "input_path", required=True, type=click.Path(exists=True))
+@click.option("--page", "page_filter", type=click.Choice(["harujin", "shinjh"]), default=None)
+@click.option("--dry-run/--live", "dry_run", default=True, help="--dry-run: mock client, shows captions; --live: calls Meta Graph API.")
+@click.option("--force", is_flag=True, help="Re-schedule even if state says already posted.")
+@click.option("--preview-only", is_flag=True, help="Print captions without posting.")
+@click.option(
+    "--schedule",
+    "schedule_str",
+    default=None,
+    metavar="YYYY-MM-DD HH:MM",
+    help="KST datetime to schedule the post. Omit to use the default (next 09:00 KST).",
+)
+def instagram_post(input_path, page_filter, dry_run, force, preview_only, schedule_str):
+    from .instagram.client import parse_schedule_time
+
+    config = load_config()
+    _setup_logging(config)
+    if not dry_run:
+        import dataclasses
+        config = dataclasses.replace(config, instagram_api_mode="live")
+
+    products = load_products(input_path)
+    if page_filter:
+        products = [p for p in products if p.target_page == page_filter]
+
+    scheduled_publish_time: int | None = None
+    if schedule_str:
+        try:
+            scheduled_publish_time = parse_schedule_time(schedule_str)
+        except ValueError as exc:
+            raise click.ClickException(str(exc)) from exc
+
+    if preview_only:
+        from .state_store import StateStore
+        store = StateStore(config.state_file_path)
+        for product in products:
+            if not product.enabled:
+                continue
+            product_state = store.get(product.id)
+            deeplink = product_state.deeplink if product_state else "(딥링크 없음)"
+            caption = build_instagram_caption(
+                product, deeplink or "", config.instagram_default_cta, config.instagram_disclaimer
+            )
+            click.echo(f"=== {product.id} [{product.target_page}] ===")
+            click.echo(caption)
+            click.echo()
+        return
+
+    from .state_store import StateStore
+    store = StateStore(config.state_file_path)
+    outcomes = run_instagram_stage(
+        products, config, store, force=force, scheduled_publish_time=scheduled_publish_time
+    )
+    store.save()
+    _print_outcomes("instagram post", outcomes)
 
 
 @cli.group()
