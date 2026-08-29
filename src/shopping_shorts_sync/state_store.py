@@ -32,6 +32,9 @@ class ProductState:
     instagram_media_id: str | None = None
     instagram_posted_at: str | None = None
     instagram_scheduled_publish_time: int | None = None
+    facebook_post_id: str | None = None
+    facebook_posted_at: str | None = None
+    facebook_scheduled_publish_time: int | None = None
 
 
 class StateStore:
@@ -135,6 +138,28 @@ class StateStore:
         state.instagram_scheduled_publish_time = scheduled_publish_time
 
     def record_instagram_error(self, product: Product, error: str) -> None:
+        state = self._products.setdefault(product.id, ProductState(coupang_url=product.coupang_url))
+        state.status = "error"
+        state.last_error = error
+
+    def needs_facebook_post(self, product: Product) -> bool:
+        state = self._products.get(product.id)
+        if state is None or not state.deeplink:
+            return False
+        if not state.facebook_posted_at:
+            return True
+        current_hash = product.content_hash(state.deeplink)
+        return state.content_hash != current_hash
+
+    def record_facebook_post(
+        self, product: Product, post_id: str, scheduled_publish_time: int | None = None
+    ) -> None:
+        state = self._products[product.id]
+        state.facebook_post_id = post_id
+        state.facebook_posted_at = _utcnow_iso()
+        state.facebook_scheduled_publish_time = scheduled_publish_time
+
+    def record_facebook_error(self, product: Product, error: str) -> None:
         state = self._products.setdefault(product.id, ProductState(coupang_url=product.coupang_url))
         state.status = "error"
         state.last_error = error

@@ -8,6 +8,7 @@ from .coupang.mock_client import MockCoupangClient
 from .browser import launch_browser
 from .inpock.mock_rpa import MockInpockRPAClient
 from .inpock.rpa import InpockRPAClient, product_to_card
+from .facebook.client import FacebookPageClient, MockFacebookPageClient
 from .instagram.client import InstagramClient, next_scheduled_timestamp
 from .instagram.dm_client import InstagramDMClient, MockInstagramDMClient
 from .instagram.mock_client import MockInstagramClient
@@ -188,6 +189,68 @@ def run_instagram_stage(
         except Exception as exc:  # noqa: BLE001
             logger.exception("instagram post failed for product %s", product.id)
             state.record_instagram_error(product, str(exc))
+            outcomes.append((product, "error", str(exc)))
+
+    return outcomes
+
+
+def build_facebook_client(config: Config, target_page: str):
+    if config.facebook_api_mode == "live":
+        page_id, page_access_token = config.facebook_credentials(target_page)
+        return FacebookPageClient(page_id, page_access_token)
+    return MockFacebookPageClient()
+
+
+def run_facebook_stage(
+    products: list[Product],
+    config: Config,
+    state: StateStore,
+    force: bool = False,
+    scheduled_publish_time: int | None = None,
+) -> list[tuple[Product, str, str | None]]:
+    """Returns (product, outcome, detail) tuples. outcome in {scheduled, posted, skipped, error}."""
+    outcomes: list[tuple[Product, str, str | None]] = []
+
+    for product in products:
+        if not product.enabled:
+            outcomes.append((product, "skipped", "disabled"))
+            continue
+
+        product_state = state.get(product.id)
+        if product_state is None or not product_state.deeplink:
+            outcomes.append((product, "skipped", "no deeplink yet"))
+            continue
+
+        if not product.thumbnail:
+            outcomes.append((product, "skipped", "thumbnail required for Facebook post"))
+            continue
+
+        if not force and not state.needs_facebook_post(product):
+            outcomes.append((product, "skipped", "already posted"))
+            continue
+
+        try:
+            client = build_facebook_client(config, product.target_page)
+            caption = build_instagram_caption(
+                product,
+                product_state.deeplink,
+                config.instagram_default_cta,
+                config.instagram_disclaimer,
+            )
+            sched_ts = scheduled_publish_time or next_scheduled_timestamp(
+                config.instagram_schedule_hour, config.instagram_schedule_minute
+            )
+            result = client.post_photo(product.id, product.thumbnail, caption, sched_ts)
+            if result.ok:
+                state.record_facebook_post(product, result.post_id, result.scheduled_publish_time)
+                detail = str(sched_ts) if result.is_scheduled else result.post_id
+                outcomes.append((product, "scheduled" if result.is_scheduled else "posted", detail))
+            else:
+                state.record_facebook_error(product, result.error or "unknown error")
+                outcomes.append((product, "error", result.error))
+        except Exception as exc:  # noqa: BLE001
+            logger.exception("facebook post failed for product %s", product.id)
+            state.record_facebook_error(product, str(exc))
             outcomes.append((product, "error", str(exc)))
 
     return outcomes
