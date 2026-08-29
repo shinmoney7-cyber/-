@@ -16,5 +16,23 @@
     "category": "주방용품",
     "target_page": "shinjh",
     "enabled": true
+  },
+  {
+    "id": "harujin-watermelon-01",
+    "name": "곰곰 당도선별 수박(11 brix 이상), 5kg",
+    "coupang_url": "https://www.coupang.com/vp/products/5341974172?itemId=7833549308&vendorItemId=75123335503",
+    "thumbnail": "",
+    "category": "과일",
+    "target_page": "harujin",
+    "enabled": true
+  },
+  {
+    "id": "shinjh-watermelon-01",
+    "name": "곰곰 당도선별 수박(11 brix 이상), 5kg",
+    "coupang_url": "https://www.coupang.com/vp/products/5341974172?itemId=7833549308&vendorItemId=75123335503",
+    "thumbnail": "",
+    "category": "과일",
+    "target_page": "shinjh",
+    "enabled": true
   }
 ]
