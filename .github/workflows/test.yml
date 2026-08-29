@@ -24,3 +24,5 @@ jobs:
 
       - name: Run tests
         run: python -m pytest -q
+        env:
+          PLAYWRIGHT_CHROMIUM_PATH: ""
