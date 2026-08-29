@@ -1,0 +1,20 @@
+[
+  {
+    "id": "harujin-rolpan-01",
+    "name": "롤팬 인덕션 뉴오리지널 그레이",
+    "coupang_url": "https://www.coupang.com/vp/products/8266336555?itemId=23819134979&vendorItemId=86952821688",
+    "thumbnail": "",
+    "category": "주방용품",
+    "target_page": "harujin",
+    "enabled": true
+  },
+  {
+    "id": "shinjh-rolpan-01",
+    "name": "롤팬 인덕션 뉴오리지널 그레이",
+    "coupang_url": "https://www.coupang.com/vp/products/8266336555?itemId=23819134979&vendorItemId=86952821688",
+    "thumbnail": "",
+    "category": "주방용품",
+    "target_page": "shinjh",
+    "enabled": true
+  }
+]
