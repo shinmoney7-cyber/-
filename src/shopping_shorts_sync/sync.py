@@ -194,6 +194,56 @@ def run_instagram_stage(
     return outcomes
 
 
+def resolve_thumbnails(
+    products: list[Product],
+    config: Config,
+    products_path: str | None = None,
+) -> list[Product]:
+    """For every product whose thumbnail is empty, search Naver Shopping and
+    use the first result's image URL. If products_path is given the resolved
+    URL is also persisted back to the JSON file so the next run skips the lookup."""
+    import dataclasses
+
+    if not config.naver_client_id or not config.naver_client_secret:
+        return products
+
+    from .search.naver import NaverShopClient, NaverApiError
+    from .input_loader import set_product_thumbnail
+
+    try:
+        naver = NaverShopClient(config.naver_client_id, config.naver_client_secret)
+    except NaverApiError:
+        return products
+
+    resolved: list[Product] = []
+    seen_names: dict[str, str] = {}  # name → image_url cache within this run
+
+    for product in products:
+        if product.thumbnail:
+            resolved.append(product)
+            continue
+
+        try:
+            if product.name in seen_names:
+                image_url = seen_names[product.name]
+            else:
+                results = naver.search(product.name, limit=1)
+                image_url = results[0].image_url if results else ""
+                seen_names[product.name] = image_url
+
+            if image_url:
+                logger.info("auto-resolved thumbnail for %s: %s", product.id, image_url)
+                product = dataclasses.replace(product, thumbnail=image_url)
+                if products_path:
+                    set_product_thumbnail(products_path, product.id, image_url)
+        except Exception:
+            logger.warning("thumbnail auto-resolve failed for %s", product.id)
+
+        resolved.append(product)
+
+    return resolved
+
+
 def build_facebook_client(config: Config, target_page: str):
     if config.facebook_api_mode == "live":
         page_id, page_access_token = config.facebook_credentials(target_page)

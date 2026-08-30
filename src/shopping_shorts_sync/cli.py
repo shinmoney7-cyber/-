@@ -13,6 +13,7 @@ from .state_store import StateStore
 from .sync import (
     build_coupang_client,
     build_instagram_caption,
+    resolve_thumbnails,
     run_deeplink_stage,
     run_facebook_stage,
     run_full_sync,
@@ -295,6 +296,8 @@ def instagram_post(input_path, page_filter, dry_run, force, preview_only, schedu
         except ValueError as exc:
             raise click.ClickException(str(exc)) from exc
 
+    products = resolve_thumbnails(products, config, products_path=input_path)
+
     if preview_only:
         from .state_store import StateStore
         store = StateStore(config.state_file_path)
@@ -409,6 +412,8 @@ def facebook_post(input_path, page_filter, dry_run, force, preview_only, schedul
             scheduled_publish_time = parse_schedule_time(schedule_str)
         except ValueError as exc:
             raise click.ClickException(str(exc)) from exc
+
+    products = resolve_thumbnails(products, config, products_path=input_path)
 
     if preview_only:
         store = StateStore(config.state_file_path)
