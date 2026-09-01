@@ -17,6 +17,17 @@ def _utcnow_iso() -> str:
 
 
 @dataclass
+class VideoRecord:
+    candidate_id: int
+    provider: str           # "higgsfield" | "topview" | "abocado"
+    job_id: str | None = None
+    video_url: str | None = None
+    status: str = "pending"  # pending | ready | error
+    generated_at: str | None = None
+    error: str | None = None
+
+
+@dataclass
 class ProductState:
     coupang_url: str
     deeplink: str | None = None
@@ -29,6 +40,7 @@ class ProductState:
     selected_script_id: int | None = None
     script_text: str | None = None
     script_applied_at: str | None = None
+    videos: list[dict] = field(default_factory=list)
 
 
 class StateStore:
@@ -113,6 +125,40 @@ class StateStore:
         state.selected_script_id = candidate_id
         state.script_text = script_text
         state.script_applied_at = _utcnow_iso()
+
+    def record_video(
+        self,
+        product: Product,
+        candidate_id: int,
+        provider: str,
+        job_id: str | None = None,
+        video_url: str | None = None,
+        status: str = "ready",
+        error: str | None = None,
+    ) -> None:
+        state = self._products.setdefault(product.id, ProductState(coupang_url=product.coupang_url))
+        rec = VideoRecord(
+            candidate_id=candidate_id,
+            provider=provider,
+            job_id=job_id,
+            video_url=video_url,
+            status=status,
+            generated_at=_utcnow_iso(),
+            error=error,
+        )
+        # Replace existing record for same candidate+provider, else append.
+        new_list = [
+            v for v in state.videos
+            if not (v.get("candidate_id") == candidate_id and v.get("provider") == provider)
+        ]
+        new_list.append(asdict(rec))
+        state.videos = new_list
+
+    def get_videos(self, product_id: str) -> list[VideoRecord]:
+        state = self._products.get(product_id)
+        if not state:
+            return []
+        return [VideoRecord(**v) for v in state.videos]
 
     def reset(self, product_id: str) -> bool:
         return self._products.pop(product_id, None) is not None

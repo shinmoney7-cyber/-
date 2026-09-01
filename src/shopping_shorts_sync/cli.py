@@ -260,5 +260,98 @@ def state_reset(product_id):
     click.echo(f"removed: {removed}")
 
 
+@cli.group()
+def video():
+    """Video generation: build prompts from scripts and record results."""
+
+
+@video.command("prompt")
+@click.option("--product-id", required=True)
+@click.option("--candidate-id", required=True, type=int)
+@click.option("--input", "input_path", required=True, type=click.Path(exists=True))
+@click.option("--duration", default=25, type=click.Choice(["15", "25", "32", "45"]), show_default=True)
+@click.option("--format", "fmt", type=click.Choice(["text", "json", "higgsfield"]), default="text")
+def video_prompt(product_id, candidate_id, input_path, duration, fmt):
+    """Print the 6-scene video prompt for a product+candidate pair."""
+    import json as _json
+    from .input_loader import load_products
+    from .script_store import default_script_path, load_script_set
+    from .video_prompt import build_prompt_set
+
+    products = {p.id: p for p in load_products(input_path)}
+    product = products.get(product_id)
+    if not product:
+        raise click.ClickException(f"product {product_id!r} not found in {input_path}")
+
+    script_path = default_script_path(product_id)
+    script_set = load_script_set(script_path)
+    candidate = script_set.get_candidate(candidate_id)
+    prompt_set = build_prompt_set(product, candidate, duration_sec=int(duration))
+
+    if fmt == "higgsfield":
+        click.echo(prompt_set.higgsfield_prompt())
+    elif fmt == "json":
+        import dataclasses
+        click.echo(_json.dumps(dataclasses.asdict(prompt_set), ensure_ascii=False, indent=2))
+    else:
+        click.echo(f"=== {product.name} | candidate {candidate_id} | {duration}s ===\n")
+        for s in prompt_set.scenes:
+            click.echo(f"[씬 {s.scene_num}] {s.label}  ({s.start_sec}~{s.end_sec}s)")
+            click.echo(f"  비주얼: {s.visual_prompt[:120]}...")
+            click.echo(f"  자막:   {s.subtitle}")
+            click.echo(f"  카메라: {s.camera}")
+            click.echo()
+
+
+@video.command("record")
+@click.option("--product-id", required=True)
+@click.option("--candidate-id", required=True, type=int)
+@click.option("--input", "input_path", required=True, type=click.Path(exists=True))
+@click.option("--provider", required=True, type=click.Choice(["higgsfield", "topview", "abocado"]))
+@click.option("--url", "video_url", required=True, help="Delivered video URL.")
+@click.option("--job-id", default=None, help="Provider job/task ID (optional).")
+def video_record(product_id, candidate_id, input_path, provider, video_url, job_id):
+    """Save a completed video URL into state.json for a product+candidate."""
+    from .input_loader import load_products
+
+    config = load_config()
+    _setup_logging(config)
+    products = {p.id: p for p in load_products(input_path)}
+    product = products.get(product_id)
+    if not product:
+        raise click.ClickException(f"product {product_id!r} not found in {input_path}")
+
+    state = StateStore(config.state_file_path)
+    state.record_video(
+        product,
+        candidate_id=candidate_id,
+        provider=provider,
+        job_id=job_id,
+        video_url=video_url,
+        status="ready",
+    )
+    state.save()
+    click.echo(f"recorded video for {product_id} candidate {candidate_id} via {provider}")
+    click.echo(f"  url: {video_url}")
+
+
+@video.command("list")
+@click.option("--product-id", required=True)
+def video_list(product_id):
+    """List all recorded video generations for a product."""
+    config = load_config()
+    state = StateStore(config.state_file_path)
+    records = state.get_videos(product_id)
+    if not records:
+        click.echo(f"no videos recorded for {product_id}")
+        return
+    for r in records:
+        click.echo(f"  candidate={r.candidate_id} provider={r.provider} status={r.status}")
+        if r.video_url:
+            click.echo(f"    url: {r.video_url}")
+        if r.error:
+            click.echo(f"    error: {r.error}")
+
+
 if __name__ == "__main__":
     cli()
