@@ -11,6 +11,7 @@ from .script_store import ScriptSet, default_script_path, load_script_set, save_
 from .scriptgen import generate_candidates, generate_hashtags
 from .search.orchestrator import match_and_upsert_product, search_all_sources, search_one_source
 from .state_store import StateStore
+from .trend import TrendHistoryStore, build_trend_client
 from .sync import (
     build_coupang_client,
     build_instagram_caption,
@@ -196,6 +197,48 @@ def search_match(keyword, source, index, target_page, category, input_path, dry_
 
     click.echo(f"matched {selected.name!r} -> {product.coupang_url}")
     click.echo(f"upserted product {product.id} into {input_path}")
+
+
+@cli.group()
+def trend():
+    """키워드 월간 검색량/경쟁정도 조회 (네이버 검색광고 API).
+
+    상품을 정하기 전, 키워드 자체의 수요를 가늠하는 용도 (아이템스카우트/
+    판다랭크류 툴과 같은 데이터 소스). `--dry-run`(기본)은 mock 데이터,
+    `--live`는 실제 API를 호출한다 -- NAVER_AD_API_KEY/NAVER_AD_SECRET_KEY/
+    NAVER_AD_CUSTOMER_ID 발급 절차는 docs/CALIBRATION.md 참고. 전월 대비
+    증가율은 TREND_HISTORY_PATH에 조회 결과를 누적 저장해서 두 번째 달
+    조회부터 표시된다.
+    """
+
+
+@trend.command("search")
+@click.option("--keywords", required=True, help="쉼표로 구분된 키워드 목록 (최대 5개, 네이버 API 제한).")
+@click.option("--dry-run/--live", "dry_run", default=True)
+def trend_search(keywords, dry_run):
+    config = load_config()
+    _setup_logging(config)
+
+    keyword_list = [k.strip() for k in keywords.split(",") if k.strip()]
+    if not keyword_list:
+        raise click.ClickException("--keywords must contain at least one keyword")
+    if len(keyword_list) > 5:
+        raise click.ClickException("네이버 검색광고 API는 한 번에 최대 5개 키워드만 지원합니다")
+
+    client = build_trend_client(config, dry_run=dry_run)
+    trends = client.search(keyword_list)
+
+    history = TrendHistoryStore(config.trend_history_path)
+    trends = history.apply(trends)
+    history.save()
+
+    for t in trends:
+        growth = f" ({t.growth_pct:+.1f}% 전월대비)" if t.growth_pct is not None else ""
+        click.echo(
+            f"{t.keyword}: 월 {t.monthly_total_count:,}회 "
+            f"(PC {t.monthly_pc_count:,} / 모바일 {t.monthly_mobile_count:,}), "
+            f"경쟁 {t.comp_idx or '-'}{growth}"
+        )
 
 
 @cli.group()

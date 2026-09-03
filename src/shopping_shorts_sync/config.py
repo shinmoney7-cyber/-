@@ -12,6 +12,7 @@ _REDACT_KEYS = {
     "youtube_api_key",
     "typecast_api_key",
     "instagram_access_token",
+    "naver_ad_secret_key",
     "tiktok_access_token",
     "instagram_harujin_access_token",
     "instagram_shinjh_access_token",
@@ -35,6 +36,11 @@ class Config:
     naver_client_secret: str
 
     youtube_api_key: str
+
+    naver_ad_api_key: str
+    naver_ad_secret_key: str
+    naver_ad_customer_id: str
+    trend_history_path: str
 
     instagram_access_token: str
     instagram_ig_user_id: str
@@ -129,6 +135,10 @@ def load_config(env_file: str | None = None) -> Config:
         naver_client_id=os.environ.get("NAVER_CLIENT_ID", ""),
         naver_client_secret=os.environ.get("NAVER_CLIENT_SECRET", ""),
         youtube_api_key=os.environ.get("YOUTUBE_API_KEY", ""),
+        naver_ad_api_key=os.environ.get("NAVER_AD_API_KEY", ""),
+        naver_ad_secret_key=os.environ.get("NAVER_AD_SECRET_KEY", ""),
+        naver_ad_customer_id=os.environ.get("NAVER_AD_CUSTOMER_ID", ""),
+        trend_history_path=os.environ.get("TREND_HISTORY_PATH", "data/trend_history.json"),
         instagram_access_token=os.environ.get("INSTAGRAM_ACCESS_TOKEN", ""),
         instagram_ig_user_id=os.environ.get("INSTAGRAM_IG_USER_ID", ""),
         typecast_api_key=os.environ.get("TYPECAST_API_KEY", ""),

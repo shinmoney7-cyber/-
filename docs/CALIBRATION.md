@@ -174,6 +174,35 @@ Typecast 공개 문서 기반 추정치이며, `typecast.ai` 접속이 막혀 �
    횟수(`_POLL_MAX_ATTEMPTS`=24회, 총 2분)가 실제 처리 시간에 충분한지
    확인.
 
+## 키워드 트렌드 조회 절차
+
+`src/shopping_shorts_sync/trend/naver_ad.py`는 네이버 검색광고(SearchAd)
+API의 키워드 도구(`/keywordstool`)를 쓴다. 이 환경은 `api.naver.com`
+접속이 막혀 있어 실제로 한 번도 호출해보지 못했다. `trend search`
+(CLI)와 대시보드 "키워드 트렌드" 페이지는 기본이 `--dry-run`(체크박스
+미체크)이라 키 없이도 mock 데이터로 흐름 확인이 가능하지만, **`--live`로
+처음 실행하기 전 반드시 아래를 확인할 것.**
+
+1. **API 키 발급**: searchad.naver.com 가입(광고주 등록, 무료) ->
+   로그인 후 우측 상단 **도구 -> API 사용 관리** -> API 사용 신청 ->
+   발급되는 세 값(계정 화면의 CUSTOMER ID, ACCESS LICENSE, SECRET KEY)을
+   각각 `NAVER_AD_CUSTOMER_ID`/`NAVER_AD_API_KEY`/`NAVER_AD_SECRET_KEY`에
+   설정. SECRET KEY는 발급 시 한 번만 표시되니 바로 복사해둘 것.
+2. `signing.py`의 서명 대상 문자열(`f"{timestamp}.{method}.{uri}"`)과
+   헤더 이름(`X-Timestamp`/`X-API-KEY`/`X-Customer`/`X-Signature`)이
+   실제 API 문서와 맞는지 실제 키 발급 후 재확인.
+3. `naver_ad.py`가 가정하는 응답 필드명(`keywordList`, `relKeyword`,
+   `monthlyPcQcCnt`, `monthlyMobileQcCnt`, `compIdx`)이 실제 응답과
+   맞는지 확인 -- 저검색량 키워드는 숫자 대신 `"< 10"` 문자열로 온다는
+   전제로 `_parse_count`를 짜뒀는데, 실제 응답에서도 그런지 확인.
+4. 한 번에 넘길 수 있는 `hintKeywords` 최대 개수(현재 5개로 가정)가
+   맞는지 확인.
+5. **전월 대비 증가율**은 네이버 API 자체가 주지 않는 값이라
+   `history_store.py`가 매 조회마다 `TREND_HISTORY_PATH`(기본
+   `data/trend_history.json`)에 이번 달 합계를 누적 저장해서 계산한다
+   -- 즉 같은 키워드를 두 번째 달에 조회해야 값이 뜨고, 첫 조회는 항상
+   "첫 조회"로 표시된다.
+
 ## 확인이 필요한 열린 질문
 
 - 쿠팡파트너스 API의 정확한 HMAC 서명 포맷(헤더 이름, 날짜 포맷, 서명 대상 문자열에 쿼리

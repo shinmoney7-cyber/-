@@ -27,6 +27,7 @@ from ..scriptgen import AD_LABEL, AD_LABEL_POSITION, COUPANG_PARTNERS_DISCLOSURE
 from ..search.orchestrator import VIDEO_SOURCES, match_and_upsert_product, search_all_sources, search_one_source
 from ..state_store import StateStore
 from ..sync import build_coupang_client, run_deeplink_stage, run_inpock_stage
+from ..trend import TrendHistoryStore, build_trend_client
 from ..tts import build_tts_client
 from ..tts.voices import VOICE_CATALOG, get_voice
 from ..video.pipeline import VideoPipelineError, generate_stitched_video
@@ -101,6 +102,25 @@ def create_app(products_path: str = "data/products.example.json") -> Flask:
             categories=CATEGORY_CHOICES,
             target_pages=TARGET_PAGE_CHOICES,
         )
+
+    @app.get("/trend")
+    def trend():
+        keywords_raw = request.args.get("keywords", "").strip()
+        live = request.args.get("live") == "on"
+        trends = []
+        error = None
+        if keywords_raw:
+            keyword_list = [k.strip() for k in keywords_raw.split(",") if k.strip()][:5]
+            config = _config()
+            try:
+                client = build_trend_client(config, dry_run=not live)
+                trends = client.search(keyword_list)
+                history = TrendHistoryStore(config.trend_history_path)
+                trends = history.apply(trends)
+                history.save()
+            except Exception as exc:
+                error = str(exc)
+        return render_template("trend.html", keywords=keywords_raw, live=live, trends=trends, error=error)
 
     @app.post("/products/new")
     def products_new():

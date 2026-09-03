@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}키워드 트렌드 - 쇼폼쇼핑{% endblock %}
+{% block content %}
+<h1>키워드 트렌드</h1>
+<p class="hint">
+  네이버 검색광고 API 기반 월간 검색량/경쟁정도 조회 (아이템스카우트류 툴과 같은 데이터 소스).
+  상품을 정하기 전 키워드 수요를 먼저 가늠하는 용도.
+</p>
+
+<form class="search-form" method="get" action="{{ url_for('trend') }}">
+  <input type="text" name="keywords" placeholder="쉼표로 구분, 최대 5개 (예: 무타공 수납장, 벽걸이 수납장)" value="{{ keywords }}" required>
+  <label class="checkbox"><input type="checkbox" name="live" {% if live %}checked{% endif %}> 실전 연동(API 키 필요)</label>
+  <button type="submit">조회</button>
+</form>
+
+{% if error %}
+<p class="notice error-notice">{{ error }}</p>
+{% elif trends %}
+<div class="panel">
+  <table class="trend-table">
+    <thead>
+      <tr>
+        <th>키워드</th>
+        <th>월간 검색량(합계)</th>
+        <th>PC</th>
+        <th>모바일</th>
+        <th>경쟁정도</th>
+        <th>전월 대비</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in trends %}
+      <tr>
+        <td>{{ t.keyword }}</td>
+        <td>{{ "{:,}".format(t.monthly_total_count) }}</td>
+        <td>{{ "{:,}".format(t.monthly_pc_count) }}</td>
+        <td>{{ "{:,}".format(t.monthly_mobile_count) }}</td>
+        <td>{{ t.comp_idx or "-" }}</td>
+        <td>
+          {% if t.growth_pct is not none %}
+            <span class="badge {% if t.growth_pct >= 0 %}ok{% endif %}">{{ "%+.1f"|format(t.growth_pct) }}%</span>
+          {% else %}
+            <span class="hint">첫 조회 (다음달부터 표시)</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% elif keywords %}
+<p class="empty">조회 결과가 없습니다.</p>
+{% endif %}
+{% endblock %}

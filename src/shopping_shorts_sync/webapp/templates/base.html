@@ -10,6 +10,7 @@
 <header class="topbar">
   <a class="brand" href="{{ url_for('dashboard') }}">쇼폼쇼핑</a>
   <a class="topbar-link" href="{{ url_for('search') }}">+ 새 상품 검색</a>
+  <a class="topbar-link" href="{{ url_for('trend') }}">키워드 트렌드</a>
 </header>
 <main class="container">
   {% block content %}{% endblock %}

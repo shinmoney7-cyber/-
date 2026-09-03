@@ -178,6 +178,10 @@ code.deeplink { display: block; word-break: break-all; background: var(--bg); pa
 .step-nav { display: flex; justify-content: space-between; margin-top: 16px; }
 .secondary-link { color: var(--accent); text-decoration: none; font-size: 0.95rem; }
 
+.trend-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.trend-table th, .trend-table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+.trend-table th { color: var(--muted); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em; }
+
 @media (max-width: 480px) {
   .container { padding: 12px; }
   .card-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
