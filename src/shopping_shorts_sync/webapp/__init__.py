@@ -14,7 +14,6 @@ from __future__ import annotations
 import dataclasses
 from pathlib import Path
 
-import requests
 from flask import Flask, redirect, render_template, request, send_from_directory, url_for
 
 from ..config import load_config
@@ -122,97 +121,6 @@ def create_app(products_path: str = "data/products.example.json") -> Flask:
             except Exception as exc:
                 error = str(exc)
         return render_template("trend.html", keywords=keywords_raw, live=live, trends=trends, error=error)
-
-    @app.get("/trend/debug")
-    def trend_debug():
-        """Temporary diagnostic route for the NAVER_AD_* "Invalid Signature"
-        issue -- masks the secret key's middle characters so it's safe to
-        view in a browser. Tries a few plausible signing-scheme variants
-        against the live API at once, since this sandbox can't reach the
-        API directly to iterate quickly. Remove once resolved."""
-        import base64
-        import hashlib
-        import hmac
-        import time as _time
-
-        from ..trend.naver_ad import API_HOST, URI
-
-        config = _config()
-        api_key = config.naver_ad_api_key.strip()
-        secret_key = config.naver_ad_secret_key.strip()
-        customer_id = config.naver_ad_customer_id.strip()
-
-        def _mask(s):
-            if len(s) <= 8:
-                return "*" * len(s)
-            return f"{s[:4]}...{s[-4:]} (len={len(s)})"
-
-        lines = [
-            f"api_key: {_mask(api_key)}",
-            f"secret_key: {_mask(secret_key)}",
-            f"customer_id: {customer_id}",
-            "",
-        ]
-
-        def _try(label, secret_bytes, message, timestamp):
-            sig = base64.b64encode(hmac.new(secret_bytes, message.encode("utf-8"), hashlib.sha256).digest()).decode(
-                "utf-8"
-            )
-            headers = {
-                "X-Timestamp": timestamp,
-                "X-API-KEY": api_key,
-                "X-Customer": customer_id,
-                "X-Signature": sig,
-            }
-            try:
-                resp = requests.get(
-                    f"{API_HOST}{URI}",
-                    params={"hintKeywords": "테스트", "showDetail": "1"},
-                    headers=headers,
-                    timeout=10,
-                )
-                lines.append(f"[{label}] message={message!r}")
-                lines.append(f"[{label}] status={resp.status_code} body={resp.text}")
-            except Exception as exc:
-                lines.append(f"[{label}] exception: {exc!r}")
-            lines.append("")
-
-        ts = str(int(_time.time() * 1000))
-        _try("A: secret as utf-8 bytes", secret_key.encode("utf-8"), f"{ts}.GET.{URI}", ts)
-
-        ts = str(int(_time.time() * 1000))
-        try:
-            decoded = base64.b64decode(secret_key)
-            _try("B: secret base64-decoded", decoded, f"{ts}.GET.{URI}", ts)
-        except Exception as exc:
-            lines.append(f"[B] base64 decode failed: {exc!r}")
-
-        ts = str(int(_time.time() * 1000))
-        _try("C: message includes customer_id", secret_key.encode("utf-8"), f"{ts}.GET.{URI}.{customer_id}", ts)
-
-        ts = str(int(_time.time() * 1000))
-        _try("D: newline-separated", secret_key.encode("utf-8"), f"{ts}\nGET\n{URI}", ts)
-
-        ts = str(int(_time.time() * 1000))
-        _try(
-            "E: uri = full original URL (api.naver.com)",
-            secret_key.encode("utf-8"),
-            f"{ts}.GET.https://api.naver.com{URI}",
-            ts,
-        )
-
-        ts = str(int(_time.time() * 1000))
-        _try(
-            "F: uri = full current URL (api.searchad.naver.com)",
-            secret_key.encode("utf-8"),
-            f"{ts}.GET.{API_HOST}{URI}",
-            ts,
-        )
-
-        ts = str(int(_time.time() * 1000))
-        _try("G: reordered method/uri/timestamp", secret_key.encode("utf-8"), f"GET.{URI}.{ts}", ts)
-
-        return "<pre>" + "\n".join(lines) + "</pre>"
 
     @app.post("/products/new")
     def products_new():

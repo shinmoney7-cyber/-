@@ -2,10 +2,9 @@
 
 Official endpoint for monthly PC/mobile search volume + competition level
 per keyword (the same underlying data source tools like 아이템스카우트/
-판다랭크 build their UI on top of). This session's network policy blocks
-api.searchad.naver.com, so this client could only be verified indirectly
-(deployed + tested from Render) -- see docs/CALIBRATION.md for what that
-testing found.
+판다랭크 build their UI on top of). Verified working end-to-end against
+the live API (deployed on Render, since this dev sandbox can't reach
+api.searchad.naver.com) -- see docs/CALIBRATION.md.
 """
 from __future__ import annotations
 

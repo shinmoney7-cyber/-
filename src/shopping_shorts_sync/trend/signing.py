@@ -3,9 +3,8 @@
 Spec per Naver's SearchAd API developer guide (searchad.naver.com ->
 도구 -> API 사용 관리): sign `f"{timestamp}.{method}.{uri}"` (uri is the
 path only, no domain/query string) with the issued secret key, base64
-the result. Has not been exercised against the live endpoint in this
-environment (api.naver.com is not reachable here) -- verify the header
-names/response shape once a real key is issued, see docs/CALIBRATION.md.
+the result. Verified working end-to-end against the live API (deployed
+on Render) -- see docs/CALIBRATION.md.
 """
 from __future__ import annotations
 

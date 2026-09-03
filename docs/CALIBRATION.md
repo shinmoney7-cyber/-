@@ -177,27 +177,39 @@ Typecast 공개 문서 기반 추정치이며, `typecast.ai` 접속이 막혀 �
 ## 키워드 트렌드 조회 절차
 
 `src/shopping_shorts_sync/trend/naver_ad.py`는 네이버 검색광고(SearchAd)
-API의 키워드 도구(`/keywordstool`)를 쓴다. 이 환경은 `api.naver.com`
-접속이 막혀 있어 실제로 한 번도 호출해보지 못했다. `trend search`
-(CLI)와 대시보드 "키워드 트렌드" 페이지는 기본이 `--dry-run`(체크박스
-미체크)이라 키 없이도 mock 데이터로 흐름 확인이 가능하지만, **`--live`로
-처음 실행하기 전 반드시 아래를 확인할 것.**
+API의 키워드 도구(`/keywordstool`)를 쓴다. 이 개발 환경은 실제 API
+호스트 접속이 막혀 있어서 여기선 한 번도 호출해볼 수 없었지만,
+**Render에 배포한 실제 서비스에서 `--live`로 검증 완료** -- 아래 내용은
+전부 실제 응답으로 확인된 사실이다.
 
-1. **API 키 발급**: searchad.naver.com 가입(광고주 등록, 무료) ->
-   로그인 후 우측 상단 **도구 -> API 사용 관리** -> API 사용 신청 ->
-   발급되는 세 값(계정 화면의 CUSTOMER ID, ACCESS LICENSE, SECRET KEY)을
+1. **API 키 발급**: searchad.naver.com(=ads.naver.com) 가입(광고주 등록,
+   무료) -> 로그인 후 좌측 메뉴 **SA API 사용 관리** -> API 사용 신청 ->
+   발급되는 세 값(화면 상단의 CUSTOMER_ID, 엑세스라이선스, 비밀키)을
    각각 `NAVER_AD_CUSTOMER_ID`/`NAVER_AD_API_KEY`/`NAVER_AD_SECRET_KEY`에
-   설정. SECRET KEY는 발급 시 한 번만 표시되니 바로 복사해둘 것.
-2. `signing.py`의 서명 대상 문자열(`f"{timestamp}.{method}.{uri}"`)과
-   헤더 이름(`X-Timestamp`/`X-API-KEY`/`X-Customer`/`X-Signature`)이
-   실제 API 문서와 맞는지 실제 키 발급 후 재확인.
-3. `naver_ad.py`가 가정하는 응답 필드명(`keywordList`, `relKeyword`,
-   `monthlyPcQcCnt`, `monthlyMobileQcCnt`, `compIdx`)이 실제 응답과
-   맞는지 확인 -- 저검색량 키워드는 숫자 대신 `"< 10"` 문자열로 온다는
-   전제로 `_parse_count`를 짜뒀는데, 실제 응답에서도 그런지 확인.
-4. 한 번에 넘길 수 있는 `hintKeywords` 최대 개수(현재 5개로 가정)가
-   맞는지 확인.
-5. **전월 대비 증가율**은 네이버 API 자체가 주지 않는 값이라
+   설정. 비밀키는 발급 시 한 번만 표시되니 바로 복사해둘 것.
+2. **호스트는 `api.searchad.naver.com`** (구 문서에 나오는
+   `api.naver.com`으로 요청해도 여기로 301 리다이렉트된다) --
+   `naver_ad.py`의 `API_HOST`가 이미 이 값으로 되어 있음.
+3. `signing.py`의 서명 대상 문자열(`f"{timestamp}.{method}.{uri}"`,
+   `uri`는 쿼리스트링 없는 경로만, 비밀키는 base64 디코딩하지 않고 그냥
+   UTF-8 문자열 바이트로 HMAC-SHA256 후 base64)과 헤더 이름
+   (`X-Timestamp`/`X-API-KEY`/`X-Customer`/`X-Signature`)이 실제로
+   `status:200`을 받는 조합임을 확인함.
+4. **자주 겪는 함정 (직접 겪음)**: Render 등 대시보드의 환경변수
+   입력창에 값을 붙여넣을 때 기존 값을 먼저 지우지 않으면 두 값이
+   이어붙어 저장된다 (예: 74자짜리 키가 148자가 됨). 이러면 API가
+   `403 Invalid Signature`를 반환하는데, 서명 계산 로직 문제로 착각하기
+   쉽다 -- 값을 바꿀 땐 항상 입력칸 전체 선택(Ctrl+A) 후 지우고
+   붙여넣을 것. 길이가 예상과 다르면 이 문제부터 의심.
+5. `naver_ad.py`가 가정하는 응답 필드명(`keywordList`, `relKeyword`,
+   `monthlyPcQcCnt`, `monthlyMobileQcCnt`, `compIdx`)은 실제 응답과
+   일치함 (예: `{"keywordList":[{"relKeyword":"...","monthlyPcQcCnt":2790,
+   "monthlyMobileQcCnt":12000,"compIdx":"중간",...}]}`). 저검색량 키워드가
+   숫자 대신 `"< 10"` 문자열로 오는 것까지는 아직 실제로 못 봄 --
+   `_parse_count`의 그 부분만 미확인 상태로 남음.
+6. 한 번에 넘길 수 있는 `hintKeywords` 최대 개수(현재 5개로 가정)가
+   맞는지는 아직 미확인.
+7. **전월 대비 증가율**은 네이버 API 자체가 주지 않는 값이라
    `history_store.py`가 매 조회마다 `TREND_HISTORY_PATH`(기본
    `data/trend_history.json`)에 이번 달 합계를 누적 저장해서 계산한다
    -- 즉 같은 키워드를 두 번째 달에 조회해야 값이 뜨고, 첫 조회는 항상
