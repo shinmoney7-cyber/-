@@ -154,11 +154,10 @@ def create_app(products_path: str = "data/products.example.json") -> Flask:
             "",
         ]
 
-        def _try(label, secret_bytes, message):
+        def _try(label, secret_bytes, message, timestamp):
             sig = base64.b64encode(hmac.new(secret_bytes, message.encode("utf-8"), hashlib.sha256).digest()).decode(
                 "utf-8"
             )
-            timestamp = message.split(".", 1)[0]
             headers = {
                 "X-Timestamp": timestamp,
                 "X-API-KEY": api_key,
@@ -179,17 +178,39 @@ def create_app(products_path: str = "data/products.example.json") -> Flask:
             lines.append("")
 
         ts = str(int(_time.time() * 1000))
-        _try("A: secret as utf-8 bytes", secret_key.encode("utf-8"), f"{ts}.GET.{URI}")
+        _try("A: secret as utf-8 bytes", secret_key.encode("utf-8"), f"{ts}.GET.{URI}", ts)
 
         ts = str(int(_time.time() * 1000))
         try:
             decoded = base64.b64decode(secret_key)
-            _try("B: secret base64-decoded", decoded, f"{ts}.GET.{URI}")
+            _try("B: secret base64-decoded", decoded, f"{ts}.GET.{URI}", ts)
         except Exception as exc:
             lines.append(f"[B] base64 decode failed: {exc!r}")
 
         ts = str(int(_time.time() * 1000))
-        _try("C: message includes customer_id", secret_key.encode("utf-8"), f"{ts}.GET.{URI}.{customer_id}")
+        _try("C: message includes customer_id", secret_key.encode("utf-8"), f"{ts}.GET.{URI}.{customer_id}", ts)
+
+        ts = str(int(_time.time() * 1000))
+        _try("D: newline-separated", secret_key.encode("utf-8"), f"{ts}\nGET\n{URI}", ts)
+
+        ts = str(int(_time.time() * 1000))
+        _try(
+            "E: uri = full original URL (api.naver.com)",
+            secret_key.encode("utf-8"),
+            f"{ts}.GET.https://api.naver.com{URI}",
+            ts,
+        )
+
+        ts = str(int(_time.time() * 1000))
+        _try(
+            "F: uri = full current URL (api.searchad.naver.com)",
+            secret_key.encode("utf-8"),
+            f"{ts}.GET.{API_HOST}{URI}",
+            ts,
+        )
+
+        ts = str(int(_time.time() * 1000))
+        _try("G: reordered method/uri/timestamp", secret_key.encode("utf-8"), f"GET.{URI}.{ts}", ts)
 
         return "<pre>" + "\n".join(lines) + "</pre>"
 
