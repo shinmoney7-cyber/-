@@ -3,9 +3,9 @@
 Official endpoint for monthly PC/mobile search volume + competition level
 per keyword (the same underlying data source tools like 아이템스카우트/
 판다랭크 build their UI on top of). This session's network policy blocks
-api.naver.com, so this client has not been exercised against the live
-endpoint -- verify the response field names once a real key is issued,
-see docs/CALIBRATION.md.
+api.searchad.naver.com, so this client could only be verified indirectly
+(deployed + tested from Render) -- see docs/CALIBRATION.md for what that
+testing found.
 """
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ import requests
 from .models import KeywordTrend
 from .signing import build_headers
 
-API_HOST = "https://api.naver.com"
+API_HOST = "https://api.searchad.naver.com"
 URI = "/keywordstool"
 
 
@@ -42,7 +42,8 @@ class NaverAdKeywordClient:
             headers=headers,
             timeout=self.timeout,
         )
-        response.raise_for_status()
+        if not response.ok:
+            raise NaverAdApiError(f"{response.status_code} from {URI}: {response.text}")
         body = response.json()
 
         results = []
