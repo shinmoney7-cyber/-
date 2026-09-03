@@ -29,6 +29,22 @@ class ProductState:
     selected_script_id: int | None = None
     script_text: str | None = None
     script_applied_at: str | None = None
+    voice_audio_url: str | None = None
+    voice_actor_id: str | None = None
+    voice_generated_at: str | None = None
+    stitched_video_path: str | None = None
+    stitched_video_source_urls: list = field(default_factory=list)
+    stitched_video_generated_at: str | None = None
+    approved_at: str | None = None
+    tiktok_post_url: str | None = None
+    tiktok_published_at: str | None = None
+    tiktok_publish_error: str | None = None
+    youtube_post_url: str | None = None
+    youtube_published_at: str | None = None
+    youtube_publish_error: str | None = None
+    instagram_post_url: str | None = None
+    instagram_published_at: str | None = None
+    instagram_publish_error: str | None = None
     instagram_media_id: str | None = None
     instagram_posted_at: str | None = None
     instagram_scheduled_publish_time: int | None = None
@@ -119,6 +135,51 @@ class StateStore:
         state.selected_script_id = candidate_id
         state.script_text = script_text
         state.script_applied_at = _utcnow_iso()
+
+    def record_voice(self, product_id: str, audio_url: str, actor_id: str) -> None:
+        """"음성으로 바로 다음 자동연동" step: records the generated TTS
+        audio for the product's currently-selected script. Requires the
+        product to already have an entry (i.e. a script was selected)."""
+        state = self._products[product_id]
+        state.voice_audio_url = audio_url
+        state.voice_actor_id = actor_id
+        state.voice_generated_at = _utcnow_iso()
+
+    def record_video(self, product_id: str, video_path: str, source_urls: list[str]) -> None:
+        """"영상중 3개를 선택하면 생성 클릭하면 바로...짜집기를 완성" step:
+        records the stitched preview video path for this product."""
+        state = self._products.setdefault(product_id, ProductState(coupang_url=""))
+        state.stitched_video_path = video_path
+        state.stitched_video_source_urls = list(source_urls)
+        state.stitched_video_generated_at = _utcnow_iso()
+
+    def record_publish(self, product_id: str, platform: str, result) -> None:
+        """Records the outcome of a `publish` stage call (TikTok/YouTube/
+        Instagram) for this product. `result` is a publisher.PublishResult
+        (duck-typed here to avoid a state_store -> publisher import)."""
+        if platform not in ("tiktok", "youtube", "instagram"):
+            raise ValueError(f"unknown publish platform {platform!r}")
+
+        state = self._products.setdefault(product_id, ProductState(coupang_url=""))
+        if result.success:
+            setattr(state, f"{platform}_post_url", result.post_url)
+            setattr(state, f"{platform}_published_at", _utcnow_iso())
+            setattr(state, f"{platform}_publish_error", None)
+        else:
+            setattr(state, f"{platform}_publish_error", result.error)
+
+    def approve(self, product: Product) -> None:
+        """Owner's final "확인키": video/thumbnail/script reviewed together
+        and approved for deployment. Requires a script already selected."""
+        state = self._products.get(product.id)
+        if state is None or state.selected_script_id is None:
+            raise ValueError(f"product {product.id!r} has no selected script yet -- nothing to approve")
+        state.approved_at = _utcnow_iso()
+
+    def unapprove(self, product_id: str) -> None:
+        state = self._products.get(product_id)
+        if state is not None:
+            state.approved_at = None
 
     def needs_instagram_post(self, product: Product) -> bool:
         state = self._products.get(product.id)

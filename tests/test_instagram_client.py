@@ -1,86 +1,80 @@
-from __future__ import annotations
-
-import datetime
-import time
-
 import pytest
 
-from shopping_shorts_sync.instagram.client import (
-    SCHEDULE_MIN_SECONDS,
-    PostResult,
-    next_scheduled_timestamp,
-    parse_schedule_time,
+from shopping_shorts_sync.search.instagram import (
+    GRAPH_API_BASE,
+    HASHTAG_SEARCH_URL,
+    InstagramApiError,
+    InstagramSearchClient,
 )
-from shopping_shorts_sync.instagram.mock_client import MockInstagramClient
 
 
-class TestPostResult:
-    def test_ok_when_media_id_set(self):
-        r = PostResult(product_id="p1", media_id="123")
-        assert r.ok is True
+def test_search_parses_video_results(requests_mock):
+    requests_mock.get(HASHTAG_SEARCH_URL, json={"data": [{"id": "hash123"}]})
+    requests_mock.get(
+        f"{GRAPH_API_BASE}/hash123/top_media",
+        json={
+            "data": [
+                {
+                    "id": "1",
+                    "caption": "무선청소기 리뷰\n더보기",
+                    "media_type": "VIDEO",
+                    "thumbnail_url": "https://example.com/thumb.jpg",
+                    "permalink": "https://www.instagram.com/p/abc/",
+                }
+            ]
+        },
+    )
 
-    def test_not_ok_when_error(self):
-        r = PostResult(product_id="p1", media_id=None, error="fail")
-        assert r.ok is False
+    client = InstagramSearchClient(access_token="token", ig_user_id="ig123")
+    results = client.search("무선 청소기")
 
-    def test_is_scheduled(self):
-        r = PostResult(product_id="p1", media_id="123", scheduled_publish_time=9999999999)
-        assert r.is_scheduled is True
-
-    def test_not_scheduled_when_none(self):
-        r = PostResult(product_id="p1", media_id="123")
-        assert r.is_scheduled is False
-
-
-class TestParseScheduleTime:
-    def test_valid_future_time(self):
-        kst = datetime.timezone(datetime.timedelta(hours=9))
-        future = datetime.datetime.now(kst) + datetime.timedelta(hours=1)
-        value = future.strftime("%Y-%m-%d %H:%M")
-        ts = parse_schedule_time(value)
-        assert isinstance(ts, int)
-        assert ts > int(time.time())
-
-    def test_too_soon_raises(self):
-        kst = datetime.timezone(datetime.timedelta(hours=9))
-        soon = datetime.datetime.now(kst) + datetime.timedelta(minutes=5)
-        with pytest.raises(ValueError, match="10 minutes"):
-            parse_schedule_time(soon.strftime("%Y-%m-%d %H:%M"))
-
-    def test_invalid_format_raises(self):
-        with pytest.raises(ValueError):
-            parse_schedule_time("not-a-date")
+    assert len(results) == 1
+    assert results[0].source == "instagram"
+    assert results[0].name == "무선청소기 리뷰"
+    assert results[0].image_url == "https://example.com/thumb.jpg"
+    assert results[0].product_url == "https://www.instagram.com/p/abc/"
 
 
-class TestNextScheduledTimestamp:
-    def test_returns_future_timestamp(self):
-        ts = next_scheduled_timestamp(hour=9, minute=0)
-        now = int(time.time())
-        assert ts > now + SCHEDULE_MIN_SECONDS - 60  # within 1 min tolerance
+def test_search_filters_out_non_video_media(requests_mock):
+    requests_mock.get(HASHTAG_SEARCH_URL, json={"data": [{"id": "hash123"}]})
+    requests_mock.get(
+        f"{GRAPH_API_BASE}/hash123/top_media",
+        json={
+            "data": [
+                {"id": "1", "media_type": "IMAGE", "permalink": "https://instagram.com/p/img/"},
+                {"id": "2", "media_type": "VIDEO", "permalink": "https://instagram.com/p/vid/", "caption": "영상"},
+            ]
+        },
+    )
 
-    def test_different_hours_give_different_results(self):
-        ts9 = next_scheduled_timestamp(hour=9)
-        ts10 = next_scheduled_timestamp(hour=10)
-        assert ts10 > ts9 or abs(ts10 - ts9) == 3600
+    client = InstagramSearchClient(access_token="token", ig_user_id="ig123")
+    results = client.search("청소기")
+
+    assert len(results) == 1
+    assert results[0].product_url == "https://instagram.com/p/vid/"
 
 
-class TestMockInstagramClient:
-    def test_post_image_returns_ok(self):
-        client = MockInstagramClient()
-        result = client.post_image("product-1", "https://example.com/img.jpg", "caption")
-        assert result.ok
-        assert result.media_id.startswith("mock-ig-")
-        assert "instagram.com" in result.permalink
+def test_search_respects_limit(requests_mock):
+    requests_mock.get(HASHTAG_SEARCH_URL, json={"data": [{"id": "hash123"}]})
+    requests_mock.get(
+        f"{GRAPH_API_BASE}/hash123/top_media",
+        json={
+            "data": [
+                {"id": str(i), "media_type": "VIDEO", "permalink": f"https://instagram.com/p/{i}/"}
+                for i in range(10)
+            ]
+        },
+    )
+    client = InstagramSearchClient(access_token="token", ig_user_id="ig123")
+    assert len(client.search("x", limit=3)) == 3
 
-    def test_deterministic_media_id(self):
-        client = MockInstagramClient()
-        r1 = client.post_image("product-1", "https://example.com/img.jpg", "caption")
-        r2 = client.post_image("product-1", "https://example.com/img.jpg", "caption")
-        assert r1.media_id == r2.media_id
 
-    def test_scheduled_publish_time_propagated(self):
-        client = MockInstagramClient()
-        ts = int(time.time()) + 3600
-        result = client.post_image("p", "https://img.com/x.jpg", "cap", scheduled_publish_time=ts)
-        assert result.scheduled_publish_time == ts
-        assert result.is_scheduled
+def test_no_hashtag_match_returns_empty(requests_mock):
+    requests_mock.get(HASHTAG_SEARCH_URL, json={"data": []})
+    client = InstagramSearchClient(access_token="token", ig_user_id="ig123")
+    assert client.search("존재하지않는해시태그") == []
+
+
+def test_missing_credentials_raises():
+    with pytest.raises(InstagramApiError):
+        InstagramSearchClient(access_token="", ig_user_id="")

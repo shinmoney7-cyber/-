@@ -9,6 +9,11 @@ _REDACT_KEYS = {
     "coupang_secret_key",
     "coupang_access_key",
     "inpock_password",
+    "youtube_api_key",
+    "typecast_api_key",
+    "instagram_access_token",
+    "naver_ad_secret_key",
+    "tiktok_access_token",
     "instagram_harujin_access_token",
     "instagram_shinjh_access_token",
     "facebook_harujin_page_access_token",
@@ -29,6 +34,33 @@ class Config:
 
     naver_client_id: str
     naver_client_secret: str
+
+    youtube_api_key: str
+
+    naver_ad_api_key: str
+    naver_ad_secret_key: str
+    naver_ad_customer_id: str
+    trend_history_path: str
+    rank_history_path: str
+
+    instagram_access_token: str
+    instagram_ig_user_id: str
+
+    typecast_api_key: str
+    typecast_mode: str
+    typecast_actor_id: str
+    typecast_speed: float
+
+    video_mode: str
+    video_output_dir: str
+    video_clip_seconds: float
+    ytdlp_path: str
+    ffmpeg_path: str
+
+    tiktok_access_token: str
+    youtube_client_secrets_file: str
+    youtube_token_file: str
+    public_base_url: str
 
     instagram_harujin_user_id: str
     instagram_harujin_access_token: str
@@ -55,6 +87,7 @@ class Config:
 
     playwright_chromium_path: str
     state_file_path: str
+    scripts_dir: str
     log_level: str
 
     def facebook_credentials(self, target_page: str) -> tuple[str, str]:
@@ -102,6 +135,27 @@ def load_config(env_file: str | None = None) -> Config:
         inpock_headless=os.environ.get("INPOCK_HEADLESS", "true").strip().lower() in ("1", "true", "yes"),
         naver_client_id=os.environ.get("NAVER_CLIENT_ID", ""),
         naver_client_secret=os.environ.get("NAVER_CLIENT_SECRET", ""),
+        youtube_api_key=os.environ.get("YOUTUBE_API_KEY", ""),
+        naver_ad_api_key=os.environ.get("NAVER_AD_API_KEY", ""),
+        naver_ad_secret_key=os.environ.get("NAVER_AD_SECRET_KEY", ""),
+        naver_ad_customer_id=os.environ.get("NAVER_AD_CUSTOMER_ID", ""),
+        trend_history_path=os.environ.get("TREND_HISTORY_PATH", "data/trend_history.json"),
+        rank_history_path=os.environ.get("RANK_HISTORY_PATH", "data/rank_history.json"),
+        instagram_access_token=os.environ.get("INSTAGRAM_ACCESS_TOKEN", ""),
+        instagram_ig_user_id=os.environ.get("INSTAGRAM_IG_USER_ID", ""),
+        typecast_api_key=os.environ.get("TYPECAST_API_KEY", ""),
+        typecast_mode=os.environ.get("TYPECAST_MODE", "mock"),
+        typecast_actor_id=os.environ.get("TYPECAST_ACTOR_ID", "예슬"),
+        typecast_speed=float(os.environ.get("TYPECAST_SPEED", "1.2")),
+        video_mode=os.environ.get("VIDEO_MODE", "mock"),
+        video_output_dir=os.environ.get("VIDEO_OUTPUT_DIR", "data/videos"),
+        video_clip_seconds=float(os.environ.get("VIDEO_CLIP_SECONDS", "5.0")),
+        ytdlp_path=os.environ.get("YTDLP_PATH", "yt-dlp"),
+        ffmpeg_path=os.environ.get("FFMPEG_PATH", "ffmpeg"),
+        tiktok_access_token=os.environ.get("TIKTOK_ACCESS_TOKEN", ""),
+        youtube_client_secrets_file=os.environ.get("YOUTUBE_CLIENT_SECRETS_FILE", ""),
+        youtube_token_file=os.environ.get("YOUTUBE_TOKEN_FILE", "data/youtube_token.json"),
+        public_base_url=os.environ.get("PUBLIC_BASE_URL", ""),
         instagram_harujin_user_id=os.environ.get("INSTAGRAM_HARUJIN_USER_ID", ""),
         instagram_harujin_access_token=os.environ.get("INSTAGRAM_HARUJIN_ACCESS_TOKEN", ""),
         instagram_shinjh_user_id=os.environ.get("INSTAGRAM_SHINJH_USER_ID", ""),
@@ -131,5 +185,6 @@ def load_config(env_file: str | None = None) -> Config:
         facebook_api_mode=os.environ.get("FACEBOOK_API_MODE", "mock"),
         playwright_chromium_path=os.environ.get("PLAYWRIGHT_CHROMIUM_PATH", "/opt/pw-browsers/chromium"),
         state_file_path=os.environ.get("STATE_FILE_PATH", "data/state.json"),
+        scripts_dir=os.environ.get("SCRIPTS_DIR", "data/scripts"),
         log_level=os.environ.get("LOG_LEVEL", "INFO"),
     )

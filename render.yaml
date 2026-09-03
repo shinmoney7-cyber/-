@@ -1,0 +1,53 @@
+services:
+  - type: web
+    name: shopping-shorts-sync
+    env: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt && pip install ."
+    startCommand: "gunicorn wsgi:app --bind 0.0.0.0:$PORT"
+    # Free 플랜은 영구 디스크(유료 기능)를 못 쓴다 -- PRODUCTS_PATH/
+    # STATE_FILE_PATH/SCRIPTS_DIR/TREND_HISTORY_PATH/RANK_HISTORY_PATH를 그냥 config.py 기본값
+    # (저장소 안 data/ 경로)으로 둬서, 재배포/재시작 때마다 커밋된 내용으로
+    # 리셋된다는 전제로 돌아간다. 실제 운영 데이터가 쌓이기 시작하면
+    # starter 플랜 + disk 블록(git 히스토리에 남아있음)으로 다시 바꿀 것.
+    envVars:
+      - key: COUPANG_API_MODE
+        value: mock
+      - key: TYPECAST_MODE
+        value: mock
+      - key: LOG_LEVEL
+        value: INFO
+      # PUBLIC_BASE_URL: this service's own public URL, e.g.
+      # https://shopping-shorts-sync.onrender.com -- needed by the
+      # Instagram publish stage to build a public HTTPS video URL from the
+      # /videos/<id>/<file> route (Instagram won't accept a local path).
+      - key: PUBLIC_BASE_URL
+        sync: false
+      # 실제 키가 준비되면 Render 대시보드 Environment 탭에서 값만 채우고
+      # 위 두 MODE를 live로 바꾸면 된다. Render에는 절대 시크릿을 커밋하지 말 것.
+      - key: COUPANG_ACCESS_KEY
+        sync: false
+      - key: COUPANG_SECRET_KEY
+        sync: false
+      - key: NAVER_CLIENT_ID
+        sync: false
+      - key: NAVER_CLIENT_SECRET
+        sync: false
+      - key: NAVER_AD_API_KEY
+        sync: false
+      - key: NAVER_AD_SECRET_KEY
+        sync: false
+      - key: NAVER_AD_CUSTOMER_ID
+        sync: false
+      - key: YOUTUBE_API_KEY
+        sync: false
+      - key: TYPECAST_API_KEY
+        sync: false
+      - key: TIKTOK_ACCESS_TOKEN
+        sync: false
+      - key: YOUTUBE_CLIENT_SECRETS_FILE
+        sync: false
+      - key: INSTAGRAM_ACCESS_TOKEN
+        sync: false
+      - key: INSTAGRAM_IG_USER_ID
+        sync: false
