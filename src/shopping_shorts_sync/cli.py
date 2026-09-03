@@ -11,7 +11,7 @@ from .script_store import ScriptSet, default_script_path, load_script_set, save_
 from .scriptgen import generate_candidates, generate_hashtags
 from .search.orchestrator import match_and_upsert_product, search_all_sources, search_one_source
 from .state_store import StateStore
-from .trend import TrendHistoryStore, build_trend_client
+from .trend import CATEGORIES, RankHistoryStore, TrendHistoryStore, build_category_rank_client, build_trend_client
 from .sync import (
     build_coupang_client,
     build_instagram_caption,
@@ -239,6 +239,43 @@ def trend_search(keywords, dry_run):
             f"(PC {t.monthly_pc_count:,} / 모바일 {t.monthly_mobile_count:,}), "
             f"경쟁 {t.comp_idx or '-'}{growth}"
         )
+
+
+@trend.command("category")
+@click.option("--category-id", required=True, type=click.Choice(sorted(CATEGORIES)), help="trend.categories.CATEGORIES 참고.")
+@click.option("--date", "date_str", default=None, help="YYYY-MM-DD, 기본은 어제.")
+@click.option("--count", default=20, show_default=True)
+@click.option("--dry-run/--live", "dry_run", default=True)
+def trend_category(category_id, date_str, count, dry_run):
+    """분야별 인기검색어 순위 조회 (네이버 데이터랩 쇼핑인사이트).
+
+    카테고리 하나를 통째로 보면서 "뭐가 뜨고 있나"를 가늠하는 용도 --
+    `trend search`가 개별 키워드 수요를 보는 것과 상호보완적이다. 전일
+    대비 순위 변동은 RANK_HISTORY_PATH에 매일 스냅샷을 쌓아서 계산하므로
+    이틀 연속 조회해야 표시된다.
+    """
+    import datetime as _datetime
+
+    config = load_config()
+    _setup_logging(config)
+
+    target_date = _datetime.date.fromisoformat(date_str) if date_str else _datetime.date.today() - _datetime.timedelta(days=1)
+
+    client = build_category_rank_client(config, dry_run=dry_run)
+    ranks = client.category_rank(category_id, target_date=target_date, count=count)
+
+    history = RankHistoryStore(config.rank_history_path)
+    ranks = history.apply(category_id, target_date.isoformat(), ranks)
+    history.save()
+
+    click.echo(f"-- {CATEGORIES[category_id]} ({target_date.isoformat()}) --")
+    for r in ranks:
+        delta = ""
+        if r.rank_delta is not None:
+            delta = f" (전일 {r.prev_rank}위, {r.rank_delta:+d})" if r.rank_delta != 0 else " (전일과 동일)"
+        else:
+            delta = " (첫 조회)"
+        click.echo(f"{r.rank}. {r.keyword}{delta}")
 
 
 @cli.group()

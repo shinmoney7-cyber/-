@@ -13,6 +13,8 @@ def client(tmp_path, monkeypatch):
     monkeypatch.setenv("STATE_FILE_PATH", str(tmp_path / "state.json"))
     monkeypatch.setenv("SCRIPTS_DIR", str(tmp_path / "scripts"))
     monkeypatch.setenv("VIDEO_OUTPUT_DIR", str(tmp_path / "videos"))
+    monkeypatch.setenv("TREND_HISTORY_PATH", str(tmp_path / "trend_history.json"))
+    monkeypatch.setenv("RANK_HISTORY_PATH", str(tmp_path / "rank_history.json"))
     monkeypatch.setenv("COUPANG_API_MODE", "mock")
 
     app = create_app(products_path=str(products_path))
@@ -31,6 +33,25 @@ def test_search_shows_mock_results(client):
     resp = client.get("/search?keyword=%EB%AC%B4%EC%84%A0%EC%B2%AD%EC%86%8C%EA%B8%B0")
     assert resp.status_code == 200
     assert "naver".encode() in resp.data
+
+
+def test_trend_page_shows_mock_results(client):
+    resp = client.get("/trend?keywords=%EB%AC%B4%ED%83%80%EA%B3%B5+%EC%88%98%EB%82%A9%EC%9E%A5")
+    assert resp.status_code == 200
+    assert "월간 검색량".encode() in resp.data
+
+
+def test_trend_category_page_shows_mock_ranks(client):
+    resp = client.get("/trend/category?category_id=50000005")
+    assert resp.status_code == 200
+    assert "식품".encode() in resp.data
+    assert "순위".encode() in resp.data
+
+
+def test_trend_category_page_without_selection_shows_form_only(client):
+    resp = client.get("/trend/category")
+    assert resp.status_code == 200
+    assert "조회 결과가 없습니다".encode() not in resp.data
 
 
 def test_full_flow_new_product_through_approve(client):

@@ -27,7 +27,7 @@ from ..scriptgen import AD_LABEL, AD_LABEL_POSITION, COUPANG_PARTNERS_DISCLOSURE
 from ..search.orchestrator import VIDEO_SOURCES, match_and_upsert_product, search_all_sources, search_one_source
 from ..state_store import StateStore
 from ..sync import build_coupang_client, run_deeplink_stage, run_inpock_stage
-from ..trend import TrendHistoryStore, build_trend_client
+from ..trend import CATEGORIES, RankHistoryStore, TrendHistoryStore, build_category_rank_client, build_trend_client
 from ..tts import build_tts_client
 from ..tts.voices import VOICE_CATALOG, get_voice
 from ..video.pipeline import VideoPipelineError, generate_stitched_video
@@ -121,6 +121,38 @@ def create_app(products_path: str = "data/products.example.json") -> Flask:
             except Exception as exc:
                 error = str(exc)
         return render_template("trend.html", keywords=keywords_raw, live=live, trends=trends, error=error)
+
+    @app.get("/trend/category")
+    def trend_category():
+        import datetime as _datetime
+
+        category_id = request.args.get("category_id", "").strip()
+        live = request.args.get("live") == "on"
+        ranks = []
+        error = None
+        category_name = None
+        target_date = _datetime.date.today() - _datetime.timedelta(days=1)
+        if category_id:
+            category_name = CATEGORIES.get(category_id)
+            config = _config()
+            try:
+                client = build_category_rank_client(config, dry_run=not live)
+                ranks = client.category_rank(category_id, target_date=target_date)
+                history = RankHistoryStore(config.rank_history_path)
+                ranks = history.apply(category_id, target_date.isoformat(), ranks)
+                history.save()
+            except Exception as exc:
+                error = str(exc)
+        return render_template(
+            "trend_category.html",
+            categories=CATEGORIES,
+            category_id=category_id,
+            category_name=category_name,
+            live=live,
+            ranks=ranks,
+            error=error,
+            target_date=target_date.isoformat(),
+        )
 
     @app.post("/products/new")
     def products_new():

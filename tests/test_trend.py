@@ -1,11 +1,23 @@
 import json
+from datetime import date
 
 import pytest
 
-from shopping_shorts_sync.trend import NaverAdApiError, NaverAdKeywordClient, TrendHistoryStore, build_trend_client
+from shopping_shorts_sync.trend import (
+    NaverAdApiError,
+    NaverAdKeywordClient,
+    NaverDatalabApiError,
+    NaverDatalabCategoryRankClient,
+    RankHistoryStore,
+    TrendHistoryStore,
+    build_category_rank_client,
+    build_trend_client,
+)
 from shopping_shorts_sync.trend.history_store import _prev_month, current_month
-from shopping_shorts_sync.trend.mock import MockKeywordTrendClient
+from shopping_shorts_sync.trend.mock import MockCategoryRankClient, MockKeywordTrendClient
+from shopping_shorts_sync.trend.models import CategoryKeywordRank
 from shopping_shorts_sync.trend.naver_ad import API_HOST, URI, _parse_count
+from shopping_shorts_sync.trend.naver_datalab import API_URL as DATALAB_API_URL
 from shopping_shorts_sync.trend.signing import build_headers, build_signature
 
 
@@ -170,3 +182,127 @@ def test_build_trend_client_live_requires_credentials():
     config = dataclasses.replace(config, naver_ad_api_key="", naver_ad_secret_key="", naver_ad_customer_id="")
     with pytest.raises(NaverAdApiError):
         build_trend_client(config, dry_run=False)
+
+
+# ---------------------------------------------------------------------
+# category rank: mock client
+# ---------------------------------------------------------------------
+
+
+def test_mock_category_rank_client_is_deterministic_per_day():
+    client = MockCategoryRankClient()
+    d = date(2026, 9, 3)
+    first = client.category_rank("50000005", target_date=d)
+    second = client.category_rank("50000005", target_date=d)
+    assert first == second
+
+
+def test_mock_category_rank_client_ranks_are_sequential():
+    client = MockCategoryRankClient()
+    results = client.category_rank("50000005", target_date=date(2026, 9, 3), count=5)
+    assert [r.rank for r in results] == [1, 2, 3, 4, 5]
+    assert len(results) == 5
+
+
+# ---------------------------------------------------------------------
+# category rank: naver_datalab live client (requests_mock)
+# ---------------------------------------------------------------------
+
+
+def test_naver_datalab_client_requires_credentials():
+    with pytest.raises(NaverDatalabApiError):
+        NaverDatalabCategoryRankClient(client_id="", client_secret="")
+
+
+def test_naver_datalab_client_parses_ranks(requests_mock):
+    requests_mock.post(
+        DATALAB_API_URL,
+        json={
+            "categoryCode": "50000005",
+            "categoryName": "식품",
+            "ranks": [
+                {"rank": 1, "keyword": "샤인머스캣"},
+                {"rank": 2, "keyword": "홍삼스틱"},
+            ],
+        },
+    )
+    client = NaverDatalabCategoryRankClient(client_id="id", client_secret="secret")
+    results = client.category_rank("50000005", target_date=date(2026, 9, 2))
+
+    assert [r.keyword for r in results] == ["샤인머스캣", "홍삼스틱"]
+    assert [r.rank for r in results] == [1, 2]
+
+    sent_headers = requests_mock.last_request.headers
+    assert sent_headers["X-Naver-Client-Id"] == "id"
+    assert sent_headers["X-Naver-Client-Secret"] == "secret"
+
+    sent_body = requests_mock.last_request.json()
+    assert sent_body["category"] == "50000005"
+    assert sent_body["startDate"] == sent_body["endDate"] == "2026-09-02"
+
+
+def test_naver_datalab_client_raises_on_error_response(requests_mock):
+    requests_mock.post(DATALAB_API_URL, status_code=400, text='{"errorMessage":"bad category"}')
+    client = NaverDatalabCategoryRankClient(client_id="id", client_secret="secret")
+    with pytest.raises(NaverDatalabApiError):
+        client.category_rank("bad-category")
+
+
+# ---------------------------------------------------------------------
+# rank history store (전일 대비 순위 변동)
+# ---------------------------------------------------------------------
+
+
+def test_rank_history_store_first_query_has_no_prev_rank(tmp_path):
+    store = RankHistoryStore(tmp_path / "ranks.json")
+    ranks = [CategoryKeywordRank(rank=1, keyword="샤인머스캣")]
+    enriched = store.apply("50000005", "2026-09-03", ranks)
+    assert enriched[0].prev_rank is None
+    assert enriched[0].rank_delta is None
+
+
+def test_rank_history_store_computes_delta_on_next_day(tmp_path):
+    path = tmp_path / "ranks.json"
+    store = RankHistoryStore(path)
+    store.record("50000005", "2026-09-02", [CategoryKeywordRank(rank=10, keyword="샤인머스캣")])
+    store.save()
+
+    reloaded = RankHistoryStore(path)
+    today_ranks = [CategoryKeywordRank(rank=3, keyword="샤인머스캣")]
+    enriched = reloaded.apply("50000005", "2026-09-03", today_ranks)
+
+    assert enriched[0].prev_rank == 10
+    assert enriched[0].rank_delta == 7  # 10위 -> 3위 = 7계단 상승
+
+
+def test_rank_history_store_persists_across_instances(tmp_path):
+    path = tmp_path / "ranks.json"
+    store = RankHistoryStore(path)
+    store.record("50000005", "2026-09-02", [CategoryKeywordRank(rank=1, keyword="키워드1")])
+    store.save()
+
+    assert json.loads(path.read_text())["50000005"]["2026-09-02"] == {"키워드1": 1}
+
+
+# ---------------------------------------------------------------------
+# category rank factory
+# ---------------------------------------------------------------------
+
+
+def test_build_category_rank_client_dry_run_returns_mock():
+    from shopping_shorts_sync.config import load_config
+
+    config = load_config(env_file="/nonexistent/.env")
+    client = build_category_rank_client(config, dry_run=True)
+    assert isinstance(client, MockCategoryRankClient)
+
+
+def test_build_category_rank_client_live_requires_credentials():
+    import dataclasses
+
+    from shopping_shorts_sync.config import load_config
+
+    config = load_config(env_file="/nonexistent/.env")
+    config = dataclasses.replace(config, naver_client_id="", naver_client_secret="")
+    with pytest.raises(NaverDatalabApiError):
+        build_category_rank_client(config, dry_run=False)

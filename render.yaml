@@ -6,7 +6,7 @@ services:
     buildCommand: "pip install -r requirements.txt && pip install ."
     startCommand: "gunicorn wsgi:app --bind 0.0.0.0:$PORT"
     # Free 플랜은 영구 디스크(유료 기능)를 못 쓴다 -- PRODUCTS_PATH/
-    # STATE_FILE_PATH/SCRIPTS_DIR/TREND_HISTORY_PATH를 그냥 config.py 기본값
+    # STATE_FILE_PATH/SCRIPTS_DIR/TREND_HISTORY_PATH/RANK_HISTORY_PATH를 그냥 config.py 기본값
     # (저장소 안 data/ 경로)으로 둬서, 재배포/재시작 때마다 커밋된 내용으로
     # 리셋된다는 전제로 돌아간다. 실제 운영 데이터가 쌓이기 시작하면
     # starter 플랜 + disk 블록(git 히스토리에 남아있음)으로 다시 바꿀 것.

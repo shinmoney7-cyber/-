@@ -1,6 +1,7 @@
 .env
 data/state.json
 data/trend_history.json
+data/rank_history.json
 debug/
 __pycache__/
 *.pyc

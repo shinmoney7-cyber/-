@@ -41,6 +41,7 @@ class Config:
     naver_ad_secret_key: str
     naver_ad_customer_id: str
     trend_history_path: str
+    rank_history_path: str
 
     instagram_access_token: str
     instagram_ig_user_id: str
@@ -139,6 +140,7 @@ def load_config(env_file: str | None = None) -> Config:
         naver_ad_secret_key=os.environ.get("NAVER_AD_SECRET_KEY", ""),
         naver_ad_customer_id=os.environ.get("NAVER_AD_CUSTOMER_ID", ""),
         trend_history_path=os.environ.get("TREND_HISTORY_PATH", "data/trend_history.json"),
+        rank_history_path=os.environ.get("RANK_HISTORY_PATH", "data/rank_history.json"),
         instagram_access_token=os.environ.get("INSTAGRAM_ACCESS_TOKEN", ""),
         instagram_ig_user_id=os.environ.get("INSTAGRAM_IG_USER_ID", ""),
         typecast_api_key=os.environ.get("TYPECAST_API_KEY", ""),

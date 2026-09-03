@@ -14,3 +14,17 @@ class KeywordTrend:
     @property
     def monthly_total_count(self) -> int:
         return self.monthly_pc_count + self.monthly_mobile_count
+
+
+@dataclass(frozen=True)
+class CategoryKeywordRank:
+    rank: int
+    keyword: str
+    prev_rank: int | None = None  # 어제(직전 조회) 순위, 히스토리가 있을 때만
+
+    @property
+    def rank_delta(self) -> int | None:
+        """양수면 순위 상승(예: 어제 10위 -> 오늘 3위 = +7)."""
+        if self.prev_rank is None:
+            return None
+        return self.prev_rank - self.rank

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}분야별 인기검색어 - 쇼폼쇼핑{% endblock %}
+{% block content %}
+<h1>분야별 인기검색어</h1>
+<p class="hint">
+  네이버 데이터랩 쇼핑인사이트 기반 분야별 TOP 순위 (기준일: {{ target_date }}).
+  전일 대비 순위 변동은 이틀 연속 조회해야 표시된다.
+</p>
+
+<form class="search-form" method="get" action="{{ url_for('trend_category') }}">
+  <select name="category_id" required>
+    <option value="" disabled {% if not category_id %}selected{% endif %}>카테고리 선택</option>
+    {% for id, name in categories.items() %}
+    <option value="{{ id }}" {% if id == category_id %}selected{% endif %}>{{ name }}</option>
+    {% endfor %}
+  </select>
+  <label class="checkbox"><input type="checkbox" name="live" {% if live %}checked{% endif %}> 실전 연동(API 키 필요)</label>
+  <button type="submit">조회</button>
+</form>
+
+{% if error %}
+<p class="notice error-notice">{{ error }}</p>
+{% elif ranks %}
+<div class="panel">
+  <h2 class="source-heading">{{ category_name }}</h2>
+  <table class="trend-table">
+    <thead>
+      <tr>
+        <th>순위</th>
+        <th>키워드</th>
+        <th>전일 대비</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in ranks %}
+      <tr>
+        <td>{{ r.rank }}</td>
+        <td>{{ r.keyword }}</td>
+        <td>
+          {% if r.rank_delta is not none %}
+            {% if r.rank_delta > 0 %}
+              <span class="badge ok">▲ {{ r.rank_delta }} (전일 {{ r.prev_rank }}위)</span>
+            {% elif r.rank_delta < 0 %}
+              <span class="badge">▼ {{ -r.rank_delta }} (전일 {{ r.prev_rank }}위)</span>
+            {% else %}
+              <span class="hint">- (전일과 동일)</span>
+            {% endif %}
+          {% else %}
+            <span class="hint">첫 조회</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% elif category_id %}
+<p class="empty">조회 결과가 없습니다.</p>
+{% endif %}
+{% endblock %}
