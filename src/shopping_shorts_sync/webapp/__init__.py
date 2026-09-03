@@ -14,6 +14,7 @@ from __future__ import annotations
 import dataclasses
 from pathlib import Path
 
+import requests
 from flask import Flask, redirect, render_template, request, send_from_directory, url_for
 
 from ..config import load_config
@@ -121,6 +122,52 @@ def create_app(products_path: str = "data/products.example.json") -> Flask:
             except Exception as exc:
                 error = str(exc)
         return render_template("trend.html", keywords=keywords_raw, live=live, trends=trends, error=error)
+
+    @app.get("/trend/debug")
+    def trend_debug():
+        """Temporary diagnostic route for the NAVER_AD_* "Invalid Signature"
+        issue -- masks the secret key's middle characters so it's safe to
+        view in a browser, but confirms whitespace/length + the live API's
+        raw response. Remove once the signing issue is resolved."""
+        import time as _time
+
+        from ..trend.naver_ad import API_HOST, URI
+        from ..trend.signing import build_headers
+
+        config = _config()
+        api_key = config.naver_ad_api_key
+        secret_key = config.naver_ad_secret_key
+        customer_id = config.naver_ad_customer_id
+
+        def _mask(s):
+            if len(s) <= 8:
+                return "*" * len(s)
+            return f"{s[:4]}...{s[-4:]} (len={len(s)})"
+
+        lines = [
+            f"api_key: {_mask(api_key)} stripped_equal={api_key == api_key.strip()}",
+            f"secret_key: {_mask(secret_key)} stripped_equal={secret_key == secret_key.strip()}",
+            f"customer_id: {_mask(customer_id)} stripped_equal={customer_id == customer_id.strip()}",
+        ]
+
+        try:
+            headers = build_headers(api_key.strip(), secret_key.strip(), customer_id.strip(), "GET", URI)
+            masked_headers = dict(headers)
+            masked_headers["X-API-KEY"] = _mask(masked_headers["X-API-KEY"])
+            lines.append(f"headers: {masked_headers}")
+
+            resp = requests.get(
+                f"{API_HOST}{URI}",
+                params={"hintKeywords": "테스트", "showDetail": "1"},
+                headers=headers,
+                timeout=10,
+            )
+            lines.append(f"status: {resp.status_code}")
+            lines.append(f"body: {resp.text}")
+        except Exception as exc:
+            lines.append(f"exception: {exc!r}")
+
+        return "<pre>" + "\n".join(lines) + "</pre>"
 
     @app.post("/products/new")
     def products_new():
