@@ -2,24 +2,15 @@ services:
   - type: web
     name: shopping-shorts-sync
     env: python
-    plan: starter
+    plan: free
     buildCommand: "pip install -r requirements.txt && pip install ."
     startCommand: "gunicorn wsgi:app"
-    disk:
-      name: shopping-shorts-data
-      mountPath: /var/data
-      sizeGB: 1
+    # Free 플랜은 영구 디스크(유료 기능)를 못 쓴다 -- PRODUCTS_PATH/
+    # STATE_FILE_PATH/SCRIPTS_DIR/TREND_HISTORY_PATH를 그냥 config.py 기본값
+    # (저장소 안 data/ 경로)으로 둬서, 재배포/재시작 때마다 커밋된 내용으로
+    # 리셋된다는 전제로 돌아간다. 실제 운영 데이터가 쌓이기 시작하면
+    # starter 플랜 + disk 블록(git 히스토리에 남아있음)으로 다시 바꿀 것.
     envVars:
-      # /var/data is the persistent disk above -- products/scripts/state
-      # written here survive redeploys and restarts, unlike the repo's
-      # own data/ directory (which resets to git's committed content on
-      # every deploy).
-      - key: PRODUCTS_PATH
-        value: /var/data/products.json
-      - key: STATE_FILE_PATH
-        value: /var/data/state.json
-      - key: SCRIPTS_DIR
-        value: /var/data/scripts
       - key: COUPANG_API_MODE
         value: mock
       - key: TYPECAST_MODE
@@ -32,10 +23,6 @@ services:
       # /videos/<id>/<file> route (Instagram won't accept a local path).
       - key: PUBLIC_BASE_URL
         sync: false
-      - key: YOUTUBE_TOKEN_FILE
-        value: /var/data/youtube_token.json
-      - key: TREND_HISTORY_PATH
-        value: /var/data/trend_history.json
       # 실제 키가 준비되면 Render 대시보드 Environment 탭에서 값만 채우고
       # 위 두 MODE를 live로 바꾸면 된다. Render에는 절대 시크릿을 커밋하지 말 것.
       - key: COUPANG_ACCESS_KEY
