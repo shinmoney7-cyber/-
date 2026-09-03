@@ -38,11 +38,18 @@ class NaverAdKeywordClient:
         self.timeout = timeout
 
     def search(self, keywords: list[str]) -> list[KeywordTrend]:
-        """`keywords`: up to 5 seed keywords per Naver's documented limit."""
+        """`keywords`: up to 5 seed keywords per Naver's documented limit.
+
+        Naver rejects a hintKeywords value containing spaces with a 400
+        ("hintKeywords 파라미터가 유효하지 않습니다") -- confirmed against the
+        live API. Space-separated phrases like "무타공 수납장" must be sent
+        as a single compound token ("무타공수납장").
+        """
+        hint_keywords = ",".join(kw.replace(" ", "") for kw in keywords)
         headers = build_headers(self.api_key, self.secret_key, self.customer_id, "GET", URI)
         response = requests.get(
             f"{API_HOST}{URI}",
-            params={"hintKeywords": ",".join(keywords), "showDetail": "1"},
+            params={"hintKeywords": hint_keywords, "showDetail": "1"},
             headers=headers,
             timeout=self.timeout,
         )

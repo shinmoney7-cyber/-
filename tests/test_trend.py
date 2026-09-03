@@ -90,6 +90,10 @@ def test_naver_ad_client_parses_keyword_list(requests_mock):
     assert sent_headers["X-API-KEY"] == "k"
     assert sent_headers["X-Customer"] == "c"
 
+    # Naver rejects hintKeywords containing spaces with a 400 (confirmed
+    # against the live API) -- space-separated phrases must be sent compound.
+    assert requests_mock.last_request.qs["hintkeywords"] == ["무타공수납장"]
+
 
 def test_parse_count_handles_low_volume_string():
     assert _parse_count("< 10") == 10
