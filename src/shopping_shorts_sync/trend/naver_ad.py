@@ -24,6 +24,11 @@ class NaverAdApiError(RuntimeError):
 
 class NaverAdKeywordClient:
     def __init__(self, api_key: str, secret_key: str, customer_id: str, timeout: float = 10.0):
+        # .strip(): env vars pasted into a dashboard text field commonly pick up a
+        # trailing newline, which silently breaks the HMAC signature below.
+        api_key = api_key.strip()
+        secret_key = secret_key.strip()
+        customer_id = customer_id.strip()
         if not api_key or not secret_key or not customer_id:
             raise NaverAdApiError(
                 "NAVER_AD_API_KEY, NAVER_AD_SECRET_KEY and NAVER_AD_CUSTOMER_ID are required in live mode"
