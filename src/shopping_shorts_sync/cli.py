@@ -618,5 +618,108 @@ def monitor_history(product_id):
         click.echo(f"  {entry['checked_at'][:16]}  {price_str}")
 
 
+# ===========================================================================
+# TRENDING PRODUCT PIPELINE (TikTok/Douyin -> Korean platforms)
+# ===========================================================================
+
+@cli.group()
+def trend():
+    """TikTok/Douyin trending products → Korean platform mapping → 15-second desire scripts."""
+
+
+@trend.command("run")
+@click.option("--periods", default="7d,30d,1y",
+              help="Comma-separated periods: 7d,30d,90d,1y (default: 7d,30d,1y)")
+@click.option("--top-n", default=10, show_default=True, help="Top N products per period.")
+@click.option("--no-scripts", is_flag=True, help="Skip script generation.")
+@click.option("--generate-videos", is_flag=True, help="Also queue Higgs video generation (slow).")
+@click.option("--dry-run/--live", "dry_run", default=True,
+              help="--dry-run uses mock data; --live calls real TikTok API (requires MCP plugin).")
+def trend_run(periods, top_n, no_scripts, generate_videos, dry_run):
+    """Fetch trending products and generate desire-optimised 15-second scripts."""
+    from .trending.models import TrendPeriod
+    from .trending.pipeline import TrendPipeline
+
+    config = load_config()
+    _setup_logging(config)
+
+    period_map = {"7d": TrendPeriod.DAY_7, "30d": TrendPeriod.DAY_30,
+                  "90d": TrendPeriod.DAY_90, "1y": TrendPeriod.DAY_365}
+    period_list = [period_map[p.strip()] for p in periods.split(",") if p.strip() in period_map]
+    if not period_list:
+        raise click.ClickException(f"No valid periods in '{periods}'. Use: 7d, 30d, 90d, 1y")
+
+    # Build script AI
+    script_ai = None
+    if not no_scripts:
+        if dry_run:
+            from .content.script_ai import MockScriptAI
+            script_ai = MockScriptAI()
+        elif config.anthropic_api_key:
+            from .content.script_ai import ScriptAI
+            script_ai = ScriptAI(config.anthropic_api_key)
+        else:
+            click.echo("ANTHROPIC_API_KEY 미설정 - 대본 건너뜀", err=True)
+
+    # Build video pipeline (optional)
+    video_pipeline = None
+    if generate_videos:
+        if dry_run:
+            from .content.video_pipeline import MockVideoPipeline
+            video_pipeline = MockVideoPipeline()
+        elif config.higgs_api_key:
+            from .content.video_pipeline import VideoPipeline
+            video_pipeline = VideoPipeline(config.higgs_api_key)
+        else:
+            click.echo("HIGGS_API_KEY 미설정 - 영상 건너뜀", err=True)
+
+    pipeline = TrendPipeline(
+        script_ai=script_ai,
+        video_pipeline=video_pipeline,
+        mock=dry_run,
+    )
+
+    mode_label = "[DRY-RUN]" if dry_run else "[LIVE]"
+    click.echo(f"{mode_label} 트렌딩 파이프라인 실행 중... 기간: {[p.value for p in period_list]}")
+
+    result = pipeline.run(
+        periods=period_list,
+        top_n=top_n,
+        generate_scripts=(not no_scripts),
+        generate_videos=generate_videos,
+    )
+
+    click.echo(result.summary())
+
+
+@trend.command("list")
+@click.option("--periods", default="7d,30d,1y", help="Comma-separated periods.")
+@click.option("--dry-run/--live", "dry_run", default=True)
+def trend_list(periods, dry_run):
+    """List trending products without generating scripts."""
+    from .trending.models import TrendPeriod
+    from .trending.tiktok_fetcher import TikTokTrendFetcher
+    from .trending.korea_mapper import KoreaMapper
+
+    period_map = {"7d": TrendPeriod.DAY_7, "30d": TrendPeriod.DAY_30,
+                  "90d": TrendPeriod.DAY_90, "1y": TrendPeriod.DAY_365}
+    period_list = [period_map[p.strip()] for p in periods.split(",") if p.strip() in period_map]
+
+    fetcher = TikTokTrendFetcher(mock=dry_run)
+    mapper = KoreaMapper()
+
+    products = fetcher.fetch(periods=period_list)
+    for p in products:
+        match = mapper.map(p)
+        sold = f"{p.sold_count:,}"
+        growth = f"+{p.growth_rate:.1f}%" if p.growth_rate >= 0 else f"{p.growth_rate:.1f}%"
+        price = f"₩{match.local_price_krw:,}" if match.local_price_krw else "-"
+        platforms = ",".join(match.available_platforms)
+        click.echo(
+            f"[{p.period.value} #{p.rank:2d}] {p.brand} | {match.local_product_name[:30]} "
+            f"| 판매 {sold} ({growth}) | {price} | {platforms}"
+        )
+
+
 if __name__ == "__main__":
     cli()

@@ -154,6 +154,74 @@ JSON만 출력하세요.
             return []
 
 
+    def generate_desire_script_15s(
+        self,
+        product_name: str,
+        brand: str,
+        category: str,
+        sold_count: int = 0,
+        sold_period: str = "7일",
+        local_name: str = "",
+        local_price_krw: int = 0,
+        platform: str = "tiktok",
+    ) -> str:
+        """Generate 15-second desire/욕망-focused script (1.2x speed = ~40 words)."""
+        display_name = local_name or product_name
+        sold_str = f"{sold_count:,}" if sold_count else ""
+        price_str = f"쿠팡 {local_price_krw:,}원" if local_price_krw else "쿠팡 최저가"
+
+        system_prompt = (
+            "당신은 한국 틱톡/숏폼 영상 대본 전문가입니다. "
+            "15초, 1.2배속 기준 약 40~50자 분량의 짧은 대본을 작성합니다. "
+            "욕망(FOMO, 사회적 증명, 변화 전후)을 극도로 자극하는 카피를 씁니다. "
+            "이모지 1~2개 포함. 말줄임표나 과도한 느낌표 없이 자연스럽게."
+        )
+        prompt = f"""
+상품명: {display_name} ({brand})
+카테고리: {category}
+{f'글로벌 판매: {sold_str}개 ({sold_period} 기준)' if sold_str else ''}
+가격: {price_str}
+플랫폼: {platform}
+
+4파트 15초 대본을 작성하세요 (각 파트 하나의 짧은 문장):
+[0-3초] 훅: 욕망/충격 유발 (예: "이거 없으면 손해!")
+[3-8초] 욕구: 변화/효과/FOMO (예: "피부가 달라지는 걸 느꼈어요")
+[8-12초] 증명: 숫자/사실 (예: "글로벌 100만개 판매")
+[12-15초] CTA: "설명란 링크 → {price_str}"
+
+대본만 출력 (JSON 불필요):
+""".strip()
+
+        headers = {
+            "x-api-key": self.api_key,
+            "anthropic-version": "2023-06-01",
+            "content-type": "application/json",
+        }
+        payload = {
+            "model": self.model,
+            "max_tokens": 300,
+            "system": system_prompt,
+            "messages": [{"role": "user", "content": prompt}],
+        }
+
+        try:
+            resp = requests.post(CLAUDE_API_URL, headers=headers, json=payload, timeout=30)
+            resp.raise_for_status()
+            return resp.json()["content"][0]["text"].strip()
+        except Exception as exc:
+            log.warning("15s desire script generation failed: %s", exc)
+            return self._fallback_desire_script(display_name, brand, sold_str, sold_period, price_str)
+
+    def _fallback_desire_script(
+        self, name: str, brand: str, sold_str: str, period: str, price: str
+    ) -> str:
+        hook = f"이거 모르면 진짜 손해예요! ✨"
+        desire = f"{name}, 써본 사람들은 다 알아요"
+        proof = f"글로벌 {sold_str}개 팔린 {brand}" if sold_str else f"{brand} 인기 1위"
+        cta = f"지금 설명란 링크 클릭! {price}"
+        return f"{hook}\n{desire}\n{proof}\n{cta}"
+
+
 class MockScriptAI(ScriptAI):
     def __init__(self):
         self.api_key = "mock"
@@ -171,6 +239,18 @@ class MockScriptAI(ScriptAI):
             )
             for i in range(5)
         ]
+
+    def generate_desire_script_15s(self, product_name, brand, category, sold_count=0,
+                                    sold_period="7일", local_name="", local_price_krw=0, **kwargs):
+        display = local_name or product_name
+        sold = f"{sold_count:,}" if sold_count else "수백만"
+        price = f"쿠팡 {local_price_krw:,}원" if local_price_krw else "쿠팡 최저가"
+        return (
+            f"이거 모르면 진짜 손해예요! ✨\n"
+            f"{display}, 한번 써보면 못 끊어요\n"
+            f"글로벌 {sold}개 팔린 {brand}\n"
+            f"지금 설명란 링크 클릭! {price}"
+        )
 
     def generate_hashtags(self, product_name, category, **kwargs):
         return ["쿠팡추천", "쇼핑추천", category.replace(" ", ""), product_name.replace(" ", "")]
