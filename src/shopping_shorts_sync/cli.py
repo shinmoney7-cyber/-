@@ -260,5 +260,363 @@ def state_reset(product_id):
     click.echo(f"removed: {removed}")
 
 
+# ===========================================================================
+# PLATFORM PUBLISH COMMANDS
+# ===========================================================================
+
+def _build_publish_orchestrator(config, dry_run: bool = True):
+    """Build a PublishOrchestrator from config. Uses mock clients when dry_run=True."""
+    from .publish.orchestrator import PublishOrchestrator
+
+    if dry_run:
+        from .platforms.tiktok import MockTikTokClient
+        from .platforms.youtube import MockYouTubeClient
+        from .platforms.instagram import MockInstagramClient
+        from .platforms.naver_blog import MockNaverBlogClient
+        from .platforms.email_sender import MockEmailSender
+        return PublishOrchestrator(
+            tiktok=MockTikTokClient(),
+            youtube=MockYouTubeClient(),
+            instagram=MockInstagramClient(),
+            naver_blog=MockNaverBlogClient(),
+            email_sender=MockEmailSender(),
+            email_recipients=config.email_recipients or ["mock@example.com"],
+        )
+
+    from .platforms.tiktok import TikTokClient
+    from .platforms.youtube import YouTubeClient
+    from .platforms.instagram import InstagramClient
+    from .platforms.naver_blog import NaverBlogClient
+    from .platforms.email_sender import EmailSender
+
+    tiktok = TikTokClient(config.tiktok_access_token, config.tiktok_client_key, config.tiktok_client_secret) if config.tiktok_access_token else None
+    youtube = YouTubeClient(config.youtube_client_id, config.youtube_client_secret, config.youtube_refresh_token, config.youtube_channel_id) if config.youtube_refresh_token else None
+    instagram = InstagramClient(config.instagram_access_token, config.instagram_business_account_id) if config.instagram_access_token else None
+    naver_blog = NaverBlogClient(config.naver_blog_client_id, config.naver_blog_client_secret, config.naver_blog_access_token, config.naver_blog_id) if config.naver_blog_access_token else None
+    email_sender = EmailSender(config.email_sender, config.email_password, config.email_smtp_host, config.email_smtp_port) if config.email_sender else None
+
+    return PublishOrchestrator(
+        tiktok=tiktok,
+        youtube=youtube,
+        instagram=instagram,
+        naver_blog=naver_blog,
+        email_sender=email_sender,
+        email_recipients=config.email_recipients,
+    )
+
+
+@cli.group()
+def publish():
+    """Publish product shorts to social platforms (TikTok / YouTube / Instagram / Naver Blog / Email)."""
+
+
+@publish.command("all")
+@click.option("--product-id", required=True, help="Product ID from products.json")
+@click.option("--input", "input_path", required=True, type=click.Path(exists=True))
+@click.option("--video", "video_path", required=True, type=click.Path(exists=True), help="Local .mp4 file to publish.")
+@click.option("--video-cdn-url", default="", help="Public CDN URL of the video (required for Instagram).")
+@click.option("--platforms", default="", help="Comma-separated platform list. Empty = all.")
+@click.option("--tags", default="", help="Comma-separated hashtags (no #).")
+@click.option("--dry-run/--live", "dry_run", default=True)
+def publish_all(product_id, input_path, video_path, video_cdn_url, platforms, tags, dry_run):
+    """Publish to all configured platforms."""
+    config = load_config()
+    _setup_logging(config)
+
+    products = {p.id: p for p in load_products(input_path)}
+    product = products.get(product_id)
+    if product is None:
+        raise click.ClickException(f"product {product_id!r} not found")
+
+    state = StateStore(config.state_file_path)
+    product_state = state.all().get(product_id, {})
+    deeplink = product_state.get("deeplink", product.coupang_url)
+    script_text = product_state.get("script_text", product.name)
+
+    tag_list = [t.strip() for t in tags.split(",") if t.strip()] if tags else []
+    platform_list = [p.strip() for p in platforms.split(",") if p.strip()] if platforms else None
+
+    orchestrator = _build_publish_orchestrator(config, dry_run=dry_run)
+    summary = orchestrator.publish_product(
+        product_id=product.id,
+        product_name=product.name,
+        category=product.category,
+        coupang_deeplink=deeplink,
+        thumbnail_url=product.thumbnail,
+        script_text=script_text,
+        video_path=video_path,
+        video_cdn_url=video_cdn_url,
+        tags=tag_list,
+        platforms=platform_list,
+    )
+    click.echo(str(summary))
+
+
+@publish.command("tiktok")
+@click.option("--product-id", required=True)
+@click.option("--input", "input_path", required=True, type=click.Path(exists=True))
+@click.option("--video", "video_path", required=True, type=click.Path(exists=True))
+@click.option("--tags", default="")
+@click.option("--dry-run/--live", "dry_run", default=True)
+def publish_tiktok(product_id, input_path, video_path, tags, dry_run):
+    """Publish to TikTok only."""
+    config = load_config()
+    _setup_logging(config)
+    products = {p.id: p for p in load_products(input_path)}
+    product = products.get(product_id)
+    if product is None:
+        raise click.ClickException(f"product {product_id!r} not found")
+    tag_list = [t.strip() for t in tags.split(",") if t.strip()]
+    orchestrator = _build_publish_orchestrator(config, dry_run=dry_run)
+    summary = orchestrator.publish_product(
+        product_id=product.id, product_name=product.name, category=product.category,
+        coupang_deeplink=product.coupang_url, thumbnail_url=product.thumbnail,
+        script_text=product.name, video_path=video_path, tags=tag_list,
+        platforms=["tiktok"],
+    )
+    click.echo(str(summary))
+
+
+@publish.command("youtube")
+@click.option("--product-id", required=True)
+@click.option("--input", "input_path", required=True, type=click.Path(exists=True))
+@click.option("--video", "video_path", required=True, type=click.Path(exists=True))
+@click.option("--tags", default="")
+@click.option("--dry-run/--live", "dry_run", default=True)
+def publish_youtube(product_id, input_path, video_path, tags, dry_run):
+    """Publish as YouTube Short."""
+    config = load_config()
+    _setup_logging(config)
+    products = {p.id: p for p in load_products(input_path)}
+    product = products.get(product_id)
+    if product is None:
+        raise click.ClickException(f"product {product_id!r} not found")
+    tag_list = [t.strip() for t in tags.split(",") if t.strip()]
+    orchestrator = _build_publish_orchestrator(config, dry_run=dry_run)
+    summary = orchestrator.publish_product(
+        product_id=product.id, product_name=product.name, category=product.category,
+        coupang_deeplink=product.coupang_url, thumbnail_url=product.thumbnail,
+        script_text=product.name, video_path=video_path, tags=tag_list,
+        platforms=["youtube"],
+    )
+    click.echo(str(summary))
+
+
+@publish.command("naver-blog")
+@click.option("--product-id", required=True)
+@click.option("--input", "input_path", required=True, type=click.Path(exists=True))
+@click.option("--tags", default="")
+@click.option("--dry-run/--live", "dry_run", default=True)
+def publish_naver_blog(product_id, input_path, tags, dry_run):
+    """Post product review to Naver Blog."""
+    config = load_config()
+    _setup_logging(config)
+    products = {p.id: p for p in load_products(input_path)}
+    product = products.get(product_id)
+    if product is None:
+        raise click.ClickException(f"product {product_id!r} not found")
+    state = StateStore(config.state_file_path)
+    product_state = state.all().get(product_id, {})
+    deeplink = product_state.get("deeplink", product.coupang_url)
+    script_text = product_state.get("script_text", product.name)
+    tag_list = [t.strip() for t in tags.split(",") if t.strip()]
+    orchestrator = _build_publish_orchestrator(config, dry_run=dry_run)
+    summary = orchestrator.publish_product(
+        product_id=product.id, product_name=product.name, category=product.category,
+        coupang_deeplink=deeplink, thumbnail_url=product.thumbnail,
+        script_text=script_text, video_path="", tags=tag_list,
+        platforms=["naver_blog"],
+    )
+    click.echo(str(summary))
+
+
+@publish.command("email")
+@click.option("--input", "input_path", required=True, type=click.Path(exists=True))
+@click.option("--subject", default="오늘의 쇼핑 추천")
+@click.option("--dry-run/--live", "dry_run", default=True)
+def publish_email(input_path, subject, dry_run):
+    """Send email newsletter for all enabled products."""
+    config = load_config()
+    _setup_logging(config)
+
+    import json
+    products_raw = json.loads(open(input_path).read())
+    if isinstance(products_raw, list):
+        enabled = [p for p in products_raw if p.get("enabled", True)]
+    else:
+        enabled = [products_raw]
+
+    state = StateStore(config.state_file_path)
+    state_data = state.all()
+    for p in enabled:
+        pid = p.get("id", "")
+        p["deeplink"] = state_data.get(pid, {}).get("deeplink", p.get("coupang_url", ""))
+
+    orchestrator = _build_publish_orchestrator(config, dry_run=dry_run)
+    result = orchestrator._publish_email(enabled, subject)
+    click.echo(f"[email] {'OK' if result.success else f'FAIL ({result.error})'}")
+
+
+# ===========================================================================
+# VIDEO GENERATION COMMANDS
+# ===========================================================================
+
+@cli.group()
+def video():
+    """Generate vertical product videos using Higgs AI."""
+
+
+@video.command("generate")
+@click.option("--product-id", required=True)
+@click.option("--input", "input_path", required=True, type=click.Path(exists=True))
+@click.option("--output-dir", default="data/videos", show_default=True)
+@click.option("--dry-run/--live", "dry_run", default=True)
+def video_generate(product_id, input_path, output_dir, dry_run):
+    """Generate a 9:16 short video for a product."""
+    config = load_config()
+    _setup_logging(config)
+
+    products = {p.id: p for p in load_products(input_path)}
+    product = products.get(product_id)
+    if product is None:
+        raise click.ClickException(f"product {product_id!r} not found")
+
+    state = StateStore(config.state_file_path)
+    script_text = state.all().get(product_id, {}).get("script_text", product.name)
+    output_path = f"{output_dir}/{product_id}.mp4"
+
+    if dry_run:
+        from .content.video_pipeline import MockVideoPipeline
+        pipeline = MockVideoPipeline()
+    else:
+        from .content.video_pipeline import VideoPipeline
+        if not config.higgs_api_key:
+            raise click.ClickException("HIGGS_API_KEY not set in .env")
+        pipeline = VideoPipeline(config.higgs_api_key)
+
+    result = pipeline.generate_and_download(
+        product_name=product.name,
+        script_text=script_text,
+        product_image_url=product.thumbnail,
+        output_path=output_path,
+    )
+    if result:
+        click.echo(f"video saved: {result}")
+    else:
+        click.echo("video generation failed", err=True)
+
+
+@video.command("script")
+@click.option("--product-id", required=True)
+@click.option("--input", "input_path", required=True, type=click.Path(exists=True))
+@click.option("--platform", default="tiktok", type=click.Choice(["tiktok", "youtube", "instagram"]))
+@click.option("--dry-run/--live", "dry_run", default=True)
+def video_script(product_id, input_path, platform, dry_run):
+    """Auto-generate 5 AIDA script candidates with AI."""
+    config = load_config()
+    _setup_logging(config)
+
+    products = {p.id: p for p in load_products(input_path)}
+    product = products.get(product_id)
+    if product is None:
+        raise click.ClickException(f"product {product_id!r} not found")
+
+    if dry_run:
+        from .content.script_ai import MockScriptAI
+        ai = MockScriptAI()
+    else:
+        from .content.script_ai import ScriptAI
+        if not config.anthropic_api_key:
+            raise click.ClickException("ANTHROPIC_API_KEY not set in .env")
+        ai = ScriptAI(config.anthropic_api_key)
+
+    candidates = ai.generate_candidates(
+        product_name=product.name,
+        category=product.category,
+        thumbnail_url=product.thumbnail,
+        platform=platform,
+    )
+    hashtags = ai.generate_hashtags(product.name, product.category, platform)
+
+    for c in candidates:
+        click.echo(f"\n--- 후보 {c.id} ---")
+        click.echo(f"  주의(A): {c.attention}")
+        click.echo(f"  흥미(I): {c.interest}")
+        click.echo(f"  욕망(D): {c.desire}")
+        click.echo(f"  행동(A): {c.action}")
+
+    if hashtags:
+        click.echo(f"\n추천 해시태그: #{' #'.join(hashtags)}")
+
+    click.echo(f"\n선택하려면: python -m shopping_shorts_sync script select --product-id {product_id} --candidate-id <번호> --input {input_path}")
+
+
+# ===========================================================================
+# COUPANG PRICE MONITOR
+# ===========================================================================
+
+@cli.group("monitor")
+def monitor_group():
+    """Coupang price monitoring and drop alerts."""
+
+
+@monitor_group.command("prices")
+@click.option("--input", "input_path", required=True, type=click.Path(exists=True))
+@click.option("--dry-run/--live", "dry_run", default=True)
+@click.option("--headed/--headless", "headed", default=False)
+def monitor_prices(input_path, dry_run, headed):
+    """Check prices for all products and report drops."""
+    import json
+    config = load_config()
+    _setup_logging(config)
+
+    products_raw = json.loads(open(input_path).read())
+    if not isinstance(products_raw, list):
+        products_raw = [products_raw]
+
+    from .coupang.price_monitor import PriceMonitor
+    monitor = PriceMonitor(
+        chromium_path=config.playwright_chromium_path,
+        price_history_path=config.price_history_path,
+        drop_threshold_pct=config.price_drop_threshold_pct,
+        headless=not headed,
+    )
+
+    results = monitor.check_all(products_raw, dry_run=dry_run)
+    alerts = []
+    for snapshot, alert in results:
+        price_str = f"₩{snapshot.price:,}" if snapshot.price else "N/A"
+        rocket = " 🚀" if snapshot.rocket else ""
+        click.echo(f"  {snapshot.product_name}: {price_str}{rocket}")
+        if alert:
+            alerts.append(alert)
+            click.echo(f"    ⚡ 가격 하락! ₩{alert.old_price:,} -> ₩{alert.new_price:,} (-{alert.drop_pct}%)")
+
+    if alerts:
+        click.echo(f"\n총 {len(alerts)}개 상품 가격 하락 감지")
+    else:
+        click.echo("\n가격 변동 없음")
+
+
+@monitor_group.command("history")
+@click.option("--product-id", required=True)
+def monitor_history(product_id):
+    """Show price history for a product."""
+    import json
+    config = load_config()
+    from .coupang.price_monitor import PriceMonitor
+    monitor = PriceMonitor(
+        chromium_path=config.playwright_chromium_path,
+        price_history_path=config.price_history_path,
+    )
+    history = monitor.get_history(product_id)
+    if not history:
+        click.echo(f"가격 이력 없음: {product_id}")
+        return
+    for entry in history[-20:]:
+        price_str = f"₩{entry['price']:,}" if entry.get("price") else "N/A"
+        click.echo(f"  {entry['checked_at'][:16]}  {price_str}")
+
+
 if __name__ == "__main__":
     cli()
