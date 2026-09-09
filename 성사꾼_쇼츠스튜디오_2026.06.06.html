@@ -78,10 +78,13 @@ textarea.finp{resize:vertical;min-height:80px;}
 .catitem{display:flex;align-items:flex-start;gap:10px;padding:12px;border-radius:8px;cursor:pointer;transition:all .15s;margin-bottom:4px;}
 .catitem:hover{background:var(--bg);}
 .catitem.sel{background:var(--primary-l);}
-.pgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:16px;}
+.pgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:4px;}
 .pchip{background:white;border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:space-between;gap:4px;}
 .pchip:hover{border-color:var(--primary);background:var(--primary-l);color:var(--primary);}
 .badge{font-size:10px;padding:2px 6px;border-radius:99px;font-weight:600;}
+.ptabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px;}
+.ptab{font-size:11px;font-weight:600;padding:4px 10px;border-radius:99px;border:1px solid var(--border);background:none;cursor:pointer;color:var(--muted);transition:all .15s;}
+.ptab.active{background:var(--primary);color:white;border-color:var(--primary);}
 .bb{background:#dbeafe;color:#1d4ed8;}.bg{background:#dcfce7;color:#15803d;}.bo{background:#ffedd5;color:#c2410c;}.bpu{background:#ede9fe;color:#7c3aed;}
 /* VOICE */
 .vgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
@@ -504,8 +507,16 @@ textarea.finp{resize:vertical;min-height:80px;}
     <div class="mhd"><div class="mt">✨ AI 인기상품 추천</div><div style="font-size:12px;color:var(--muted);margin-top:4px;">조사할 카테고리 선택</div></div>
     <div class="mbody" id="cat-list"></div>
     <div id="prod-res" class="hidden" style="padding:0 20px 12px;">
-      <div style="font-size:12px;font-weight:600;margin-bottom:8px;color:var(--muted);">추천 상품 키워드</div>
-      <div class="pgrid" id="prod-list"></div>
+      <div class="ptabs">
+        <button class="ptab active" onclick="switchPlatTab('ai',this)">✨ AI추천</button>
+        <button class="ptab" onclick="switchPlatTab('daiso',this)">🛍 다이소</button>
+        <button class="ptab" onclick="switchPlatTab('olive',this)">🌿 올리브영</button>
+        <button class="ptab" onclick="switchPlatTab('naver',this)">🟢 네이버</button>
+      </div>
+      <div id="prod-list-ai" class="pgrid"></div>
+      <div id="prod-list-daiso" class="pgrid hidden"></div>
+      <div id="prod-list-olive" class="pgrid hidden"></div>
+      <div id="prod-list-naver" class="pgrid hidden"></div>
     </div>
     <div class="mfoot" style="display:flex;gap:8px;justify-content:flex-end;">
       <button class="btn btn-o btn-sm" onclick="closeM('m-cat')">취소</button>
@@ -1391,31 +1402,58 @@ function renderCatList(){
 }
 function selCat(i){S.catIdx=i;renderCatList();searchCat();}
 
+function switchPlatTab(plat,el){
+  document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  ['ai','daiso','olive','naver'].forEach(p=>{
+    document.getElementById(`prod-list-${p}`).classList.toggle('hidden',p!==plat);
+  });
+}
 async function searchCat(){
   if(S.catIdx===null){alert('카테고리를 선택해주세요.');return;}
   const btn=document.getElementById('btn-srch');btn.textContent='⏳ AI 조사 중...';btn.disabled=true;
   const cat=CATS[S.catIdx];
+  ['ai','daiso','olive','naver'].forEach(p=>{
+    document.getElementById(`prod-list-${p}`).innerHTML='<div style="color:var(--muted);font-size:11px;padding:8px;">불러오는 중...</div>';
+  });
+  document.getElementById('prod-res').classList.remove('hidden');
   if(S.key){
     try{
       const r=await fetch('https://api.anthropic.com/v1/messages',{
         method:'POST',
         headers:getHeaders(),
-        body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:400,messages:[{role:'user',content:`"${cat.n}" 카테고리에서 요즘 쇼핑숏츠로 잘 팔리는 인기 상품 키워드 8개를 JSON 배열로만 답해주세요. 각 항목은 {"name":"상품명","badge":"태그"} 형태. 배지는 신상/인기/다이소/쿠팡 중 하나. \`\`\`json 없이 순수 JSON만.`}]})
+        body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1200,messages:[{role:'user',content:`"${cat.n}" 카테고리에서 쇼핑숏츠로 잘 팔리는 상품 키워드를 플랫폼별 10개씩 순수 JSON으로만 답해주세요. 형식: {"ai":[{"name":"상품명","badge":"태그"},...10개],"daiso":[...10개],"olive":[...10개],"naver":[...10개]}. 배지는 신상/인기/추천/베스트 중 하나. 플랫폼 특성에 맞는 상품으로. \`\`\`json 없이 순수 JSON만.`}]})
       });
       const d=await r.json();
       if(d.error) throw new Error(d.error.message||'API error');
       const t=d.content?.[0]?.text||'';
-      const parsed=t?JSON.parse(t.replace(/```json|```/g,'').trim()):[];
-      renderProds(parsed.length?parsed:fallProds());
-    }catch(e){renderProds(fallProds());}
-  } else renderProds(fallProds());
+      const parsed=t?JSON.parse(t.replace(/```json|```/g,'').trim()):null;
+      if(parsed){
+        ['ai','daiso','olive','naver'].forEach(p=>renderPlatProds(p,parsed[p]?.length?parsed[p]:fallProds(p)));
+      } else {
+        ['ai','daiso','olive','naver'].forEach(p=>renderPlatProds(p,fallProds(p)));
+      }
+    }catch(e){['ai','daiso','olive','naver'].forEach(p=>renderPlatProds(p,fallProds(p)));}
+  } else {
+    ['ai','daiso','olive','naver'].forEach(p=>renderPlatProds(p,fallProds(p)));
+  }
+  // 첫 탭(AI추천)으로 리셋
+  document.querySelectorAll('.ptab').forEach((t,i)=>t.classList.toggle('active',i===0));
+  ['ai','daiso','olive','naver'].forEach((p,i)=>document.getElementById(`prod-list-${p}`).classList.toggle('hidden',i!==0));
   btn.textContent='🔍 선택한 카테고리로 키워드 조사 시작';btn.disabled=false;
 }
-function fallProds(){return[{name:'USB-C 다기능 허브',badge:'다이소'},{name:'LED 무드등 마우스패드',badge:'다이소'},{name:'무선 충전 스탠드형 거치대',badge:'신상'},{name:'소형 공기청정기',badge:'신상'},{name:'노트북 접이식 발침대',badge:'쿠팡'},{name:'소리감지 스마트 LED 조명',badge:'인기'},{name:'미니 가습기',badge:'다이소'},{name:'오토센서 무선 마우스',badge:'인기'}];}
+const FALL_PRODS={
+  ai:[{name:'USB-C 다기능 허브',badge:'인기'},{name:'LED 무드등',badge:'신상'},{name:'무선 충전 거치대',badge:'신상'},{name:'소형 공기청정기',badge:'베스트'},{name:'접이식 발침대',badge:'추천'},{name:'스마트 LED 조명',badge:'인기'},{name:'미니 가습기',badge:'베스트'},{name:'무선 마우스',badge:'인기'},{name:'멀티탭 USB 포트',badge:'추천'},{name:'휴대폰 거치대',badge:'신상'}],
+  daiso:[{name:'다이소 멀티포트 충전기',badge:'베스트'},{name:'다이소 미니선풍기',badge:'인기'},{name:'다이소 수납함',badge:'추천'},{name:'다이소 보냉백',badge:'신상'},{name:'다이소 리무버블 훅',badge:'베스트'},{name:'다이소 칫솔살균기',badge:'인기'},{name:'다이소 야광 스티커',badge:'추천'},{name:'다이소 자석 메모홀더',badge:'신상'},{name:'다이소 슬리퍼',badge:'베스트'},{name:'다이소 면도기 커버',badge:'인기'}],
+  olive:[{name:'토리든 히알루론산 세럼',badge:'베스트'},{name:'CeraVe 수분크림',badge:'인기'},{name:'라운드랩 자작나무 토너',badge:'신상'},{name:'달바 미스트 세럼',badge:'추천'},{name:'메디힐 마스크팩',badge:'베스트'},{name:'아누아 어성초 토너',badge:'인기'},{name:'코스알엑스 달팽이크림',badge:'추천'},{name:'이니스프리 그린티 세럼',badge:'신상'},{name:'숨37 에센스',badge:'베스트'},{name:'클리오 킬커버 파운데이션',badge:'인기'}],
+  naver:[{name:'스탠리 텀블러',badge:'인기'},{name:'샤오미 보조배터리',badge:'추천'},{name:'에어팟 케이스',badge:'신상'},{name:'노트북 파우치',badge:'베스트'},{name:'아이패드 케이스',badge:'인기'},{name:'캠핑 랜턴',badge:'신상'},{name:'무선 키보드',badge:'추천'},{name:'갤럭시 버즈 케이스',badge:'베스트'},{name:'애플워치 밴드',badge:'인기'},{name:'가습기 필터',badge:'추천'}]
+};
+function fallProds(p){return FALL_PRODS[p]||FALL_PRODS.ai;}
 const BC=['bb','bg','bo','bpu'];
-function renderProds(prods){
-  document.getElementById('prod-list').innerHTML=prods.map((p,i)=>`<div class="pchip" onclick="selProd('${p.name}')">${p.name}<span class="badge ${BC[i%4]}">${p.badge}</span></div>`).join('');
-  document.getElementById('prod-res').classList.remove('hidden');
+function renderPlatProds(plat,prods){
+  const el=document.getElementById(`prod-list-${plat}`);
+  if(!el)return;
+  el.innerHTML=prods.map((p,i)=>`<div class="pchip" onclick="selProd('${p.name.replace(/'/g,"&#39;")}')">${p.name}<span class="badge ${BC[i%4]}">${p.badge}</span></div>`).join('');
 }
 function selProd(n){S.kw=n;S.selectedProduct=n;const el=document.getElementById('i-kw');if(el)el.value=n;closeM('m-cat');}
 

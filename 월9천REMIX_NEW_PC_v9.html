@@ -3414,20 +3414,70 @@ const catData = {
   '식품/건강':{tips:['영양 성분 수치 강조','맛/향 감성 묘사','정기 구독 할인 안내'],keywords:['단백질쉐이크','비타민','닭가슴살','건강즙','유산균'],avg_comm:'약 800~2,000원/건'},
   '전자기기':{tips:['스펙 비교로 신뢰감 구축','실제 사용 영상 필수','AS/보증기간 강조'],keywords:['무선이어폰','보조배터리','USB허브','웹캠','키보드'],avg_comm:'약 2,000~6,000원/건'},
 };
-function cpaShowCat(card, name) {
+const CPA_FALL={
+  daiso:[{name:'다이소 멀티포트 충전기'},{name:'다이소 미니선풍기'},{name:'다이소 수납함'},{name:'다이소 보냉백'},{name:'다이소 리무버블 훅'},{name:'다이소 칫솔살균기'},{name:'다이소 야광 스티커'},{name:'다이소 자석 메모홀더'},{name:'다이소 슬리퍼'},{name:'다이소 면도기 커버'}],
+  olive:[{name:'토리든 히알루론산 세럼'},{name:'CeraVe 수분크림'},{name:'라운드랩 자작나무 토너'},{name:'달바 미스트 세럼'},{name:'메디힐 마스크팩'},{name:'아누아 어성초 토너'},{name:'코스알엑스 달팽이크림'},{name:'이니스프리 그린티 세럼'},{name:'숨37 에센스'},{name:'클리오 킬커버 파운데이션'}],
+  naver:[{name:'스탠리 텀블러'},{name:'샤오미 보조배터리'},{name:'에어팟 케이스'},{name:'노트북 파우치'},{name:'아이패드 케이스'},{name:'캠핑 랜턴'},{name:'무선 키보드'},{name:'갤럭시 버즈 케이스'},{name:'애플워치 밴드'},{name:'가습기 필터'}]
+};
+function cpaRenderPlatChips(plat,prods){
+  const chips=prods.map(p=>`<span class="tag" style="cursor:pointer;margin:2px" onclick="document.getElementById('searchQuery').value='${p.name.replace(/'/g,"&#39;")} 쿠팡';goPanel('search',document.querySelector('.nav-item:nth-child(6)'))">🔍 ${p.name}</span>`).join('');
+  const el=document.getElementById(`cpa-plat-${plat}`);
+  if(el) el.innerHTML=chips;
+}
+function cpaSwitchPlatTab(plat,el){
+  document.querySelectorAll('.cpa-ptab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  ['daiso','olive','naver'].forEach(p=>{
+    document.getElementById(`cpa-plat-${p}`).style.display=p===plat?'flex':'none';
+  });
+}
+async function cpaShowCat(card, name) {
   document.querySelectorAll('.cat-card').forEach(c=>c.classList.remove('on'));
   card.classList.add('on');
   const data = catData[name];
   if(!data) return;
   document.getElementById('catDetail').innerHTML = `
-    <div style="background:var(--bg3);border:1px solid rgba(255,211,42,.25);border-radius:10px;padding:14px">
+    <div style="background:var(--bg3);border:1px solid rgba(255,211,42,.25);border-radius:10px;padding:14px;margin-bottom:10px">
       <div style="font-size:12px;font-weight:700;color:var(--yellow);margin-bottom:10px">📊 ${name} CPA 전략</div>
       <div style="font-size:12px;color:var(--text2);margin-bottom:4px">💰 건당 예상 수익: <span style="color:var(--yellow);font-weight:700">${data.avg_comm}</span></div>
       <div style="font-size:11px;font-weight:600;color:var(--text2);margin:8px 0 5px">✅ 핵심 전략</div>
       ${data.tips.map(t=>`<div style="font-size:11px;color:var(--text2);margin-bottom:4px">• ${t}</div>`).join('')}
       <div style="font-size:11px;font-weight:600;color:var(--text2);margin:8px 0 5px">🔍 추천 키워드</div>
       <div class="tag-wrap">${data.keywords.map(k=>`<span class="tag" style="cursor:pointer" onclick="document.getElementById('searchQuery').value='${k} 쿠팡';goPanel('search',document.querySelector('.nav-item:nth-child(6)'))">🔍 ${k}</span>`).join('')}</div>
+    </div>
+    <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:14px">
+      <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:10px">🛒 플랫폼별 인기 상품 10개</div>
+      <div style="display:flex;gap:4px;margin-bottom:10px">
+        <button class="cpa-ptab active" onclick="cpaSwitchPlatTab('daiso',this)" style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:99px;border:1px solid var(--border2);background:var(--accent);color:white;cursor:pointer">🛍 다이소</button>
+        <button class="cpa-ptab" onclick="cpaSwitchPlatTab('olive',this)" style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:99px;border:1px solid var(--border2);background:none;cursor:pointer;color:var(--text3)">🌿 올리브영</button>
+        <button class="cpa-ptab" onclick="cpaSwitchPlatTab('naver',this)" style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:99px;border:1px solid var(--border2);background:none;cursor:pointer;color:var(--text3)">🟢 네이버</button>
+      </div>
+      <div id="cpa-plat-daiso" class="tag-wrap" style="display:flex;flex-wrap:wrap"><span style="font-size:11px;color:var(--text3)">불러오는 중...</span></div>
+      <div id="cpa-plat-olive" class="tag-wrap" style="display:none;flex-wrap:wrap"></div>
+      <div id="cpa-plat-naver" class="tag-wrap" style="display:none;flex-wrap:wrap"></div>
     </div>`;
+  // AI로 3개 플랫폼 상품 동시 조회
+  const k=getKey();
+  if(k){
+    try{
+      const r=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:getHeaders(),
+        body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1000,messages:[{role:'user',content:`"${name}" 카테고리에서 쇼핑숏츠로 잘 팔리는 인기 상품 이름을 플랫폼별 10개씩 순수 JSON으로만 답해주세요. 형식: {"daiso":[{"name":"상품명"},...10개],"olive":[...10개],"naver":[...10개]}. \`\`\`json 없이 순수 JSON만.`}]})
+      });
+      const d=await r.json();
+      if(d.error) throw new Error(d.error.message);
+      const t=d.content?.[0]?.text||'';
+      const parsed=t?JSON.parse(t.replace(/```json|```/g,'').trim()):null;
+      if(parsed){
+        ['daiso','olive','naver'].forEach(p=>cpaRenderPlatChips(p,parsed[p]?.length?parsed[p]:CPA_FALL[p]));
+      } else {
+        ['daiso','olive','naver'].forEach(p=>cpaRenderPlatChips(p,CPA_FALL[p]));
+      }
+    }catch(e){['daiso','olive','naver'].forEach(p=>cpaRenderPlatChips(p,CPA_FALL[p]));}
+  } else {
+    ['daiso','olive','naver'].forEach(p=>cpaRenderPlatChips(p,CPA_FALL[p]));
+  }
 }
 
 // 초기화
