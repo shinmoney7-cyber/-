@@ -2867,7 +2867,7 @@ function mtImgLoad(e){
 
 // 메인 생성 함수
 async function mtGenerate(){
-  if(!getKey()){alert('Claude API 키를 먼저 저장해줘.');return;}
+  if(!S.key){alert('상단 API 키 버튼 클릭해서 Claude API 키 입력해줘.');toggleApiBar();return;}
   const btn=document.getElementById('mtGenBtn');
   btn.disabled=true;btn.textContent='🛒 분석 중...';
   const res=document.getElementById('mtResult');
