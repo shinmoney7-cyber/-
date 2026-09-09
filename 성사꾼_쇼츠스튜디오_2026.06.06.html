@@ -1389,7 +1389,7 @@ function renderCatList(){
       </div>
     </div>`).join('');
 }
-function selCat(i){S.catIdx=i;renderCatList();document.getElementById('prod-res').classList.add('hidden');}
+function selCat(i){S.catIdx=i;renderCatList();searchCat();}
 
 async function searchCat(){
   if(S.catIdx===null){alert('카테고리를 선택해주세요.');return;}
