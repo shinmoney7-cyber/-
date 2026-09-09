@@ -496,7 +496,24 @@ textarea.finp{resize:vertical;min-height:80px;}
 <div class="main">
   <div class="topbar">
     <div class="topbar-t" id="topbar-t">새 프로젝트</div>
-    <div class="topbar-r"><span style="font-size:12px;color:var(--muted);">쇼츠 자동화 올인원</span></div>
+    <div class="topbar-r">
+      <span style="font-size:12px;color:var(--muted);">쇼츠 자동화 올인원</span>
+      <div style="position:relative;">
+        <button id="api-key-bar" onclick="toggleApiBar()" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;border:1px solid;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;" title="Claude API 키 설정">
+          <span id="api-key-icon">🔑</span>
+          <span id="api-key-label">API 키 없음</span>
+        </button>
+        <div id="api-key-popup" style="display:none;position:absolute;right:0;top:calc(100% + 8px);width:300px;background:var(--c-bg);border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);padding:14px;z-index:200;">
+          <div style="font-size:12px;font-weight:700;margin-bottom:8px;color:var(--text);">🔑 Claude API 키 설정</div>
+          <input id="api-bar-input" type="password" placeholder="sk-ant-api03-..." style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;outline:none;box-sizing:border-box;margin-bottom:8px;">
+          <div style="display:flex;gap:6px;">
+            <button onclick="saveApiBarKey()" style="flex:1;padding:7px;background:var(--primary);color:white;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;">저장</button>
+            <button onclick="clearApiKey()" style="padding:7px 10px;background:none;border:1px solid var(--border);border-radius:6px;font-size:12px;cursor:pointer;color:var(--muted);">초기화</button>
+          </div>
+          <div style="margin-top:8px;font-size:10px;color:var(--muted);">키 발급: <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--primary);">console.anthropic.com</a></div>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="content" id="mc"></div>
 </div>
@@ -700,7 +717,42 @@ const VOICES=[
 ];
 const COLORS=['#ff3b30','#ffd60a','#34c759','#0071e3','#ffffff','#000000','#ff6b35','#8e8e93'];
 
-function saveKey(v){S.key=v;localStorage.setItem('ssk',v);}
+function saveKey(v){S.key=v;localStorage.setItem('ssk',v);updateApiKeyBar();}
+function updateApiKeyBar(){
+  const bar=document.getElementById('api-key-bar');
+  const icon=document.getElementById('api-key-icon');
+  const label=document.getElementById('api-key-label');
+  if(!bar)return;
+  if(S.key){
+    bar.style.background='rgba(46,204,138,.12)';bar.style.borderColor='rgba(46,204,138,.5)';bar.style.color='#1aad6e';
+    icon.textContent='✅';label.textContent='API 키 연결됨';
+  } else {
+    bar.style.background='rgba(255,59,48,.1)';bar.style.borderColor='rgba(255,59,48,.4)';bar.style.color='#ff3b30';
+    icon.textContent='🔑';label.textContent='API 키 없음';
+  }
+  const inp=document.getElementById('api-bar-input');if(inp)inp.value=S.key;
+}
+function toggleApiBar(){
+  const p=document.getElementById('api-key-popup');
+  if(p.style.display==='none'){p.style.display='block';document.getElementById('api-bar-input').focus();}
+  else p.style.display='none';
+}
+function saveApiBarKey(){
+  const v=document.getElementById('api-bar-input').value.trim();
+  saveKey(v);
+  document.getElementById('sb-api').value=v;
+  document.getElementById('api-key-popup').style.display='none';
+}
+function clearApiKey(){
+  saveKey('');
+  document.getElementById('sb-api').value='';
+  document.getElementById('api-bar-input').value='';
+}
+document.addEventListener('click',function(e){
+  const popup=document.getElementById('api-key-popup');
+  const bar=document.getElementById('api-key-bar');
+  if(popup&&bar&&!popup.contains(e.target)&&!bar.contains(e.target))popup.style.display='none';
+});
 function getHeaders(){return{'Content-Type':'application/json','x-api-key':S.key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'};}
 function savePj(){localStorage.setItem('sspj',JSON.stringify(S.projects));}
 function closeM(id){document.getElementById(id).classList.add('hidden');}
@@ -880,7 +932,7 @@ function selR(r){S.ratio=r;document.querySelectorAll('.rcard').forEach(e=>e.clas
 function selT(t){S.vtype=t;document.querySelectorAll('.ttab').forEach(e=>e.classList.remove('active'));event.currentTarget.classList.add('active');}
 function goS2(){S.kw=document.getElementById('i-kw').value;S.style=document.getElementById('i-st').value;S.step=2;renderWiz();}
 function goS3(){
-  if(!S.key){alert('왼쪽 사이드바에서 Claude API Key를 입력해주세요.');return;}
+  if(!S.key){alert('우측 상단 API 키 버튼을 클릭해서 Claude API Key를 입력해주세요.');toggleApiBar();return;}
   S.step=3;renderWiz();
 }
 
@@ -1527,6 +1579,7 @@ function toast(msg){
 
 /* ===== INIT ===== */
 document.getElementById('sb-api').value=S.key;
+updateApiKeyBar();
 // Category modal init
 document.getElementById('m-cat').addEventListener('click',function(e){if(e.target===this)closeM('m-cat');});
 document.getElementById('m-voice').addEventListener('click',function(e){if(e.target===this)closeM('m-voice');});
