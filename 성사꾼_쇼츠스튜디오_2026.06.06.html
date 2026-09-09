@@ -1309,7 +1309,7 @@ async function regenCap(){
     const r=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:getHeaders(),
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,messages:[{role:'user',content:`"${S.kw||'상품'}" 쇼핑숏츠용 인스타그램 캡션(150자)과 고정댓글(DM 유도)을 작성해주세요.\n형식:\n캡션: [내용]\n댓글: [내용]`}]})
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:400,messages:[{role:'user',content:`"${S.kw||'상품'}" 쇼핑숏츠용 인스타그램 캡션(150자)과 고정댓글(DM 유도)을 작성해주세요.\n형식:\n캡션: [내용]\n댓글: [내용]`}]})
     });
     const d=await r.json();
     const t=d.content?.[0]?.text||'';
@@ -1400,11 +1400,13 @@ async function searchCat(){
       const r=await fetch('https://api.anthropic.com/v1/messages',{
         method:'POST',
         headers:getHeaders(),
-        body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,messages:[{role:'user',content:`"${cat.n}" 카테고리에서 요즘 쇼핑숏츠로 잘 팔리는 인기 상품 키워드 8개를 JSON 배열로만 답해주세요. 각 항목은 {"name":"상품명","badge":"태그"} 형태. 배지는 신상/인기/다이소/쿠팡 중 하나. \`\`\`json 없이 순수 JSON만.`}]})
+        body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:400,messages:[{role:'user',content:`"${cat.n}" 카테고리에서 요즘 쇼핑숏츠로 잘 팔리는 인기 상품 키워드 8개를 JSON 배열로만 답해주세요. 각 항목은 {"name":"상품명","badge":"태그"} 형태. 배지는 신상/인기/다이소/쿠팡 중 하나. \`\`\`json 없이 순수 JSON만.`}]})
       });
       const d=await r.json();
-      const t=d.content?.[0]?.text||'[]';
-      renderProds(JSON.parse(t.replace(/```json|```/g,'').trim()));
+      if(d.error) throw new Error(d.error.message||'API error');
+      const t=d.content?.[0]?.text||'';
+      const parsed=t?JSON.parse(t.replace(/```json|```/g,'').trim()):[];
+      renderProds(parsed.length?parsed:fallProds());
     }catch(e){renderProds(fallProds());}
   } else renderProds(fallProds());
   btn.textContent='🔍 선택한 카테고리로 키워드 조사 시작';btn.disabled=false;
