@@ -1937,9 +1937,55 @@ async function doSearchDirect() {
 // 검색 결과 저장
 let searchResults = [];
 
+async function showAiSearchFallback(query) {
+  const res = document.getElementById('searchResult');
+  const claudeKey = getKey();
+  if(!claudeKey) {
+    res.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--text3)">
+      <div style="font-size:36px;margin-bottom:12px">🔑</div>
+      <div style="font-size:14px;font-weight:700;margin-bottom:8px">YouTube API 키 또는 Claude API 키가 필요해</div>
+      <div style="font-size:12px;margin-bottom:16px;color:var(--text3)">API 설정 탭에서 키를 저장해줘</div>
+      <button onclick="goPanel('api',document.querySelector('.nav-item:nth-child(5)'))" style="padding:10px 20px;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600">🔑 API 설정 이동</button>
+    </div>`;
+    return;
+  }
+  res.innerHTML = '<div class="loading"><div class="spin"></div><br>AI 키워드 추천 중...</div>';
+  document.getElementById('currentQuery').innerHTML =
+    `🤖 AI 키워드: <span style="color:var(--accent2);font-weight:600">"${query}"</span> · YouTube API 없이 AI 추천`;
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST', headers:getHeaders(),
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:800,
+        messages:[{role:'user',content:`"${query}" 쇼핑쇼츠에서 잘 팔리는 인기 검색 키워드 15개와 각 키워드별 인기 상품명 1개를 JSON 배열로만 답해줘. 형식: [{"keyword":"키워드","product":"상품명","emoji":"이모지1개"},...] 배열만 반환. \`\`\`json 없이 순수 JSON만.`}]})
+    });
+    const d = await r.json();
+    if(d.error) throw new Error(d.error.message);
+    const text = d.content?.[0]?.text || '[]';
+    const items = JSON.parse(text.replace(/```json|```/g,'').trim());
+    res.innerHTML = `<div style="padding:4px">
+      <div style="font-size:12px;color:var(--text3);margin-bottom:14px;display:flex;align-items:center;gap:6px">
+        <span style="background:var(--accent);color:#fff;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">AI</span>
+        ${esc(query)} 인기 키워드 · YouTube API 없이 AI 추천
+        <span style="margin-left:auto;font-size:10px">키워드 클릭 → 직접 검색</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px">
+        ${items.map(it=>`<div onclick="document.getElementById('searchQuery').value='${(it.keyword||'').replace(/'/g,"&#39;")}';doSearchDirect()" style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;cursor:pointer;transition:.15s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div style="font-size:22px;margin-bottom:6px">${esc(it.emoji||'🛍')}</div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">${esc(it.keyword||'')}</div>
+          <div style="font-size:11px;color:var(--text3)">${esc(it.product||'')}</div>
+        </div>`).join('')}
+      </div>
+      <div style="margin-top:14px;padding:10px;background:var(--bg2);border-radius:8px;font-size:11px;color:var(--text3);text-align:center">
+        실제 YouTube 영상 검색은 <a href="#" onclick="goPanel('api',document.querySelector('.nav-item:nth-child(5)'));return false" style="color:var(--accent2);font-weight:600">API 설정</a>에서 YouTube API 키를 저장해줘
+      </div>
+    </div>`;
+  } catch(e) {
+    res.innerHTML = `<div style="color:var(--text3);text-align:center;padding:2rem">AI 추천 실패: ${esc(e.message)}</div>`;
+  }
+}
 async function doSearchWithQuery(query) {
   const k = getYtKey();
-  if(!k){ alert('YouTube API 키를 API 설정 탭에서 먼저 저장해주세요.'); return; }
+  if(!k){ await showAiSearchFallback(query); return; }
 
   const res = document.getElementById('searchResult');
   res.innerHTML = '<div class="loading"><div class="spin"></div><br>인기 영상 검색 중... (20개)</div>';
@@ -2131,6 +2177,12 @@ function onSrch1Change() {
   } else {
     if(srch2Sel){ srch2Sel.style.display='none'; }
     if(srch2){ srch2.style.display='block'; }
+  }
+  // 카테고리 선택하면 바로 검색 실행
+  if(cat) {
+    document.getElementById('currentQuery').innerHTML =
+      `📂 카테고리: <span style="color:var(--accent2);font-weight:600">"${cat}"</span>`;
+    doSearchWithQuery(cat);
   }
 }
 

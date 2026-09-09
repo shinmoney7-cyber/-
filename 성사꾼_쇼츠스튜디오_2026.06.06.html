@@ -1582,10 +1582,40 @@ const FALL_PRODS_BY_CAT={
 };
 function fallProds(catName,p){const c=FALL_PRODS_BY_CAT[catName];return(c&&c[p])||FALL_PRODS_BY_CAT['디지털-쇼핑가전'][p]||[];}
 const BC=['bb','bg','bo','bpu'];
+function getProdEmoji(name,plat){
+  const kws=[
+    [/커피|포트|드립|머신/,'☕'],[/냄비|프라이팬|식기|도마|칼|그릇|밥솥/,'🍳'],
+    [/청소|세정|탈취|방향/,'🧹'],[/수납|정리|박스|용기|밀폐/,'📦'],
+    [/크림|세럼|마스크팩|로션|토너|에센스|선크림|파운데이션|립|뷰티|스킨|아이섀도|컨실러|프라이머/,'💄'],
+    [/샴푸|트리트먼트|헤어|드라이기|고데기/,'💆'],[/강아지|고양이|반려|펫|사료|간식/,'🐾'],
+    [/텐트|캠핑|랜턴|버너|침낭/,'⛺'],[/여행|캐리어|파우치/,'✈️'],
+    [/USB|충전|멀티탭|배터리|허브/,'🔌'],[/이어폰|스피커|헤드폰|블루투스/,'🎧'],
+    [/노트북|탭|아이패드|갤럭시탭/,'💻'],[/워치|스마트워치/,'⌚'],
+    [/단백질|프로틴|닭가슴살|유산균|콜라겐|비타민|영양제/,'💊'],
+    [/다이어트|운동|요가|덤벨|폼롤러/,'💪'],[/후드|청바지|니트|의류|코트|자켓|원피스/,'👕'],
+    [/운동화|슬리퍼|신발|스니커즈|부츠/,'👟'],[/가방|백팩|토트|크로스/,'👜'],
+    [/쌀|귀리|콜라|초콜릿|과자|도시락|식품/,'🥗'],[/전기포트|에어프라이어|가전/,'🏠'],
+    [/보조배터리|에어팟|갤럭시버즈|무선이어폰/,'🎧'],[/스마트폰|폰케이스|필름/,'📱'],
+  ];
+  for(const [re,e] of kws){if(re.test(name))return e;}
+  return {ai:'🛍',daiso:'🏪',olive:'🌿',naver:'🛒'}[plat]||'🛍';
+}
 function renderPlatProds(plat,prods){
   const el=document.getElementById(`prod-list-${plat}`);
   if(!el)return;
-  el.innerHTML=prods.map((p,i)=>`<div class="pchip" onclick="selProd('${p.name.replace(/'/g,"&#39;")}')">${p.name}<span class="badge ${BC[i%4]}">${p.badge}</span></div>`).join('');
+  el.style.cssText='display:flex;flex-wrap:wrap;gap:8px;padding:4px 0;';
+  el.innerHTML=prods.map((p,i)=>{
+    const emoji=getProdEmoji(p.name,plat);
+    const platBg={ai:'rgba(108,99,255,.15)',daiso:'rgba(255,202,40,.15)',olive:'rgba(76,175,80,.15)',naver:'rgba(3,199,90,.15)'}[plat]||'rgba(108,99,255,.15)';
+    const platBrd={ai:'rgba(108,99,255,.35)',daiso:'rgba(255,202,40,.35)',olive:'rgba(76,175,80,.35)',naver:'rgba(3,199,90,.35)'}[plat]||'rgba(108,99,255,.35)';
+    return `<div class="pchip" onclick="selProd('${p.name.replace(/'/g,"&#39;")}')" style="display:flex;align-items:center;gap:8px;padding:6px 10px;min-width:0;flex:1 1 calc(50% - 4px);max-width:calc(50% - 4px);box-sizing:border-box;">
+      <div style="width:38px;height:38px;border-radius:8px;background:${platBg};border:1.5px solid ${platBrd};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">${emoji}</div>
+      <div style="flex:1;min-width:0;overflow:hidden">
+        <div style="font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--txt)">${p.name}</div>
+        <div style="margin-top:2px"><span class="badge ${BC[i%4]}" style="font-size:9px">${p.badge}</span></div>
+      </div>
+    </div>`;
+  }).join('');
 }
 function selProd(n){S.kw=n;S.selectedProduct=n;const el=document.getElementById('i-kw');if(el)el.value=n;closeM('m-cat');}
 
@@ -2834,7 +2864,7 @@ function renderMatcher() {
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
       <div>
         <div style="font-size:11px;color:var(--muted);margin-bottom:4px">카테고리</div>
-        <select id="mtCat" style="width:100%;padding:9px 12px;border:1px solid var(--bdr);border-radius:8px;background:var(--bg);color:var(--txt);font-size:12px">
+        <select id="mtCat" onchange="mtCatAutoSelect()" style="width:100%;padding:9px 12px;border:1px solid var(--bdr);border-radius:8px;background:var(--bg);color:var(--txt);font-size:12px">
           <option value="">자동 감지</option>
           <option>뷰티/헤어케어</option><option>스킨케어/화장품</option>
           <option>주방/요리용품</option><option>청소/세탁용품</option>
@@ -2914,6 +2944,19 @@ function mtImgLoad(e){
 }
 
 // 메인 생성 함수
+function mtCatAutoSelect(){
+  const cat=document.getElementById('mtCat').value;
+  if(!cat)return;
+  const CAT_MAP_MT={'뷰티/헤어케어':'뷰티-패션잡화','스킨케어/화장품':'뷰티-패션잡화','주방/요리용품':'생활-주방-자취','청소/세탁용품':'생활-주방-자취','생활/인테리어':'생활-주방-자취','수납/정리용품':'생활-주방-자취','식품/건강기능식품':'식품-다이어트','전자기기/가전':'디지털-쇼핑가전','패션/의류':'뷰티-패션잡화','반려동물':'반려동물 (강아지/고양이)','육아/유아용품':'생활-주방-자취'};
+  const fk=CAT_MAP_MT[cat]||'디지털-쇼핑가전';
+  const top=FALL_PRODS_BY_CAT[fk]?.ai?.[0];
+  if(!top)return;
+  // 제품명 탭으로 전환
+  document.querySelectorAll('.mttab').forEach((t,i)=>t.classList.toggle('active',i===1));
+  ['mtInputVideo','mtInputName','mtInputImg'].forEach((id,i)=>{document.getElementById(id).style.display=i===1?'block':'none';});
+  const el=document.getElementById('mtProductName');
+  if(el&&!el.value.trim())el.value=top.name;
+}
 async function mtGenerate(){
   if(!S.key){alert('상단 API 키 버튼 클릭해서 Claude API 키 입력해줘.');toggleApiBar();return;}
   const btn=document.getElementById('mtGenBtn');
@@ -2948,8 +2991,15 @@ async function mtGenerate(){
     extraInfo = `업로드된 영상 파일명: ${mtVideoFile.name}\n영상 크기: ${(mtVideoFile.size/1024/1024).toFixed(1)}MB\n`;
   }
   if(activeTab==='name'){
-    const nm = document.getElementById('mtProductName').value.trim();
-    if(!nm){alert('제품명을 입력해줘.');btn.disabled=false;btn.textContent='🛒 상품 분석 + 쿠팡 매칭 + 클릭바 문구 생성';return;}
+    let nm = document.getElementById('mtProductName').value.trim();
+    if(!nm){
+      // 카테고리에서 인기 1위 자동선택
+      const CAT_MAP_MT={'뷰티/헤어케어':'뷰티-패션잡화','스킨케어/화장품':'뷰티-패션잡화','주방/요리용품':'생활-주방-자취','청소/세탁용품':'생활-주방-자취','생활/인테리어':'생활-주방-자취','수납/정리용품':'생활-주방-자취','식품/건강기능식품':'식품-다이어트','전자기기/가전':'디지털-쇼핑가전','패션/의류':'뷰티-패션잡화','반려동물':'반려동물 (강아지/고양이)','육아/유아용품':'생활-주방-자취'};
+      const fk=CAT_MAP_MT[cat]||'디지털-쇼핑가전';
+      const top=FALL_PRODS_BY_CAT[fk]?.ai?.[0];
+      if(top){nm=top.name;document.getElementById('mtProductName').value=nm;}
+      else{alert('제품명을 입력해줘.');btn.disabled=false;btn.textContent='🛒 상품 분석 + 쿠팡 매칭 + 클릭바 문구 생성';return;}
+    }
     extraInfo = `제품명: ${nm}\n`;
   }
 
