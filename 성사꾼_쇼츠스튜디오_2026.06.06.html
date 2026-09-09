@@ -1429,26 +1429,58 @@ async function searchCat(){
       const t=d.content?.[0]?.text||'';
       const parsed=t?JSON.parse(t.replace(/```json|```/g,'').trim()):null;
       if(parsed){
-        ['ai','daiso','olive','naver'].forEach(p=>renderPlatProds(p,parsed[p]?.length?parsed[p]:fallProds(p)));
+        ['ai','daiso','olive','naver'].forEach(p=>renderPlatProds(p,parsed[p]?.length?parsed[p]:fallProds(cat.n,p)));
       } else {
-        ['ai','daiso','olive','naver'].forEach(p=>renderPlatProds(p,fallProds(p)));
+        ['ai','daiso','olive','naver'].forEach(p=>renderPlatProds(p,fallProds(cat.n,p)));
       }
-    }catch(e){['ai','daiso','olive','naver'].forEach(p=>renderPlatProds(p,fallProds(p)));}
+    }catch(e){['ai','daiso','olive','naver'].forEach(p=>renderPlatProds(p,fallProds(cat.n,p)));}
   } else {
-    ['ai','daiso','olive','naver'].forEach(p=>renderPlatProds(p,fallProds(p)));
+    ['ai','daiso','olive','naver'].forEach(p=>renderPlatProds(p,fallProds(cat.n,p)));
   }
   // 첫 탭(AI추천)으로 리셋
   document.querySelectorAll('.ptab').forEach((t,i)=>t.classList.toggle('active',i===0));
   ['ai','daiso','olive','naver'].forEach((p,i)=>document.getElementById(`prod-list-${p}`).classList.toggle('hidden',i!==0));
   btn.textContent='🔍 선택한 카테고리로 키워드 조사 시작';btn.disabled=false;
 }
-const FALL_PRODS={
-  ai:[{name:'USB-C 다기능 허브',badge:'인기'},{name:'LED 무드등',badge:'신상'},{name:'무선 충전 거치대',badge:'신상'},{name:'소형 공기청정기',badge:'베스트'},{name:'접이식 발침대',badge:'추천'},{name:'스마트 LED 조명',badge:'인기'},{name:'미니 가습기',badge:'베스트'},{name:'무선 마우스',badge:'인기'},{name:'멀티탭 USB 포트',badge:'추천'},{name:'휴대폰 거치대',badge:'신상'}],
-  daiso:[{name:'다이소 멀티포트 충전기',badge:'베스트'},{name:'다이소 미니선풍기',badge:'인기'},{name:'다이소 수납함',badge:'추천'},{name:'다이소 보냉백',badge:'신상'},{name:'다이소 리무버블 훅',badge:'베스트'},{name:'다이소 칫솔살균기',badge:'인기'},{name:'다이소 야광 스티커',badge:'추천'},{name:'다이소 자석 메모홀더',badge:'신상'},{name:'다이소 슬리퍼',badge:'베스트'},{name:'다이소 면도기 커버',badge:'인기'}],
-  olive:[{name:'토리든 히알루론산 세럼',badge:'베스트'},{name:'CeraVe 수분크림',badge:'인기'},{name:'라운드랩 자작나무 토너',badge:'신상'},{name:'달바 미스트 세럼',badge:'추천'},{name:'메디힐 마스크팩',badge:'베스트'},{name:'아누아 어성초 토너',badge:'인기'},{name:'코스알엑스 달팽이크림',badge:'추천'},{name:'이니스프리 그린티 세럼',badge:'신상'},{name:'숨37 에센스',badge:'베스트'},{name:'클리오 킬커버 파운데이션',badge:'인기'}],
-  naver:[{name:'스탠리 텀블러',badge:'인기'},{name:'샤오미 보조배터리',badge:'추천'},{name:'에어팟 케이스',badge:'신상'},{name:'노트북 파우치',badge:'베스트'},{name:'아이패드 케이스',badge:'인기'},{name:'캠핑 랜턴',badge:'신상'},{name:'무선 키보드',badge:'추천'},{name:'갤럭시 버즈 케이스',badge:'베스트'},{name:'애플워치 밴드',badge:'인기'},{name:'가습기 필터',badge:'추천'}]
+const FALL_PRODS_BY_CAT={
+  '생활-주방-자취':{
+    ai:[{name:'미니 식기건조대',badge:'인기'},{name:'캡슐 커피머신',badge:'신상'},{name:'에어 프라이어',badge:'베스트'},{name:'주방 수납선반',badge:'추천'},{name:'스마트 전기포트',badge:'인기'},{name:'실리콘 냄비받침',badge:'신상'},{name:'무선 진공청소기',badge:'베스트'},{name:'소형 냉장고',badge:'추천'},{name:'조리도구 세트',badge:'인기'},{name:'전자 계량저울',badge:'신상'}],
+    daiso:[{name:'다이소 주방 수납함',badge:'인기'},{name:'다이소 실리콘 뚜껑',badge:'신상'},{name:'다이소 냉장고 정리함',badge:'베스트'},{name:'다이소 절약 클립',badge:'추천'},{name:'다이소 물비누 용기',badge:'인기'},{name:'다이소 채소 세척망',badge:'신상'},{name:'다이소 고무장갑',badge:'베스트'},{name:'다이소 키친타올홀더',badge:'추천'},{name:'다이소 커피 드리퍼',badge:'인기'},{name:'다이소 계량컵',badge:'신상'}],
+    olive:[{name:'주방 방향제',badge:'인기'},{name:'천연 수세미',badge:'신상'},{name:'베이킹소다 세정제',badge:'베스트'},{name:'착한 손 크림',badge:'추천'},{name:'항균 도마 세정제',badge:'인기'},{name:'구연산 클렌저',badge:'신상'},{name:'천연 핸드워시',badge:'베스트'},{name:'바디 스크럽',badge:'추천'},{name:'주방 탈취제',badge:'인기'},{name:'욕실 세정제',badge:'신상'}],
+    naver:[{name:'코렐 그릇 세트',badge:'베스트'},{name:'락앤락 밀폐용기',badge:'인기'},{name:'쿠쿠 압력밥솥',badge:'신상'},{name:'테팔 프라이팬',badge:'베스트'},{name:'스텐 냄비 세트',badge:'추천'},{name:'조지루시 보온밥통',badge:'인기'},{name:'레녹스 식기세트',badge:'신상'},{name:'할로겐 가열판',badge:'베스트'},{name:'핫플 식기 세트',badge:'추천'},{name:'냄비 보관 랙',badge:'인기'}]
+  },
+  '디지털-쇼핑가전':{
+    ai:[{name:'USB-C 다기능 허브',badge:'인기'},{name:'LED 무드등',badge:'신상'},{name:'무선 충전 거치대',badge:'신상'},{name:'소형 공기청정기',badge:'베스트'},{name:'접이식 발침대',badge:'추천'},{name:'스마트 LED 조명',badge:'인기'},{name:'미니 가습기',badge:'베스트'},{name:'무선 마우스',badge:'인기'},{name:'멀티탭 USB 포트',badge:'추천'},{name:'휴대폰 거치대',badge:'신상'}],
+    daiso:[{name:'다이소 스마트폰 거치대',badge:'인기'},{name:'다이소 USB 멀티포트',badge:'신상'},{name:'다이소 이어폰 수납',badge:'베스트'},{name:'다이소 케이블 정리',badge:'추천'},{name:'다이소 폰 클리너',badge:'인기'},{name:'다이소 태블릿 거치대',badge:'신상'},{name:'다이소 마우스패드',badge:'베스트'},{name:'다이소 스크린 클리너',badge:'추천'},{name:'다이소 충전 케이블',badge:'인기'},{name:'다이소 카메라 렌즈',badge:'신상'}],
+    olive:[{name:'스마트워치 보호필름',badge:'베스트'},{name:'에어팟 케이스',badge:'인기'},{name:'갤럭시 버즈 케이스',badge:'신상'},{name:'핑거링 스마트폰',badge:'추천'},{name:'폰케이스 추천',badge:'인기'},{name:'스마트 체온계',badge:'신상'},{name:'UV 소독기',badge:'베스트'},{name:'화면 보호필름',badge:'추천'},{name:'블루투스 이어폰',badge:'인기'},{name:'스마트 헬스밴드',badge:'신상'}],
+    naver:[{name:'샤오미 보조배터리',badge:'인기'},{name:'에어팟 프로',badge:'신상'},{name:'갤럭시 탭',badge:'베스트'},{name:'아이패드 미니',badge:'추천'},{name:'LG 그램 노트북',badge:'인기'},{name:'갤럭시 워치',badge:'신상'},{name:'소니 블루투스 헤드폰',badge:'베스트'},{name:'JBL 블루투스 스피커',badge:'추천'},{name:'애플워치',badge:'인기'},{name:'닌텐도 스위치 라이트',badge:'신상'}]
+  },
+  '뷰티-패션잡화':{
+    ai:[{name:'토리든 히알루론산 세럼',badge:'베스트'},{name:'CeraVe 수분크림',badge:'인기'},{name:'달바 미스트 세럼',badge:'신상'},{name:'메디힐 마스크팩',badge:'베스트'},{name:'라운드랩 자작나무 토너',badge:'추천'},{name:'아누아 어성초 토너',badge:'인기'},{name:'코스알엑스 달팽이크림',badge:'추천'},{name:'이니스프리 그린티 세럼',badge:'신상'},{name:'클리오 킬커버 파운데이션',badge:'베스트'},{name:'롬앤 립틴트',badge:'인기'}],
+    daiso:[{name:'다이소 미니 거울',badge:'인기'},{name:'다이소 화장품 정리함',badge:'신상'},{name:'다이소 클렌징 패드',badge:'베스트'},{name:'다이소 립케어',badge:'추천'},{name:'다이소 면봉 케이스',badge:'인기'},{name:'다이소 UV 차단제',badge:'신상'},{name:'다이소 아이섀도우',badge:'베스트'},{name:'다이소 마스크팩',badge:'추천'},{name:'다이소 눈썹칼',badge:'인기'},{name:'다이소 메이크업 브러쉬',badge:'신상'}],
+    olive:[{name:'숨37 에센스',badge:'베스트'},{name:'설화수 자음 크림',badge:'인기'},{name:'헉슬리 레몬볼 세럼',badge:'신상'},{name:'조선미녀 쌀 스킨',badge:'추천'},{name:'헬리오케어 자외선차단제',badge:'베스트'},{name:'클리오 콘실러',badge:'인기'},{name:'롬앤 립글로우',badge:'신상'},{name:'입큰 스킨케어',badge:'추천'},{name:'리플 수분 크림',badge:'베스트'},{name:'베네피트 틴트',badge:'인기'}],
+    naver:[{name:'레페토 발레플랫',badge:'인기'},{name:'아디다스 삼바',badge:'신상'},{name:'뉴발란스 530',badge:'베스트'},{name:'나이키 에어맥스',badge:'추천'},{name:'키르시 맨투맨',badge:'인기'},{name:'마르디 메크르디 셔츠',badge:'신상'},{name:'무신사 스탠다드 청바지',badge:'베스트'},{name:'아크테릭스 로고 후드',badge:'추천'},{name:'반스 올드스쿨',badge:'인기'},{name:'폴로 반팔 셔츠',badge:'신상'}]
+  },
+  '식품-다이어트':{
+    ai:[{name:'제로 콜라 추천',badge:'인기'},{name:'닭가슴살 큐브',badge:'신상'},{name:'무당 단백질 바',badge:'베스트'},{name:'저칼로리 컵라면',badge:'추천'},{name:'고단백 그릭요거트',badge:'인기'},{name:'저당 음료',badge:'신상'},{name:'무설탕 초콜릿',badge:'베스트'},{name:'샐러드 드레싱 추천',badge:'추천'},{name:'프로틴 쉐이크',badge:'인기'},{name:'건강 도시락 세트',badge:'신상'}],
+    daiso:[{name:'다이소 밀프렙 용기',badge:'인기'},{name:'다이소 샐러드 볼',badge:'신상'},{name:'다이소 도시락 통',badge:'베스트'},{name:'다이소 냉동 용기',badge:'추천'},{name:'다이소 식품 보관함',badge:'인기'},{name:'다이소 분리 찬합',badge:'신상'},{name:'다이소 비닐 랩',badge:'베스트'},{name:'다이소 포장랩',badge:'추천'},{name:'다이소 젓가락 세트',badge:'인기'},{name:'다이소 낱개 세척망',badge:'신상'}],
+    olive:[{name:'비타민C 영양제',badge:'베스트'},{name:'콜라겐 프로틴 쉐이크',badge:'인기'},{name:'저칼로리 식이섬유',badge:'신상'},{name:'프로바이오틱스',badge:'추천'},{name:'글루타치온 영양제',badge:'베스트'},{name:'오메가3',badge:'인기'},{name:'루테인 눈 영양제',badge:'신상'},{name:'마그네슘 보충제',badge:'추천'},{name:'아연 영양제',badge:'베스트'},{name:'유산균 보충제',badge:'인기'}],
+    naver:[{name:'할리스 닭가슴살',badge:'인기'},{name:'프로틴 오트밀',badge:'신상'},{name:'제로 초콜릿',badge:'베스트'},{name:'곤약밥 추천',badge:'추천'},{name:'건강 간식 구독박스',badge:'인기'},{name:'저칼로리 과자',badge:'신상'},{name:'단백질 스낵',badge:'베스트'},{name:'그린티 라떼 파우더',badge:'추천'},{name:'귀리 씨리얼',badge:'인기'},{name:'동원 참치 저당',badge:'신상'}]
+  },
+  '캠핑-여행-취미':{
+    ai:[{name:'감성 캠핑 랜턴',badge:'인기'},{name:'접이식 캠핑 의자',badge:'신상'},{name:'캠핑 버너 세트',badge:'베스트'},{name:'다이소 여행 파우치',badge:'추천'},{name:'무선 캠핑 스피커',badge:'인기'},{name:'캠핑 해먹',badge:'신상'},{name:'여행용 보조배터리',badge:'베스트'},{name:'미니 카메라',badge:'추천'},{name:'차박 용품',badge:'인기'},{name:'여행 캐리어',badge:'신상'}],
+    daiso:[{name:'다이소 여행 파우치',badge:'인기'},{name:'다이소 멀티 어댑터',badge:'신상'},{name:'다이소 접이식 컵',badge:'베스트'},{name:'다이소 압축 팩',badge:'추천'},{name:'다이소 여행 비닐팩',badge:'인기'},{name:'다이소 목 쿠션',badge:'신상'},{name:'다이소 접이식 숟가락',badge:'베스트'},{name:'다이소 미니 우산',badge:'추천'},{name:'다이소 여행 분리팩',badge:'인기'},{name:'다이소 해충 방지 팔찌',badge:'신상'}],
+    olive:[{name:'선크림 여행용 소분',badge:'베스트'},{name:'자외선 차단 립밤',badge:'인기'},{name:'모기 기피제',badge:'신상'},{name:'여행용 샴푸 세트',badge:'추천'},{name:'여행용 보디로션',badge:'베스트'},{name:'미니 향수 추천',badge:'인기'},{name:'썬 쿠션 소용량',badge:'신상'},{name:'여행용 핸드크림',badge:'추천'},{name:'자외선 차단 파운데이션',badge:'베스트'},{name:'여행용 세안 제품',badge:'인기'}],
+    naver:[{name:'스노우피크 랜턴',badge:'인기'},{name:'파타고니아 플리스',badge:'신상'},{name:'제이트립 텐트',badge:'베스트'},{name:'방수 캠핑 타프',badge:'추천'},{name:'트레킹 스틱 추천',badge:'인기'},{name:'콜롬비아 윈드자켓',badge:'신상'},{name:'K2 아이젠',badge:'베스트'},{name:'네파 등산화',badge:'추천'},{name:'아웃도어 침낭',badge:'인기'},{name:'캠핑 그릴',badge:'신상'}]
+  },
+  '반려동물 (강아지/고양이)':{
+    ai:[{name:'강아지 수제 간식',badge:'인기'},{name:'고양이 숨숨집',badge:'신상'},{name:'반려동물 자동급식기',badge:'베스트'},{name:'고양이 모래 추천',badge:'추천'},{name:'강아지 산책 하네스',badge:'인기'},{name:'자동 급수기',badge:'신상'},{name:'고양이 장난감',badge:'베스트'},{name:'강아지 치아 간식',badge:'추천'},{name:'반려동물 샴푸',badge:'인기'},{name:'고양이 스크래처',badge:'신상'}],
+    daiso:[{name:'다이소 강아지 간식통',badge:'인기'},{name:'다이소 고양이 장난감',badge:'신상'},{name:'다이소 반려동물 빗',badge:'베스트'},{name:'다이소 펫 방석',badge:'추천'},{name:'다이소 리드줄',badge:'인기'},{name:'다이소 배변 봉투',badge:'신상'},{name:'다이소 고양이 쿠션',badge:'베스트'},{name:'다이소 반려동물 수건',badge:'추천'},{name:'다이소 슬링백',badge:'인기'},{name:'다이소 펫 캔통',badge:'신상'}],
+    olive:[{name:'강아지 관절 영양제',badge:'베스트'},{name:'고양이 유산균',badge:'인기'},{name:'반려동물 오메가3',badge:'신상'},{name:'강아지 비타민',badge:'추천'},{name:'고양이 트리플케어',badge:'베스트'},{name:'반려동물 프로바이오틱스',badge:'인기'},{name:'강아지 눈물 닦기',badge:'신상'},{name:'귀 세정제',badge:'추천'},{name:'발바닥 보습크림',badge:'베스트'},{name:'피부 건강 보조제',badge:'인기'}],
+    naver:[{name:'로얄캐닌 사료',badge:'인기'},{name:'힐스 처방식',badge:'신상'},{name:'내추럴밸런스 사료',badge:'베스트'},{name:'강아지 침대 추천',badge:'추천'},{name:'스마트 자동급식기',badge:'인기'},{name:'캐터필러 고양이집',badge:'신상'},{name:'인터렉티브 장난감',badge:'베스트'},{name:'반려동물 GPS 트래커',badge:'추천'},{name:'자동 화장실 고양이용',badge:'인기'},{name:'반려동물 유모차',badge:'신상'}]
+  }
 };
-function fallProds(p){return FALL_PRODS[p]||FALL_PRODS.ai;}
+function fallProds(catName,p){const c=FALL_PRODS_BY_CAT[catName];return(c&&c[p])||FALL_PRODS_BY_CAT['디지털-쇼핑가전'][p]||[];}
 const BC=['bb','bg','bo','bpu'];
 function renderPlatProds(plat,prods){
   const el=document.getElementById(`prod-list-${plat}`);
