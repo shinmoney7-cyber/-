@@ -384,6 +384,54 @@ textarea.finp{resize:vertical;min-height:80px;}
   .wcard { padding: 12px 10px !important; }
 }
 
+/* ──── API 키 클릭바 모바일 ──── */
+@media (max-width: 768px) {
+  #api-key-label { display: none; }
+  #api-key-bar { padding: 6px 9px; border-radius: 50%; }
+  #api-key-popup {
+    position: fixed !important;
+    right: 8px !important;
+    left: 8px !important;
+    top: 54px !important;
+    width: auto !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+  }
+  /* 카테고리 모달 전체화면 */
+  .mov { padding: 0 !important; }
+  .modal {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    max-height: 100dvh !important;
+    height: 100dvh !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    display: flex;
+    flex-direction: column;
+  }
+  .mbody { flex: 1; overflow-y: auto; padding: 12px 14px !important; }
+  .mhd { padding: 14px 16px 10px !important; flex-shrink: 0; }
+  .mfoot { padding: 10px 16px !important; flex-shrink: 0; }
+  /* 상품매칭+클릭바 패널 */
+  #mtGenBtn { font-size: 13px !important; padding: 12px !important; }
+  /* 플랫폼 체크박스 wrap */
+  .mt-plat-row { flex-wrap: wrap !important; gap: 8px !important; }
+  /* 씬 목록 */
+  .scrow { gap: 6px !important; }
+}
+@media (max-width: 480px) {
+  /* ptab 스크롤 */
+  .ptabs { flex-wrap: nowrap !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; padding-bottom: 4px !important; }
+  .ptab { flex-shrink: 0 !important; font-size: 11px !important; padding: 4px 9px !important; }
+  /* 상품 칩 */
+  .pchip { font-size: 12px !important; padding: 8px 10px !important; }
+  .badge { font-size: 9px !important; padding: 1px 5px !important; }
+  /* 카테고리 라디오 리스트 */
+  .catitem { padding: 10px 12px !important; }
+  .catitem > div > div:first-child { font-size: 13px !important; }
+  .catitem > div > div:last-child { font-size: 10px !important; }
+}
+
 
 /* ═══════════════ 모바일 반응형 ═══════════════ */
 @media(max-width:900px){

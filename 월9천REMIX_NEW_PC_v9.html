@@ -213,9 +213,71 @@ select option{background:var(--bg3)}
   .launcher-grid{grid-template-columns:1fr}
   .hook-grid{grid-template-columns:1fr 1fr}
   .score-grid{grid-template-columns:repeat(2,1fr)}
-  .tabs{overflow-x:auto}
-  .search-row{flex-wrap:wrap}
+  .tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap;white-space:nowrap;padding-bottom:2px}
+  .tab{flex-shrink:0;font-size:12px;padding:6px 12px}
+  .search-row{flex-wrap:wrap;gap:6px}
   .search-row input{width:100%}
+  .topbar-sub{display:none}
+  .tbtn{display:none}
+  .card{padding:14px}
+  .card-title{font-size:14px}
+  .srch-grid,.srch-row{grid-template-columns:1fr!important;gap:8px}
+  select[id^="srch"]{width:100%!important}
+  .cpa-card-desc,.plat-sub{font-size:10px}
+  .cpa-result-box{padding:12px}
+  .sub-row{grid-template-columns:44px 54px 1fr auto;font-size:11px}
+}
+@media(max-width:480px){
+  .content{padding:12px 10px}
+  .topbar{height:46px;padding:0 10px 0 50px}
+  .topbar-title{font-size:13px}
+  .stats-grid{gap:6px}
+  .stat-card{padding:12px 10px}
+  .stat-val{font-size:20px}
+  .stat-label{font-size:10px}
+  .video-grid{gap:10px}
+  .video-card{border-radius:8px}
+  .video-thumb{height:160px}
+  .video-info{padding:10px}
+  .video-title{font-size:12px}
+  .hook-grid{grid-template-columns:1fr}
+  .score-grid{grid-template-columns:1fr 1fr;gap:6px}
+  .score-card{padding:10px}
+  .score-val{font-size:20px}
+  .tab{font-size:11px;padding:5px 10px}
+  .card{padding:12px;border-radius:10px}
+  .card-hd{margin-bottom:10px}
+  .card-title{font-size:13px}
+  .btn{font-size:12px;padding:7px 12px}
+  .cpa-grid{gap:10px}
+  .cpa-card{padding:14px}
+  .cpa-card-title{font-size:13px}
+  .category-grid{grid-template-columns:repeat(3,1fr);gap:6px}
+  .cat-card{padding:9px 6px}
+  .cat-icon{font-size:18px;margin-bottom:3px}
+  .cat-name{font-size:10px}
+  .profit-amount{font-size:26px}
+  .plat-deploy-grid{grid-template-columns:1fr}
+  .plat-deploy-card{padding:12px}
+  .vg-ctrl{gap:6px}
+  .style-btns{grid-template-columns:repeat(2,1fr)}
+  .launcher-grid{gap:8px}
+  .launcher-card{padding:12px}
+  /* 모달 전체화면 */
+  .modal-wrap,.mov{padding:0!important}
+  .modal{width:100vw!important;max-width:100vw!important;max-height:100vh!important;border-radius:0!important;margin:0!important}
+  .mhd{padding:14px 16px 12px}
+  .mfoot{padding:12px 16px}
+  /* 인기상품 플랫폼탭 */
+  .cpa-ptab{font-size:10px!important;padding:4px 8px!important}
+}
+@media(max-width:380px){
+  .stats-grid{grid-template-columns:1fr}
+  .category-grid{grid-template-columns:repeat(2,1fr)}
+  .hook-grid{grid-template-columns:1fr}
+  .score-grid{grid-template-columns:1fr 1fr}
+  .content{padding:10px 8px}
+  .card{padding:10px}
 }
 
 /* ── 영상 생성기 ── */
