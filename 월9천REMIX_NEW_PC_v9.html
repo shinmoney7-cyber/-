@@ -1851,6 +1851,7 @@ function setKw(kw) {
 function getHeaders() {
   return {'Content-Type':'application/json','x-api-key':getKey(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'};
 }
+function esc(s){const d=document.createElement('div');d.textContent=String(s??'');return d.innerHTML;}
 
 async function doSearch() {
   // 3단계 검색어 조합
