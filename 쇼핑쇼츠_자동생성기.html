@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>쇼핑쇼츠 자동생성기</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0f0f13;--card:#1a1a22;--card2:#22222e;--accent:#6c63ff;--accent2:#ff6584;--txt:#f0f0f8;--sub:#8888aa;--border:#2a2a3a;--green:#22d3a0}
+body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;padding-bottom:40px}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 0;max-width:540px;margin:0 auto}
+.logo{font-size:18px;font-weight:800;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.set-btn{background:var(--card);border:1px solid var(--border);color:var(--sub);padding:6px 12px;border-radius:20px;cursor:pointer;font-size:12px}
+.set-btn:hover{border-color:var(--accent);color:var(--accent)}
+.tabs{display:flex;gap:8px;padding:16px 16px 0;max-width:540px;margin:0 auto}
+.tab{flex:1;padding:10px;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--sub);font-size:13px;font-weight:600;cursor:pointer;text-align:center;transition:all .2s}
+.tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.panel{display:none;padding:16px;max-width:540px;margin:0 auto}
+.panel.active{display:block}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px}
+label{display:block;font-size:11px;font-weight:700;color:var(--sub);margin-bottom:6px;letter-spacing:.5px;text-transform:uppercase}
+input[type=text],input[type=url],textarea{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--txt);font-size:14px;outline:none;transition:border .2s}
+input[type=text]:focus,input[type=url]:focus,textarea:focus{border-color:var(--accent)}
+textarea{resize:vertical;min-height:70px;font-family:inherit}
+.img-preview{width:80px;height:80px;border-radius:12px;object-fit:cover;border:1px solid var(--border);display:none}
+.img-ph{width:80px;height:80px;border-radius:12px;background:var(--card2);border:1px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:28px}
+.img-row{display:flex;gap:12px;align-items:flex-start}
+.img-col{display:flex;flex-direction:column;gap:8px}
+.inputs-col{flex:1}
+.btn{width:100%;padding:14px;border-radius:12px;border:none;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+.btn-primary:hover{opacity:.9;transform:translateY(-1px)}
+.btn-primary:active{transform:translateY(0)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--sub);padding:8px 14px;width:auto;border-radius:8px;font-size:12px;cursor:pointer}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+.result{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-top:12px;display:none}
+.result.show{display:block}
+.result-section{margin-bottom:14px}
+.result-section:last-child{margin-bottom:0}
+.result-label{font-size:10px;font-weight:700;color:var(--sub);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px}
+.result-text{font-size:13px;line-height:1.7;color:var(--txt);white-space:pre-wrap}
+.copy-btn{font-size:11px;background:var(--card);border:1px solid var(--border);color:var(--sub);padding:4px 10px;border-radius:6px;cursor:pointer;float:right;margin-top:-2px}
+.copy-btn:hover{border-color:var(--green);color:var(--green)}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;margin-right:4px;margin-bottom:4px}
+.badge-yt{background:#ff0000;color:#fff}
+.badge-tt{background:#010101;color:#fff;border:1px solid #333}
+.badge-ig{background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff}
+.plat-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.plat-btn{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--card2);color:var(--sub);font-size:12px;font-weight:600;cursor:pointer}
+.plat-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(108,99,255,.1)}
+.prod-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;display:flex;gap:12px;align-items:center}
+.prod-emoji{width:48px;height:48px;border-radius:10px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.prod-info{flex:1;min-width:0}
+.prod-name{font-size:13px;font-weight:700;margin-bottom:4px}
+.prod-link{display:inline-block;margin-top:6px;padding:5px 12px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-radius:8px;font-size:11px;font-weight:700;text-decoration:none}
+.spinner{width:20px;height:20px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* Settings modal */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;align-items:flex-end;justify-content:center}
+.modal.open{display:flex}
+.modal-box{background:var(--card);border-radius:20px 20px 0 0;padding:20px;width:100%;max-width:540px;max-height:80vh;overflow-y:auto}
+.modal-title{font-size:16px;font-weight:800;margin-bottom:16px}
+.modal-close{float:right;background:none;border:none;color:var(--sub);font-size:20px;cursor:pointer;margin-top:-4px}
+.saved-badge{display:inline-block;background:var(--green);color:#000;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:8px;opacity:0;transition:opacity .3s}
+.saved-badge.show{opacity:1}
+.tag{display:inline-block;padding:3px 8px;background:rgba(108,99,255,.15);border:1px solid rgba(108,99,255,.3);color:var(--accent);border-radius:6px;font-size:11px;margin:2px}
+.sep{height:1px;background:var(--border);margin:12px 0}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">🛍 쇼핑쇼츠 AI</div>
+  <button class="set-btn" onclick="openSettings()">⚙️ 설정</button>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('shorts',this)">🎬 쇼츠 생성</button>
+  <button class="tab" onclick="switchTab('viral',this)">🔗 바이럴 연동</button>
+</div>
+
+<!-- Tab 1: 쇼핑쇼츠 생성 -->
+<div id="panel-shorts" class="panel active">
+  <div class="card">
+    <div style="margin-bottom:12px">
+      <div class="plat-row">
+        <button class="plat-btn active" onclick="selPlat('all',this)">전체</button>
+        <button class="plat-btn" onclick="selPlat('youtube',this)"><span class="badge badge-yt">YT</span> Shorts</button>
+        <button class="plat-btn" onclick="selPlat('tiktok',this)"><span class="badge badge-tt">TT</span> TikTok</button>
+        <button class="plat-btn" onclick="selPlat('instagram',this)"><span class="badge badge-ig">IG</span> Reels</button>
+      </div>
+    </div>
+
+    <div class="img-row">
+      <div class="img-col">
+        <div class="img-ph" id="imgPh">📦</div>
+        <img id="imgPreview" class="img-preview" alt="상품이미지">
+      </div>
+      <div class="inputs-col">
+        <label>상품명</label>
+        <input type="text" id="prodName" placeholder="예: 다이슨 에어랩" style="margin-bottom:8px">
+        <label>이미지 URL (선택)</label>
+        <input type="url" id="prodImg" placeholder="https://..." oninput="previewImg(this.value)">
+      </div>
+    </div>
+
+    <div style="margin-top:10px">
+      <label>상품 URL (쿠팡 / 네이버 등)</label>
+      <input type="url" id="prodUrl" placeholder="https://www.coupang.com/...">
+    </div>
+
+    <div style="margin-top:10px">
+      <label>추가 정보 (선택)</label>
+      <textarea id="prodInfo" placeholder="가격, 특징, 타깃 등 자유롭게 입력..."></textarea>
+    </div>
+
+    <button class="btn btn-primary" id="genBtn" onclick="generateShorts()">
+      ✨ 쇼핑쇼츠 생성
+    </button>
+  </div>
+
+  <div class="result" id="shortsResult">
+    <div class="result-section" id="rs-hook">
+      <div class="result-label">🎣 훅 (첫 3초) <button class="copy-btn" onclick="copySection('hook')">복사</button></div>
+      <div class="result-text" id="rtext-hook"></div>
+    </div>
+    <div class="sep"></div>
+    <div class="result-section" id="rs-script">
+      <div class="result-label">📝 스크립트 <button class="copy-btn" onclick="copySection('script')">복사</button></div>
+      <div class="result-text" id="rtext-script"></div>
+    </div>
+    <div class="sep"></div>
+    <div class="result-section" id="rs-hash">
+      <div class="result-label">🏷 해시태그 <button class="copy-btn" onclick="copySection('hash')">복사</button></div>
+      <div class="result-text" id="rtext-hash"></div>
+    </div>
+    <div class="sep"></div>
+    <div class="result-section" id="rs-cta">
+      <div class="result-label">📣 CTA <button class="copy-btn" onclick="copySection('cta')">복사</button></div>
+      <div class="result-text" id="rtext-cta"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Tab 2: 바이럴 자동연동 -->
+<div id="panel-viral" class="panel">
+  <div class="card">
+    <label>유튜브 / 틱톡 / 인스타 영상 링크</label>
+    <input type="url" id="viralUrl" placeholder="https://www.youtube.com/watch?v=..." style="margin-bottom:12px">
+
+    <label style="margin-bottom:6px">여러 링크 (줄바꿈으로 구분)</label>
+    <textarea id="viralUrls" placeholder="링크1&#10;링크2&#10;링크3" style="min-height:90px"></textarea>
+
+    <button class="btn btn-primary" id="viralBtn" onclick="analyzeViral()">
+      🔍 상품 감지 + 쿠팡 자동연동
+    </button>
+  </div>
+
+  <div id="viralResult"></div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal" id="settingsModal" onclick="closeIfBg(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeSettings()">✕</button>
+    <div class="modal-title">⚙️ 설정</div>
+
+    <label>Claude API 키</label>
+    <input type="text" id="claudeKey" placeholder="sk-ant-..." style="margin-bottom:4px">
+    <button class="btn-outline" onclick="saveKey()">저장 <span class="saved-badge" id="keySaved">✓ 저장됨</span></button>
+
+    <div class="sep"></div>
+    <div style="font-size:12px;font-weight:700;color:var(--sub);margin-bottom:10px">쿠팡파트너스 (선택 — 딥링크 생성용)</div>
+    <label>Access Key</label>
+    <input type="text" id="cpAccess" placeholder="액세스 키" style="margin-bottom:8px">
+    <label>Secret Key</label>
+    <input type="text" id="cpSecret" placeholder="시크릿 키" style="margin-bottom:8px">
+    <label>Sub ID</label>
+    <input type="text" id="cpSubid" placeholder="서브 ID" style="margin-bottom:4px">
+    <button class="btn-outline" onclick="saveCoupang()">쿠팡파트너스 저장 <span class="saved-badge" id="cpSaved">✓ 저장됨</span></button>
+  </div>
+</div>
+
+<script>
+// ── 상태 ──────────────────────────────────────
+let curPlat = 'all';
+
+// ── 스토리지 ───────────────────────────────────
+const LS = {
+  get: k => localStorage.getItem(k) || '',
+  set: (k, v) => localStorage.setItem(k, v)
+};
+
+function getKey() { return LS.get('ss_claude_key'); }
+function getHeaders() {
+  return {
+    'Content-Type': 'application/json',
+    'x-api-key': getKey(),
+    'anthropic-version': '2023-06-01',
+    'anthropic-dangerous-direct-browser-access': 'true'
+  };
+}
+async function callClaude(prompt, maxTokens = 2000) {
+  const r = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: getHeaders(),
+    body: JSON.stringify({ model: 'claude-sonnet-4-5', max_tokens: maxTokens, messages: [{ role: 'user', content: prompt }] })
+  });
+  const d = await r.json();
+  if (!r.ok) throw new Error(d.error?.message || 'API 오류');
+  return d.content?.[0]?.text || '';
+}
+
+function getCoupangCreds() {
+  return { access: LS.get('ss_cp_access'), secret: LS.get('ss_cp_secret'), subid: LS.get('ss_cp_subid') };
+}
+
+function coupangSearchUrl(kw) {
+  return `https://www.coupang.com/np/search?q=${encodeURIComponent(kw)}&channel=user`;
+}
+
+function coupangDeepLink(kw) {
+  const c = getCoupangCreds();
+  if (!c.access || !c.subid) return null;
+  const base = coupangSearchUrl(kw);
+  return `https://link.coupang.com/a/${c.subid}?url=${encodeURIComponent(base)}`;
+}
+
+// ── UI ────────────────────────────────────────
+function switchTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function selPlat(p, btn) {
+  curPlat = p;
+  document.querySelectorAll('.plat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function previewImg(url) {
+  const prev = document.getElementById('imgPreview');
+  const ph = document.getElementById('imgPh');
+  if (url) {
+    prev.src = url;
+    prev.style.display = 'block';
+    ph.style.display = 'none';
+  } else {
+    prev.style.display = 'none';
+    ph.style.display = 'flex';
+  }
+}
+
+function copySection(id) {
+  const el = document.getElementById('rtext-' + id);
+  if (!el) return;
+  navigator.clipboard.writeText(el.textContent).then(() => {
+    const btn = el.parentElement.querySelector('.copy-btn');
+    if (btn) { btn.textContent = '✓'; setTimeout(() => btn.textContent = '복사', 1500); }
+  });
+}
+
+// ── 쇼츠 생성 ─────────────────────────────────
+async function generateShorts() {
+  const name = document.getElementById('prodName').value.trim();
+  if (!name) { alert('상품명을 입력해줘.'); return; }
+  if (!getKey()) { openSettings(); return; }
+
+  const btn = document.getElementById('genBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> 생성 중...';
+
+  const url = document.getElementById('prodUrl').value.trim();
+  const info = document.getElementById('prodInfo').value.trim();
+  const platNames = { all: '유튜브Shorts/틱톡/인스타Reels 전체', youtube: '유튜브 Shorts', tiktok: '틱톡', instagram: '인스타그램 Reels' };
+  const plat = platNames[curPlat];
+
+  const prompt = [
+    `당신은 쇼핑쇼츠 전문 카피라이터야. 아래 상품 정보를 바탕으로 ${plat} 용 쇼핑쇼츠 콘텐츠를 만들어줘.`,
+    '',
+    `상품명: ${name}`,
+    url ? `상품 URL: ${url}` : '',
+    info ? `추가 정보: ${info}` : '',
+    '',
+    '다음 JSON 형식으로만 응답해:',
+    '{"hook":"첫 3초 훅 멘트 (충격적이고 호기심 자극, 1-2문장)","script":"15-30초 영상 스크립트 (타임라인 포함, 자연스러운 구어체)","hashtags":"관련 해시태그 10개 (인기 포함)","cta":"구매 유도 CTA 문구 2가지"}'
+  ].filter(Boolean).join('\n');
+
+  try {
+    const raw = await callClaude(prompt, 1500);
+    const d = parseJSON(raw);
+    document.getElementById('rtext-hook').textContent = d.hook || '';
+    document.getElementById('rtext-script').textContent = d.script || '';
+    document.getElementById('rtext-hash').textContent = d.hashtags || '';
+    document.getElementById('rtext-cta').textContent = d.cta || '';
+    document.getElementById('shortsResult').classList.add('show');
+  } catch (e) {
+    alert('생성 실패: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '✨ 쇼핑쇼츠 생성';
+  }
+}
+
+// ── 바이럴 자동연동 ────────────────────────────
+function getPlatInfo(url) {
+  if (/youtube\.com|youtu\.be/.test(url)) return { name: 'YouTube', badge: 'badge-yt', icon: '▶️' };
+  if (/tiktok\.com/.test(url)) return { name: 'TikTok', badge: 'badge-tt', icon: '🎵' };
+  if (/instagram\.com/.test(url)) return { name: 'Instagram', badge: 'badge-ig', icon: '📸' };
+  return { name: '영상', badge: '', icon: '🎬' };
+}
+
+async function getYtTitle(url) {
+  try {
+    const r = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`);
+    const d = await r.json();
+    return d.title || '';
+  } catch { return ''; }
+}
+
+function parseJSON(raw) {
+  const m = raw.match(/\{[\s\S]*\}/);
+  if (m) try { return JSON.parse(m[0]); } catch {}
+  return {};
+}
+
+function getProdEmoji(name) {
+  const kws = [
+    [/커피|드립|머신|포트/, '☕'], [/냄비|프라이팬|식기|그릇|밥솥/, '🍳'],
+    [/청소|세정|탈취|방향/, '🧹'], [/수납|정리|박스|용기|밀폐/, '📦'],
+    [/크림|세럼|마스크팩|로션|토너|선크림|파운데이션|립|뷰티|스킨|화장/, '💄'],
+    [/샴푸|컨디셔너|헤어|드라이어|에어랩/, '💇'], [/필라테스|요가|덤벨|헬스|운동/, '💪'],
+    [/노트북|맥북|태블릿|아이패드|스마트폰|폰|이어폰|에어팟/, '💻'],
+    [/소파|의자|책상|침대|가구/, '🛋'], [/램프|조명|무드등/, '💡'],
+    [/강아지|고양이|반려|펫/, '🐾'], [/원피스|티셔츠|후드|패딩|가방|지갑/, '👗'],
+    [/비타민|영양제|유산균|단백질|프로틴/, '💊'], [/커튼|이불|베개|홈/, '🏠'],
+  ];
+  for (const [re, e] of kws) if (re.test(name)) return e;
+  return '🛍';
+}
+
+async function analyzeViral() {
+  const single = document.getElementById('viralUrl').value.trim();
+  const multi = document.getElementById('viralUrls').value.trim();
+  const allUrls = [...new Set([single, ...multi.split('\n').map(s => s.trim())].filter(Boolean))];
+
+  if (!allUrls.length) { alert('링크를 입력해줘.'); return; }
+  if (!getKey()) { openSettings(); return; }
+
+  const btn = document.getElementById('viralBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> 분석 중...';
+  document.getElementById('viralResult').innerHTML = '<div style="color:var(--sub);text-align:center;padding:20px;font-size:13px">🔍 상품 감지 중...</div>';
+
+  try {
+    const results = await Promise.all(allUrls.map(u => analyzeOneUrl(u)));
+    document.getElementById('viralResult').innerHTML = results.join('');
+  } catch (e) {
+    document.getElementById('viralResult').innerHTML = `<div style="color:#ff6584;padding:12px">오류: ${e.message}</div>`;
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '🔍 상품 감지 + 쿠팡 자동연동';
+  }
+}
+
+async function analyzeOneUrl(url) {
+  const plat = getPlatInfo(url);
+  let title = '';
+  if (/youtube\.com|youtu\.be/.test(url)) title = await getYtTitle(url);
+
+  const prompt = [
+    '아래 영상 링크를 분석해서 등장하는 상품들을 감지하고 JSON으로만 반환해.',
+    `URL: ${url}`,
+    title ? `영상 제목: ${title}` : '',
+    '',
+    '{"products":[{"name":"상품명","category":"카테고리","price_range":"가격대","reason":"이 영상과 연관된 이유","hook":"이 상품으로 만들 바이럴 훅 1줄"}]}',
+    '상품은 최대 3개. 실제 쿠팡에서 검색 가능한 구체적인 상품명으로.'
+  ].filter(Boolean).join('\n');
+
+  const raw = await callClaude(prompt, 800);
+  const d = parseJSON(raw);
+  const products = d.products || [];
+
+  if (!products.length) {
+    return `<div class="card" style="margin-bottom:8px;color:var(--sub);font-size:13px">
+      ${plat.icon} <span class="badge ${plat.badge}">${plat.name}</span> 상품 감지 실패
+      <div style="font-size:11px;margin-top:4px;word-break:break-all">${url}</div>
+    </div>`;
+  }
+
+  const prods = products.map(p => {
+    const emoji = getProdEmoji(p.name);
+    const searchUrl = coupangSearchUrl(p.name);
+    const deep = coupangDeepLink(p.name);
+    const linkHtml = deep
+      ? `<a class="prod-link" href="${deep}" target="_blank">🛒 쿠팡 딥링크</a>`
+      : `<a class="prod-link" href="${searchUrl}" target="_blank">🛒 쿠팡 검색</a>`;
+    return `<div class="prod-card" style="margin-bottom:8px">
+      <div class="prod-emoji">${emoji}</div>
+      <div class="prod-info">
+        <div class="prod-name">${p.name}</div>
+        <div style="font-size:11px;color:var(--sub);margin-bottom:4px">${p.category} · ${p.price_range}</div>
+        <div style="font-size:11px;color:var(--txt);background:rgba(108,99,255,.1);padding:4px 8px;border-radius:6px;margin-bottom:6px">"${p.hook}"</div>
+        ${linkHtml}
+      </div>
+    </div>`;
+  }).join('');
+
+  return `<div class="card" style="margin-bottom:12px">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <span style="font-size:16px">${plat.icon}</span>
+      <span class="badge ${plat.badge}">${plat.name}</span>
+      ${title ? `<span style="font-size:12px;color:var(--sub);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${title}</span>` : ''}
+    </div>
+    <div style="font-size:10px;color:var(--sub);margin-bottom:8px;word-break:break-all">${url}</div>
+    ${prods}
+  </div>`;
+}
+
+// ── 설정 모달 ──────────────────────────────────
+function openSettings() {
+  document.getElementById('claudeKey').value = LS.get('ss_claude_key');
+  document.getElementById('cpAccess').value = LS.get('ss_cp_access');
+  document.getElementById('cpSecret').value = LS.get('ss_cp_secret');
+  document.getElementById('cpSubid').value = LS.get('ss_cp_subid');
+  document.getElementById('settingsModal').classList.add('open');
+}
+function closeSettings() { document.getElementById('settingsModal').classList.remove('open'); }
+function closeIfBg(e) { if (e.target.id === 'settingsModal') closeSettings(); }
+
+function saveKey() {
+  LS.set('ss_claude_key', document.getElementById('claudeKey').value.trim());
+  const s = document.getElementById('keySaved');
+  s.classList.add('show');
+  setTimeout(() => s.classList.remove('show'), 2000);
+}
+
+function saveCoupang() {
+  LS.set('ss_cp_access', document.getElementById('cpAccess').value.trim());
+  LS.set('ss_cp_secret', document.getElementById('cpSecret').value.trim());
+  LS.set('ss_cp_subid', document.getElementById('cpSubid').value.trim());
+  const s = document.getElementById('cpSaved');
+  s.classList.add('show');
+  setTimeout(() => s.classList.remove('show'), 2000);
+}
+</script>
+</body>
+</html>
