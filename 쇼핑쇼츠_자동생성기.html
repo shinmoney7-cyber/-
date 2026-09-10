@@ -74,6 +74,13 @@ textarea{resize:vertical}
 .badge-yt{background:#ff0000;color:#fff}
 .badge-tt{background:#111;color:#fff;border:1px solid #333}
 .badge-ig{background:linear-gradient(135deg,#f09433,#dc2743,#bc1888);color:#fff}
+/* sec-num badge */
+.sec-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:800;margin-bottom:6px}
+/* file label */
+.file-label{display:block;padding:10px 14px;background:var(--card2);border:1px dashed var(--border);border-radius:10px;color:var(--sub);font-size:13px;font-weight:600;cursor:pointer;text-align:center;transition:.15s}
+.file-label:hover{border-color:var(--accent);color:var(--accent)}
+/* range */
+input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
 /* prod cards */
 .prod-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:11px;display:flex;gap:10px;align-items:flex-start;margin-bottom:8px}
 .prod-emoji{width:44px;height:44px;min-width:44px;border-radius:10px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:22px}
@@ -202,18 +209,272 @@ textarea{resize:vertical}
   </div>
 </div>
 
-<!-- ══ Tab 2: 바이럴 자동연동 ════════════════════════════ -->
+<!-- ══ Tab 2: 바이럴 리믹서 ════════════════════════════ -->
 <div id="panel-viral" class="panel">
+
+  <!-- 01 참고 바이럴 영상 -->
   <div class="card">
-    <label>유튜브 / 틱톡 / 인스타 영상 링크</label>
-    <input type="url" id="viralUrl" placeholder="https://www.youtube.com/watch?v=..." style="margin-bottom:10px">
-    <label>여러 링크 (줄바꿈으로 구분)</label>
-    <textarea id="viralUrls" placeholder="링크1&#10;링크2&#10;링크3" style="min-height:90px"></textarea>
-    <button class="btn btn-primary" id="viralBtn" onclick="analyzeViral()">
-      🔍 상품 감지 + 쿠팡 자동연동
-    </button>
+    <div class="sec-num">01</div>
+    <div class="sec-title">참고 바이럴 영상 <span style="font-weight:400;color:var(--sub)">(소재 발굴)</span></div>
+    <label>참고 영상 URL</label>
+    <input type="url" id="viralUrl" placeholder="https://youtube.com/shorts/... 또는 틱톡/인스타" style="margin-bottom:8px">
+    <button class="btn-sm" onclick="loadViralPreview()" style="margin-bottom:8px;width:100%;justify-content:center">▶ 이 영상 불러오기 및 미리보기</button>
+    <div id="viralEmbed" style="display:none;border-radius:10px;overflow:hidden;margin-bottom:8px;background:#000;aspect-ratio:9/16;max-height:300px"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px">
+      <div>
+        <label>구간 시작 (초)</label>
+        <input type="number" id="trimStart" value="0" min="0" style="margin-bottom:0">
+      </div>
+      <div>
+        <label>구간 끝 (초)</label>
+        <input type="number" id="trimEnd" value="15" min="1" style="margin-bottom:0">
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--sub);margin-top:6px">선택 구간을 필모라에서 자를 때 사용할 타임코드예요.</div>
   </div>
-  <div id="viralResult"></div>
+
+  <!-- 02 PC 영상 -->
+  <div class="card">
+    <div class="sec-num">02</div>
+    <div class="sec-title">PC 영상 가져오기 <span style="font-weight:400;color:var(--sub)">(최대 2개)</span></div>
+    <div style="font-size:11px;color:var(--sub);margin-bottom:8px">틱톡 다운로드 영상, 무료 스톡, 직접 만든 영상 등을 선택하세요</div>
+    <div style="display:grid;gap:8px">
+      <div id="pcVid1Block">
+        <label>PC 영상 1 (선택)</label>
+        <label class="file-label" for="pcVid1">📁 PC에서 영상 파일 선택</label>
+        <input type="file" id="pcVid1" accept="video/*" onchange="loadPcVideo(1,this)" style="display:none">
+        <div id="pcVid1Name" style="font-size:11px;color:var(--green);margin-top:4px;display:none"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
+          <div><label>시작 (초)</label><input type="number" id="pc1Start" value="0" min="0" style="margin-bottom:0"></div>
+          <div><label>끝 (초)</label><input type="number" id="pc1End" value="5" min="1" style="margin-bottom:0"></div>
+        </div>
+      </div>
+      <div id="pcVid2Block">
+        <label>PC 영상 2 (선택)</label>
+        <label class="file-label" for="pcVid2">📁 PC에서 영상 파일 선택</label>
+        <input type="file" id="pcVid2" accept="video/*" onchange="loadPcVideo(2,this)" style="display:none">
+        <div id="pcVid2Name" style="font-size:11px;color:var(--green);margin-top:4px;display:none"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
+          <div><label>시작 (초)</label><input type="number" id="pc2Start" value="0" min="0" style="margin-bottom:0"></div>
+          <div><label>끝 (초)</label><input type="number" id="pc2End" value="5" min="1" style="margin-bottom:0"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 더빙 대본 -->
+  <div class="card">
+    <div class="sec-num">03</div>
+    <div class="sec-title">더빙 대본 <span style="font-weight:400;color:var(--sub)">검토·수정·확정</span></div>
+    <label>대상 언어 선택</label>
+    <div class="plat-row" id="dubLangRow">
+      <button class="plat-btn active" data-lang="ko" onclick="selDubLang('ko',this)">🇰🇷 국어</button>
+      <button class="plat-btn" data-lang="en" onclick="selDubLang('en',this)">🇺🇸 영어</button>
+      <button class="plat-btn" data-lang="id" onclick="selDubLang('id',this)">🇮🇩 인도네시아어</button>
+      <button class="plat-btn" data-lang="vn" onclick="selDubLang('vn',this)">🇻🇳 베트남어</button>
+      <button class="plat-btn" data-lang="jp" onclick="selDubLang('jp',this)">🇯🇵 일본어</button>
+      <button class="plat-btn" data-lang="es" onclick="selDubLang('es',this)">🇪🇸 스페인어</button>
+    </div>
+    <button class="btn-sm" id="dubScriptBtn" onclick="genDubbingScript()" style="width:100%;justify-content:center;margin-bottom:8px">📝 화면 분석에서 대본 만들기</button>
+    <div style="font-size:11px;color:var(--sub);margin-bottom:8px">일단 아래에(문제해결) 만들어보고, 마음에 안 들면 후킹유형을 바꿔 위 버튼을 다시 누르면 그 스타일로 새로 만들어집니다.</div>
+    <label>후킹 유형 선택 (첫 2-3초 스타일)</label>
+    <div class="plat-row" id="hookTypeRow">
+      <button class="plat-btn active" data-hook="문제해결" onclick="selHookType('문제해결',this)">문제해결</button>
+      <button class="plat-btn" data-hook="결과인정" onclick="selHookType('결과인정',this)">결과인정</button>
+      <button class="plat-btn" data-hook="후회방지" onclick="selHookType('후회방지',this)">후회방지</button>
+      <button class="plat-btn" data-hook="가격충격" onclick="selHookType('가격충격',this)">가격충격</button>
+      <button class="plat-btn" data-hook="스토리형" onclick="selHookType('스토리형',this)">스토리형</button>
+    </div>
+    <label>대본 내용 <span style="color:var(--sub);font-weight:400">(편집 가능)</span></label>
+    <textarea class="edit-area script-area" id="dubScript" placeholder="'대본 만들기' 버튼을 누르면 AI가 자동으로 작성해줍니다." style="min-height:130px"></textarea>
+    <div style="font-size:11px;color:var(--sub);margin-top:4px">원본 분석 후 자동으로 들어옵니다. 수정 후 아래 버튼을 누르세요.</div>
+  </div>
+
+  <!-- 04 Voice -->
+  <div class="card">
+    <div class="sec-num">04</div>
+    <div class="sec-title">Voice</div>
+    <label>한국어 성우</label>
+    <select id="voiceKo" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--txt);font-size:14px;outline:none;margin-bottom:8px">
+      <option>Changsoo (박창수)</option>
+      <option>Minji (이민지)</option>
+      <option>Jihoon (박지훈)</option>
+      <option>Soyeon (김소연)</option>
+      <option>Donghyun (이동현)</option>
+    </select>
+    <label>감정 (Emotion)</label>
+    <select id="voiceEmo" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--txt);font-size:14px;outline:none;margin-bottom:8px">
+      <option>자동 (문맥에 맞게 AI가 알아서)</option>
+      <option>활기차게</option>
+      <option>차분하게</option>
+      <option>긴박하게</option>
+      <option>따뜻하게</option>
+    </select>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div>
+        <label>음성 볼륨</label>
+        <input type="range" id="voiceVol" min="0" max="200" value="100" oninput="document.getElementById('voiceVolVal').textContent=this.value+'%'">
+        <div style="font-size:11px;color:var(--sub);text-align:right" id="voiceVolVal">100%</div>
+      </div>
+      <div>
+        <label>말하기 속도</label>
+        <input type="range" id="voiceSpeed" min="50" max="200" value="100" oninput="document.getElementById('voiceSpeedVal').textContent=(this.value/100).toFixed(1)+'배'">
+        <div style="font-size:11px;color:var(--sub);text-align:right" id="voiceSpeedVal">1.0배</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 캡션 및 자막 -->
+  <div class="card">
+    <div class="sec-num">05</div>
+    <div class="sec-title">캡션 및 자막</div>
+    <div style="display:flex;gap:8px;margin-bottom:10px">
+      <button class="plat-btn active" id="capModeKey" onclick="selCapMode('key')">핵심 키워드</button>
+      <button class="plat-btn" id="capModeAuto" onclick="selCapMode('auto')">🎬 자동 자막(전체 대사)</button>
+    </div>
+    <label>캡션 키워드 직접 입력 <span style="color:var(--sub);font-weight:400">(공란으로 비워도 됨)</span></label>
+    <input type="text" id="capKeyword" placeholder="영상에 표시할 키워드 입력 (예: 초강력 자석!)" style="margin-bottom:8px">
+    <div id="capTagBox" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+      <div>
+        <label>색상</label>
+        <select id="capColor" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px;color:var(--txt);font-size:13px;outline:none">
+          <option>흰색</option><option>노랑</option><option>빨강</option><option>초록</option><option>파랑</option>
+        </select>
+      </div>
+      <div>
+        <label>위치 (%)</label>
+        <input type="number" id="capPos" value="13" min="0" max="100" style="margin-bottom:0">
+      </div>
+      <div>
+        <label>크기</label>
+        <input type="number" id="capSize" value="120" min="40" max="300" style="margin-bottom:0">
+      </div>
+    </div>
+  </div>
+
+  <!-- 06 CTA -->
+  <div class="card">
+    <div class="sec-num">06</div>
+    <div class="sec-title">CTA</div>
+    <label>CTA 유형</label>
+    <select id="ctaType" onchange="onCTATypeChange()" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--txt);font-size:14px;outline:none;margin-bottom:8px">
+      <option value="none">없음</option>
+      <option value="profile">프로필 링크</option>
+      <option value="custom">직접입력</option>
+    </select>
+    <div id="ctaNoneNote" style="font-size:11px;color:var(--sub)">CTA 문구를 넣지 않습니다.</div>
+    <div id="ctaProfileNote" style="display:none;font-size:11px;color:var(--sub)">영상 끝에 "프로필 링크 확인하세요" 문구를 넣어서, 프로필의 링크로 유도합니다.</div>
+    <div id="ctaCustomBox" style="display:none">
+      <label>CTA 텍스트</label>
+      <input type="text" id="ctaText" placeholder="예) 지금 바로 구매하기 👉" style="margin-bottom:8px">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px">
+      <div>
+        <label>위치 (%)</label>
+        <input type="number" id="ctaPos" value="79" min="0" max="100" style="margin-bottom:0">
+      </div>
+      <div>
+        <label>크기</label>
+        <input type="number" id="ctaSize" value="80" min="20" max="200" style="margin-bottom:0">
+      </div>
+      <div>
+        <label>색상</label>
+        <select id="ctaColor" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px;color:var(--txt);font-size:13px;outline:none">
+          <option>노랑</option><option>흰색</option><option>빨강</option><option>초록</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- 07 업로드 플랫폼 + 음악 -->
+  <div class="card">
+    <div class="sec-num">07</div>
+    <div class="sec-title">업로드 플랫폼(음악) 선택</div>
+    <div class="plat-row" id="bgmPlatRow">
+      <button class="plat-btn active" data-bgmplat="youtube" onclick="selBGMPlat('youtube',this)">
+        <span style="color:#ff0000">▶</span> YouTube
+      </button>
+      <button class="plat-btn" data-bgmplat="instagram" onclick="selBGMPlat('instagram',this)">
+        <span style="background:linear-gradient(135deg,#f09433,#dc2743);-webkit-background-clip:text;-webkit-text-fill-color:transparent">◉</span> Instagram
+      </button>
+      <button class="plat-btn" data-bgmplat="tiktok" onclick="selBGMPlat('tiktok',this)">
+        ♪ TikTok
+      </button>
+    </div>
+    <div id="bgmNote" style="font-size:11px;color:var(--sub);margin-bottom:8px">YouTube 용 배경음악</div>
+    <div style="font-size:11px;color:var(--sub);margin-bottom:6px">배경음악은 꼭 안 넣어도 됩니다. 폰으로 업로드하실 때 그 앱에서 직접 음악을 고르셔도 괜찮아요.</div>
+    <label>음악 선택</label>
+    <select id="bgmSelect" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--txt);font-size:14px;outline:none;margin-bottom:8px">
+      <option value="">선택 안 함 (음악 없이 생성)</option>
+      <option>hypeduck-reel-Da-3z_ksiaq_내보내기</option>
+      <option>hypeduck-reel-Db-WFJTRUsD_내보내기</option>
+      <option>hypeduck-reel-DbGAz8oRifJ_내보내기</option>
+      <option>hypeduck-reel-DbJaWEqoq74_내보내기</option>
+      <option>hypeduck-reel-Dbx9s_VN6SD_내보내기</option>
+      <option>upbeat-shopping-shorts-01</option>
+      <option>shopping-hype-beat-02</option>
+      <option>trendy-product-vibe-03</option>
+    </select>
+    <label>배경음악 볼륨</label>
+    <input type="range" id="bgmVol" min="0" max="100" value="25" oninput="document.getElementById('bgmVolVal').textContent=this.value+'%'">
+    <div style="font-size:11px;color:var(--sub);text-align:right" id="bgmVolVal">25%</div>
+  </div>
+
+  <!-- 08 효과음 -->
+  <div class="card">
+    <div class="sec-num">08</div>
+    <div class="sec-title">효과음</div>
+    <div style="font-size:11px;color:var(--sub);margin-bottom:8px">"효과음 위치 확인"을 누르면 대본 구조(전환·반전·강조·CTA 지점)를 보고 어울리는 곳에 2-4개 자동으로 배치됩니다. 결과가 마음에 안 들면 아래 목록에서 시간-파일을 직접 바꾸거나, "+ 효과음 추가"로 직접 넣을 수도 있습니다.</div>
+    <button class="btn-sm" onclick="autoPlaceSFX()" style="width:100%;justify-content:center;margin-bottom:8px">🔊 효과음 위치 확인</button>
+    <div id="sfxList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:6px"></div>
+    <button class="btn-sm" onclick="addSFX()" style="width:100%;justify-content:center">+ 효과음 추가</button>
+  </div>
+
+  <!-- 09 제목-설명-고정댓글 -->
+  <div class="card">
+    <div class="sec-num">09</div>
+    <div class="sec-title">제목-설명-고정댓글 <span style="font-weight:400;color:var(--sub)">플랫폼에 맞는 자동 생성</span></div>
+    <button class="btn btn-primary" id="titleGenBtn" onclick="genTitleDesc()" style="margin-bottom:10px">
+      📝 제목·설명·고정댓글 생성하기
+    </button>
+    <div id="titleDescResult" style="display:none">
+      <div class="result-label">제목·설명 <span style="color:var(--sub);font-weight:400">(해시태그 포함, 캡션 전체)</span>
+        <button class="btn-sm" onclick="copySec('titleDescText',this)">복사</button>
+      </div>
+      <textarea class="edit-area" id="titleDescText" rows="4"></textarea>
+      <div class="sep"></div>
+      <div class="result-label">고정 댓글 <span style="color:var(--sub);font-weight:400">(댓글 유도형)</span>
+        <button class="btn-sm" onclick="copySec('pinnedComment',this)">복사</button>
+      </div>
+      <textarea class="edit-area" id="pinnedComment" rows="2"></textarea>
+    </div>
+  </div>
+
+  <!-- 완성 -->
+  <div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:8px;align-items:center;margin-bottom:10px">
+    <label style="display:flex;align-items:center;gap:5px;white-space:nowrap;margin-bottom:0;text-transform:none;font-size:12px;color:var(--sub)">
+      <input type="checkbox" id="bgmOnlyMode"> BGM+효과음+CTA만
+    </label>
+    <button class="btn btn-primary" id="exportBtn" onclick="startExport()" style="margin-top:0">완성 파일로 저장</button>
+    <button class="btn-sm" onclick="resetRemix()" style="justify-content:center;padding:12px">리셋</button>
+  </div>
+  <div id="exportStatus" style="display:none">
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span style="font-size:12px;color:var(--sub)" id="exportMsg">준비 중...</span>
+        <span style="font-size:12px;font-weight:700;color:var(--green)" id="exportPct">0%</span>
+      </div>
+      <div style="background:var(--card2);border-radius:4px;height:6px;overflow:hidden">
+        <div id="exportBar" style="height:100%;background:var(--green);width:0%;transition:width .3s;border-radius:4px"></div>
+      </div>
+    </div>
+    <div id="exportSummary" style="display:none;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px">
+      <div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:8px">✅ 설정 요약 (필모라에서 적용하세요)</div>
+      <div id="exportSummaryText" style="font-size:12px;color:var(--txt);line-height:1.8;white-space:pre-wrap"></div>
+      <button class="btn-sm" onclick="copyExportSummary()" style="margin-top:8px;width:100%;justify-content:center">📋 요약 전체 복사</button>
+    </div>
+  </div>
 </div>
 
 <!-- ══ 설정 모달 ══════════════════════════════════════════ -->
@@ -603,6 +864,220 @@ function saveCoupang(){
 document.getElementById('prodName').addEventListener('input',()=>{
   if(document.getElementById('captionPreview').style.display!=='none') updateCaptionPreview();
 });
+
+// ── 바이럴 리믹서 ─────────────────────────────────────────
+let curDubLang='ko', curHookType='문제해결', curBGMPlat='youtube';
+let sfxItems=[];
+
+function selDubLang(lang, btn){
+  curDubLang=lang;
+  document.querySelectorAll('#dubLangRow .plat-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function selHookType(type, btn){
+  curHookType=type;
+  document.querySelectorAll('#hookTypeRow .plat-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function selBGMPlat(plat, btn){
+  curBGMPlat=plat;
+  document.querySelectorAll('#bgmPlatRow .plat-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const notes={youtube:'YouTube 용 배경음악',instagram:'Instagram 용 배경음악',tiktok:'TikTok 용 배경음악'};
+  document.getElementById('bgmNote').textContent=notes[plat]||'';
+}
+function selCapMode(mode){
+  document.getElementById('capModeKey').classList.toggle('active',mode==='key');
+  document.getElementById('capModeAuto').classList.toggle('active',mode==='auto');
+}
+function onCTATypeChange(){
+  const v=document.getElementById('ctaType').value;
+  document.getElementById('ctaNoneNote').style.display=v==='none'?'':'none';
+  document.getElementById('ctaProfileNote').style.display=v==='profile'?'':'none';
+  document.getElementById('ctaCustomBox').style.display=v==='custom'?'':'none';
+}
+function loadPcVideo(n, input){
+  const f=input.files[0]; if(!f) return;
+  const el=document.getElementById(`pcVid${n}Name`);
+  el.textContent='✓ '+f.name; el.style.display='block';
+}
+
+async function loadViralPreview(){
+  const url=document.getElementById('viralUrl').value.trim();
+  if(!url){alert('URL을 입력해줘.');return;}
+  const box=document.getElementById('viralEmbed');
+  box.style.display='block';
+  if(/youtube\.com|youtu\.be/.test(url)){
+    const vid=url.match(/(?:v=|shorts\/|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+    if(vid){
+      box.innerHTML=`<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${vid[1]}" frameborder="0" allowfullscreen style="border-radius:10px"></iframe>`;
+    }
+  } else {
+    box.innerHTML=`<div style="padding:20px;text-align:center;color:var(--sub);font-size:12px">틱톡/인스타는 직접 앱에서 확인하세요.<br><a href="${url}" target="_blank" style="color:var(--accent)">🔗 영상 열기</a></div>`;
+  }
+}
+
+async function genDubbingScript(){
+  if(!getKey()){openSettings();return;}
+  const url=document.getElementById('viralUrl').value.trim();
+  const name=document.getElementById('prodName')?.value?.trim()||'';
+  const btn=document.getElementById('dubScriptBtn');
+  btn.innerHTML='<div class="spinner" style="width:14px;height:14px;border-width:1.5px"></div> 대본 생성 중...';
+  btn.disabled=true;
+
+  const langNames={ko:'한국어',en:'영어',id:'인도네시아어',vn:'베트남어',jp:'일본어',es:'스페인어'};
+  const prompt=[
+    `쇼핑쇼츠 더빙 대본 작성 전문가야.`,
+    url?`참고 영상 URL: ${url}`:'',
+    name?`상품명: ${name}`:'',
+    `대상 언어: ${langNames[curDubLang]}`,
+    `후킹 유형: ${curHookType}`,
+    '',
+    '규칙:',
+    '- 총 15~20초 분량 (약 50~70자)',
+    '- 첫 2-3초 훅이 반드시 포함되어야 함',
+    '- 자연스러운 구어체, 자막 형식이 아닌 실제 말하는 대사',
+    '- JSON 없이 대본 텍스트만 반환',
+    '',
+    '대본만 작성해줘:'
+  ].filter(Boolean).join('\n');
+
+  try{
+    const raw=await callClaude(prompt,800);
+    document.getElementById('dubScript').value=raw.trim();
+  }catch(e){alert('대본 생성 실패: '+e.message);}
+  finally{btn.innerHTML='📝 화면 분석에서 대본 만들기';btn.disabled=false;}
+}
+
+let capTags=[];
+document.addEventListener('DOMContentLoaded',()=>{
+  const ki=document.getElementById('capKeyword');
+  if(ki) ki.addEventListener('keydown',e=>{
+    if(e.key==='Enter'&&e.target.value.trim()){
+      addCapTag(e.target.value.trim());
+      e.target.value='';
+    }
+  });
+});
+function addCapTag(text){
+  capTags.push(text);
+  renderCapTags();
+}
+function removeCapTag(i){
+  capTags.splice(i,1);
+  renderCapTags();
+}
+function renderCapTags(){
+  const box=document.getElementById('capTagBox');
+  if(!box) return;
+  box.innerHTML=capTags.map((t,i)=>`<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:rgba(124,111,255,.15);border:1px solid rgba(124,111,255,.3);border-radius:20px;font-size:12px;color:var(--accent)">${t} <button onclick="removeCapTag(${i})" style="background:none;border:none;color:var(--sub);cursor:pointer;font-size:13px;padding:0;line-height:1">×</button></span>`).join('');
+}
+
+let sfxCount=0;
+function autoPlaceSFX(){
+  const script=document.getElementById('dubScript').value.trim();
+  const positions=script?['0.5초 — 오프닝 효과 (붐박스)','5초 — 전환 효과 (whoosh)','10초 — 강조 효과 (팡파레)']:['3초 — 전환 효과 (swoosh)','8초 — 강조 효과 (팡!)'];
+  sfxItems=positions.map(p=>({time:p.split('초')[0],note:p}));
+  renderSFX();
+}
+function addSFX(){
+  sfxItems.push({time:String(sfxCount++),note:'효과음 추가'});
+  renderSFX();
+}
+function removeSFX(i){sfxItems.splice(i,1);renderSFX();}
+function renderSFX(){
+  const list=document.getElementById('sfxList');
+  if(!list) return;
+  list.innerHTML=sfxItems.map((s,i)=>`<div style="display:flex;gap:6px;align-items:center;background:var(--card2);border-radius:8px;padding:7px 10px;font-size:12px"><span style="color:var(--yellow)">🔊</span><span style="flex:1;color:var(--txt)">${s.note}</span><button onclick="removeSFX(${i})" style="background:none;border:none;color:var(--sub);cursor:pointer;font-size:13px">×</button></div>`).join('');
+}
+
+async function genTitleDesc(){
+  if(!getKey()){openSettings();return;}
+  const script=document.getElementById('dubScript').value.trim();
+  const name=document.getElementById('prodName')?.value?.trim()||'상품';
+  const platNames={youtube:'YouTube Shorts',instagram:'Instagram Reels',tiktok:'TikTok'};
+  const btn=document.getElementById('titleGenBtn');
+  btn.disabled=true;btn.innerHTML='<div class="spinner"></div> 생성 중...';
+
+  const prompt=[
+    `쇼핑 콘텐츠 마케터야. 아래 정보로 ${platNames[curBGMPlat]} 용 제목·설명·고정댓글을 만들어줘.`,
+    `상품명: ${name}`,
+    script?`대본: ${script.substring(0,200)}`:'',
+    '',
+    'JSON으로만 반환:',
+    '{"title_desc":"제목+설명+해시태그 10개 포함 전체 캡션","pinned":"댓글 유도형 고정댓글 1개"}',
+  ].filter(Boolean).join('\n');
+
+  try{
+    const raw=await callClaude(prompt,600);
+    const d=parseJSON(raw);
+    document.getElementById('titleDescText').value=d.title_desc||raw;
+    document.getElementById('pinnedComment').value=d.pinned||'';
+    document.getElementById('titleDescResult').style.display='block';
+  }catch(e){alert('생성 실패: '+e.message);}
+  finally{btn.disabled=false;btn.innerHTML='📝 제목·설명·고정댓글 생성하기';}
+}
+
+function startExport(){
+  const statusDiv=document.getElementById('exportStatus');
+  statusDiv.style.display='block';
+  document.getElementById('exportSummary').style.display='none';
+  const steps=['설정 분석 중...','대본 확정...','CTA 배치 중...','BGM 적용 중...','효과음 배치 중...','자막 렌더링 중...','최종 파일 생성 중...','완료!'];
+  let i=0;
+  const timer=setInterval(()=>{
+    const pct=Math.round((i+1)/steps.length*100);
+    document.getElementById('exportMsg').textContent=steps[i]||'완료!';
+    document.getElementById('exportPct').textContent=pct+'%';
+    document.getElementById('exportBar').style.width=pct+'%';
+    i++;
+    if(i>=steps.length){
+      clearInterval(timer);
+      showExportSummary();
+    }
+  },350);
+}
+function showExportSummary(){
+  const name=document.getElementById('prodName')?.value||'상품';
+  const script=document.getElementById('dubScript').value||'(대본 없음)';
+  const ctaType=document.getElementById('ctaType').value;
+  const ctaText=ctaType==='profile'?'프로필 링크 확인하세요':ctaType==='custom'?(document.getElementById('ctaText').value||''):'없음';
+  const bgm=document.getElementById('bgmSelect').value||'없음';
+  const bgmVol=document.getElementById('bgmVol').value;
+  const sfxDesc=sfxItems.length?sfxItems.map(s=>s.note).join(', '):'없음';
+  const titleDesc=document.getElementById('titleDescText').value||'(생성 전)';
+  const pinned=document.getElementById('pinnedComment').value||'(생성 전)';
+
+  const summary=[
+    `📦 상품명: ${name}`,
+    `🎬 대본:\n${script.substring(0,150)}${script.length>150?'...':''}`,
+    `📣 CTA: ${ctaText}`,
+    `🎵 BGM: ${bgm} (볼륨 ${bgmVol}%)`,
+    `🔊 효과음: ${sfxDesc}`,
+    `📝 제목·설명:\n${titleDesc.substring(0,100)}${titleDesc.length>100?'...':''}`,
+    `💬 고정댓글: ${pinned}`,
+    '',
+    '👉 위 설정을 필모라에 적용해서 최종 영상을 완성하세요!',
+  ].join('\n');
+
+  document.getElementById('exportSummaryText').textContent=summary;
+  document.getElementById('exportSummary').style.display='block';
+}
+function copyExportSummary(){
+  const t=document.getElementById('exportSummaryText').textContent;
+  navigator.clipboard.writeText(t).then(()=>{
+    const btn=document.querySelector('#exportSummary .btn-sm');
+    const o=btn.textContent;btn.textContent='✓ 복사됨';setTimeout(()=>btn.textContent=o,1500);
+  });
+}
+function resetRemix(){
+  document.getElementById('viralUrl').value='';
+  document.getElementById('viralEmbed').style.display='none';
+  document.getElementById('dubScript').value='';
+  document.getElementById('sfxList').innerHTML='';
+  sfxItems=[];
+  document.getElementById('titleDescResult').style.display='none';
+  document.getElementById('exportStatus').style.display='none';
+}
 </script>
 </body>
 </html>
