@@ -543,7 +543,10 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
     <div class="modal-title">⚙️ 설정</div>
 
     <label>Claude API 키</label>
-    <input type="text" id="claudeKey" placeholder="sk-ant-..." style="margin-bottom:6px">
+    <div style="display:flex;gap:6px;margin-bottom:6px;align-items:center">
+      <input type="text" id="claudeKey" placeholder="sk-ant-... (클릭하면 클립보드 자동 붙여넣기)" style="flex:1;margin-bottom:0" onclick="pasteApiKey()" readonly onfocus="pasteApiKey()">
+      <button class="btn-sm" onclick="pasteApiKey()" style="flex-shrink:0;white-space:nowrap">📋 붙여넣기</button>
+    </div>
     <button class="btn-sm" onclick="saveKey()" style="margin-bottom:0">저장 <span class="saved-ok" id="keySaved">✓</span></button>
 
     <div class="sep"></div>
@@ -899,8 +902,34 @@ async function analyzeOneUrl(url){
 }
 
 // ── 설정 ──────────────────────────────────────────────────
+async function pasteApiKey(){
+  const inp = document.getElementById('claudeKey');
+  try{
+    const text = (await navigator.clipboard.readText()).trim();
+    if(text.startsWith('sk-ant-') || text.startsWith('sk-')){
+      inp.value = text;
+      LS.set('ss_claude_key', text);
+      const s = document.getElementById('keySaved');
+      s.textContent = '✓ 자동저장';
+      s.classList.add('show');
+      setTimeout(()=>{s.textContent='✓';s.classList.remove('show');}, 2000);
+    } else if(text){
+      inp.removeAttribute('readonly');
+      inp.value = text;
+      inp.focus();
+      inp.select();
+    }
+  }catch(err){
+    inp.removeAttribute('readonly');
+    inp.focus();
+  }
+}
 function openSettings(){
-  document.getElementById('claudeKey').value=LS.get('ss_claude_key');
+  const saved = LS.get('ss_claude_key');
+  const inp = document.getElementById('claudeKey');
+  inp.value = saved;
+  if(saved) inp.setAttribute('readonly','');
+  else inp.removeAttribute('readonly');
   document.getElementById('cpAccess').value=LS.get('ss_cp_access');
   document.getElementById('cpSecret').value=LS.get('ss_cp_secret');
   document.getElementById('cpSubid').value=LS.get('ss_cp_subid');
@@ -909,7 +938,9 @@ function openSettings(){
 function closeSettings(){document.getElementById('settingsModal').classList.remove('open');}
 function closeIfBg(e){if(e.target.id==='settingsModal')closeSettings();}
 function saveKey(){
-  LS.set('ss_claude_key',document.getElementById('claudeKey').value.trim());
+  const val = document.getElementById('claudeKey').value.trim();
+  LS.set('ss_claude_key', val);
+  if(val) document.getElementById('claudeKey').setAttribute('readonly','');
   const s=document.getElementById('keySaved'); s.classList.add('show'); setTimeout(()=>s.classList.remove('show'),2000);
 }
 function saveCoupang(){
