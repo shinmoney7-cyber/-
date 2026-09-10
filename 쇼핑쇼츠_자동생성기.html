@@ -544,10 +544,10 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
 
     <label>Claude API 키</label>
     <div style="display:flex;gap:6px;margin-bottom:6px;align-items:center">
-      <input type="text" id="claudeKey" placeholder="여기 클릭 후 Ctrl+V 붙여넣기" style="flex:1;margin-bottom:0" onclick="activateKeyInput(this)" onpaste="onKeyPaste(event)">
-      <button class="btn-sm" onclick="saveKey()" style="flex-shrink:0;white-space:nowrap">💾 저장 <span class="saved-ok" id="keySaved">✓</span></button>
+      <input type="text" id="claudeKey" placeholder="클릭 → 붙여넣기 → 확인" style="flex:1;margin-bottom:0;cursor:pointer" readonly onclick="promptKeyInput()" title="클릭하여 API 키 입력">
+      <button class="btn-sm" onclick="promptKeyInput()" style="flex-shrink:0;white-space:nowrap">✏️ 입력 <span class="saved-ok" id="keySaved">✓</span></button>
     </div>
-    <div style="font-size:11px;color:var(--sub);margin-bottom:4px">① 입력란 클릭 → ② Ctrl+V 붙여넣기 → 자동 저장</div>
+    <div style="font-size:11px;color:var(--sub);margin-bottom:4px">입력란 클릭 → 팝업에 붙여넣기 → 확인 (자동 저장)</div>
 
     <div class="sep"></div>
     <div style="font-size:12px;font-weight:700;color:var(--sub);margin-bottom:10px">쿠팡파트너스 <span style="font-weight:400">(선택 — 딥링크용)</span></div>
@@ -902,20 +902,18 @@ async function analyzeOneUrl(url){
 }
 
 // ── 설정 ──────────────────────────────────────────────────
-function activateKeyInput(inp){
-  inp.select();
-}
-function onKeyPaste(e){
-  setTimeout(()=>{
-    const val = document.getElementById('claudeKey').value.trim();
-    if(val.startsWith('sk-')){
-      LS.set('ss_claude_key', val);
-      const s = document.getElementById('keySaved');
-      s.textContent = '✓ 저장됨';
-      s.classList.add('show');
-      setTimeout(()=>{s.textContent='✓';s.classList.remove('show');}, 2000);
-    }
-  }, 50);
+function promptKeyInput(){
+  const cur = LS.get('ss_claude_key') || '';
+  const val = window.prompt('Claude API 키를 붙여넣기 또는 입력하세요\n(sk-ant-... 형태):', cur);
+  if(val === null) return;
+  const trimmed = val.trim();
+  if(!trimmed) return;
+  LS.set('ss_claude_key', trimmed);
+  document.getElementById('claudeKey').value = trimmed;
+  const s = document.getElementById('keySaved');
+  s.textContent = '✓ 저장됨';
+  s.classList.add('show');
+  setTimeout(()=>{s.textContent='✓';s.classList.remove('show');}, 2000);
 }
 function openSettings(){
   document.getElementById('claudeKey').value = LS.get('ss_claude_key');
