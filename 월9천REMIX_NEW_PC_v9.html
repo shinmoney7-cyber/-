@@ -1964,6 +1964,16 @@ function setKw(kw) {
 function getHeaders() {
   return {'Content-Type':'application/json','x-api-key':getKey(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'};
 }
+async function callClaude(prompt, maxTokens=2000) {
+  const r = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: getHeaders(),
+    body: JSON.stringify({model:'claude-sonnet-4-5', max_tokens: maxTokens, messages:[{role:'user',content:prompt}]})
+  });
+  const d = await r.json();
+  if(!r.ok) throw new Error(d.error?.message || '생성 실패');
+  return d.content?.[0]?.text || '';
+}
 function esc(s){const d=document.createElement('div');d.textContent=String(s??'');return d.innerHTML;}
 
 async function doSearch() {
