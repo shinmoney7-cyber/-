@@ -544,12 +544,15 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
     <button class="modal-close" onclick="closeSettings()">✕</button>
     <div class="modal-title">⚙️ 설정</div>
 
-    <label>Claude API 키</label>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
+      <label style="margin:0">Claude API 키</label>
+      <a href="https://console.anthropic.com/settings/keys" target="_blank" style="font-size:11px;color:var(--accent);text-decoration:none;font-weight:700;padding:3px 8px;border:1px solid rgba(124,111,255,.4);border-radius:8px;background:rgba(124,111,255,.08)">🔑 키 발급받기 →</a>
+    </div>
     <div style="display:flex;gap:6px;margin-bottom:6px;align-items:center">
       <input type="text" id="claudeKey" placeholder="클릭 → 붙여넣기 → 확인" style="flex:1;margin-bottom:0;cursor:pointer" readonly onclick="promptKeyInput()" title="클릭하여 API 키 입력">
       <button class="btn-sm" onclick="promptKeyInput()" style="flex-shrink:0;white-space:nowrap">✏️ 입력 <span class="saved-ok" id="keySaved">✓</span></button>
     </div>
-    <div style="font-size:11px;color:var(--sub);margin-bottom:4px">입력란 클릭 → 팝업에 붙여넣기 → 확인 (자동 저장)</div>
+    <div style="font-size:11px;color:var(--sub);margin-bottom:4px">① "키 발급받기" 클릭 → 콘솔에서 키 복사 → ② ✏️ 입력 클릭 → 붙여넣기 → 확인</div>
 
     <div class="sep"></div>
     <div style="font-size:12px;font-weight:700;color:var(--sub);margin-bottom:10px">쿠팡파트너스 <span style="font-weight:400">(선택 — 딥링크용)</span></div>
