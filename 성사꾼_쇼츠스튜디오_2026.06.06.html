@@ -2824,6 +2824,7 @@ function renderMatcher() {
       <button id="mtTab1" onclick="mtToggle('video')" style="flex:1;padding:9px;border:1px solid var(--acc);border-radius:8px;background:var(--acc);color:#fff;font-size:12px;cursor:pointer;font-family:inherit">📹 MP4 업로드</button>
       <button id="mtTab2" onclick="mtToggle('name')" style="flex:1;padding:9px;border:1px solid var(--bdr);border-radius:8px;background:none;color:var(--muted);font-size:12px;cursor:pointer;font-family:inherit">✏️ 제품명 입력</button>
       <button id="mtTab3" onclick="mtToggle('img')" style="flex:1;padding:9px;border:1px solid var(--bdr);border-radius:8px;background:none;color:var(--muted);font-size:12px;cursor:pointer;font-family:inherit">🖼️ 이미지 URL</button>
+      <button id="mtTab4" onclick="mtToggle('viral')" style="flex:1;padding:9px;border:1px solid var(--bdr);border-radius:8px;background:none;color:var(--muted);font-size:12px;cursor:pointer;font-family:inherit">🔗 바이럴 링크</button>
     </div>
 
     <!-- MP4 -->
@@ -2858,6 +2859,27 @@ function renderMatcher() {
       </label>
       <input type="file" id="mtImgFile" accept="image/*" style="position:fixed;top:-9999px;opacity:0;width:0" onchange="mtImgLoad(event)">
       <div id="mtImgPreview" style="margin-top:6px;display:none"><img id="mtImgEl" style="max-width:180px;border-radius:8px"></div>
+    </div>
+
+    <!-- 바이럴 링크 -->
+    <div id="mtInputViral" style="display:none;margin-bottom:12px">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:5px">🔗 YouTube · TikTok · Instagram 영상 링크</div>
+      <input id="mt-vrl-url" placeholder="https://youtube.com/shorts/... 또는 tiktok.com/@.../video/... 또는 instagram.com/reel/..." style="width:100%;padding:9px 12px;border:1px solid var(--bdr);border-radius:8px;background:var(--bg);color:var(--txt);font-size:12px;box-sizing:border-box" oninput="ssk_vrlDetect(this.value)">
+      <div style="margin-top:6px;display:flex;align-items:center;gap:6px">
+        <span id="ssk-vrl-badge" style="padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;background:var(--bg);border:1px solid var(--bdr);color:var(--muted)">🔗 링크 감지 중</span>
+        <span style="font-size:10px;color:var(--muted)">AI가 영상 제목으로 상품 자동 감지</span>
+      </div>
+      <!-- 쿠팡 파트너스 -->
+      <details style="margin-top:10px">
+        <summary style="font-size:11px;font-weight:600;cursor:pointer;color:var(--acc)">💰 쿠팡 파트너스 설정 (선택)</summary>
+        <div style="margin-top:8px;display:flex;flex-direction:column;gap:6px">
+          <input id="ssk-cp-access" type="password" placeholder="Access Key" style="width:100%;padding:8px;border:1px solid var(--bdr);border-radius:7px;background:var(--bg);color:var(--txt);font-size:12px;box-sizing:border-box">
+          <input id="ssk-cp-secret" type="password" placeholder="Secret Key" style="width:100%;padding:8px;border:1px solid var(--bdr);border-radius:7px;background:var(--bg);color:var(--txt);font-size:12px;box-sizing:border-box">
+          <input id="ssk-cp-subid" placeholder="서브 ID (예: myshorts)" style="width:100%;padding:8px;border:1px solid var(--bdr);border-radius:7px;background:var(--bg);color:var(--txt);font-size:12px;box-sizing:border-box">
+          <button onclick="sskSaveCoupang()" style="padding:7px 14px;background:var(--acc);color:#fff;border:none;border-radius:7px;font-size:12px;cursor:pointer;align-self:flex-start">💾 저장</button>
+        </div>
+      </details>
+      <div id="ssk-vrl-result" style="margin-top:12px"></div>
     </div>
 
     <!-- 공통 설정 -->
@@ -2905,16 +2927,23 @@ let mtVideoFile = null;
 
 // 탭 전환
 function mtToggle(type) {
-  ['video','name','img'].forEach(t => {
-    document.getElementById('mtInput'+t[0].toUpperCase()+t.slice(1)).style.display = t===type?'block':'none';
+  ['video','name','img','viral'].forEach(t => {
+    const id = 'mtInput' + (t==='viral'?'Viral':t[0].toUpperCase()+t.slice(1));
+    const el = document.getElementById(id);
+    if(el) el.style.display = t===type?'block':'none';
   });
-  const btns = {'video':'mtTab1','name':'mtTab2','img':'mtTab3'};
+  const btns = {'video':'mtTab1','name':'mtTab2','img':'mtTab3','viral':'mtTab4'};
   Object.entries(btns).forEach(([t,id])=>{
     const el = document.getElementById(id);
     if(!el) return;
-    el.className = t===type ? 'btn btn-accent' : 'btn btn-outline';
+    el.style.background = t===type?'var(--acc)':'none';
+    el.style.color = t===type?'#fff':'var(--muted)';
+    el.style.borderColor = t===type?'var(--acc)':'var(--bdr)';
     el.style.flex='1'; el.style.fontSize='12px';
   });
+  // 바이럴 탭 선택 시 기본 버튼 텍스트 변경
+  const genBtn = document.getElementById('mtGenBtn');
+  if(genBtn) genBtn.textContent = type==='viral'?'🔗 바이럴 상품 감지 + 쿠팡 자동연동':'🛒 상품 분석 + 쿠팡 매칭 + 클릭바 문구 생성';
 }
 
 // 영상 로드
@@ -2970,7 +2999,15 @@ async function mtGenerate(){
 
   // 입력 방식 파악
   const activeTab = document.getElementById('mtInputVideo').style.display!=='none'?'video':
-                    document.getElementById('mtInputName').style.display!=='none'?'name':'img';
+                    document.getElementById('mtInputName').style.display!=='none'?'name':
+                    document.getElementById('mtInputViral')?.style.display!=='none'?'viral':'img';
+
+  // 바이럴 링크 탭이면 별도 처리
+  if(activeTab==='viral'){
+    btn.disabled=false;btn.textContent='🔗 바이럴 상품 감지 + 쿠팡 자동연동';
+    await sskVrlAnalyze();
+    return;
+  }
 
   // 메시지 콘텐츠 구성
   const msgContent = [];
@@ -3152,6 +3189,111 @@ function mtRender(d, coupangLink, platforms) {
   return html;
 }
 
+// ══════════════════════════════
+// 성사꾼 - 바이럴 자동연동
+// ══════════════════════════════
+function ssk_vrlDetect(url) {
+  const badge = document.getElementById('ssk-vrl-badge');
+  if(!badge) return;
+  if(/youtube\.com|youtu\.be/i.test(url)) { badge.textContent='▶️ YouTube'; badge.style.color='#ff0000'; }
+  else if(/tiktok\.com/i.test(url)) { badge.textContent='🎵 TikTok'; badge.style.color='var(--txt)'; }
+  else if(/instagram\.com/i.test(url)) { badge.textContent='📸 Instagram'; badge.style.color='#e4405f'; }
+  else { badge.textContent='🔗 링크 감지 중'; badge.style.color='var(--muted)'; }
+}
+
+function sskSaveCoupang() {
+  localStorage.setItem('cp_access', document.getElementById('ssk-cp-access').value.trim());
+  localStorage.setItem('cp_secret', document.getElementById('ssk-cp-secret').value.trim());
+  localStorage.setItem('cp_subid', document.getElementById('ssk-cp-subid').value.trim() || 'ssk2026');
+  alert('✅ 쿠팡 파트너스 저장 완료!');
+}
+
+function sskCoupangSearchUrl(kw) {
+  return `https://www.coupang.com/np/search?q=${encodeURIComponent(kw)}&channel=user`;
+}
+
+async function sskGetYtTitle(url) {
+  try {
+    const r = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`);
+    if(!r.ok) return null;
+    return (await r.json()).title || null;
+  } catch { return null; }
+}
+
+async function sskVrlAnalyze() {
+  if(!S.key){alert('상단 API 키 버튼 클릭해서 Claude API 키 입력해줘.');toggleApiBar();return;}
+  const url = document.getElementById('mt-vrl-url').value.trim();
+  if(!url){alert('영상 링크를 입력해줘.');return;}
+
+  const res = document.getElementById('ssk-vrl-result');
+  res.innerHTML='<div class="loading"><div class="spin"></div><br>AI 상품 감지 중...</div>';
+
+  try {
+    let title = '';
+    if(/youtube\.com|youtu\.be/i.test(url)) title = await sskGetYtTitle(url) || '';
+
+    const platform = /youtube\.com|youtu\.be/i.test(url)?'YouTube':/tiktok\.com/i.test(url)?'TikTok':/instagram\.com/i.test(url)?'Instagram':'SNS';
+
+    const prompt = `이 ${platform} 쇼핑쇼츠 영상에서 판매 중인 상품을 분석해줘.
+URL: ${url}${title?'\n영상 제목: '+title:''}
+
+상품 3~5개를 JSON 배열로만 반환해줘:
+[{"name":"상품명","keyword":"쿠팡검색어","price":"예상가격","category":"카테고리","badge":"인기|신상|베스트","viral_point":"왜 잘팔리는지","click_bar":"틱톡클릭바15자이내","ig_bio":"인스타바이오문구","yt_card":"유튜브카드문구"}]`;
+
+    const r = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST', headers:getHeaders(),
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1000,
+        messages:[{role:'user',content:prompt}]})
+    });
+    const d = await r.json();
+    if(d.error) throw new Error(d.error.message);
+    const prods = JSON.parse((d.content?.[0]?.text||'[]').replace(/```json|```/g,'').trim());
+
+    if(!prods.length){res.innerHTML='<div style="color:var(--muted);font-size:12px">상품 감지 실패</div>';return;}
+
+    const access = localStorage.getItem('cp_access');
+    const sub = localStorage.getItem('cp_subid')||'ssk2026';
+
+    res.innerHTML = `<div style="margin-bottom:8px;font-size:11px;color:var(--muted)">🔎 ${platform} 감지 상품 ${prods.length}개${title?` · "${title}"`:''}${title?'':' · URL 기반 AI 분석'}</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      ${prods.map(p=>{
+        const cpUrl = sskCoupangSearchUrl(p.keyword||p.name);
+        const cpDeep = (access&&sub)?`https://link.coupang.com/a/${sub}?url=${encodeURIComponent(cpUrl)}`:null;
+        return `<div style="background:var(--bg);border:1px solid var(--bdr);border-radius:10px;padding:12px">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+            <span style="font-size:18px">${getProdEmoji(p.name,'ai')}</span>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:700;color:var(--txt)">${p.name}</div>
+              <div style="font-size:10px;color:var(--muted)">${p.category||''} · ${p.price||''}</div>
+            </div>
+            <span style="background:var(--acc);color:#fff;font-size:9px;padding:2px 7px;border-radius:20px">${p.badge||'인기'}</span>
+          </div>
+          <div style="font-size:11px;color:var(--acc);margin-bottom:8px">🔥 ${p.viral_point||''}</div>
+          <div style="background:var(--lbg,#f8f9fa);border-radius:6px;padding:8px;margin-bottom:8px;font-size:11px">
+            <div>🎵 ${p.click_bar||''}</div>
+            <div>📸 ${p.ig_bio||''}</div>
+            <div>▶ ${p.yt_card||''}</div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <a href="${cpUrl}" target="_blank" style="flex:1;display:flex;align-items:center;justify-content:center;padding:7px;background:rgba(255,95,21,.12);border:1px solid rgba(255,95,21,.4);border-radius:7px;font-size:11px;font-weight:700;color:#ff5f15;text-decoration:none">🛒 쿠팡 검색</a>
+            ${cpDeep?`<a href="${cpDeep}" target="_blank" style="flex:1;display:flex;align-items:center;justify-content:center;padding:7px;background:#ff5f15;border-radius:7px;font-size:11px;font-weight:700;color:#fff;text-decoration:none">💰 딥링크</a>`:''}
+            <button onclick="navigator.clipboard.writeText('${cpUrl.replace(/'/g,"\\'")}')" style="padding:7px 10px;background:var(--bg);border:1px solid var(--bdr);border-radius:7px;font-size:11px;cursor:pointer;color:var(--muted)">📋</button>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  } catch(e) {
+    res.innerHTML=`<div style="color:red;font-size:12px">오류: ${e.message}</div>`;
+  }
+}
+
+// 쿠팡 파트너스 키 로드
+(function(){
+  const a=localStorage.getItem('cp_access');const s=localStorage.getItem('cp_secret');const sub=localStorage.getItem('cp_subid');
+  if(a){const el=document.getElementById('ssk-cp-access');if(el)el.value=a;}
+  if(s){const el=document.getElementById('ssk-cp-secret');if(el)el.value=s;}
+  if(sub){const el=document.getElementById('ssk-cp-subid');if(el)el.value=sub;}
+})();
 
 </script>
 </body>

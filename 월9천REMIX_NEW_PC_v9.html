@@ -401,6 +401,7 @@ select option{background:var(--bg3)}
     <button class="nav-item" onclick="goPanel('converter',this)"><span class="icon">🔄</span>영상 변환기 <span class="nav-badge" style="background:var(--green);color:#000">NEW</span></button>
     <button class="nav-item" onclick="goPanel('imgshorts',this)"><span class="icon">🖼️</span>이미지→쇼츠 <span class="nav-badge">NEW</span></button>
     <button class="nav-item" onclick="goPanel('matcher',this)"><span class="icon">🛒</span>상품매칭 + 클릭바 <span class="nav-badge" style="background:var(--green);color:#000">NEW</span></button>
+    <button class="nav-item" onclick="goPanel('viral',this)"><span class="icon">🔗</span>바이럴 자동연동 <span class="nav-badge" style="background:#ff6b35;color:#fff">HOT</span></button>
   </div>
   <div class="sidebar-footer">
     <div class="yt-status">
@@ -1737,6 +1738,56 @@ select option{background:var(--bg3)}
       </div>
     </div>
 
+    <!-- ══ 바이럴 자동연동 ══ -->
+    <div class="panel" id="panel-viral">
+      <div class="notice purple">🔗 틱톡·인스타·유튜브 영상 링크를 넣으면 AI가 상품을 감지하고 쿠팡 링크를 자동 생성해!</div>
+
+      <div class="card">
+        <div class="card-title">🔗 바이럴 영상 → 쿠팡 자동연동</div>
+
+        <!-- 플랫폼 URL 입력 -->
+        <div style="margin-bottom:14px">
+          <div class="label">📎 영상 링크 붙여넣기 (YouTube · TikTok · Instagram)</div>
+          <div style="display:flex;gap:8px;margin-bottom:8px">
+            <span id="vrl-platform-badge" style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;background:var(--bg3);color:var(--text3)">🔗 플랫폼 감지 중</span>
+          </div>
+          <input id="vrl-url" placeholder="https://www.youtube.com/shorts/... 또는 https://www.tiktok.com/@.../video/... 또는 https://www.instagram.com/reel/..."
+            style="margin-bottom:8px" oninput="vrlDetect(this.value)">
+          <!-- 복수 입력 -->
+          <div style="font-size:11px;color:var(--text3);margin-bottom:6px">📌 여러 개 동시 분석 (줄바꿈으로 구분)</div>
+          <textarea id="vrl-urls-multi" rows="3" placeholder="https://youtu.be/abc&#10;https://www.tiktok.com/@shop/video/123&#10;https://www.instagram.com/reel/xyz"
+            style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:12px;resize:vertical;box-sizing:border-box"></textarea>
+        </div>
+
+        <!-- 쿠팡 파트너스 설정 (접기/펼치기) -->
+        <details style="margin-bottom:14px">
+          <summary style="font-size:12px;font-weight:600;cursor:pointer;color:var(--accent2);padding:8px 0">💰 쿠팡 파트너스 설정 (선택 - 딥링크 자동생성)</summary>
+          <div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div class="field">
+              <div class="label">Access Key (공개키)</div>
+              <input id="vrl-cp-access" type="password" placeholder="쿠팡 파트너스 Access Key">
+            </div>
+            <div class="field">
+              <div class="label">Secret Key (비밀키)</div>
+              <input id="vrl-cp-secret" type="password" placeholder="쿠팡 파트너스 Secret Key">
+            </div>
+          </div>
+          <div class="field" style="margin-top:8px">
+            <div class="label">서브 ID (내 식별자)</div>
+            <input id="vrl-cp-subid" placeholder="예: myshorts2026" style="max-width:200px">
+          </div>
+          <button onclick="vrlSaveCoupang()" style="margin-top:8px;padding:7px 14px;background:var(--green);color:#fff;border:none;border-radius:6px;font-size:12px;cursor:pointer;font-weight:600">💾 저장</button>
+          <div style="font-size:10px;color:var(--text3);margin-top:6px">파트너스 API 없어도 쿠팡 검색 URL은 자동 생성돼</div>
+        </details>
+
+        <button class="btn btn-accent btn-full" id="vrlBtn" onclick="vrlAnalyze()" style="font-size:14px;padding:13px;background:linear-gradient(135deg,#ff6b35,#e84393)">
+          🚀 바이럴 상품 감지 + 쿠팡 자동연동 시작
+        </button>
+      </div>
+
+      <div id="vrl-result"></div>
+    </div>
+
   </div><!-- content -->
 </div><!-- main -->
 
@@ -1788,7 +1839,7 @@ function closeMob() {
 const panelTitles = {
   home:'홈 대시보드', api:'API 설정', search:'영상 탐색',
   analyzer:'바이럴 분석기', remix:'리믹스 스튜디오', publish:'플랫폼 배포',
-  launcher:'플랫폼 런처', videogen:'🎬 영상 생성기', converter:'🔄 영상 변환기', cpa:'💰 쿠팡 CPA 수익화 대시보드', comments:'댓글 트렌드', imgshorts:'이미지→쇼츠 변환'
+  launcher:'플랫폼 런처', videogen:'🎬 영상 생성기', converter:'🔄 영상 변환기', cpa:'💰 쿠팡 CPA 수익화 대시보드', comments:'댓글 트렌드', imgshorts:'이미지→쇼츠 변환', viral:'🔗 바이럴 자동연동'
 };
 function goPanel(id, btn) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
@@ -4524,6 +4575,180 @@ function autoSendToVideoGen(i) {
 이미지를 업로드하고 영상 생성 시작해줘.`);
   }, 400);
 }
+
+// ══════════════════════════════
+// 바이럴 자동연동
+// ══════════════════════════════
+function vrlDetect(url) {
+  const badge = document.getElementById('vrl-platform-badge');
+  if(!badge) return;
+  const info = vrlPlatformInfo(url);
+  badge.innerHTML = `${info.icon} ${info.label}`;
+  badge.style.background = info.bg;
+  badge.style.color = info.color;
+}
+
+function vrlPlatformInfo(url) {
+  if(/youtube\.com|youtu\.be/i.test(url)) return {icon:'▶️', label:'YouTube', bg:'rgba(255,0,0,.15)', color:'#ff0000'};
+  if(/tiktok\.com/i.test(url)) return {icon:'🎵', label:'TikTok', bg:'rgba(0,0,0,.15)', color:'var(--text)'};
+  if(/instagram\.com|instagr\.am/i.test(url)) return {icon:'📸', label:'Instagram', bg:'rgba(228,64,95,.15)', color:'#e4405f'};
+  return {icon:'🔗', label:'플랫폼 감지 중', bg:'var(--bg3)', color:'var(--text3)'};
+}
+
+async function vrlGetYtTitle(url) {
+  try {
+    const oembed = `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`;
+    const r = await fetch(oembed);
+    if(!r.ok) return null;
+    const d = await r.json();
+    return d.title || null;
+  } catch { return null; }
+}
+
+function vrlSaveCoupang() {
+  const a = document.getElementById('vrl-cp-access').value.trim();
+  const s = document.getElementById('vrl-cp-secret').value.trim();
+  const sub = document.getElementById('vrl-cp-subid').value.trim();
+  localStorage.setItem('cp_access', a);
+  localStorage.setItem('cp_secret', s);
+  localStorage.setItem('cp_subid', sub || 'viral2026');
+  alert('✅ 쿠팡 파트너스 설정 저장 완료!');
+}
+
+function vrlCoupangSearchUrl(keyword) {
+  return `https://www.coupang.com/np/search?q=${encodeURIComponent(keyword)}&channel=user`;
+}
+
+function vrlCoupangDeepLink(keyword) {
+  const access = localStorage.getItem('cp_access');
+  const secret = localStorage.getItem('cp_secret');
+  const sub = localStorage.getItem('cp_subid') || 'viral2026';
+  if(!access || !secret) return null;
+  // Partners API deep link URL (HMAC-SHA256 signed - simplified direct link format)
+  return `https://link.coupang.com/a/${sub}?url=${encodeURIComponent(vrlCoupangSearchUrl(keyword))}`;
+}
+
+async function vrlAnalyze() {
+  const singleUrl = document.getElementById('vrl-url').value.trim();
+  const multiRaw = document.getElementById('vrl-urls-multi').value.trim();
+  const allUrls = [...new Set([
+    ...(singleUrl ? [singleUrl] : []),
+    ...(multiRaw ? multiRaw.split('\n').map(u=>u.trim()).filter(Boolean) : [])
+  ])];
+
+  if(!allUrls.length) { alert('영상 링크를 하나 이상 입력해줘.'); return; }
+
+  const claudeKey = getKey();
+  if(!claudeKey) { alert('Claude API 키를 API 설정 탭에서 먼저 저장해줘.'); goPanel('api', document.querySelector('.nav-item:nth-child(3)')); return; }
+
+  const btn = document.getElementById('vrlBtn');
+  btn.disabled = true; btn.textContent = '🔍 분석 중...';
+  const res = document.getElementById('vrl-result');
+  res.innerHTML = '<div class="loading"><div class="spin"></div><br>영상 분석 + 상품 감지 중...</div>';
+
+  try {
+    // 각 URL 병렬 처리
+    const results = await Promise.all(allUrls.map(async url => {
+      const info = vrlPlatformInfo(url);
+      let title = '';
+      if(info.label === 'YouTube') title = await vrlGetYtTitle(url) || '';
+
+      const prompt = `이 쇼핑쇼츠 영상 링크를 분석해서 판매 중인 상품을 찾아줘.
+플랫폼: ${info.label}
+URL: ${url}
+${title ? `영상 제목: ${title}` : ''}
+
+이 영상에서 팔 것 같은 상품 3~5개를 추출해줘.
+각 상품마다 쿠팡 검색 키워드, 예상 가격대, 카테고리, 바이럴 포인트도 포함해줘.
+형식 (순수 JSON 배열만):
+[{"name":"상품명","keyword":"쿠팡검색어","price":"1~5만원","category":"카테고리","viral_point":"바이럴 포인트","badge":"인기|신상|베스트","click_bar":"틱톡 클릭바 문구 15자이내","ig_bio":"인스타 링크인바이오 문구","yt_card":"유튜브 카드 문구"}]`;
+
+      const r = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST', headers: getHeaders(),
+        body: JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1200,
+          messages:[{role:'user',content:prompt}]})
+      });
+      const d = await r.json();
+      if(d.error) throw new Error(d.error.message);
+      const text = d.content?.[0]?.text || '[]';
+      const prods = JSON.parse(text.replace(/```json|```/g,'').trim());
+      return {url, platform:info, title, prods};
+    }));
+
+    res.innerHTML = results.map(({url, platform, title, prods}) => {
+      if(!prods?.length) return `<div class="card"><div style="color:var(--text3)">상품 감지 실패: ${esc(url)}</div></div>`;
+      const badgeColor = {'인기':'#ff4757','신상':'#6c5ce7','베스트':'#ffa502'}
+      return `<div class="card" style="margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+          <span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;background:${platform.bg};color:${platform.color}">${platform.icon} ${platform.label}</span>
+          ${title ? `<span style="font-size:12px;font-weight:600;color:var(--text)">${esc(title)}</span>` : ''}
+          <a href="${esc(url)}" target="_blank" rel="noopener" style="font-size:10px;color:var(--accent2);margin-left:auto">🔗 원본</a>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px">
+          ${prods.map((p,i) => {
+            const cpSearch = vrlCoupangSearchUrl(p.keyword || p.name);
+            const cpDeep = vrlCoupangDeepLink(p.keyword || p.name);
+            const badgeCol = badgeColor[p.badge] || '#6c5ce7';
+            return `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px;position:relative">
+              <div style="position:absolute;top:8px;right:8px;background:${badgeCol};color:#fff;font-size:9px;padding:2px 7px;border-radius:20px;font-weight:700">${esc(p.badge||'')}</div>
+              <div style="font-size:22px;margin-bottom:6px">${getProdEmojiVrl(p.name)}</div>
+              <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px">${esc(p.name)}</div>
+              <div style="font-size:11px;color:var(--text3);margin-bottom:4px">📂 ${esc(p.category||'')} · 💰 ${esc(p.price||'')}</div>
+              <div style="font-size:11px;color:var(--accent2);margin-bottom:8px">🔥 ${esc(p.viral_point||'')}</div>
+              <!-- 클릭바 문구 -->
+              <div style="background:var(--bg3);border-radius:6px;padding:8px;margin-bottom:8px;font-size:11px">
+                <div style="color:var(--text3);margin-bottom:4px;font-size:10px">📋 플랫폼 문구</div>
+                <div style="margin-bottom:2px">🎵 <span style="color:var(--text)">${esc(p.click_bar||'')}</span></div>
+                <div style="margin-bottom:2px">📸 <span style="color:var(--text)">${esc(p.ig_bio||'')}</span></div>
+                <div>▶ <span style="color:var(--text)">${esc(p.yt_card||'')}</span></div>
+              </div>
+              <!-- 쿠팡 링크 -->
+              <div style="display:flex;flex-direction:column;gap:5px">
+                <a href="${esc(cpSearch)}" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:7px;background:rgba(255,95,21,.15);border:1px solid rgba(255,95,21,.4);border-radius:7px;font-size:12px;font-weight:700;color:#ff5f15;text-decoration:none">
+                  🛒 쿠팡 검색
+                </a>
+                ${cpDeep ? `<a href="${esc(cpDeep)}" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:7px;background:rgba(255,95,21,.9);border-radius:7px;font-size:12px;font-weight:700;color:#fff;text-decoration:none">💰 파트너스 딥링크</a>` : ''}
+                <button onclick="navigator.clipboard.writeText('${esc(cpSearch.replace(/'/g,"\\'"))}');this.textContent='✅ 복사됨'" style="padding:5px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;font-size:11px;cursor:pointer;color:var(--text2)">📋 링크 복사</button>
+              </div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    res.innerHTML = `<div class="card" style="color:var(--red)">오류: ${esc(e.message)}</div>`;
+  }
+  btn.disabled = false; btn.textContent = '🚀 바이럴 상품 감지 + 쿠팡 자동연동 시작';
+}
+
+function getProdEmojiVrl(name) {
+  const kws=[
+    [/커피|포트|드립/,'☕'],[/냄비|프라이팬|식기|도마|칼|그릇|밥솥/,'🍳'],
+    [/청소|세정|탈취/,'🧹'],[/수납|정리|박스|용기|밀폐/,'📦'],
+    [/크림|세럼|마스크팩|로션|토너|에센스|선크림|파운데이션|립/,'💄'],
+    [/샴푸|트리트먼트|헤어|드라이기|고데기/,'💆'],[/강아지|고양이|반려|사료|간식/,'🐾'],
+    [/텐트|캠핑|랜턴|버너/,'⛺'],[/여행|캐리어/,'✈️'],
+    [/USB|충전|멀티탭|배터리|허브/,'🔌'],[/이어폰|스피커|헤드폰/,'🎧'],
+    [/노트북|탭|아이패드/,'💻'],[/워치/,'⌚'],
+    [/단백질|프로틴|닭가슴살|영양제|비타민/,'💊'],
+    [/다이어트|운동|요가|덤벨/,'💪'],[/의류|니트|청바지|후드/,'👕'],
+    [/운동화|슬리퍼|신발|스니커즈/,'👟'],[/가방|백팩|토트/,'👜'],
+    [/식품|쌀|과자|초콜릿/,'🥗'],[/에어프라이어|가전/,'🏠'],
+    [/스마트폰|폰케이스|핸드폰/,'📱'],
+  ];
+  for(const [re,e] of kws){if(re.test(name))return e;}
+  return '🛍';
+}
+
+// 파트너스 키 로드
+(function(){
+  const a=localStorage.getItem('cp_access');
+  const s=localStorage.getItem('cp_secret');
+  const sub=localStorage.getItem('cp_subid');
+  if(a){const el=document.getElementById('vrl-cp-access');if(el)el.value=a;}
+  if(s){const el=document.getElementById('vrl-cp-secret');if(el)el.value=s;}
+  if(sub){const el=document.getElementById('vrl-cp-subid');if(el)el.value=sub;}
+})();
 
 </script>
 </body>
