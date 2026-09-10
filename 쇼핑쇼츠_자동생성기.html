@@ -212,15 +212,82 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
 <!-- ══ Tab 2: 바이럴 리믹서 ════════════════════════════ -->
 <div id="panel-viral" class="panel">
 
-  <!-- 01 참고 바이럴 영상 -->
+  <!-- 🎬 영상 업로드 + 바이럴 분석 (메인) -->
+  <div class="card" style="border-color:rgba(124,111,255,.4);background:linear-gradient(135deg,rgba(124,111,255,.07),rgba(255,107,138,.05))">
+    <div style="font-size:15px;font-weight:900;margin-bottom:4px">🎬 영상 업로드 → 바이럴 리메이크</div>
+    <div style="font-size:12px;color:var(--sub);margin-bottom:12px">유튜브·틱톡·인스타에서 다운받은 영상을 올리면 AI가 바이럴 새 영상 플랜을 만들어줘요</div>
+
+    <!-- 영상 드롭존 -->
+    <div id="mainUploadZone" onclick="document.getElementById('mainVidFile').click()"
+      style="border:2px dashed var(--border);border-radius:14px;padding:28px;text-align:center;cursor:pointer;transition:.2s;margin-bottom:10px"
+      ondragover="event.preventDefault();this.style.borderColor='var(--accent)'"
+      ondragleave="this.style.borderColor='var(--border)'"
+      ondrop="handleVideoDrop(event)">
+      <div style="font-size:32px;margin-bottom:8px">📱</div>
+      <div style="font-weight:700;margin-bottom:4px">영상 파일을 여기에 끌어다 놓거나 클릭</div>
+      <div style="font-size:12px;color:var(--sub)">유튜브 다운로드 · 틱톡 영상 · 인스타 릴스 (mp4, mov 등)</div>
+    </div>
+    <input type="file" id="mainVidFile" accept="video/*" style="display:none" onchange="loadMainVideo(this)">
+
+    <!-- 미리보기 -->
+    <div id="mainVidPreview" style="display:none;margin-bottom:10px">
+      <video id="mainVidPlayer" controls style="width:100%;border-radius:10px;background:#000;max-height:320px"></video>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
+        <span id="mainVidInfo" style="font-size:12px;color:var(--green)"></span>
+        <button onclick="clearMainVideo()" style="background:none;border:1px solid var(--border);border-radius:8px;padding:4px 10px;color:var(--sub);cursor:pointer;font-size:12px">× 지우기</button>
+      </div>
+    </div>
+
+    <!-- 구간 선택 -->
+    <div id="mainTrimBox" style="display:none;background:var(--card2);border-radius:10px;padding:10px;margin-bottom:10px">
+      <div style="font-size:11px;font-weight:700;color:var(--sub);margin-bottom:6px">✂️ 사용할 구간 선택</div>
+      <input type="range" id="mainTrimSlider" min="0" max="100" value="0" style="width:100%;margin-bottom:4px" oninput="updateTrimLabel()">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--sub)">
+        <span>시작: <b id="trimStartLabel">0초</b></span>
+        <span>끝: <b id="trimEndLabel">15초</b></span>
+      </div>
+    </div>
+
+    <!-- 영상 내용 설명 (Claude에게 전달) -->
+    <label>영상 내용 설명 <span style="color:var(--sub);font-weight:400">(AI에게 영상 내용을 알려줘요)</span></label>
+    <textarea id="vidDesc" placeholder="예) 계란 타이머 사용하는 영상 — 아침에 완숙 계란 삶는 시간을 알려주는 제품 소개&#10;예) 틱톡 바이럴 된 에어프라이어 삼겹살 요리 영상&#10;예) 강아지 장난감 언박싱 + 반응 영상" style="min-height:80px;margin-bottom:8px"></textarea>
+
+    <!-- 상품명 (자동연동) -->
+    <label>상품명 <span style="color:var(--sub);font-weight:400">(검색/쿠팡 연동용)</span></label>
+    <input type="text" id="viralProdName" placeholder="예) 계란 타이머, 에어프라이어, 강아지 장난감..." style="margin-bottom:10px">
+
+    <!-- 플랫폼 선택 -->
+    <label>업로드할 플랫폼</label>
+    <div class="plat-row" id="viralPlatRow" style="margin-bottom:10px">
+      <button class="plat-btn active" data-vplat="youtube" onclick="selViralPlat('youtube',this)"><span class="badge badge-yt">YT</span> Shorts</button>
+      <button class="plat-btn" data-vplat="tiktok" onclick="selViralPlat('tiktok',this)"><span class="badge badge-tt">TT</span> TikTok</button>
+      <button class="plat-btn" data-vplat="instagram" onclick="selViralPlat('instagram',this)"><span class="badge badge-ig">IG</span> Reels</button>
+      <button class="plat-btn" data-vplat="all" onclick="selViralPlat('all',this)">전체</button>
+    </div>
+
+    <button class="btn btn-primary" id="viralAnalyzeBtn" onclick="analyzeViralVideo()">
+      🚀 바이럴 리메이크 플랜 생성
+    </button>
+  </div>
+
+  <!-- 결과 영역 -->
+  <div id="viralAnalysisResult" style="display:none"></div>
+
+  <!-- 쿠팡 자동연동 -->
+  <div class="card" style="margin-top:0">
+    <div class="sec-title">🛒 쿠팡 자동연동</div>
+    <div style="font-size:11px;color:var(--sub);margin-bottom:8px">영상 속 상품을 쿠팡에서 찾아 파트너스 링크로 바꿔줘요</div>
+    <input type="url" id="viralUrl" placeholder="https://youtube.com/shorts/... (URL로도 분석 가능)" style="margin-bottom:8px">
+    <textarea id="viralUrls" placeholder="여러 링크 (줄바꿈으로 구분)" style="min-height:60px;margin-bottom:8px"></textarea>
+    <button class="btn-sm" id="viralBtn" onclick="analyzeViral()" style="width:100%;justify-content:center">🔍 상품 감지 + 쿠팡 자동연동</button>
+    <div id="viralResult" style="margin-top:8px"></div>
+  </div>
+
+  <!-- 01 참고 바이럴 영상 (보조) -->
   <div class="card">
     <div class="sec-num">01</div>
-    <div class="sec-title">참고 바이럴 영상 <span style="font-weight:400;color:var(--sub)">(소재 발굴)</span></div>
-    <label>참고 영상 URL</label>
-    <input type="url" id="viralUrl" placeholder="https://youtube.com/shorts/... 또는 틱톡/인스타" style="margin-bottom:8px">
-    <button class="btn-sm" onclick="loadViralPreview()" style="margin-bottom:8px;width:100%;justify-content:center">▶ 이 영상 불러오기 및 미리보기</button>
-    <div id="viralEmbed" style="display:none;border-radius:10px;overflow:hidden;margin-bottom:8px;background:#000;aspect-ratio:9/16;max-height:300px"></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px">
+    <div class="sec-title">참고 영상 구간 설정 <span style="font-weight:400;color:var(--sub)">(필모라용 타임코드)</span></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
       <div>
         <label>구간 시작 (초)</label>
         <input type="number" id="trimStart" value="0" min="0" style="margin-bottom:0">
@@ -236,28 +303,20 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
   <!-- 02 PC 영상 -->
   <div class="card">
     <div class="sec-num">02</div>
-    <div class="sec-title">PC 영상 가져오기 <span style="font-weight:400;color:var(--sub)">(최대 2개)</span></div>
-    <div style="font-size:11px;color:var(--sub);margin-bottom:8px">틱톡 다운로드 영상, 무료 스톡, 직접 만든 영상 등을 선택하세요</div>
+    <div class="sec-title">추가 영상 클립 <span style="font-weight:400;color:var(--sub)">(최대 2개, 필모라 조합용)</span></div>
+    <div style="font-size:11px;color:var(--sub);margin-bottom:8px">무료 스톡 영상, 직접 만든 영상 등을 선택하세요</div>
     <div style="display:grid;gap:8px">
-      <div id="pcVid1Block">
-        <label>PC 영상 1 (선택)</label>
+      <div>
+        <label>추가 클립 1 (선택)</label>
         <label class="file-label" for="pcVid1">📁 PC에서 영상 파일 선택</label>
         <input type="file" id="pcVid1" accept="video/*" onchange="loadPcVideo(1,this)" style="display:none">
         <div id="pcVid1Name" style="font-size:11px;color:var(--green);margin-top:4px;display:none"></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
-          <div><label>시작 (초)</label><input type="number" id="pc1Start" value="0" min="0" style="margin-bottom:0"></div>
-          <div><label>끝 (초)</label><input type="number" id="pc1End" value="5" min="1" style="margin-bottom:0"></div>
-        </div>
       </div>
-      <div id="pcVid2Block">
-        <label>PC 영상 2 (선택)</label>
+      <div>
+        <label>추가 클립 2 (선택)</label>
         <label class="file-label" for="pcVid2">📁 PC에서 영상 파일 선택</label>
         <input type="file" id="pcVid2" accept="video/*" onchange="loadPcVideo(2,this)" style="display:none">
         <div id="pcVid2Name" style="font-size:11px;color:var(--green);margin-top:4px;display:none"></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
-          <div><label>시작 (초)</label><input type="number" id="pc2Start" value="0" min="0" style="margin-bottom:0"></div>
-          <div><label>끝 (초)</label><input type="number" id="pc2End" value="5" min="1" style="margin-bottom:0"></div>
-        </div>
       </div>
     </div>
   </div>
@@ -915,6 +974,218 @@ async function loadViralPreview(){
   } else {
     box.innerHTML=`<div style="padding:20px;text-align:center;color:var(--sub);font-size:12px">틱톡/인스타는 직접 앱에서 확인하세요.<br><a href="${url}" target="_blank" style="color:var(--accent)">🔗 영상 열기</a></div>`;
   }
+}
+
+// === 영상 업로드 & 바이럴 분석 ===
+let curViralPlat = 'youtube';
+
+function handleVideoDrop(e){
+  e.preventDefault();
+  document.getElementById('mainUploadZone').style.borderColor='var(--border)';
+  const file = e.dataTransfer.files[0];
+  if(file && file.type.startsWith('video/')) loadMainVideoFile(file);
+}
+
+function loadMainVideo(input){
+  const file = input.files[0];
+  if(file) loadMainVideoFile(file);
+}
+
+function loadMainVideoFile(file){
+  const player = document.getElementById('mainVidPlayer');
+  player.src = URL.createObjectURL(file);
+  document.getElementById('mainVidPreview').style.display='block';
+  document.getElementById('mainTrimBox').style.display='block';
+  document.getElementById('mainVidInfo').textContent='✓ '+file.name+' ('+Math.round(file.size/1024)+'KB)';
+  player.onloadedmetadata=()=>{
+    const dur = Math.floor(player.duration);
+    const sl = document.getElementById('mainTrimSlider');
+    sl.max = dur;
+    sl.value = 0;
+    document.getElementById('trimStartLabel').textContent='0초';
+    document.getElementById('trimEndLabel').textContent=dur+'초';
+  };
+}
+
+function clearMainVideo(){
+  const player = document.getElementById('mainVidPlayer');
+  player.src='';
+  document.getElementById('mainVidPreview').style.display='none';
+  document.getElementById('mainTrimBox').style.display='none';
+  document.getElementById('mainVidFile').value='';
+  document.getElementById('mainVidInfo').textContent='';
+}
+
+function selViralPlat(plat, btn){
+  curViralPlat = plat;
+  document.querySelectorAll('#viralPlatRow .plat-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function updateTrimLabel(){
+  const sl = document.getElementById('mainTrimSlider');
+  document.getElementById('trimStartLabel').textContent=sl.value+'초';
+}
+
+async function analyzeViralVideo(){
+  if(!getKey()){openSettings();return;}
+  const desc = document.getElementById('vidDesc').value.trim();
+  const prodName = document.getElementById('viralProdName').value.trim();
+  const vidFile = document.getElementById('mainVidFile').files[0];
+  if(!desc && !prodName && !vidFile){alert('영상 내용 설명 또는 상품명을 입력해줘.');return;}
+
+  const btn = document.getElementById('viralAnalyzeBtn');
+  btn.disabled=true;
+  btn.innerHTML='<div class="spinner"></div> 바이럴 플랜 생성 중...';
+
+  const res = document.getElementById('viralAnalysisResult');
+  res.style.display='block';
+  res.innerHTML='<div class="loading-overlay"><div class="sp"></div>Claude AI가 바이럴 플랜을 생성하고 있어...</div>';
+
+  const platNames={youtube:'YouTube Shorts',tiktok:'TikTok',instagram:'Instagram Reels',all:'YouTube Shorts / TikTok / Instagram Reels 전체'};
+  const platform = platNames[curViralPlat];
+
+  const prompt=[
+    `쇼핑쇼츠 바이럴 전문가야. 아래 영상 정보를 바탕으로 ${platform}용 바이럴 리메이크 플랜을 만들어줘.`,
+    vidFile ? `원본 영상 파일명: ${vidFile.name}` : '',
+    desc ? `영상 내용/설명: ${desc}` : '',
+    prodName ? `상품명: ${prodName}` : '',
+    '',
+    '다음 JSON 형식으로만 반환해줘 (다른 텍스트 없이):',
+    JSON.stringify({
+      hook:'첫 3초 훅 문구 (임팩트 강하게)',
+      script:'15~30초 전체 대본 (구어체, 줄바꿈 포함)',
+      editing_tips:['편집팁1','편집팁2','편집팁3'],
+      hashtags:'#태그1 #태그2 ... (10개)',
+      title:'업로드 제목',
+      description:'업로드 설명+해시태그',
+      pinned_comment:'고정댓글 (CTA+댓글유도)',
+      cta:['CTA문구1','CTA문구2'],
+      coupang_keyword:'쿠팡 검색 키워드'
+    })
+  ].filter(Boolean).join('\n');
+
+  try{
+    const raw = await callClaude(prompt, 1800);
+    const d = parseJSON(raw);
+    if(!d) throw new Error('JSON 파싱 실패');
+
+    res.innerHTML=`
+<div class="card" style="border-color:rgba(124,111,255,.4);margin-top:0">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+    <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:16px">🚀</div>
+    <div>
+      <div style="font-size:13px;font-weight:800;color:#fff">바이럴 리메이크 플랜</div>
+      <div style="font-size:11px;color:var(--sub)">${platform}</div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:10px">
+    <div class="result-label">🎯 첫 3초 훅</div>
+    <div style="background:rgba(255,107,138,.08);border:1px solid rgba(255,107,138,.3);border-radius:10px;padding:10px 12px;font-size:15px;font-weight:800;color:var(--accent2);line-height:1.5">${d.hook||''}</div>
+  </div>
+
+  <div style="margin-bottom:10px">
+    <div class="result-label" style="justify-content:space-between">📝 대본 <button class="btn-sm" onclick="copyText('vScript')">복사</button></div>
+    <textarea id="vScript" class="edit-area script-area">${d.script||''}</textarea>
+  </div>
+
+  <div style="margin-bottom:10px">
+    <div class="result-label">✂️ 편집 팁</div>
+    <div style="background:var(--card2);border-radius:10px;padding:10px 12px">
+      ${(Array.isArray(d.editing_tips)?d.editing_tips:[d.editing_tips]).map((t,i)=>`<div style="margin-bottom:6px;font-size:13px;line-height:1.5"><span style="color:var(--accent);font-weight:700">${i+1}.</span> ${t}</div>`).join('')}
+    </div>
+  </div>
+
+  <div style="margin-bottom:10px">
+    <div class="result-label" style="justify-content:space-between">📣 제목 <button class="btn-sm" onclick="copyText('vTitle')">복사</button></div>
+    <textarea id="vTitle" class="edit-area" style="min-height:50px">${d.title||''}</textarea>
+  </div>
+
+  <div style="margin-bottom:10px">
+    <div class="result-label" style="justify-content:space-between">📋 설명+해시태그 <button class="btn-sm" onclick="copyText('vDesc')">복사</button></div>
+    <textarea id="vDesc2" class="edit-area script-area">${d.description||''}</textarea>
+  </div>
+
+  <div style="margin-bottom:10px">
+    <div class="result-label" style="justify-content:space-between">📌 고정댓글 <button class="btn-sm" onclick="copyText('vPinned')">복사</button></div>
+    <textarea id="vPinned" class="edit-area" style="min-height:60px">${d.pinned_comment||''}</textarea>
+  </div>
+
+  <div style="margin-bottom:10px">
+    <div class="result-label">💬 CTA 문구</div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      ${(Array.isArray(d.cta)?d.cta:[d.cta]).map((c,i)=>`
+        <div style="background:var(--card2);border-radius:8px;padding:8px 12px;font-size:13px;display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span>${c}</span>
+          <button class="btn-sm" onclick="navigator.clipboard.writeText(this.previousElementSibling.textContent)">복사</button>
+        </div>`).join('')}
+    </div>
+  </div>
+
+  <div style="margin-bottom:10px">
+    <div class="result-label">#️⃣ 해시태그</div>
+    <div style="background:var(--card2);border-radius:8px;padding:8px 12px;font-size:13px;color:var(--accent);word-break:break-all">${d.hashtags||''}</div>
+  </div>
+
+  ${d.coupang_keyword?`<div>
+    <div class="result-label">🛒 쿠팡 검색 키워드</div>
+    <a href="https://www.coupang.com/np/search?q=${encodeURIComponent(d.coupang_keyword)}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:linear-gradient(135deg,#ff6b8a,#ff4c4c);color:#fff;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none">🔍 ${d.coupang_keyword} 쿠팡 검색</a>
+  </div>`:''}
+
+  <button class="btn btn-primary" style="margin-top:14px" onclick="copyAllViralPlan()">📋 전체 플랜 복사</button>
+</div>`;
+
+    // 전체 복사용 데이터 저장
+    window._viralPlanData = d;
+  }catch(e){
+    res.innerHTML=`<div class="card" style="border-color:rgba(255,107,138,.4)"><div style="color:var(--accent2);font-size:13px;text-align:center;padding:12px">⚠️ 오류: ${e.message}</div></div>`;
+  }finally{
+    btn.disabled=false;
+    btn.innerHTML='🚀 바이럴 리메이크 플랜 생성';
+  }
+}
+
+function copyAllViralPlan(){
+  const d = window._viralPlanData;
+  if(!d) return;
+  const text=[
+    '🚀 바이럴 리메이크 플랜',
+    '',
+    '🎯 훅: '+d.hook,
+    '',
+    '📝 대본:',
+    d.script,
+    '',
+    '📣 제목: '+d.title,
+    '',
+    '📋 설명:',
+    d.description,
+    '',
+    '📌 고정댓글: '+d.pinned_comment,
+    '',
+    '💬 CTA: '+(Array.isArray(d.cta)?d.cta.join(' / '):d.cta),
+    '',
+    '#️⃣ '+d.hashtags,
+    '',
+    d.coupang_keyword?'🛒 쿠팡 키워드: '+d.coupang_keyword:''
+  ].filter(x=>x!==undefined).join('\n');
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn = event.target;
+    btn.textContent='✓ 복사됨!';
+    setTimeout(()=>{btn.innerHTML='📋 전체 플랜 복사';},1500);
+  });
+}
+
+function copyText(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  navigator.clipboard.writeText(el.value||el.textContent).then(()=>{
+    const btn = event.target;
+    const orig = btn.textContent;
+    btn.textContent='✓';
+    setTimeout(()=>{btn.textContent=orig;},1200);
+  });
 }
 
 async function genDubbingScript(){
