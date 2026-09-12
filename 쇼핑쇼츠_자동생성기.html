@@ -391,9 +391,7 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
         var el = e.target;
         while(el && el !== row){
           if(el.classList && el.classList.contains('chip')){
-            var chips = row.querySelectorAll('.chip');
-            for(var i=0;i<chips.length;i++) chips[i].classList.remove('sel-voice');
-            el.classList.add('sel-voice');
+            el.classList.toggle('sel-voice');
             break;
           }
           el = el.parentElement;
@@ -440,6 +438,13 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
       <button class="plat-btn" onclick="selPlat('instagram',this)"><span class="badge badge-ig">IG</span> Reels</button>
     </div>
   </div>
+
+  <button id="oneClickBtn" onclick="oneClickComplete()"
+    style="width:100%;padding:16px;border-radius:14px;border:none;background:linear-gradient(135deg,#7c6fff,#ff6b8a,#20d9a0);color:#fff;font-size:15px;font-weight:900;cursor:pointer;margin-bottom:10px;letter-spacing:.3px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 20px rgba(124,111,255,.35);transition:.2s"
+    onmouseover="this.style.opacity='.88';this.style.transform='translateY(-1px)'"
+    onmouseout="this.style.opacity='1';this.style.transform='none'">
+    🚀 AI 원클릭 완성 — 입력→대본→영상→게시
+  </button>
 
   <button class="btn btn-primary" id="genBtn" onclick="generateShorts()">
     ✨ 대본 5개 생성
@@ -542,6 +547,12 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
       <button class="plat-btn" data-vplat="threads" onclick="selViralPlat('threads',this)" style="background:var(--card2);color:var(--sub)">🧵 Threads</button>
     </div>
     <div id="platOptHint" style="font-size:11px;color:var(--accent);margin-bottom:6px;min-height:14px"></div>
+
+    <button id="viralOneClickBtn" onclick="viralOneClick()"
+      style="width:100%;padding:14px;border-radius:13px;border:none;background:linear-gradient(135deg,#20d9a0,#7c6fff,#ff6b8a);color:#fff;font-size:14px;font-weight:900;cursor:pointer;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 20px rgba(32,217,160,.3);transition:.2s"
+      onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">
+      ⚡ 바이럴 원클릭 — 입력→대본→영상→플랫폼
+    </button>
 
     <button class="btn btn-primary" id="viralAnalyzeBtn" onclick="analyzeViralVideo()">
       🚀 바이럴 리메이크 + 쿠팡 자동연동 시작
@@ -3045,6 +3056,100 @@ function loadImg(url){
     img.onerror=()=>res(null);
     img.src=url;
   });
+}
+
+// ── Tab1: 원클릭 완성 (자동완성 → 대본 → 영상 → 게시패널 표시) ────────────
+async function oneClickComplete(){
+  const btn = document.getElementById('oneClickBtn');
+  const setMsg = (m,color='#fff')=>{ if(btn){btn.innerHTML=m;btn.style.background=color||'linear-gradient(135deg,#7c6fff,#ff6b8a,#20d9a0)';} };
+
+  if(!getKey()){ openSettings(); return; }
+
+  const name = document.getElementById('prodName')?.value?.trim();
+  const img  = document.getElementById('prodImg')?.value?.trim();
+  const url  = document.getElementById('prodUrl')?.value?.trim();
+  const qs   = document.getElementById('quickSearch')?.value?.trim();
+
+  if(!name && !img && !url && !qs){
+    alert('상품명, 이미지 URL, 상품 URL 중 하나는 입력해줘!');
+    return;
+  }
+
+  if(btn){ btn.disabled=true; }
+  try {
+    // Step 1: 상품 정보 자동완성
+    if(!name || !document.getElementById('prodInfo')?.value?.trim()){
+      setMsg('⏳ 1/4 상품정보 AI 분석 중...');
+      const src = (qs && /^https?:\/\//.test(qs)) ? 'qs'
+                : qs ? 'qs'
+                : url ? 'url'
+                : img ? 'img'
+                : 'name';
+      await doAutoFill(src);
+      await new Promise(r=>setTimeout(r,300));
+    }
+
+    // Step 2: 대본 생성
+    const nameNow = document.getElementById('prodName')?.value?.trim();
+    if(!nameNow){ alert('상품명이 채워지지 않았어. 직접 입력해줘.'); if(btn){btn.disabled=false;setMsg('🚀 AI 원클릭 완성 — 입력→대본→영상→게시');} return; }
+
+    setMsg('⏳ 2/4 대본 5개 생성 중...');
+    await generateShorts();
+    await new Promise(r=>setTimeout(r,600));
+
+    // Step 3: 첫 번째 대본으로 영상 생성
+    const firstPanel = document.getElementById('script-0');
+    if(!firstPanel){ throw new Error('대본 생성 결과를 찾을 수 없어'); }
+
+    setMsg('⏳ 3/4 영상 렌더링 중 (30~60초)...');
+    await generateVideoFromScript(0);
+
+    // Step 4: 게시 패널 자동 열기 + 스크롤
+    setMsg('⏳ 4/4 게시 준비 중...');
+    await new Promise(r=>setTimeout(r,500));
+    const pubBtn = document.getElementById('pubBtn-0');
+    if(pubBtn){
+      const details = pubBtn.closest('details');
+      if(details) details.open = true;
+      pubBtn.scrollIntoView({behavior:'smooth', block:'center'});
+    }
+
+    setMsg('✅ 완성! 아래 플랫폼에 게시하세요 🎉');
+    setTimeout(()=>{ if(btn){btn.disabled=false;btn.innerHTML='🚀 AI 원클릭 완성 — 입력→대본→영상→게시';btn.style.background='linear-gradient(135deg,#7c6fff,#ff6b8a,#20d9a0)';} },4000);
+
+  } catch(e) {
+    console.error('[oneClickComplete]',e);
+    alert('원클릭 완성 중 오류: '+e.message);
+    if(btn){ btn.disabled=false; btn.innerHTML='🚀 AI 원클릭 완성 — 입력→대본→영상→게시'; btn.style.background='linear-gradient(135deg,#7c6fff,#ff6b8a,#20d9a0)'; }
+  }
+}
+
+// ── Tab2: 바이럴 원클릭 (상품URL/이름 → 리메이크 분석 → 게시) ─────────────
+async function viralOneClick(){
+  const btn = document.getElementById('viralOneClickBtn');
+  const viralUrl  = document.getElementById('viralSrcUrl')?.value?.trim();
+  const viralName = document.getElementById('viralProdName')?.value?.trim();
+  const viralProd = document.getElementById('viralProdUrl')?.value?.trim();
+
+  if(!viralUrl && !viralName && !viralProd){
+    alert('영상 URL 또는 상품명·상품URL 중 하나를 먼저 입력해줘!');
+    return;
+  }
+  if(!getKey()){ openSettings(); return; }
+
+  if(btn){ btn.disabled=true; btn.innerHTML='⏳ 바이럴 분석 중...'; }
+  try {
+    await analyzeViralVideo();
+    await new Promise(r=>setTimeout(r,500));
+    const rp = document.getElementById('viralResultPanel');
+    if(rp){ rp.scrollIntoView({behavior:'smooth',block:'start'}); }
+    if(btn){ btn.innerHTML='✅ 바이럴 완성! 플랫폼 게시 섹션을 확인해줘 🎉'; }
+    setTimeout(()=>{ if(btn){btn.disabled=false;btn.innerHTML='⚡ 바이럴 원클릭 — 입력→대본→영상→플랫폼';} },4000);
+  } catch(e) {
+    console.error('[viralOneClick]',e);
+    alert('바이럴 원클릭 중 오류: '+e.message);
+    if(btn){ btn.disabled=false; btn.innerHTML='⚡ 바이럴 원클릭 — 입력→대본→영상→플랫폼'; }
+  }
 }
 
 // ── Tab1: 상품 쇼츠 영상 생성 ─────────────────────────────────────────────
