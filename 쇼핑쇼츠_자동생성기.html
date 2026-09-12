@@ -1108,7 +1108,59 @@ function buildScriptPanelHTML(i, s){
     <textarea class="edit-area" id="hook-${i}" rows="2">${escHtml(s.hook||'')}</textarea>
     <div class="sep"></div>
     <div class="result-label">📝 스크립트 (자막 ${curSubtitleSize}px 미리보기)<button class="btn-sm" onclick="copySec('script-${i}',this)">복사</button></div>
-    <textarea class="edit-area script-area" id="script-${i}" style="font-size:${curSubtitleSize}px">${escHtml(s.script||'')}</textarea>
+
+    <!-- 대본 텍스트 바 -->
+    <div id="scriptBar-${i}" style="background:var(--card3);border:1px solid var(--border);border-bottom:none;border-radius:10px 10px 0 0;padding:6px 8px;display:flex;flex-wrap:wrap;gap:4px;align-items:center">
+
+      <!-- 타임스탬프 삽입 -->
+      <button onclick="sbInsertTimestamp(${i})" title="커서 위치에 타임스탬프 삽입"
+        style="padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:var(--card2);color:var(--accent);font-size:11px;font-weight:700;cursor:pointer">⏱ [시:초]</button>
+
+      <!-- 줄 나누기 -->
+      <button onclick="sbSplitLine(${i})" title="현재 줄을 두 줄로 나누기"
+        style="padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:var(--card2);color:var(--sub);font-size:11px;cursor:pointer">↵ 줄나누기</button>
+
+      <!-- 타임스탬프 자동생성 -->
+      <button onclick="sbAutoTimestamp(${i})" title="문장별 타임스탬프 자동 생성 (3초 간격)"
+        style="padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:var(--card2);color:var(--sub);font-size:11px;cursor:pointer">🕐 자동타임</button>
+
+      <!-- 이모지 빠른 삽입 -->
+      <div style="position:relative;display:inline-block">
+        <button onclick="sbToggleEmoji(${i})" title="이모지 삽입"
+          style="padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:var(--card2);color:var(--sub);font-size:11px;cursor:pointer">😀 이모지</button>
+        <div id="emojiPop-${i}" style="display:none;position:absolute;top:28px;left:0;z-index:50;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px;width:220px;flex-wrap:wrap;gap:4px">
+          ${['🔥','💥','👀','✅','🛒','💰','🎉','😍','⚡','🌟','💪','🙌','👇','❓','‼️','✨','💯','🆕','📦','🎁','💎','🏷️','⏰','🚀','😎','🤩','🥰','😱','🤔','💬','📢','❤️','💚','💜','🧡'].map(e=>`<button onclick="sbInsertEmoji(${i},'${e}')" style="width:28px;height:28px;border:none;background:transparent;font-size:16px;cursor:pointer;border-radius:4px" title="${e}">${e}</button>`).join('')}
+        </div>
+      </div>
+
+      <!-- 특수문자 -->
+      <div style="position:relative;display:inline-block">
+        <button onclick="sbToggleSpecial(${i})" title="특수문자 삽입"
+          style="padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:var(--card2);color:var(--sub);font-size:11px;cursor:pointer">!? 특수</button>
+        <div id="specialPop-${i}" style="display:none;position:absolute;top:28px;left:0;z-index:50;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px;width:200px;flex-wrap:wrap;gap:4px">
+          ${['‼️','⁉️','※','→','←','↑','↓','▶','◀','■','▲','▼','★','♥','♦','「','」','『','』','…','〜','·','×','÷','≠','≤','≥'].map(s=>`<button onclick="sbInsertEmoji(${i},'${s}')" style="width:28px;height:28px;border:none;background:transparent;font-size:13px;cursor:pointer;border-radius:4px;color:var(--txt)">${s}</button>`).join('')}
+        </div>
+      </div>
+
+      <!-- 대소문자 변환 -->
+      <button onclick="sbUpperCase(${i})" title="전체 대문자"
+        style="padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:var(--card2);color:var(--sub);font-size:10px;cursor:pointer">AA 대문자</button>
+
+      <!-- 지우기 -->
+      <button onclick="sbClear(${i})" title="대본 전체 지우기"
+        style="padding:4px 8px;border-radius:6px;border:1px solid rgba(255,71,87,.3);background:rgba(255,71,87,.08);color:#ff4757;font-size:11px;cursor:pointer">✕ 지우기</button>
+
+      <!-- 글자수 / 예상시간 (우측) -->
+      <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+        <span id="scriptCharCount-${i}" style="font-size:10px;color:var(--sub)">0자</span>
+        <span id="scriptTimeEst-${i}" style="font-size:10px;color:var(--accent);font-weight:700">~0초</span>
+      </div>
+    </div>
+
+    <textarea class="edit-area script-area" id="script-${i}"
+      style="font-size:${curSubtitleSize}px;border-radius:0 0 10px 10px;border-top:none"
+      oninput="sbUpdateCount(${i})"
+      onfocus="sbUpdateCount(${i})">${escHtml(s.script||'')}</textarea>
     <div class="sep"></div>
     <div class="result-label">🏷 해시태그<button class="btn-sm" onclick="copySec('hash-${i}',this)">복사</button></div>
     <textarea class="edit-area" id="hash-${i}" rows="2">${escHtml(s.hashtags||'')}</textarea>
@@ -2975,6 +3027,135 @@ function onAdLineHeight(i,val){ _adv(i).lh=(parseInt(val)/10).toFixed(1); docume
 function onAdShadow(i,val){ _adv(i).shadow=parseInt(val); document.getElementById(`adShVal-${i}`).textContent=val+'px'; _applyAdv(i); }
 function onAdAlign(i,al,btn){ _adv(i).align=al; btn.parentElement.querySelectorAll('button').forEach(b=>{b.style.borderColor='var(--border)';b.style.background='var(--card3)';b.style.color='var(--sub)';b.style.fontWeight='normal';}); btn.style.borderColor='var(--accent)';btn.style.background='rgba(124,111,255,.12)';btn.style.color='var(--accent)';btn.style.fontWeight='700'; _applyAdv(i); }
 function onAdMarginBottom(i,val){ _adv(i).mb=parseInt(val); document.getElementById(`adMbVal-${i}`).textContent=val+'%'; }
+// ══════════════════════════════════════════════════════════════
+// 대본 텍스트 바 (Script Bar) 함수
+// ══════════════════════════════════════════════════════════════
+
+// 글자수 + 예상시간 업데이트 (한국어 평균 낭독 속도 ~330자/분)
+function sbUpdateCount(i){
+  const ta=document.getElementById(`script-${i}`);
+  if(!ta) return;
+  const len=ta.value.length;
+  const sec=Math.round(len/330*60);
+  const cc=document.getElementById(`scriptCharCount-${i}`);
+  const te=document.getElementById(`scriptTimeEst-${i}`);
+  if(cc) cc.textContent=len.toLocaleString()+'자';
+  if(te) te.textContent=`~${sec}초`;
+}
+
+// 커서 위치에 텍스트 삽입
+function sbInsertAt(i, text){
+  const ta=document.getElementById(`script-${i}`);
+  if(!ta) return;
+  const s=ta.selectionStart, e=ta.selectionEnd;
+  ta.value=ta.value.slice(0,s)+text+ta.value.slice(e);
+  ta.selectionStart=ta.selectionEnd=s+text.length;
+  ta.focus();
+  sbUpdateCount(i);
+}
+
+// 타임스탬프 삽입 (현재 줄 기준 자동 계산)
+function sbInsertTimestamp(i){
+  const ta=document.getElementById(`script-${i}`);
+  if(!ta) return;
+  // 커서 앞의 [분:초] 태그 개수로 다음 타임 추정
+  const before=ta.value.slice(0,ta.selectionStart);
+  const matches=before.match(/\[(\d+):(\d{2})\]/g)||[];
+  let nextSec=0;
+  if(matches.length>0){
+    const last=matches[matches.length-1].match(/\[(\d+):(\d{2})\]/);
+    nextSec=parseInt(last[1])*60+parseInt(last[2])+3;
+  }
+  const m=Math.floor(nextSec/60).toString().padStart(1,'0');
+  const s=Math.floor(nextSec%60).toString().padStart(2,'0');
+  sbInsertAt(i,`[${m}:${s}] `);
+}
+
+// 줄 나누기 (커서 위치에서 줄바꿈 + 다음 타임스탬프 삽입)
+function sbSplitLine(i){
+  sbInsertAt(i,'\n');
+}
+
+// 전체 타임스탬프 자동 생성 (3초 간격)
+function sbAutoTimestamp(i){
+  const ta=document.getElementById(`script-${i}`);
+  if(!ta||!ta.value.trim()) return;
+  // 기존 [분:초] 태그 제거 후 재생성
+  const lines=ta.value.replace(/\[\d+:\d{2}\]\s*/g,'').split('\n').filter(l=>l.trim());
+  ta.value=lines.map((l,idx)=>{
+    const sec=idx*3;
+    const m=Math.floor(sec/60).toString().padStart(1,'0');
+    const s=Math.floor(sec%60).toString().padStart(2,'0');
+    return `[${m}:${s}] ${l.trim()}`;
+  }).join('\n');
+  sbUpdateCount(i);
+}
+
+// 이모지 팝업 토글
+function sbToggleEmoji(i){
+  const pop=document.getElementById(`emojiPop-${i}`);
+  const sp=document.getElementById(`specialPop-${i}`);
+  if(!pop) return;
+  const open=pop.style.display==='flex';
+  if(sp) sp.style.display='none';
+  pop.style.display=open?'none':'flex';
+  if(!open){
+    // 팝업 외부 클릭 시 닫기
+    setTimeout(()=>{
+      const handler=e=>{if(!pop.contains(e.target)){pop.style.display='none';document.removeEventListener('click',handler);}};
+      document.addEventListener('click',handler);
+    },50);
+  }
+}
+
+// 특수문자 팝업 토글
+function sbToggleSpecial(i){
+  const pop=document.getElementById(`specialPop-${i}`);
+  const ep=document.getElementById(`emojiPop-${i}`);
+  if(!pop) return;
+  const open=pop.style.display==='flex';
+  if(ep) ep.style.display='none';
+  pop.style.display=open?'none':'flex';
+  if(!open){
+    setTimeout(()=>{
+      const handler=e=>{if(!pop.contains(e.target)){pop.style.display='none';document.removeEventListener('click',handler);}};
+      document.addEventListener('click',handler);
+    },50);
+  }
+}
+
+// 이모지/특수문자 삽입
+function sbInsertEmoji(i, ch){
+  sbInsertAt(i, ch);
+  const ep=document.getElementById(`emojiPop-${i}`);
+  const sp=document.getElementById(`specialPop-${i}`);
+  if(ep) ep.style.display='none';
+  if(sp) sp.style.display='none';
+}
+
+// 대문자 변환 (영문용)
+function sbUpperCase(i){
+  const ta=document.getElementById(`script-${i}`);
+  if(!ta) return;
+  const s=ta.selectionStart, e=ta.selectionEnd;
+  if(s!==e){
+    ta.value=ta.value.slice(0,s)+ta.value.slice(s,e).toUpperCase()+ta.value.slice(e);
+    ta.selectionStart=s; ta.selectionEnd=e;
+  } else {
+    ta.value=ta.value.toUpperCase();
+  }
+  sbUpdateCount(i);
+}
+
+// 전체 지우기
+function sbClear(i){
+  const ta=document.getElementById(`script-${i}`);
+  if(!ta) return;
+  if(!confirm('대본을 전체 지울까요?')) return;
+  ta.value='';
+  sbUpdateCount(i);
+}
+
 function onAdBold(i,btn){ _adv(i).bold=!_adv(i).bold; btn.style.borderColor=_adv(i).bold?'var(--accent)':'var(--border)'; btn.style.background=_adv(i).bold?'rgba(124,111,255,.12)':'var(--card3)'; btn.style.color=_adv(i).bold?'var(--accent)':'var(--sub)'; _applyAdv(i); }
 function onAdItalic(i,btn){ _adv(i).italic=!_adv(i).italic; btn.style.borderColor=_adv(i).italic?'var(--accent)':'var(--border)'; btn.style.background=_adv(i).italic?'rgba(124,111,255,.12)':'var(--card3)'; btn.style.color=_adv(i).italic?'var(--accent)':'var(--sub)'; _applyAdv(i); }
 function onAdUpper(i,btn){ _adv(i).upper=!_adv(i).upper; btn.style.borderColor=_adv(i).upper?'var(--accent)':'var(--border)'; btn.style.background=_adv(i).upper?'rgba(124,111,255,.12)':'var(--card3)'; btn.style.color=_adv(i).upper?'var(--accent)':'var(--sub)'; _applyAdv(i); }
