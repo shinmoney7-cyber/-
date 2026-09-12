@@ -878,6 +878,54 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
     <label>Sub ID</label>
     <input type="text" id="cpSubid" placeholder="서브 ID" style="margin-bottom:6px">
     <button class="btn-sm" onclick="saveCoupang()" style="margin-bottom:0">저장 <span class="saved-ok" id="cpSaved">✓</span></button>
+
+    <div class="sep"></div>
+    <div style="font-size:12px;font-weight:700;color:var(--txt);margin-bottom:4px">🔗 플랫폼 자동 연동</div>
+    <div style="font-size:10px;color:var(--sub);margin-bottom:10px;line-height:1.6">각 플랫폼 API 토큰을 입력하면 대본 완성 후 바로 게시할 수 있습니다.<br>토큰은 기기에만 저장되며 외부로 전송되지 않습니다.</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
+      <div>
+        <label style="display:flex;align-items:center;gap:4px">▶ 유튜브 OAuth 토큰
+          <a href="https://developers.google.com/oauthplayground/" target="_blank" style="font-size:9px;color:var(--accent);text-decoration:none;border:1px solid rgba(124,111,255,.4);border-radius:5px;padding:1px 5px">발급 →</a>
+        </label>
+        <input type="password" id="platYtToken" placeholder="ya29.xxxxx" style="margin-bottom:0;font-size:11px" oninput="savePlatTokens()">
+      </div>
+      <div>
+        <label>🎵 TikTok 액세스 토큰
+          <a href="https://developers.tiktok.com/" target="_blank" style="font-size:9px;color:var(--accent);text-decoration:none;border:1px solid rgba(124,111,255,.4);border-radius:5px;padding:1px 5px">발급 →</a>
+        </label>
+        <input type="password" id="platTtToken" placeholder="act.xxxxx" style="margin-bottom:0;font-size:11px" oninput="savePlatTokens()">
+      </div>
+      <div>
+        <label>📸 인스타그램 페이지 토큰
+          <a href="https://developers.facebook.com/tools/explorer/" target="_blank" style="font-size:9px;color:var(--accent);text-decoration:none;border:1px solid rgba(124,111,255,.4);border-radius:5px;padding:1px 5px">발급 →</a>
+        </label>
+        <input type="password" id="platIgToken" placeholder="EAA..." style="margin-bottom:0;font-size:11px" oninput="savePlatTokens()">
+      </div>
+      <div>
+        <label>📘 인스타 Business 계정 ID</label>
+        <input type="text" id="platIgAccountId" placeholder="17841..." style="margin-bottom:0;font-size:11px" oninput="savePlatTokens()">
+      </div>
+      <div>
+        <label>🟢 네이버 액세스 토큰
+          <a href="https://developers.naver.com/apps/" target="_blank" style="font-size:9px;color:var(--accent);text-decoration:none;border:1px solid rgba(124,111,255,.4);border-radius:5px;padding:1px 5px">발급 →</a>
+        </label>
+        <input type="password" id="platNvToken" placeholder="AAAA..." style="margin-bottom:0;font-size:11px" oninput="savePlatTokens()">
+      </div>
+      <div>
+        <label>🧵 Threads 액세스 토큰
+          <a href="https://developers.facebook.com/tools/explorer/" target="_blank" style="font-size:9px;color:var(--accent);text-decoration:none;border:1px solid rgba(124,111,255,.4);border-radius:5px;padding:1px 5px">발급 →</a>
+        </label>
+        <input type="password" id="platThToken" placeholder="EAA..." style="margin-bottom:0;font-size:11px" oninput="savePlatTokens()">
+      </div>
+    </div>
+
+    <div style="font-size:10px;font-weight:700;color:var(--sub);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px">🔗 인포크링크 제휴 링크 (3개)</div>
+    <input type="url" id="infoclink1" placeholder="인포크링크 링크 1 (예: https://link.infoclink.com/xxx)" style="margin-bottom:4px;font-size:11px" oninput="savePlatTokens()">
+    <input type="url" id="infoclink2" placeholder="인포크링크 링크 2" style="margin-bottom:4px;font-size:11px" oninput="savePlatTokens()">
+    <input type="url" id="infoclink3" placeholder="인포크링크 링크 3" style="margin-bottom:4px;font-size:11px" oninput="savePlatTokens()">
+    <div style="font-size:10px;color:var(--sub);margin-bottom:8px">대본 게시 시 해시태그 아래에 자동으로 삽입됩니다.</div>
+    <span id="platSaved" style="font-size:11px;color:var(--green);display:none">✅ 저장됨</span>
   </div>
 </div>
 
@@ -1123,7 +1171,173 @@ function buildScriptPanelHTML(i, s){
       <div style="font-size:11px;font-weight:800;color:var(--accent);margin-bottom:4px">📌 다음 단계 — 영상 완성 방법</div>
       <div>① <b style="color:var(--txt)">대본 완성</b> → ② <b style="color:var(--txt)">🔗 바이럴연동</b> 클릭 (쿠팡 연동·자막·BGM 편집) → ③ <b style="color:var(--txt)">완성 파일로 저장</b> 클릭 → ④ <b style="color:var(--yellow)">필모라·캡컷</b>에 설정 요약 적용해서 영상 렌더링</div>
       <div style="margin-top:4px;color:var(--sub);font-size:10px">💡 영상 렌더링은 필모라 / 캡컷 / 인샷 등 외부 편집 앱에서 진행됩니다</div>
-    </div>`;
+    </div>
+
+    <!-- 고급 자막 커스터마이징 -->
+    <details style="margin-top:8px">
+      <summary style="cursor:pointer;font-size:12px;font-weight:800;color:var(--accent);padding:10px 12px;background:var(--card2);border-radius:10px;border:1px solid var(--border);list-style:none;display:flex;align-items:center;gap:6px">
+        🎨 고급 편집 — 자막·음성·배치 전체 커스터마이징 <span style="margin-left:auto;font-size:10px;color:var(--sub)">▼ 펼치기</span>
+      </summary>
+      <div style="background:var(--card2);border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;padding:12px">
+
+        <!-- 자막 폰트 크기 (패널별) -->
+        <div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <div style="font-size:10px;font-weight:700;color:var(--sub);text-transform:uppercase">📏 자막 폰트 크기</div>
+            <span id="adSubSzVal-${i}" style="font-size:10px;color:var(--accent);font-weight:700">24px</span>
+          </div>
+          <input type="range" id="adSubSz-${i}" min="10" max="60" value="24" style="width:100%"
+            oninput="onAdSubSz(${i},this.value)">
+          <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--sub)"><span>10px</span><span>60px</span></div>
+        </div>
+
+        <!-- 폰트 패밀리 -->
+        <div style="margin-bottom:12px">
+          <div style="font-size:10px;font-weight:700;color:var(--sub);text-transform:uppercase;margin-bottom:6px">🔤 폰트 종류</div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px" id="fontPick-${i}">
+            <button onclick="onAdFont(${i},'-apple-system,sans-serif','고딕',this)" style="padding:5px 10px;border-radius:8px;border:1px solid var(--accent);background:rgba(124,111,255,.12);color:var(--accent);font-size:11px;font-weight:700;cursor:pointer">고딕</button>
+            <button onclick="onAdFont(${i},'serif','명조',this)" style="padding:5px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card3);color:var(--sub);font-size:11px;font-weight:700;cursor:pointer">명조</button>
+            <button onclick="onAdFont(${i},'cursive','손글씨',this)" style="padding:5px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card3);color:var(--sub);font-size:11px;cursor:pointer">손글씨</button>
+            <button onclick="onAdFont(${i},'monospace','코드',this)" style="padding:5px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card3);color:var(--sub);font-size:11px;cursor:pointer">코드</button>
+            <button onclick="onAdFont(${i},'fantasy','판타지',this)" style="padding:5px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card3);color:var(--sub);font-size:11px;cursor:pointer">판타지</button>
+          </div>
+        </div>
+
+        <!-- 자막 배경 -->
+        <div style="margin-bottom:12px">
+          <div style="font-size:10px;font-weight:700;color:var(--sub);text-transform:uppercase;margin-bottom:6px">🗂 자막 배경</div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px" id="bgPick-${i}">
+            <button onclick="onAdBg(${i},'none','없음',this)" style="padding:5px 10px;border-radius:8px;border:1px solid var(--accent);background:rgba(124,111,255,.12);color:var(--accent);font-size:11px;font-weight:700;cursor:pointer">없음</button>
+            <button onclick="onAdBg(${i},'semi','반투명박스',this)" style="padding:5px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card3);color:var(--sub);font-size:11px;cursor:pointer">반투명박스</button>
+            <button onclick="onAdBg(${i},'solid','단색박스',this)" style="padding:5px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card3);color:var(--sub);font-size:11px;cursor:pointer">단색박스</button>
+            <button onclick="onAdBg(${i},'gradient','그라디언트',this)" style="padding:5px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card3);color:var(--sub);font-size:11px;cursor:pointer">그라디언트</button>
+            <button onclick="onAdBg(${i},'banner','풀배너',this)" style="padding:5px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card3);color:var(--sub);font-size:11px;cursor:pointer">풀배너</button>
+          </div>
+        </div>
+
+        <!-- 배경 불투명도 -->
+        <div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <div style="font-size:10px;font-weight:700;color:var(--sub);text-transform:uppercase">🌑 배경 불투명도</div>
+            <span id="adBgOpVal-${i}" style="font-size:10px;color:var(--accent);font-weight:700">60%</span>
+          </div>
+          <input type="range" id="adBgOp-${i}" min="0" max="100" value="60" style="width:100%"
+            oninput="onAdBgOp(${i},this.value)">
+        </div>
+
+        <!-- 애니메이션 -->
+        <div style="margin-bottom:12px">
+          <div style="font-size:10px;font-weight:700;color:var(--sub);text-transform:uppercase;margin-bottom:6px">✨ 자막 애니메이션</div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px" id="animPick-${i}">
+            <button onclick="onAdAnim(${i},'none','없음',this)" style="padding:5px 10px;border-radius:8px;border:1px solid var(--accent);background:rgba(124,111,255,.12);color:var(--accent);font-size:11px;font-weight:700;cursor:pointer">없음</button>
+            <button onclick="onAdAnim(${i},'fade','페이드인',this)" style="padding:5px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card3);color:var(--sub);font-size:11px;cursor:pointer">페이드인</button>
+            <button onclick="onAdAnim(${i},'pop','팝업',this)" style="padding:5px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card3);color:var(--sub);font-size:11px;cursor:pointer">팝업</button>
+            <button onclick="onAdAnim(${i},'slide','슬라이드',this)" style="padding:5px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card3);color:var(--sub);font-size:11px;cursor:pointer">슬라이드</button>
+            <button onclick="onAdAnim(${i},'bounce','바운스',this)" style="padding:5px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card3);color:var(--sub);font-size:11px;cursor:pointer">바운스</button>
+          </div>
+        </div>
+
+        <!-- 자간/행간 -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+              <div style="font-size:10px;font-weight:700;color:var(--sub);text-transform:uppercase">↔ 자간</div>
+              <span id="adLsVal-${i}" style="font-size:10px;color:var(--accent);font-weight:700">0px</span>
+            </div>
+            <input type="range" id="adLs-${i}" min="-3" max="15" value="0" style="width:100%"
+              oninput="onAdLetterSpacing(${i},this.value)">
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+              <div style="font-size:10px;font-weight:700;color:var(--sub);text-transform:uppercase">↕ 행간</div>
+              <span id="adLhVal-${i}" style="font-size:10px;color:var(--accent);font-weight:700">1.4</span>
+            </div>
+            <input type="range" id="adLh-${i}" min="10" max="30" value="14" style="width:100%"
+              oninput="onAdLineHeight(${i},this.value)">
+          </div>
+        </div>
+
+        <!-- 그림자 강도 -->
+        <div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <div style="font-size:10px;font-weight:700;color:var(--sub);text-transform:uppercase">💫 그림자/외곽선 강도</div>
+            <span id="adShVal-${i}" style="font-size:10px;color:var(--accent);font-weight:700">4px</span>
+          </div>
+          <input type="range" id="adSh-${i}" min="0" max="20" value="4" style="width:100%"
+            oninput="onAdShadow(${i},this.value)">
+        </div>
+
+        <!-- 텍스트 정렬 -->
+        <div style="margin-bottom:12px">
+          <div style="font-size:10px;font-weight:700;color:var(--sub);text-transform:uppercase;margin-bottom:6px">⬛ 텍스트 정렬</div>
+          <div style="display:flex;gap:5px">
+            <button onclick="onAdAlign(${i},'left',this)" style="flex:1;padding:6px;border-radius:8px;border:1px solid var(--border);background:var(--card3);color:var(--sub);font-size:12px;cursor:pointer">← 좌</button>
+            <button onclick="onAdAlign(${i},'center',this)" style="flex:1;padding:6px;border-radius:8px;border:1px solid var(--accent);background:rgba(124,111,255,.12);color:var(--accent);font-size:12px;font-weight:700;cursor:pointer">가운데</button>
+            <button onclick="onAdAlign(${i},'right',this)" style="flex:1;padding:6px;border-radius:8px;border:1px solid var(--border);background:var(--card3);color:var(--sub);font-size:12px;cursor:pointer">→ 우</button>
+          </div>
+        </div>
+
+        <!-- 하단 여백 -->
+        <div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <div style="font-size:10px;font-weight:700;color:var(--sub);text-transform:uppercase">⬇ 하단 여백</div>
+            <span id="adMbVal-${i}" style="font-size:10px;color:var(--accent);font-weight:700">10%</span>
+          </div>
+          <input type="range" id="adMb-${i}" min="0" max="50" value="10" style="width:100%"
+            oninput="onAdMarginBottom(${i},this.value)">
+        </div>
+
+        <!-- 볼드/이탤릭 -->
+        <div style="display:flex;gap:8px">
+          <button id="adBold-${i}" onclick="onAdBold(${i},this)" style="flex:1;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--card3);color:var(--sub);font-size:13px;font-weight:700;cursor:pointer">B 볼드</button>
+          <button id="adItalic-${i}" onclick="onAdItalic(${i},this)" style="flex:1;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--card3);color:var(--sub);font-size:13px;font-style:italic;cursor:pointer">I 이탤릭</button>
+          <button id="adUpper-${i}" onclick="onAdUpper(${i},this)" style="flex:1;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--card3);color:var(--sub);font-size:11px;cursor:pointer">ALL CAPS</button>
+        </div>
+      </div>
+    </details>
+
+    <!-- 플랫폼 자동 게시 -->
+    <details style="margin-top:8px">
+      <summary style="cursor:pointer;font-size:12px;font-weight:800;color:var(--green);padding:10px 12px;background:rgba(32,217,160,.07);border-radius:10px;border:1px solid rgba(32,217,160,.25);list-style:none;display:flex;align-items:center;gap:6px">
+        🚀 플랫폼 자동 게시 <span style="margin-left:auto;font-size:10px;color:var(--sub)">▼ 펼치기</span>
+      </summary>
+      <div style="background:rgba(32,217,160,.04);border:1px solid rgba(32,217,160,.2);border-top:none;border-radius:0 0 10px 10px;padding:12px">
+        <div style="font-size:10px;color:var(--sub);margin-bottom:10px">게시할 플랫폼을 선택하세요. 토큰 미설정 플랫폼은 클립보드 복사+앱 열기로 처리됩니다.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px" id="pubPlatGrid-${i}">
+          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;padding:7px 10px;background:var(--card2);border-radius:8px;border:1px solid var(--border);margin:0">
+            <input type="checkbox" id="pub-yt-${i}" style="width:14px;height:14px;accent-color:var(--green)"> <span class="badge badge-yt" style="font-size:9px">YT</span> 유튜브
+          </label>
+          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;padding:7px 10px;background:var(--card2);border-radius:8px;border:1px solid var(--border);margin:0">
+            <input type="checkbox" id="pub-tt-${i}" style="width:14px;height:14px;accent-color:var(--green)"> <span class="badge badge-tt" style="font-size:9px">TT</span> 틱톡
+          </label>
+          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;padding:7px 10px;background:var(--card2);border-radius:8px;border:1px solid var(--border);margin:0">
+            <input type="checkbox" id="pub-ig-${i}" style="width:14px;height:14px;accent-color:var(--green)"> <span class="badge badge-ig" style="font-size:9px">IG</span> 인스타
+          </label>
+          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;padding:7px 10px;background:var(--card2);border-radius:8px;border:1px solid var(--border);margin:0">
+            <input type="checkbox" id="pub-nv-${i}" style="width:14px;height:14px;accent-color:var(--green)"> 🟢 네이버
+          </label>
+          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;padding:7px 10px;background:var(--card2);border-radius:8px;border:1px solid var(--border);margin:0">
+            <input type="checkbox" id="pub-th-${i}" style="width:14px;height:14px;accent-color:var(--green)"> 🧵 쓰레드
+          </label>
+          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;padding:7px 10px;background:var(--card2);border-radius:8px;border:1px solid var(--border);margin:0">
+            <input type="checkbox" id="pub-ic-${i}" style="width:14px;height:14px;accent-color:var(--green)"> 🔗 인포크링크
+          </label>
+        </div>
+
+        <!-- 영상 제목 -->
+        <div style="font-size:10px;font-weight:700;color:var(--sub);text-transform:uppercase;margin-bottom:4px">영상 제목</div>
+        <input type="text" id="pubTitle-${i}" placeholder="영상 제목 입력 (미입력 시 AI 자동생성)" style="margin-bottom:8px;font-size:12px">
+
+        <!-- 게시 버튼 -->
+        <button onclick="publishAll(${i})" id="pubBtn-${i}"
+          style="width:100%;padding:12px;border-radius:11px;border:none;background:linear-gradient(135deg,var(--green),var(--accent));color:#fff;font-size:14px;font-weight:900;cursor:pointer">
+          🚀 선택 플랫폼 전체 게시
+        </button>
+
+        <!-- 게시 상태 로그 -->
+        <div id="pubLog-${i}" style="margin-top:8px;font-size:11px;line-height:2;display:none"></div>
+      </div>
+    </details>`;
 }
 
 // ── 칩 선택 (기존) ───────────────────────────────────────
@@ -2701,6 +2915,277 @@ function toggleViralOverlay(){
     const textEl = document.getElementById('viralSubText');
     if(textEl) textEl.textContent = cur ? cur.text : '';
   }, 100);
+}
+
+// ══════════════════════════════════════════════════════════════
+// 고급 자막 편집 함수들
+// ══════════════════════════════════════════════════════════════
+
+// 패널별 자막 설정 저장소
+const _panelAdv = {};
+function _adv(i){ if(!_panelAdv[i]) _panelAdv[i]={sz:24,font:'-apple-system,sans-serif',bg:'none',bgOp:60,anim:'none',ls:0,lh:1.4,shadow:4,align:'center',mb:10,bold:false,italic:false,upper:false}; return _panelAdv[i]; }
+
+function _applyAdv(i){
+  const a=_adv(i);
+  const ta=document.getElementById(`script-${i}`);
+  if(!ta) return;
+  let fs=`${a.sz}px`;
+  let fw=a.bold?'900':'normal';
+  let fst=a.italic?'italic':'normal';
+  let ff=a.font;
+  let ls=`${a.ls}px`;
+  let lh=a.lh;
+  let ta2=a.align;
+  ta.style.cssText+=`;font-size:${fs};font-weight:${fw};font-style:${fst};font-family:${ff};letter-spacing:${ls};line-height:${lh};text-align:${ta2}`;
+  if(a.upper) ta.style.textTransform='uppercase'; else ta.style.textTransform='';
+  // 미리보기 박스 업데이트
+  const prev=document.getElementById(`prevTxt-${i}`);
+  if(prev){
+    prev.style.fontSize=fs; prev.style.fontWeight=fw; prev.style.fontStyle=fst;
+    prev.style.fontFamily=ff; prev.style.letterSpacing=ls; prev.style.lineHeight=lh;
+    prev.style.textAlign=ta2;
+    if(a.upper) prev.style.textTransform='uppercase'; else prev.style.textTransform='';
+    let bgStyle='transparent';
+    if(a.bg==='semi') bgStyle=`rgba(0,0,0,${a.bgOp/100})`;
+    else if(a.bg==='solid') bgStyle=`rgba(0,0,0,${a.bgOp/100})`;
+    else if(a.bg==='gradient') bgStyle=`linear-gradient(transparent,rgba(0,0,0,${a.bgOp/100}))`;
+    else if(a.bg==='banner') bgStyle=`rgba(124,111,255,${a.bgOp/100})`;
+    prev.style.background=bgStyle;
+    prev.style.borderRadius=a.bg!=='none'?'8px':'0';
+    prev.style.padding=a.bg!=='none'?'6px 12px':'0';
+    prev.style.textShadow=a.shadow>0?`0 0 ${a.shadow}px rgba(0,0,0,.9),${a.shadow/2}px ${a.shadow/2}px ${a.shadow}px rgba(0,0,0,.8)`:'none';
+  }
+}
+
+function onAdSubSz(i,val){ _adv(i).sz=parseInt(val); document.getElementById(`adSubSzVal-${i}`).textContent=val+'px'; _applyAdv(i); }
+function onAdFont(i,ff,nm,btn){ _adv(i).font=ff; document.querySelectorAll(`#fontPick-${i} button`).forEach(b=>{b.style.borderColor='var(--border)';b.style.background='var(--card3)';b.style.color='var(--sub)';}); btn.style.borderColor='var(--accent)';btn.style.background='rgba(124,111,255,.12)';btn.style.color='var(--accent)'; _applyAdv(i); }
+function onAdBg(i,bg,nm,btn){ _adv(i).bg=bg; document.querySelectorAll(`#bgPick-${i} button`).forEach(b=>{b.style.borderColor='var(--border)';b.style.background='var(--card3)';b.style.color='var(--sub)';}); btn.style.borderColor='var(--accent)';btn.style.background='rgba(124,111,255,.12)';btn.style.color='var(--accent)'; _applyAdv(i); }
+function onAdBgOp(i,val){ _adv(i).bgOp=parseInt(val); document.getElementById(`adBgOpVal-${i}`).textContent=val+'%'; _applyAdv(i); }
+function onAdAnim(i,an,nm,btn){ _adv(i).anim=an; document.querySelectorAll(`#animPick-${i} button`).forEach(b=>{b.style.borderColor='var(--border)';b.style.background='var(--card3)';b.style.color='var(--sub)';}); btn.style.borderColor='var(--accent)';btn.style.background='rgba(124,111,255,.12)';btn.style.color='var(--accent)'; }
+function onAdLetterSpacing(i,val){ _adv(i).ls=parseInt(val); document.getElementById(`adLsVal-${i}`).textContent=val+'px'; _applyAdv(i); }
+function onAdLineHeight(i,val){ _adv(i).lh=(parseInt(val)/10).toFixed(1); document.getElementById(`adLhVal-${i}`).textContent=_adv(i).lh; _applyAdv(i); }
+function onAdShadow(i,val){ _adv(i).shadow=parseInt(val); document.getElementById(`adShVal-${i}`).textContent=val+'px'; _applyAdv(i); }
+function onAdAlign(i,al,btn){ _adv(i).align=al; btn.parentElement.querySelectorAll('button').forEach(b=>{b.style.borderColor='var(--border)';b.style.background='var(--card3)';b.style.color='var(--sub)';b.style.fontWeight='normal';}); btn.style.borderColor='var(--accent)';btn.style.background='rgba(124,111,255,.12)';btn.style.color='var(--accent)';btn.style.fontWeight='700'; _applyAdv(i); }
+function onAdMarginBottom(i,val){ _adv(i).mb=parseInt(val); document.getElementById(`adMbVal-${i}`).textContent=val+'%'; }
+function onAdBold(i,btn){ _adv(i).bold=!_adv(i).bold; btn.style.borderColor=_adv(i).bold?'var(--accent)':'var(--border)'; btn.style.background=_adv(i).bold?'rgba(124,111,255,.12)':'var(--card3)'; btn.style.color=_adv(i).bold?'var(--accent)':'var(--sub)'; _applyAdv(i); }
+function onAdItalic(i,btn){ _adv(i).italic=!_adv(i).italic; btn.style.borderColor=_adv(i).italic?'var(--accent)':'var(--border)'; btn.style.background=_adv(i).italic?'rgba(124,111,255,.12)':'var(--card3)'; btn.style.color=_adv(i).italic?'var(--accent)':'var(--sub)'; _applyAdv(i); }
+function onAdUpper(i,btn){ _adv(i).upper=!_adv(i).upper; btn.style.borderColor=_adv(i).upper?'var(--accent)':'var(--border)'; btn.style.background=_adv(i).upper?'rgba(124,111,255,.12)':'var(--card3)'; btn.style.color=_adv(i).upper?'var(--accent)':'var(--sub)'; _applyAdv(i); }
+
+// ══════════════════════════════════════════════════════════════
+// 플랫폼 연동 설정 저장/로드
+// ══════════════════════════════════════════════════════════════
+
+function savePlatTokens(){
+  const ids=['platYtToken','platTtToken','platIgToken','platIgAccountId','platNvToken','platThToken','infoclink1','infoclink2','infoclink3'];
+  ids.forEach(id=>{ const el=document.getElementById(id); if(el) LS.set('ss_'+id, el.value); });
+  const savedEl=document.getElementById('platSaved');
+  if(savedEl){ savedEl.style.display='inline'; setTimeout(()=>savedEl.style.display='none',2000); }
+}
+
+function loadPlatTokens(){
+  const ids=['platYtToken','platTtToken','platIgToken','platIgAccountId','platNvToken','platThToken','infoclink1','infoclink2','infoclink3'];
+  ids.forEach(id=>{ const el=document.getElementById(id); if(el) el.value=LS.get('ss_'+id)||''; });
+}
+
+// 기존 openSettings에 loadPlatTokens 후킹
+const _origOpenSettings = typeof openSettings==='function' ? openSettings : null;
+function openSettings(){
+  document.getElementById('settingsModal').classList.add('open');
+  const k=getKey();
+  const el=document.getElementById('claudeKey');
+  if(el) el.value=k?k.slice(0,8)+'••••••••':'';
+  const c=getCoupangCreds();
+  if(document.getElementById('cpAccess')) document.getElementById('cpAccess').value=c.access||'';
+  if(document.getElementById('cpSecret')) document.getElementById('cpSecret').value=c.secret||'';
+  if(document.getElementById('cpSubid'))  document.getElementById('cpSubid').value=c.subid||'';
+  loadPlatTokens();
+}
+
+// ══════════════════════════════════════════════════════════════
+// 플랫폼 게시 함수들
+// ══════════════════════════════════════════════════════════════
+
+function _getPlatToken(key){ return LS.get('ss_'+key)||''; }
+
+// 캡션 빌더 (해시태그 + 인포크링크 자동삽입)
+function buildCaption(idx){
+  const hook   = document.getElementById(`hook-${idx}`)?.value||'';
+  const script = document.getElementById(`script-${idx}`)?.value||'';
+  const hash   = document.getElementById(`hash-${idx}`)?.value||'';
+  const cta    = document.getElementById(`cta-${idx}`)?.value||'';
+  const ic1    = _getPlatToken('infoclink1');
+  const ic2    = _getPlatToken('infoclink2');
+  const ic3    = _getPlatToken('infoclink3');
+  let links='';
+  if(ic1) links += '\n🔗 '+ic1;
+  if(ic2) links += '\n🔗 '+ic2;
+  if(ic3) links += '\n🔗 '+ic3;
+  return [hook,script,cta,hash,links].filter(Boolean).join('\n\n');
+}
+
+// 로그 출력
+function _pubLog(idx, msg, ok=true){
+  const log=document.getElementById(`pubLog-${idx}`);
+  if(!log) return;
+  log.style.display='block';
+  log.innerHTML += `<div style="color:${ok?'var(--green)':'var(--accent2)'}">${msg}</div>`;
+}
+
+// ── YouTube API 업로드 ─────────────────────────────────────
+async function publishYouTube(idx, title, caption, videoBlob){
+  const token = _getPlatToken('platYtToken');
+  if(!token){
+    // 토큰 없음 → 클립보드 + 새탭
+    await navigator.clipboard.writeText(caption).catch(()=>{});
+    window.open('https://studio.youtube.com/channel/UC/videos/upload', '_blank');
+    _pubLog(idx,'▶ 유튜브: 캡션 복사됨 + 업로드 페이지 열림 (토큰 미설정)');
+    return;
+  }
+  _pubLog(idx,'▶ 유튜브: API 업로드 시작...');
+  try{
+    const meta=JSON.stringify({snippet:{title:title.substring(0,100),description:caption,tags:['쿠팡','쇼츠','쇼핑'],categoryId:'26'},status:{privacyStatus:'private',selfDeclaredMadeForKids:false}});
+    const initR=await fetch('https://www.googleapis.com/upload/youtube/v3/videos?uploadType=resumable&part=snippet,status',{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json; charset=UTF-8',
+               'X-Upload-Content-Type':videoBlob?videoBlob.type:'video/webm','X-Upload-Content-Length':videoBlob?videoBlob.size:0},
+      body:meta
+    });
+    if(!initR.ok) throw new Error('초기화 실패 '+initR.status);
+    const uploadUrl=initR.headers.get('Location');
+    if(videoBlob){
+      const upR=await fetch(uploadUrl,{method:'PUT',headers:{'Content-Type':videoBlob.type},body:videoBlob});
+      if(!upR.ok) throw new Error('업로드 실패 '+upR.status);
+      const data=await upR.json();
+      _pubLog(idx,`✅ 유튜브 업로드 완료! ID: ${data.id}`);
+    } else {
+      _pubLog(idx,'ℹ️ 유튜브: 영상 없음 → 메타데이터만 초기화됨');
+    }
+  }catch(e){
+    _pubLog(idx,'❌ 유튜브 오류: '+e.message,false);
+  }
+}
+
+// ── TikTok API 업로드 ─────────────────────────────────────
+async function publishTikTok(idx, title, caption, videoBlob){
+  const token = _getPlatToken('platTtToken');
+  if(!token){
+    await navigator.clipboard.writeText(caption).catch(()=>{});
+    window.open('https://www.tiktok.com/upload', '_blank');
+    _pubLog(idx,'🎵 틱톡: 캡션 복사됨 + 업로드 페이지 열림 (토큰 미설정)');
+    return;
+  }
+  _pubLog(idx,'🎵 틱톡: API 업로드 시작...');
+  try{
+    const initR=await fetch('https://open.tiktokapis.com/v2/post/publish/video/init/',{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json; charset=UTF-8'},
+      body:JSON.stringify({post_info:{title:title.substring(0,150),privacy_level:'SELF_ONLY',disable_duet:false,disable_stitch:false},
+        source_info:{source:'FILE_UPLOAD',video_size:videoBlob?videoBlob.size:1,chunk_size:videoBlob?videoBlob.size:1,total_chunk_count:1}})
+    });
+    if(!initR.ok) throw new Error('초기화 실패 '+initR.status);
+    const d=await initR.json();
+    const uploadUrl=d.data?.upload_url;
+    if(videoBlob&&uploadUrl){
+      const upR=await fetch(uploadUrl,{method:'PUT',headers:{'Content-Range':`bytes 0-${videoBlob.size-1}/${videoBlob.size}`,'Content-Type':'video/webm'},body:videoBlob});
+      _pubLog(idx,`✅ 틱톡 업로드 완료! publish_id: ${d.data?.publish_id}`);
+    } else {
+      _pubLog(idx,'ℹ️ 틱톡: 영상 없음 → 초기화만 완료');
+    }
+  }catch(e){
+    _pubLog(idx,'❌ 틱톡 오류: '+e.message,false);
+  }
+}
+
+// ── 인스타그램 (클립보드 + 앱/웹 열기) ────────────────────
+async function publishInstagram(idx, caption, videoBlob){
+  const token=_getPlatToken('platIgToken');
+  const accountId=_getPlatToken('platIgAccountId');
+  await navigator.clipboard.writeText(caption).catch(()=>{});
+  if(token&&accountId&&videoBlob){
+    _pubLog(idx,'📸 인스타그램: 캡션 복사됨. 영상은 서버 URL이 필요해 직접 업로드해주세요.');
+  } else {
+    _pubLog(idx,'📸 인스타그램: 캡션 복사됨. 앱/웹에서 붙여넣기하세요.');
+  }
+  window.open('https://www.instagram.com/', '_blank');
+}
+
+// ── 네이버 블로그 API ──────────────────────────────────────
+async function publishNaver(idx, title, caption){
+  const token=_getPlatToken('platNvToken');
+  if(!token){
+    await navigator.clipboard.writeText(title+'\n\n'+caption).catch(()=>{});
+    window.open('https://blog.naver.com/', '_blank');
+    _pubLog(idx,'🟢 네이버: 내용 복사됨 + 블로그 열림 (토큰 미설정)');
+    return;
+  }
+  _pubLog(idx,'🟢 네이버 블로그: API 게시 시작...');
+  try{
+    const r=await fetch('https://openapi.naver.com/v1/blog/writePost.json',{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+token,'Content-Type':'application/x-www-form-urlencoded'},
+      body:new URLSearchParams({title,contents:`<p>${caption.replace(/\n/g,'</p><p>')}</p>`})
+    });
+    if(!r.ok) throw new Error('게시 실패 '+r.status);
+    const d=await r.json();
+    _pubLog(idx,'✅ 네이버 블로그 게시 완료!');
+  }catch(e){
+    _pubLog(idx,'❌ 네이버 오류: '+e.message,false);
+  }
+}
+
+// ── Threads (클립보드 + 열기) ─────────────────────────────
+async function publishThreads(idx, caption){
+  await navigator.clipboard.writeText(caption).catch(()=>{});
+  _pubLog(idx,'🧵 Threads: 캡션 복사됨. 앱에서 붙여넣기하세요.');
+  window.open('https://www.threads.net/', '_blank');
+}
+
+// ── 인포크링크 캡션 삽입 표시 ──────────────────────────────
+function publishInfoclink(idx, caption){
+  const ic1=_getPlatToken('infoclink1');
+  const ic2=_getPlatToken('infoclink2');
+  const ic3=_getPlatToken('infoclink3');
+  const cnt=[ic1,ic2,ic3].filter(Boolean).length;
+  _pubLog(idx,`🔗 인포크링크: ${cnt}개 링크가 캡션에 자동 포함됨`);
+}
+
+// ── 전체 게시 실행 ──────────────────────────────────────────
+async function publishAll(idx){
+  const btn=document.getElementById(`pubBtn-${idx}`);
+  const log=document.getElementById(`pubLog-${idx}`);
+  if(log){ log.innerHTML=''; log.style.display='block'; }
+  if(btn){ btn.disabled=true; btn.textContent='⏳ 게시 중...'; }
+
+  const yt = document.getElementById(`pub-yt-${idx}`)?.checked;
+  const tt = document.getElementById(`pub-tt-${idx}`)?.checked;
+  const ig = document.getElementById(`pub-ig-${idx}`)?.checked;
+  const nv = document.getElementById(`pub-nv-${idx}`)?.checked;
+  const th = document.getElementById(`pub-th-${idx}`)?.checked;
+  const ic = document.getElementById(`pub-ic-${idx}`)?.checked;
+
+  if(!yt&&!tt&&!ig&&!nv&&!th&&!ic){
+    alert('게시할 플랫폼을 하나 이상 선택하세요.');
+    if(btn){ btn.disabled=false; btn.textContent='🚀 선택 플랫폼 전체 게시'; }
+    return;
+  }
+
+  let title=document.getElementById(`pubTitle-${idx}`)?.value?.trim();
+  if(!title) title=document.getElementById(`hook-${idx}`)?.value?.trim()?.slice(0,50)||'쇼핑쇼츠';
+  const caption=buildCaption(idx);
+
+  // 영상 블롭: 현재 다운로드한 것은 없으니 null 처리 (API 있으면 연결 가능)
+  const videoBlob=null;
+
+  if(ic) publishInfoclink(idx, caption);
+  if(yt) await publishYouTube(idx, title, caption, videoBlob);
+  if(tt) await publishTikTok(idx, title, caption, videoBlob);
+  if(ig) await publishInstagram(idx, caption, videoBlob);
+  if(nv) await publishNaver(idx, title, caption);
+  if(th) await publishThreads(idx, caption);
+
+  if(btn){ btn.disabled=false; btn.textContent='🚀 선택 플랫폼 전체 게시'; }
+  _pubLog(idx,'─────────────────');
+  _pubLog(idx,'✅ 전체 게시 처리 완료!');
 }
 </script>
 </body>
