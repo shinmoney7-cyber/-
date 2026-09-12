@@ -41,6 +41,7 @@ textarea{resize:vertical}
 .chip.sel-desire{border-color:var(--accent2);color:var(--accent2);background:rgba(255,107,138,.12)}
 .chip.sel-voice{border-color:var(--accent);color:var(--accent);background:rgba(124,111,255,.12)}
 .chip.sel-size{border-color:var(--yellow);color:var(--yellow);background:rgba(255,208,96,.1)}
+.chip.sel-trend{border-color:var(--green);color:var(--green);background:rgba(32,217,160,.12)}
 /* plat buttons */
 .plat-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
 .plat-btn{padding:6px 12px;border-radius:20px;border:1px solid var(--border);background:var(--card2);color:var(--sub);font-size:12px;font-weight:700;cursor:pointer;transition:.15s}
@@ -264,52 +265,77 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
     <div class="sec-title">📈 유행어 · 인기템 <span style="color:var(--sub);font-size:10px;font-weight:400;text-transform:none">복수 선택 → 대본에 자동 반영</span></div>
     <div style="font-size:10px;color:var(--sub);margin-bottom:6px;font-weight:700;letter-spacing:.4px">💬 유행어</div>
     <div class="chip-row" id="trendRow">
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">갓생</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">탕진잼</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">레전드급</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">미쳤다ㄷㄷ</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">실화냐?!</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">찐이야</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">킹받네</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">극호</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">개꿀</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">품절대란</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">역대급</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">득템</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">알고리즘탔다</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">써보니미쳤다</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">완전혜자</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">갓성비</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">핵꿀잼</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">인싸템</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">대박남</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">개이득</div>
+      <div class="chip" data-type="trend">갓생</div>
+      <div class="chip" data-type="trend">탕진잼</div>
+      <div class="chip" data-type="trend">레전드급</div>
+      <div class="chip" data-type="trend">미쳤다ㄷㄷ</div>
+      <div class="chip" data-type="trend">실화냐?!</div>
+      <div class="chip" data-type="trend">찐이야</div>
+      <div class="chip" data-type="trend">킹받네</div>
+      <div class="chip" data-type="trend">극호</div>
+      <div class="chip" data-type="trend">개꿀</div>
+      <div class="chip" data-type="trend">품절대란</div>
+      <div class="chip" data-type="trend">역대급</div>
+      <div class="chip" data-type="trend">득템</div>
+      <div class="chip" data-type="trend">알고리즘탔다</div>
+      <div class="chip" data-type="trend">써보니미쳤다</div>
+      <div class="chip" data-type="trend">완전혜자</div>
+      <div class="chip" data-type="trend">갓성비</div>
+      <div class="chip" data-type="trend">핵꿀잼</div>
+      <div class="chip" data-type="trend">인싸템</div>
+      <div class="chip" data-type="trend">대박남</div>
+      <div class="chip" data-type="trend">개이득</div>
     </div>
     <div style="font-size:10px;color:var(--sub);margin:8px 0 6px;font-weight:700;letter-spacing:.4px">🛒 인기 카테고리 / 트렌드템</div>
-    <div class="chip-row">
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">다이소템</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">올리브영템</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">쿠팡로켓</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">홈카페</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">루틴템</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">K-뷰티</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">비건</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">제로칼로리</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">텀블러</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">홈트</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">미니멀</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">캐릭터굿즈</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">홈파티</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">리빙템</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">캠핑템</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">주방템</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">뷰티루틴</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">알리꿀템</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">다이어트템</div>
-      <div class="chip" data-type="trend" onclick="selChipAuto(this,'trend',20)">자취필수템</div>
+    <div class="chip-row" id="categoryRow">
+      <div class="chip" data-type="trend">다이소템</div>
+      <div class="chip" data-type="trend">올리브영템</div>
+      <div class="chip" data-type="trend">쿠팡로켓</div>
+      <div class="chip" data-type="trend">홈카페</div>
+      <div class="chip" data-type="trend">루틴템</div>
+      <div class="chip" data-type="trend">K-뷰티</div>
+      <div class="chip" data-type="trend">비건</div>
+      <div class="chip" data-type="trend">제로칼로리</div>
+      <div class="chip" data-type="trend">텀블러</div>
+      <div class="chip" data-type="trend">홈트</div>
+      <div class="chip" data-type="trend">미니멀</div>
+      <div class="chip" data-type="trend">캐릭터굿즈</div>
+      <div class="chip" data-type="trend">홈파티</div>
+      <div class="chip" data-type="trend">리빙템</div>
+      <div class="chip" data-type="trend">캠핑템</div>
+      <div class="chip" data-type="trend">주방템</div>
+      <div class="chip" data-type="trend">뷰티루틴</div>
+      <div class="chip" data-type="trend">알리꿀템</div>
+      <div class="chip" data-type="trend">다이어트템</div>
+      <div class="chip" data-type="trend">자취필수템</div>
     </div>
+    <script>
+    (function(){
+      function bindTrendRow(rowId){
+        var row = document.getElementById(rowId);
+        if(!row) return;
+        row.addEventListener('click', function(e){
+          var el = e.target;
+          while(el && el !== row){
+            if(el.classList && el.classList.contains('chip')){
+              el.classList.toggle('sel-trend');
+              var bar = document.getElementById('autoUpdateBar');
+              if(bar){
+                var anyScript = document.querySelectorAll('[id^="script-"]').length > 0;
+                if(anyScript) bar.style.display = 'flex';
+              }
+              break;
+            }
+            el = el.parentElement;
+          }
+        });
+      }
+      bindTrendRow('trendRow');
+      bindTrendRow('categoryRow');
+    })();
+    </script>
     <!-- 대본 자동업데이트 토스트 -->
-    <div id="autoUpdateBar" style="display:none;margin-top:10px;padding:8px 12px;background:rgba(124,111,255,.15);border:1px solid var(--accent);border-radius:10px;display:none;align-items:center;justify-content:space-between">
+    <div id="autoUpdateBar" style="display:none;margin-top:10px;padding:8px 12px;background:rgba(124,111,255,.15);border:1px solid var(--accent);border-radius:10px;align-items:center;justify-content:space-between">
       <span style="font-size:12px;color:var(--accent);font-weight:700">✦ 선택 변경됨</span>
       <button onclick="generateShorts()" style="font-size:11px;padding:5px 12px;border-radius:8px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-weight:700">대본 다시 생성 →</button>
     </div>
@@ -1200,7 +1226,7 @@ function selChipAuto(el, type, max){
 
 // ── 유행어 선택 가져오기 ─────────────────────────────────
 function getSelectedTrends(){
-  return [...document.querySelectorAll('.chip[data-type="trend"].sel-desire')].map(c=>c.textContent.trim());
+  return [...document.querySelectorAll('.chip[data-type="trend"].sel-trend')].map(c=>c.textContent.trim());
 }
 
 // ── 대본 추가 생성 ───────────────────────────────────────
