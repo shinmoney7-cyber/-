@@ -204,30 +204,33 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
 
   <!-- 욕망/욕구 확장 -->
   <div class="card">
-    <div class="sec-title">🔥 욕망 / 욕구 <span style="color:var(--sub);font-size:10px;font-weight:400;text-transform:none">최대 5개 선택</span></div>
+    <div class="sec-title" style="display:flex;align-items:center;justify-content:space-between">
+      <span>🔥 욕망 / 욕구 <span style="color:var(--sub);font-size:10px;font-weight:400;text-transform:none">복수 선택 가능</span></span>
+      <button id="desireAllBtn" onclick="toggleAllDesire()" style="font-size:11px;padding:4px 10px;border-radius:12px;border:1px solid var(--border);background:var(--card2);color:var(--sub);cursor:pointer;font-weight:600;white-space:nowrap">전체 선택</button>
+    </div>
     <div class="chip-row" id="desireRow">
-      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',5)">🔥 과시욕</div>
-      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',5)">💰 절약욕</div>
-      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',5)">💪 건강욕</div>
-      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',5)">⚡ 편의욕</div>
-      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',5)">✨ 아름다움욕</div>
-      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',5)">🌟 트렌드욕</div>
-      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',5)">❤️ 가족사랑</div>
-      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',5)">😌 자기만족</div>
-      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',5)">⏰ FOMO</div>
-      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',5)">👑 인정욕</div>
-      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',5)">🎁 선물충동</div>
-      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',5)">🔑 차별화욕</div>
-      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',5)">🏠 홈꾸욕</div>
-      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',5)">🐾 반려동물사랑</div>
-      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',5)">🌿 친환경욕</div>
-      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',5)">🕐 시간절약</div>
-      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',5)">🎯 목표달성</div>
-      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',5)">🤩 호기심</div>
-      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',5)">💫 자기계발</div>
-      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',5)">🛒 충동구매</div>
-      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',5)">🏆 성취욕</div>
-      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',5)">💝 자기선물</div>
+      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',99)">🔥 과시욕</div>
+      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',99)">💰 절약욕</div>
+      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',99)">💪 건강욕</div>
+      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',99)">⚡ 편의욕</div>
+      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',99)">✨ 아름다움욕</div>
+      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',99)">🌟 트렌드욕</div>
+      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',99)">❤️ 가족사랑</div>
+      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',99)">😌 자기만족</div>
+      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',99)">⏰ FOMO</div>
+      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',99)">👑 인정욕</div>
+      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',99)">🎁 선물충동</div>
+      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',99)">🔑 차별화욕</div>
+      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',99)">🏠 홈꾸욕</div>
+      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',99)">🐾 반려동물사랑</div>
+      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',99)">🌿 친환경욕</div>
+      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',99)">🕐 시간절약</div>
+      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',99)">🎯 목표달성</div>
+      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',99)">🤩 호기심</div>
+      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',99)">💫 자기계발</div>
+      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',99)">🛒 충동구매</div>
+      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',99)">🏆 성취욕</div>
+      <div class="chip" data-type="desire" onclick="selChipAuto(this,'desire',99)">💝 자기선물</div>
     </div>
   </div>
 
@@ -1075,6 +1078,24 @@ async function doAutoFill(src){
     st.textContent = '✓ 자동채우기 완료';
     setTimeout(()=>st.textContent='', 2500);
   } catch(e){ st.textContent=''; }
+}
+
+// ── 욕망 전체 선택 / 전체 해제 ──────────────────────────
+function toggleAllDesire(){
+  const chips = [...document.querySelectorAll('.chip[data-type="desire"]')];
+  const allSel = chips.every(c=>c.classList.contains('sel-desire'));
+  const btn = document.getElementById('desireAllBtn');
+  if(allSel){
+    chips.forEach(c=>c.classList.remove('sel-desire'));
+    if(btn){ btn.textContent='전체 선택'; btn.style.borderColor='var(--border)'; btn.style.color='var(--sub)'; }
+  } else {
+    chips.forEach(c=>c.classList.add('sel-desire'));
+    if(btn){ btn.textContent='전체 해제'; btn.style.borderColor='var(--accent2)'; btn.style.color='var(--accent2)'; }
+  }
+  if(lastScripts.length > 0){
+    const bar = document.getElementById('autoUpdateBar');
+    if(bar) bar.style.display='flex';
+  }
 }
 
 // ── 칩 선택 (트렌드 포함, 자동업데이트) ─────────────────
