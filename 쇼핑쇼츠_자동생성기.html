@@ -1073,36 +1073,79 @@ async function doAutoFill(src){
   const name = document.getElementById('prodName').value.trim();
   const img  = document.getElementById('prodImg').value.trim();
   const url  = document.getElementById('prodUrl').value.trim();
-  // 모두 채워져 있으면 패스
-  if(name && img && url) return;
-  // 최소 하나는 있어야 함
   if(!name && !img && !url) return;
 
   const st = document.getElementById('autoFillStatus');
   st.textContent = '⏳ AI 자동채우기 중...';
 
-  const parts = [];
-  if(name) parts.push(`상품명: ${name}`);
-  if(url)  parts.push(`상품URL: ${url}`);
-  if(img)  parts.push(`이미지URL: ${img}`);
-
-  const fillPrompt = [
-    `쇼핑 상품 정보 분석가야. 아래 정보로 빠진 항목을 추론해서 채워줘.`,
-    parts.join('\n'),
-    '',
-    `아래 JSON만 반환 (코드블록 없이):`,
-    `{"name":"상품명 (빠졌으면 추론, 있으면 그대로)","info":"핵심 특징·가격대·타깃 요약 2-3줄","category":"주방/뷰티/패션/건강/리빙/전자기기/스포츠/기타 중 하나"}`
-  ].join('\n');
+  const jsonSchema = '{"name":"정확한 상품명","info":"핵심 특징 및 장점 3-4줄","price_range":"가격대 추정 (예: 2-3만원대)","target":"타깃 고객 (예: 20-30대 여성)","category":"주방/뷰티/패션/건강/리빙/전자기기/스포츠/기타 중 하나","keywords":"쿠팡 검색 키워드 3개 (쉼표 구분)"}';
 
   try {
-    const raw = await callClaude(fillPrompt, 300);
-    const d = parseJSON(raw);
+    let messages;
+
+    if(img && /^https?:\/\//.test(img)){
+      // 이미지 URL → 비전 API로 상품 분석
+      const textLines = ['이 상품 이미지를 분석해서 아래 JSON만 반환해 (코드블록 없이):', jsonSchema];
+      if(name) textLines.push(`참고 상품명: ${name}`);
+      if(url)  textLines.push(`참고 상품URL: ${url}`);
+      messages = [{role:'user', content:[
+        {type:'image', source:{type:'url', url:img}},
+        {type:'text', text:textLines.join('\n')}
+      ]}];
+    } else {
+      // URL 또는 상품명으로 추론
+      let pageHint = '';
+      if(url){
+        try {
+          const pr = await fetch(url);
+          if(pr.ok){
+            const html = await pr.text();
+            const tmp = document.createElement('div');
+            tmp.innerHTML = html.replace(/<script[\s\S]*?<\/script>/gi,'').replace(/<style[\s\S]*?<\/style>/gi,'');
+            pageHint = tmp.textContent.replace(/\s+/g,' ').slice(0,1500);
+          }
+        } catch(_){}
+      }
+      const parts = [];
+      if(url)  parts.push(`상품URL: ${url}`);
+      if(name) parts.push(`상품명: ${name}`);
+      if(pageHint) parts.push(`페이지 내용 (일부): ${pageHint}`);
+      const prompt = [
+        '쇼핑 상품 분석가야. 아래 정보로 빠진 모든 항목을 추론해서 채워줘.',
+        parts.join('\n'),
+        '',
+        `JSON만 반환 (코드블록 없이):`,
+        jsonSchema
+      ].join('\n');
+      messages = [{role:'user', content:prompt}];
+    }
+
+    const r = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST', headers:getHeaders(),
+      body:JSON.stringify({model:'claude-sonnet-4-5', max_tokens:600, messages})
+    });
+    const resp = await r.json();
+    if(!r.ok) throw new Error(resp.error?.message||'API 오류');
+    const d = parseJSON(resp.content?.[0]?.text||'');
+    if(!d) throw new Error('파싱 실패');
+
     if(d.name && !name) document.getElementById('prodName').value = d.name;
-    if(d.info && !document.getElementById('prodInfo').value.trim())
-      document.getElementById('prodInfo').value = d.info;
+
+    const infoEl = document.getElementById('prodInfo');
+    if(!infoEl.value.trim() && d.info){
+      const lines = [d.info];
+      if(d.price_range) lines.push(`💰 가격대: ${d.price_range}`);
+      if(d.target)      lines.push(`👤 타깃: ${d.target}`);
+      if(d.keywords)    lines.push(`🔑 키워드: ${d.keywords}`);
+      infoEl.value = lines.join('\n');
+    }
+
     st.textContent = '✓ 자동채우기 완료';
     setTimeout(()=>st.textContent='', 2500);
-  } catch(e){ st.textContent=''; }
+  } catch(e){
+    st.textContent = '⚠️ 자동채우기 실패';
+    setTimeout(()=>st.textContent='', 2000);
+  }
 }
 
 // ── 욕망 칩 클릭 (이벤트 위임) ─────────────────────────
