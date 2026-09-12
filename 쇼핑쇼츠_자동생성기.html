@@ -59,6 +59,11 @@ textarea{resize:vertical}
 .rtab.active{background:var(--accent);border-color:var(--accent);color:#fff}
 .script-panel{display:none}
 .script-panel.active{display:block}
+/* viral edit tabs */
+.vtab{padding:7px 13px;border-radius:10px;border:1px solid var(--border);background:var(--card2);color:var(--sub);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;transition:.15s;flex-shrink:0}
+.vtab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.vtab-panel{display:none}
+.vtab-panel.active{display:block}
 .result-label{font-size:10px;font-weight:700;color:var(--sub);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px;display:flex;align-items:center;justify-content:space-between}
 .edit-area{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--txt);font-size:14px;outline:none;resize:vertical;font-family:inherit;line-height:1.7;transition:border .2s;min-height:60px}
 .edit-area:focus{border-color:var(--accent)}
@@ -313,385 +318,391 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
 <!-- ══ Tab 2: 바이럴 리믹서 ════════════════════════════ -->
 <div id="panel-viral" class="panel">
 
-  <!-- 🎬 영상 업로드 + 바이럴 분석 (메인) -->
+  <!-- 입력 카드 -->
   <div class="card" style="border-color:rgba(124,111,255,.4);background:linear-gradient(135deg,rgba(124,111,255,.07),rgba(255,107,138,.05))">
-    <div style="font-size:15px;font-weight:900;margin-bottom:4px">🎬 영상 업로드 → 바이럴 리메이크</div>
-    <div style="font-size:12px;color:var(--sub);margin-bottom:12px">유튜브·틱톡·인스타에서 다운받은 영상을 올리면 AI가 바이럴 새 영상 플랜을 만들어줘요</div>
+    <div style="font-size:15px;font-weight:900;margin-bottom:4px">🔥 바이럴 리믹서</div>
+    <div style="font-size:12px;color:var(--sub);margin-bottom:12px">틱톡·인스타·도우인·샤우홍슈·유튜브 URL 붙여넣기 or 파일 업로드 → AI가 쿠팡 연동 바이럴 쇼츠로 변환</div>
 
-    <!-- 영상 드롭존 -->
+    <!-- 소스 플랫폼 선택 -->
+    <div style="font-size:10px;font-weight:700;color:var(--sub);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px">영상 출처 플랫폼</div>
+    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px" id="vSrcPlatRow">
+      <button class="plat-btn active" data-vsrc="tiktok" onclick="selVSrc('tiktok',this)">🎵 TikTok</button>
+      <button class="plat-btn" data-vsrc="instagram" onclick="selVSrc('instagram',this)">📸 인스타</button>
+      <button class="plat-btn" data-vsrc="douyin" onclick="selVSrc('douyin',this)">🇨🇳 도우인</button>
+      <button class="plat-btn" data-vsrc="xiaohongshu" onclick="selVSrc('xiaohongshu',this)">📕 샤우홍슈</button>
+      <button class="plat-btn" data-vsrc="youtube" onclick="selVSrc('youtube',this)">▶ YouTube</button>
+    </div>
+    <input type="url" id="viralSrcUrl" placeholder="URL 붙여넣기 → 플랫폼 자동감지" style="margin-bottom:6px" oninput="autoDetectPlatform(this.value)" onpaste="setTimeout(()=>autoDetectPlatform(document.getElementById('viralSrcUrl').value),80)">
+    <div id="viralUrlStatus" style="font-size:11px;color:var(--green);margin-bottom:8px;min-height:14px"></div>
+
+    <!-- OR 파일 업로드 -->
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+      <div style="flex:1;height:1px;background:var(--border)"></div>
+      <span style="font-size:11px;color:var(--sub);white-space:nowrap">또는 파일 직접 업로드</span>
+      <div style="flex:1;height:1px;background:var(--border)"></div>
+    </div>
     <div id="mainUploadZone" onclick="document.getElementById('mainVidFile').click()"
-      style="border:2px dashed var(--border);border-radius:14px;padding:28px;text-align:center;cursor:pointer;transition:.2s;margin-bottom:10px"
+      style="border:2px dashed var(--border);border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:.2s;margin-bottom:8px"
       ondragover="event.preventDefault();this.style.borderColor='var(--accent)'"
       ondragleave="this.style.borderColor='var(--border)'"
       ondrop="handleVideoDrop(event)">
-      <div style="font-size:32px;margin-bottom:8px">📱</div>
-      <div style="font-weight:700;margin-bottom:4px">영상 파일을 여기에 끌어다 놓거나 클릭</div>
-      <div style="font-size:12px;color:var(--sub)">유튜브 다운로드 · 틱톡 영상 · 인스타 릴스 (mp4, mov 등)</div>
+      <div style="font-size:28px;margin-bottom:6px">📱</div>
+      <div style="font-weight:700;font-size:13px;margin-bottom:3px">영상 파일 드래그 or 클릭</div>
+      <div style="font-size:11px;color:var(--sub)">mp4, mov 등</div>
     </div>
     <input type="file" id="mainVidFile" accept="video/*" style="display:none" onchange="loadMainVideo(this)">
 
-    <!-- 미리보기 -->
+    <!-- 영상 미리보기 -->
     <div id="mainVidPreview" style="display:none;margin-bottom:10px">
-      <video id="mainVidPlayer" controls style="width:100%;border-radius:10px;background:#000;max-height:320px"></video>
+      <video id="mainVidPlayer" controls style="width:100%;border-radius:10px;background:#000;max-height:280px"></video>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
         <span id="mainVidInfo" style="font-size:12px;color:var(--green)"></span>
         <button onclick="clearMainVideo()" style="background:none;border:1px solid var(--border);border-radius:8px;padding:4px 10px;color:var(--sub);cursor:pointer;font-size:12px">× 지우기</button>
       </div>
     </div>
 
-    <!-- 구간 선택 -->
-    <div id="mainTrimBox" style="display:none;background:var(--card2);border-radius:10px;padding:10px;margin-bottom:10px">
-      <div style="font-size:11px;font-weight:700;color:var(--sub);margin-bottom:6px">✂️ 사용할 구간 선택</div>
-      <input type="range" id="mainTrimSlider" min="0" max="100" value="0" style="width:100%;margin-bottom:4px" oninput="updateTrimLabel()">
-      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--sub)">
-        <span>시작: <b id="trimStartLabel">0초</b></span>
-        <span>끝: <b id="trimEndLabel">15초</b></span>
+    <!-- 상품 자동인식 -->
+    <div style="background:var(--card2);border-radius:10px;padding:10px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+        <div style="font-size:11px;font-weight:700;color:var(--sub)">🛒 쿠팡 연동 상품</div>
+        <span id="viralProdAutoStatus" style="font-size:10px;color:var(--green)"></span>
       </div>
+      <input type="text" id="viralProdName" placeholder="상품명 (비워두면 영상에서 AI 자동인식)" style="margin-bottom:5px" oninput="scheduleViralAutoFill()">
+      <input type="url" id="viralProdUrl" placeholder="쿠팡 상품 URL (선택)" style="margin-bottom:0">
     </div>
 
-    <!-- 영상 내용 설명 (Claude에게 전달) -->
-    <label>영상 내용 설명 <span style="color:var(--sub);font-weight:400">(AI에게 영상 내용을 알려줘요)</span></label>
-    <textarea id="vidDesc" placeholder="예) 계란 타이머 사용하는 영상 — 아침에 완숙 계란 삶는 시간을 알려주는 제품 소개&#10;예) 틱톡 바이럴 된 에어프라이어 삼겹살 요리 영상&#10;예) 강아지 장난감 언박싱 + 반응 영상" style="min-height:80px;margin-bottom:8px"></textarea>
+    <!-- 영상 설명 -->
+    <textarea id="vidDesc" placeholder="영상 내용 설명 (선택 — 비워도 AI가 자동 분석)" style="min-height:60px;margin-bottom:8px"></textarea>
 
-    <!-- 상품명 (자동연동) -->
-    <label>상품명 <span style="color:var(--sub);font-weight:400">(검색/쿠팡 연동용)</span></label>
-    <input type="text" id="viralProdName" placeholder="예) 계란 타이머, 에어프라이어, 강아지 장난감..." style="margin-bottom:10px">
-
-    <!-- 플랫폼 선택 -->
-    <label>업로드할 플랫폼</label>
+    <!-- 업로드 플랫폼 -->
+    <div style="font-size:10px;font-weight:700;color:var(--sub);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px">업로드할 플랫폼</div>
     <div class="plat-row" id="viralPlatRow" style="margin-bottom:10px">
-      <button class="plat-btn active" data-vplat="youtube" onclick="selViralPlat('youtube',this)"><span class="badge badge-yt">YT</span> Shorts</button>
+      <button class="plat-btn active" data-vplat="all" onclick="selViralPlat('all',this)">전체</button>
+      <button class="plat-btn" data-vplat="youtube" onclick="selViralPlat('youtube',this)"><span class="badge badge-yt">YT</span> Shorts</button>
       <button class="plat-btn" data-vplat="tiktok" onclick="selViralPlat('tiktok',this)"><span class="badge badge-tt">TT</span> TikTok</button>
       <button class="plat-btn" data-vplat="instagram" onclick="selViralPlat('instagram',this)"><span class="badge badge-ig">IG</span> Reels</button>
-      <button class="plat-btn" data-vplat="all" onclick="selViralPlat('all',this)">전체</button>
     </div>
 
     <button class="btn btn-primary" id="viralAnalyzeBtn" onclick="analyzeViralVideo()">
-      🚀 바이럴 리메이크 플랜 생성
+      🚀 바이럴 리메이크 + 쿠팡 자동연동 시작
     </button>
   </div>
 
-  <!-- 결과 영역 -->
-  <div id="viralAnalysisResult" style="display:none"></div>
+  <!-- ── 결과 패널 (분석 후 표시) ───────────────────────── -->
+  <div id="viralResultPanel" style="display:none">
 
-  <!-- 쿠팡 자동연동 -->
-  <div class="card" style="margin-top:0">
-    <div class="sec-title">🛒 쿠팡 자동연동</div>
-    <div style="font-size:11px;color:var(--sub);margin-bottom:8px">영상 속 상품을 쿠팡에서 찾아 파트너스 링크로 바꿔줘요</div>
-    <input type="url" id="viralUrl" placeholder="https://youtube.com/shorts/... (URL로도 분석 가능)" style="margin-bottom:8px">
-    <textarea id="viralUrls" placeholder="여러 링크 (줄바꿈으로 구분)" style="min-height:60px;margin-bottom:8px"></textarea>
-    <button class="btn-sm" id="viralBtn" onclick="analyzeViral()" style="width:100%;justify-content:center">🔍 상품 감지 + 쿠팡 자동연동</button>
-    <div id="viralResult" style="margin-top:8px"></div>
-  </div>
-
-  <!-- 01 참고 바이럴 영상 (보조) -->
-  <div class="card">
-    <div class="sec-num">01</div>
-    <div class="sec-title">참고 영상 구간 설정 <span style="font-weight:400;color:var(--sub)">(필모라용 타임코드)</span></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-      <div>
-        <label>구간 시작 (초)</label>
-        <input type="number" id="trimStart" value="0" min="0" style="margin-bottom:0">
+    <!-- 상단 2컬럼: 원본영상 + 쿠팡 상품 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <!-- 원본 영상 -->
+      <div class="card" style="margin-bottom:0;padding:12px">
+        <div style="font-size:11px;font-weight:800;color:var(--sub);margin-bottom:8px;letter-spacing:.5px;text-transform:uppercase">원본 영상</div>
+        <div id="vOriginalBox" style="background:#111;border-radius:10px;overflow:hidden;aspect-ratio:9/16;display:flex;align-items:center;justify-content:center;max-height:240px">
+          <div style="color:var(--sub);font-size:11px;text-align:center;padding:16px">영상 업로드 후<br>여기에 표시됩니다</div>
+        </div>
       </div>
-      <div>
-        <label>구간 끝 (초)</label>
-        <input type="number" id="trimEnd" value="15" min="1" style="margin-bottom:0">
+      <!-- 쿠팡 상품 카드 -->
+      <div class="card" style="margin-bottom:0;padding:12px">
+        <div style="font-size:11px;font-weight:800;color:var(--sub);margin-bottom:8px;letter-spacing:.5px;text-transform:uppercase">🛒 쿠팡 연동 상품</div>
+        <div id="coupangProductCard" style="background:var(--card2);border-radius:10px;padding:10px;min-height:80px;font-size:12px;color:var(--sub);display:flex;align-items:center;justify-content:center">
+          분석 후 자동 매칭
+        </div>
+        <button class="btn-sm" onclick="findSimilarProduct()" style="width:100%;justify-content:center;margin-top:6px;font-size:11px">🔄 유사 인기상품으로 대체</button>
+        <div id="coupangAffLink" style="margin-top:6px;display:none">
+          <div style="font-size:10px;color:var(--sub);margin-bottom:3px">파트너스 링크</div>
+          <input type="text" id="coupangLinkInput" readonly style="font-size:11px;background:var(--card2);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--txt);width:100%;margin-bottom:0" onclick="this.select()">
+        </div>
       </div>
     </div>
-    <div style="font-size:11px;color:var(--sub);margin-top:6px">선택 구간을 필모라에서 자를 때 사용할 타임코드예요.</div>
-  </div>
 
-  <!-- 02 PC 영상 -->
-  <div class="card">
-    <div class="sec-num">02</div>
-    <div class="sec-title">추가 영상 클립 <span style="font-weight:400;color:var(--sub)">(최대 2개, 필모라 조합용)</span></div>
-    <div style="font-size:11px;color:var(--sub);margin-bottom:8px">무료 스톡 영상, 직접 만든 영상 등을 선택하세요</div>
-    <div style="display:grid;gap:8px">
-      <div>
-        <label>추가 클립 1 (선택)</label>
-        <label class="file-label" for="pcVid1">📁 PC에서 영상 파일 선택</label>
-        <input type="file" id="pcVid1" accept="video/*" onchange="loadPcVideo(1,this)" style="display:none">
-        <div id="pcVid1Name" style="font-size:11px;color:var(--green);margin-top:4px;display:none"></div>
+    <!-- ── 통합 편집 카드 (Tab1과 동일한 수정바) ──────────── -->
+    <div class="card">
+      <!-- 편집 탭 버튼 -->
+      <div style="display:flex;gap:4px;margin-bottom:12px;border-bottom:1px solid var(--border);padding-bottom:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none">
+        <button class="vtab active" onclick="switchVTab('script',this)">📝 대본</button>
+        <button class="vtab" onclick="switchVTab('ratio',this)">🎬 비율</button>
+        <button class="vtab" onclick="switchVTab('subtitle',this)">💬 자막</button>
+        <button class="vtab" onclick="switchVTab('voice',this)">🎙 성우</button>
+        <button class="vtab" onclick="switchVTab('bgm',this)">🎵 BGM</button>
+        <button class="vtab" onclick="switchVTab('sfx',this)">🔊 효과음</button>
       </div>
-      <div>
-        <label>추가 클립 2 (선택)</label>
-        <label class="file-label" for="pcVid2">📁 PC에서 영상 파일 선택</label>
-        <input type="file" id="pcVid2" accept="video/*" onchange="loadPcVideo(2,this)" style="display:none">
-        <div id="pcVid2Name" style="font-size:11px;color:var(--green);margin-top:4px;display:none"></div>
-      </div>
-    </div>
-  </div>
 
-  <!-- 03 더빙 대본 -->
-  <div class="card">
-    <div class="sec-num">03</div>
-    <div class="sec-title">더빙 대본 <span style="font-weight:400;color:var(--sub)">검토·수정·확정</span></div>
-    <label>대상 언어 선택</label>
-    <div class="plat-row" id="dubLangRow">
-      <button class="plat-btn active" data-lang="ko" onclick="selDubLang('ko',this)">🇰🇷 국어</button>
-      <button class="plat-btn" data-lang="en" onclick="selDubLang('en',this)">🇺🇸 영어</button>
-      <button class="plat-btn" data-lang="id" onclick="selDubLang('id',this)">🇮🇩 인도네시아어</button>
-      <button class="plat-btn" data-lang="vn" onclick="selDubLang('vn',this)">🇻🇳 베트남어</button>
-      <button class="plat-btn" data-lang="jp" onclick="selDubLang('jp',this)">🇯🇵 일본어</button>
-      <button class="plat-btn" data-lang="es" onclick="selDubLang('es',this)">🇪🇸 스페인어</button>
-    </div>
-    <button class="btn-sm" id="dubScriptBtn" onclick="genDubbingScript()" style="width:100%;justify-content:center;margin-bottom:8px">📝 화면 분석에서 대본 만들기</button>
-    <div style="font-size:11px;color:var(--sub);margin-bottom:8px">일단 아래에(문제해결) 만들어보고, 마음에 안 들면 후킹유형을 바꿔 위 버튼을 다시 누르면 그 스타일로 새로 만들어집니다.</div>
-    <label>후킹 유형 선택 (첫 2-3초 스타일)</label>
-    <div class="plat-row" id="hookTypeRow">
-      <button class="plat-btn active" data-hook="문제해결" onclick="selHookType('문제해결',this)">문제해결</button>
-      <button class="plat-btn" data-hook="결과인정" onclick="selHookType('결과인정',this)">결과인정</button>
-      <button class="plat-btn" data-hook="후회방지" onclick="selHookType('후회방지',this)">후회방지</button>
-      <button class="plat-btn" data-hook="가격충격" onclick="selHookType('가격충격',this)">가격충격</button>
-      <button class="plat-btn" data-hook="스토리형" onclick="selHookType('스토리형',this)">스토리형</button>
-    </div>
-    <label>대본 내용 <span style="color:var(--sub);font-weight:400">(편집 가능)</span></label>
-    <textarea class="edit-area script-area" id="dubScript" placeholder="'대본 만들기' 버튼을 누르면 AI가 자동으로 작성해줍니다." style="min-height:130px"></textarea>
-    <div style="font-size:11px;color:var(--sub);margin-top:4px">원본 분석 후 자동으로 들어옵니다. 수정 후 아래 버튼을 누르세요.</div>
-  </div>
-
-  <!-- 04 Voice -->
-  <div class="card">
-    <div class="sec-num">04</div>
-    <div class="sec-title">Voice</div>
-    <label>한국어 성우</label>
-    <select id="voiceKo" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--txt);font-size:14px;outline:none;margin-bottom:8px">
-      <optgroup label="👨 남성 — 에너지/활력">
-        <option>강민호 Minho — 힘차고 에너지 넘치는 남성</option>
-        <option>한성민 Sungmin — 활기차고 발랄한 남성</option>
-        <option>정민재 Minjae — 10대 느낌 신선한 남성</option>
-        <option>황인서 Inseo — 스포티 활력 남성</option>
-        <option>조성현 Seonghyeon — 힙하고 캐주얼 남성</option>
-        <option>박지훈 Jihoon — MZ 젊은 남성</option>
-      </optgroup>
-      <optgroup label="👨 남성 — 신뢰/안정">
-        <option>박창수 Changsoo — 중저음 신뢰감 남성</option>
-        <option>이동현 Donghyun — 진지하고 안정적 남성</option>
-        <option>조현우 Hyunwoo — 성숙한 30대 남성</option>
-        <option>권도윤 Doyoon — 차분한 지성파 남성</option>
-        <option>신동훈 Donghoon — 내레이터 느낌 남성</option>
-        <option>류승호 Seungho — 중후한 시니어 남성</option>
-      </optgroup>
-      <optgroup label="👨 남성 — 드라마틱">
-        <option>임재원 Jaewon — 드라마틱하고 강렬한 남성</option>
-        <option>고준혁 Junhyeok — 긴장감 있는 남성</option>
-        <option>김태양 Taeyang — 시원시원한 남성</option>
-      </optgroup>
-      <optgroup label="👩 여성 — 밝음/귀여움">
-        <option>이민지 Minji — 밝고 경쾌한 여성</option>
-        <option>최유진 Yujin — 귀엽고 친근한 여성</option>
-        <option>서다영 Dayoung — MZ 활발한 여성</option>
-        <option>문가영 Gayoung — 상큼 발랄 여성</option>
-        <option>김아름 Areum — 사랑스럽고 친근한 여성</option>
-        <option>이하늘 Haneul — 자연스러운 일상 여성</option>
-      </optgroup>
-      <optgroup label="👩 여성 — 감성/세련">
-        <option>김소연 Soyeon — 감성 풍부한 여성</option>
-        <option>박하나 Hana — 차분하고 세련된 여성</option>
-        <option>윤서연 Seoyeon — 트렌디 20대 여성</option>
-        <option>백채원 Chaewon — 고급스러운 여성</option>
-        <option>나지현 Jihyeon — 감동적인 스토리텔러 여성</option>
-        <option>송미래 Mirae — 고요하고 우아한 여성</option>
-      </optgroup>
-      <optgroup label="👩 여성 — 신뢰/프로">
-        <option>오지은 Jieun — 프로페셔널 비즈니스 여성</option>
-        <option>이수아 Sua — 따뜻하고 부드러운 여성</option>
-        <option>엄지원 Jiwon — 따뜻한 공감형 여성</option>
-      </optgroup>
-    </select>
-    <label>감정 (Emotion)</label>
-    <select id="voiceEmo" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--txt);font-size:14px;outline:none;margin-bottom:8px">
-      <option>자동 (문맥에 맞게 AI가 알아서)</option>
-      <option>활기차게</option>
-      <option>차분하게</option>
-      <option>긴박하게</option>
-      <option>따뜻하게</option>
-    </select>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-      <div>
-        <label>음성 볼륨</label>
-        <input type="range" id="voiceVol" min="0" max="200" value="100" oninput="document.getElementById('voiceVolVal').textContent=this.value+'%'">
-        <div style="font-size:11px;color:var(--sub);text-align:right" id="voiceVolVal">100%</div>
+      <!-- 📝 대본 탭 -->
+      <div id="vtab-script" class="vtab-panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px">
+          <div style="font-size:11px;font-weight:700;color:var(--sub)">대본 길이</div>
+          <div style="display:flex;gap:5px">
+            <button class="plat-btn active" id="vlen-short" onclick="setViralScriptLen('short',this)">짧게</button>
+            <button class="plat-btn" id="vlen-normal" onclick="setViralScriptLen('normal',this)">보통</button>
+            <button class="plat-btn" id="vlen-long" onclick="setViralScriptLen('long',this)">길게</button>
+          </div>
+        </div>
+        <div style="font-size:10px;font-weight:700;color:var(--sub);margin-bottom:5px;text-transform:uppercase">후킹 유형</div>
+        <div class="plat-row" id="vHookTypeRow" style="margin-bottom:10px">
+          <button class="plat-btn active" data-hook="문제해결" onclick="selVHookType('문제해결',this)">문제해결</button>
+          <button class="plat-btn" data-hook="결과인정" onclick="selVHookType('결과인정',this)">결과인정</button>
+          <button class="plat-btn" data-hook="후회방지" onclick="selVHookType('후회방지',this)">후회방지</button>
+          <button class="plat-btn" data-hook="가격충격" onclick="selVHookType('가격충격',this)">가격충격</button>
+          <button class="plat-btn" data-hook="스토리형" onclick="selVHookType('스토리형',this)">스토리형</button>
+        </div>
+        <div class="result-label">🎣 훅 (첫 3초) <button class="btn-sm" onclick="copySec('vHook',this)">복사</button></div>
+        <textarea class="edit-area" id="vHook" rows="2" placeholder="훅이 여기에 생성됩니다..."></textarea>
+        <div class="sep"></div>
+        <div class="result-label">📝 스크립트 <button class="btn-sm" onclick="copySec('vScript',this)">복사</button></div>
+        <textarea class="edit-area script-area" id="vScript" style="min-height:110px" placeholder="스크립트가 여기에 생성됩니다..."></textarea>
+        <div class="sep"></div>
+        <div class="result-label">🏷 해시태그 <button class="btn-sm" onclick="copySec('vHash',this)">복사</button></div>
+        <textarea class="edit-area" id="vHash" rows="2" placeholder="해시태그..."></textarea>
+        <div class="sep"></div>
+        <div class="result-label">📣 CTA <button class="btn-sm" onclick="copySec('vCta',this)">복사</button></div>
+        <textarea class="edit-area" id="vCta" rows="2" placeholder="CTA..."></textarea>
+        <div class="sep"></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn-sm" onclick="regenViralScript()" style="flex:1;justify-content:center">🔄 대본 재생성</button>
+          <button class="btn-sm green" onclick="copyViralAll()" style="flex:1;justify-content:center">📋 전체복사</button>
+        </div>
       </div>
-      <div>
-        <label>말하기 속도</label>
-        <input type="range" id="voiceSpeed" min="50" max="200" value="100" oninput="document.getElementById('voiceSpeedVal').textContent=(this.value/100).toFixed(1)+'배'">
-        <div style="font-size:11px;color:var(--sub);text-align:right" id="voiceSpeedVal">1.0배</div>
-      </div>
-    </div>
-  </div>
 
-  <!-- 05 캡션 및 자막 -->
-  <div class="card">
-    <div class="sec-num">05</div>
-    <div class="sec-title">캡션 및 자막</div>
-    <div style="display:flex;gap:8px;margin-bottom:10px">
-      <button class="plat-btn active" id="capModeKey" onclick="selCapMode('key')">핵심 키워드</button>
-      <button class="plat-btn" id="capModeAuto" onclick="selCapMode('auto')">🎬 자동 자막(전체 대사)</button>
-    </div>
-    <label>캡션 키워드 직접 입력 <span style="color:var(--sub);font-weight:400">(공란으로 비워도 됨)</span></label>
-    <input type="text" id="capKeyword" placeholder="영상에 표시할 키워드 입력 (예: 초강력 자석!)" style="margin-bottom:8px">
-    <div id="capTagBox" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px"></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
-      <div>
-        <label>색상</label>
-        <select id="capColor" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px;color:var(--txt);font-size:13px;outline:none">
-          <option>흰색</option><option>노랑</option><option>빨강</option><option>초록</option><option>파랑</option>
+      <!-- 🎬 화면비율 탭 -->
+      <div id="vtab-ratio" class="vtab-panel" style="display:none">
+        <div style="font-size:12px;color:var(--sub);margin-bottom:12px">업로드 플랫폼에 맞는 화면 비율을 선택하세요</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px">
+          <button id="vratio-916" onclick="setVRatio('9:16',this)" style="border:2px solid var(--accent);background:rgba(124,111,255,.12);border-radius:10px;padding:12px 6px;cursor:pointer;text-align:center">
+            <div style="width:16px;height:28px;border:2px solid var(--accent);border-radius:2px;margin:0 auto 6px;background:rgba(124,111,255,.2)"></div>
+            <div style="font-size:12px;font-weight:800;color:var(--accent)">9:16</div>
+            <div style="font-size:10px;color:var(--sub)">쇼츠·릴스</div>
+          </button>
+          <button id="vratio-11" onclick="setVRatio('1:1',this)" style="border:1px solid var(--border);background:var(--card2);border-radius:10px;padding:12px 6px;cursor:pointer;text-align:center">
+            <div style="width:24px;height:24px;border:2px solid var(--sub);border-radius:2px;margin:0 auto 6px"></div>
+            <div style="font-size:12px;font-weight:800;color:var(--txt)">1:1</div>
+            <div style="font-size:10px;color:var(--sub)">인스타 피드</div>
+          </button>
+          <button id="vratio-169" onclick="setVRatio('16:9',this)" style="border:1px solid var(--border);background:var(--card2);border-radius:10px;padding:12px 6px;cursor:pointer;text-align:center">
+            <div style="width:32px;height:18px;border:2px solid var(--sub);border-radius:2px;margin:0 auto 6px"></div>
+            <div style="font-size:12px;font-weight:800;color:var(--txt)">16:9</div>
+            <div style="font-size:10px;color:var(--sub)">YouTube</div>
+          </button>
+          <button id="vratio-45" onclick="setVRatio('4:5',this)" style="border:1px solid var(--border);background:var(--card2);border-radius:10px;padding:12px 6px;cursor:pointer;text-align:center">
+            <div style="width:18px;height:22px;border:2px solid var(--sub);border-radius:2px;margin:0 auto 6px"></div>
+            <div style="font-size:12px;font-weight:800;color:var(--txt)">4:5</div>
+            <div style="font-size:10px;color:var(--sub)">피드 최적화</div>
+          </button>
+        </div>
+        <div id="vRatioNote" style="font-size:11px;color:var(--sub);background:var(--card2);border-radius:8px;padding:10px;line-height:1.6">
+          📐 <b>9:16</b> (1080×1920px) — TikTok · YouTube Shorts · Instagram Reels 에 최적화된 세로 영상
+        </div>
+      </div>
+
+      <!-- 💬 자막 탭 -->
+      <div id="vtab-subtitle" class="vtab-panel" style="display:none">
+        <div class="result-label" style="margin-bottom:4px">자막 텍스트 <span style="font-weight:400;color:var(--sub)">(직접 수정 가능)</span></div>
+        <textarea class="edit-area" id="vSubText" rows="3" placeholder="화면에 표시할 자막 텍스트를 입력하거나 대본에서 자동으로 가져옵니다" oninput="updateVSubPreview()" style="margin-bottom:10px"></textarea>
+        <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+          <div style="flex:1;min-width:150px">
+            <div style="font-size:10px;font-weight:700;color:var(--sub);margin-bottom:5px;text-transform:uppercase">색상</div>
+            <div style="display:flex;gap:5px;flex-wrap:wrap">
+              <button onclick="setVSubColor('#ffffff')" title="흰색" style="width:26px;height:26px;border-radius:50%;background:#fff;border:2px solid var(--accent);cursor:pointer"></button>
+              <button onclick="setVSubColor('#ffd060')" title="노랑" style="width:26px;height:26px;border-radius:50%;background:#ffd060;border:1px solid var(--border);cursor:pointer"></button>
+              <button onclick="setVSubColor('#ff6b8a')" title="분홍" style="width:26px;height:26px;border-radius:50%;background:#ff6b8a;border:1px solid var(--border);cursor:pointer"></button>
+              <button onclick="setVSubColor('#20d9a0')" title="초록" style="width:26px;height:26px;border-radius:50%;background:#20d9a0;border:1px solid var(--border);cursor:pointer"></button>
+              <button onclick="setVSubColor('#7c6fff')" title="보라" style="width:26px;height:26px;border-radius:50%;background:#7c6fff;border:1px solid var(--border);cursor:pointer"></button>
+              <button onclick="setVSubColor('#ff8c42')" title="주황" style="width:26px;height:26px;border-radius:50%;background:#ff8c42;border:1px solid var(--border);cursor:pointer"></button>
+              <button onclick="setVSubColor('#00cfff')" title="하늘" style="width:26px;height:26px;border-radius:50%;background:#00cfff;border:1px solid var(--border);cursor:pointer"></button>
+              <button onclick="setVSubColor('#ff4444')" title="빨강" style="width:26px;height:26px;border-radius:50%;background:#ff4444;border:1px solid var(--border);cursor:pointer"></button>
+            </div>
+          </div>
+          <div style="flex:0;min-width:80px">
+            <div style="font-size:10px;font-weight:700;color:var(--sub);margin-bottom:5px;text-transform:uppercase">위치</div>
+            <div style="display:flex;flex-direction:column;gap:3px">
+              <button id="vpos-top" onclick="setVSubPos('top')" style="font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--card2);color:var(--sub);cursor:pointer">▲ 상단</button>
+              <button id="vpos-mid" onclick="setVSubPos('mid')" style="font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--accent);background:rgba(124,111,255,.12);color:var(--accent);cursor:pointer">● 중앙</button>
+              <button id="vpos-bot" onclick="setVSubPos('bot')" style="font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--card2);color:var(--sub);cursor:pointer">▼ 하단</button>
+            </div>
+          </div>
+          <div style="flex:1;min-width:80px">
+            <div style="font-size:10px;font-weight:700;color:var(--sub);margin-bottom:5px;text-transform:uppercase">스타일</div>
+            <div style="display:flex;flex-direction:column;gap:3px">
+              <button id="vsty-none" onclick="setVSubStyle('none')" style="font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--accent);background:rgba(124,111,255,.12);color:var(--accent);cursor:pointer">일반</button>
+              <button id="vsty-shadow" onclick="setVSubStyle('shadow')" style="font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--card2);color:var(--sub);cursor:pointer">그림자</button>
+              <button id="vsty-outline" onclick="setVSubStyle('outline')" style="font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--card2);color:var(--sub);cursor:pointer">외곽선</button>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <div style="font-size:10px;font-weight:700;color:var(--sub);text-transform:uppercase">자막 크기</div>
+            <span id="vSubSizeVal" style="font-size:10px;color:var(--accent);font-weight:700">24px</span>
+          </div>
+          <input type="range" id="vSubSizeSlider" min="12" max="60" value="24" style="width:100%" oninput="onVSubSize(this.value)">
+        </div>
+        <!-- 자막 미리보기 -->
+        <div style="background:#111;border-radius:10px;overflow:hidden;position:relative;min-height:90px;display:flex;align-items:center;justify-content:center" id="vPrevBox">
+          <div id="vPrevTxt" style="color:#fff;font-weight:800;font-size:24px;text-align:center;padding:8px 14px;max-width:90%;word-break:break-all;transition:all .2s">자막 미리보기</div>
+        </div>
+      </div>
+
+      <!-- 🎙 성우 탭 -->
+      <div id="vtab-voice" class="vtab-panel" style="display:none">
+        <label>성우 선택</label>
+        <select id="vVoiceSelect" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--txt);font-size:14px;outline:none;margin-bottom:8px">
+          <optgroup label="👨 남성 — 에너지/활력">
+            <option>강민호 Minho — 힘차고 에너지 넘치는 남성</option>
+            <option>한성민 Sungmin — 활기차고 발랄한 남성</option>
+            <option>정민재 Minjae — 10대 느낌 신선한 남성</option>
+            <option>황인서 Inseo — 스포티 활력 남성</option>
+            <option>조성현 Seonghyeon — 힙하고 캐주얼 남성</option>
+            <option>박지훈 Jihoon — MZ 젊은 남성</option>
+          </optgroup>
+          <optgroup label="👨 남성 — 신뢰/안정">
+            <option>박창수 Changsoo — 중저음 신뢰감 남성</option>
+            <option>이동현 Donghyun — 진지하고 안정적 남성</option>
+            <option>조현우 Hyunwoo — 성숙한 30대 남성</option>
+            <option>권도윤 Doyoon — 차분한 지성파 남성</option>
+            <option>신동훈 Donghoon — 내레이터 느낌 남성</option>
+            <option>류승호 Seungho — 중후한 시니어 남성</option>
+          </optgroup>
+          <optgroup label="👨 남성 — 드라마틱">
+            <option>임재원 Jaewon — 드라마틱하고 강렬한 남성</option>
+            <option>고준혁 Junhyeok — 긴장감 있는 남성</option>
+            <option>김태양 Taeyang — 시원시원한 남성</option>
+          </optgroup>
+          <optgroup label="👩 여성 — 밝음/귀여움">
+            <option>이민지 Minji — 밝고 경쾌한 여성</option>
+            <option>최유진 Yujin — 귀엽고 친근한 여성</option>
+            <option>서다영 Dayoung — MZ 활발한 여성</option>
+            <option>문가영 Gayoung — 상큼 발랄 여성</option>
+            <option>김아름 Areum — 사랑스럽고 친근한 여성</option>
+            <option>이하늘 Haneul — 자연스러운 일상 여성</option>
+          </optgroup>
+          <optgroup label="👩 여성 — 감성/세련">
+            <option>김소연 Soyeon — 감성 풍부한 여성</option>
+            <option>박하나 Hana — 차분하고 세련된 여성</option>
+            <option>윤서연 Seoyeon — 트렌디 20대 여성</option>
+            <option>백채원 Chaewon — 고급스러운 여성</option>
+            <option>나지현 Jihyeon — 감동적인 스토리텔러 여성</option>
+            <option>송미래 Mirae — 고요하고 우아한 여성</option>
+          </optgroup>
+          <optgroup label="👩 여성 — 신뢰/프로">
+            <option>오지은 Jieun — 프로페셔널 비즈니스 여성</option>
+            <option>이수아 Sua — 따뜻하고 부드러운 여성</option>
+            <option>엄지원 Jiwon — 따뜻한 공감형 여성</option>
+          </optgroup>
         </select>
-      </div>
-      <div>
-        <label>위치 (%)</label>
-        <input type="number" id="capPos" value="13" min="0" max="100" style="margin-bottom:0">
-      </div>
-      <div>
-        <label>크기</label>
-        <input type="number" id="capSize" value="120" min="40" max="300" style="margin-bottom:0">
-      </div>
-    </div>
-  </div>
-
-  <!-- 06 CTA -->
-  <div class="card">
-    <div class="sec-num">06</div>
-    <div class="sec-title">CTA</div>
-    <label>CTA 유형</label>
-    <select id="ctaType" onchange="onCTATypeChange()" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--txt);font-size:14px;outline:none;margin-bottom:8px">
-      <option value="none">없음</option>
-      <option value="profile">프로필 링크</option>
-      <option value="custom">직접입력</option>
-    </select>
-    <div id="ctaNoneNote" style="font-size:11px;color:var(--sub)">CTA 문구를 넣지 않습니다.</div>
-    <div id="ctaProfileNote" style="display:none;font-size:11px;color:var(--sub)">영상 끝에 "프로필 링크 확인하세요" 문구를 넣어서, 프로필의 링크로 유도합니다.</div>
-    <div id="ctaCustomBox" style="display:none">
-      <label>CTA 텍스트</label>
-      <input type="text" id="ctaText" placeholder="예) 지금 바로 구매하기 👉" style="margin-bottom:8px">
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px">
-      <div>
-        <label>위치 (%)</label>
-        <input type="number" id="ctaPos" value="79" min="0" max="100" style="margin-bottom:0">
-      </div>
-      <div>
-        <label>크기</label>
-        <input type="number" id="ctaSize" value="80" min="20" max="200" style="margin-bottom:0">
-      </div>
-      <div>
-        <label>색상</label>
-        <select id="ctaColor" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px;color:var(--txt);font-size:13px;outline:none">
-          <option>노랑</option><option>흰색</option><option>빨강</option><option>초록</option>
+        <label>감정</label>
+        <select id="vVoiceEmo" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--txt);font-size:14px;outline:none;margin-bottom:10px">
+          <option>자동 (문맥에 맞게 AI가 알아서)</option>
+          <option>활기차게</option>
+          <option>차분하게</option>
+          <option>긴박하게</option>
+          <option>따뜻하게</option>
         </select>
+        <div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <div style="font-size:10px;font-weight:700;color:var(--sub);text-transform:uppercase">말하기 속도</div>
+            <span id="vSpeedVal" style="font-size:10px;color:var(--accent);font-weight:700">1.0배</span>
+          </div>
+          <input type="range" id="vSpeedSlider" min="50" max="200" value="100" style="width:100%" oninput="onVSpeed(this.value)">
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <div style="font-size:10px;font-weight:700;color:var(--sub);text-transform:uppercase">음량</div>
+            <span id="vVolVal" style="font-size:10px;color:var(--accent);font-weight:700">100%</span>
+          </div>
+          <input type="range" id="vVolSlider" min="0" max="200" value="100" style="width:100%" oninput="onVVol(this.value)">
+        </div>
+      </div>
+
+      <!-- 🎵 BGM 탭 -->
+      <div id="vtab-bgm" class="vtab-panel" style="display:none">
+        <label>배경음악 선택</label>
+        <select id="vBgmSelect" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--txt);font-size:14px;outline:none;margin-bottom:10px">
+          <option value="">🚫 선택 안 함</option>
+          <optgroup label="🔥 하이프 / 에너지">
+            <option>upbeat-shopping-hype-01 — 업비트 쇼핑 하이프</option>
+            <option>shopping-energy-bounce-02 — 에너지 바운스</option>
+            <option>hype-club-intro-03 — 클럽 인트로 느낌</option>
+            <option>bass-impact-drop-04 — 베이스 임팩트</option>
+            <option>fast-electronic-cut-05 — 빠른 전자음 컷</option>
+          </optgroup>
+          <optgroup label="✨ 트렌디 / MZ">
+            <option>trendy-product-vibe-06 — 트렌디 상품 바이브</option>
+            <option>k-pop-energy-loop-07 — 케이팝 에너지 루프</option>
+            <option>retro-funky-beat-08 — 레트로 펑키 비트</option>
+            <option>summer-bright-reel-09 — 여름 밝은 릴</option>
+            <option>lofi-chill-beats-10 — 로파이 칠 비트</option>
+          </optgroup>
+          <optgroup label="😊 밝음 / 귀여움">
+            <option>cute-kawaii-bounce-11 — 귀여운 카와이</option>
+            <option>ukulele-happy-vibe-12 — 우쿨렐레 해피</option>
+            <option>morning-fresh-bgm-13 — 아침 상쾌</option>
+            <option>chill-lifestyle-loop-14 — 칠 라이프스타일</option>
+          </optgroup>
+          <optgroup label="💎 감성 / 고급">
+            <option>luxury-ambient-soft-15 — 럭셔리 앰비언트</option>
+            <option>soft-piano-product-16 — 소프트 피아노</option>
+            <option>romantic-glow-soft-17 — 로맨틱 글로우</option>
+            <option>emotional-story-bgm-18 — 감성 스토리</option>
+          </optgroup>
+          <optgroup label="🎭 드라마틱 / 긴장">
+            <option>dramatic-reveal-sting-19 — 드라마틱 공개</option>
+            <option>dark-mystery-hook-20 — 다크 미스터리 훅</option>
+          </optgroup>
+        </select>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <div style="font-size:10px;font-weight:700;color:var(--sub);text-transform:uppercase">BGM 볼륨</div>
+            <span id="vBgmVolVal" style="font-size:10px;color:var(--accent);font-weight:700">25%</span>
+          </div>
+          <input type="range" id="vBgmVolSlider" min="0" max="100" value="25" style="width:100%" oninput="document.getElementById('vBgmVolVal').textContent=this.value+'%'">
+        </div>
+      </div>
+
+      <!-- 🔊 효과음 탭 -->
+      <div id="vtab-sfx" class="vtab-panel" style="display:none">
+        <div style="font-size:11px;color:var(--sub);margin-bottom:8px">대본의 전환·반전·강조·CTA 지점을 분석해 어울리는 효과음을 자동 배치합니다</div>
+        <button class="btn-sm" onclick="autoPlaceSFX()" style="width:100%;justify-content:center;margin-bottom:8px">🔊 효과음 자동 배치</button>
+        <div id="sfxList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:6px"></div>
+        <button class="btn-sm" onclick="addSFX()" style="width:100%;justify-content:center">+ 효과음 추가</button>
       </div>
     </div>
-  </div>
 
-  <!-- 07 업로드 플랫폼 + 음악 -->
-  <div class="card">
-    <div class="sec-num">07</div>
-    <div class="sec-title">업로드 플랫폼(음악) 선택</div>
-    <div class="plat-row" id="bgmPlatRow">
-      <button class="plat-btn active" data-bgmplat="youtube" onclick="selBGMPlat('youtube',this)">
-        <span style="color:#ff0000">▶</span> YouTube
-      </button>
-      <button class="plat-btn" data-bgmplat="instagram" onclick="selBGMPlat('instagram',this)">
-        <span style="background:linear-gradient(135deg,#f09433,#dc2743);-webkit-background-clip:text;-webkit-text-fill-color:transparent">◉</span> Instagram
-      </button>
-      <button class="plat-btn" data-bgmplat="tiktok" onclick="selBGMPlat('tiktok',this)">
-        ♪ TikTok
-      </button>
-    </div>
-    <div id="bgmNote" style="font-size:11px;color:var(--sub);margin-bottom:8px">YouTube 용 배경음악</div>
-    <div style="font-size:11px;color:var(--sub);margin-bottom:6px">배경음악은 꼭 안 넣어도 됩니다. 폰으로 업로드하실 때 그 앱에서 직접 음악을 고르셔도 괜찮아요.</div>
-    <label>음악 선택</label>
-    <select id="bgmSelect" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--txt);font-size:14px;outline:none;margin-bottom:8px">
-      <option value="">🚫 선택 안 함 (음악 없이)</option>
-      <optgroup label="🔥 하이프 / 에너지">
-        <option>upbeat-shopping-hype-01 — 업비트 쇼핑 하이프</option>
-        <option>shopping-energy-bounce-02 — 에너지 바운스</option>
-        <option>hype-club-intro-03 — 클럽 인트로 느낌</option>
-        <option>bass-impact-drop-04 — 베이스 임팩트</option>
-        <option>fast-electronic-cut-05 — 빠른 전자음 컷</option>
-      </optgroup>
-      <optgroup label="✨ 트렌디 / MZ">
-        <option>trendy-product-vibe-06 — 트렌디 상품 바이브</option>
-        <option>k-pop-energy-loop-07 — 케이팝 에너지 루프</option>
-        <option>retro-funky-beat-08 — 레트로 펑키 비트</option>
-        <option>summer-bright-reel-09 — 여름 밝은 릴</option>
-        <option>lofi-chill-beats-10 — 로파이 칠 비트</option>
-      </optgroup>
-      <optgroup label="😊 밝음 / 귀여움">
-        <option>cute-kawaii-bounce-11 — 귀여운 카와이</option>
-        <option>ukulele-happy-vibe-12 — 우쿨렐레 해피</option>
-        <option>morning-fresh-bgm-13 — 아침 상쾌</option>
-        <option>chill-lifestyle-loop-14 — 칠 라이프스타일</option>
-      </optgroup>
-      <optgroup label="💎 감성 / 고급">
-        <option>luxury-ambient-soft-15 — 럭셔리 앰비언트</option>
-        <option>soft-piano-product-16 — 소프트 피아노</option>
-        <option>romantic-glow-soft-17 — 로맨틱 글로우</option>
-        <option>emotional-story-bgm-18 — 감성 스토리</option>
-      </optgroup>
-      <optgroup label="🎭 드라마틱 / 긴장">
-        <option>dramatic-reveal-sting-19 — 드라마틱 공개</option>
-        <option>dark-mystery-hook-20 — 다크 미스터리 훅</option>
-      </optgroup>
-    </select>
-    <label>배경음악 볼륨</label>
-    <input type="range" id="bgmVol" min="0" max="100" value="25" oninput="document.getElementById('bgmVolVal').textContent=this.value+'%'">
-    <div style="font-size:11px;color:var(--sub);text-align:right" id="bgmVolVal">25%</div>
-  </div>
-
-  <!-- 08 효과음 -->
-  <div class="card">
-    <div class="sec-num">08</div>
-    <div class="sec-title">효과음</div>
-    <div style="font-size:11px;color:var(--sub);margin-bottom:8px">"효과음 위치 확인"을 누르면 대본 구조(전환·반전·강조·CTA 지점)를 보고 어울리는 곳에 2-4개 자동으로 배치됩니다. 결과가 마음에 안 들면 아래 목록에서 시간-파일을 직접 바꾸거나, "+ 효과음 추가"로 직접 넣을 수도 있습니다.</div>
-    <button class="btn-sm" onclick="autoPlaceSFX()" style="width:100%;justify-content:center;margin-bottom:8px">🔊 효과음 위치 확인</button>
-    <div id="sfxList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:6px"></div>
-    <button class="btn-sm" onclick="addSFX()" style="width:100%;justify-content:center">+ 효과음 추가</button>
-  </div>
-
-  <!-- 09 제목-설명-고정댓글 -->
-  <div class="card">
-    <div class="sec-num">09</div>
-    <div class="sec-title">제목-설명-고정댓글 <span style="font-weight:400;color:var(--sub)">플랫폼에 맞는 자동 생성</span></div>
-    <button class="btn btn-primary" id="titleGenBtn" onclick="genTitleDesc()" style="margin-bottom:10px">
-      📝 제목·설명·고정댓글 생성하기
-    </button>
-    <div id="titleDescResult" style="display:none">
-      <div class="result-label">제목·설명 <span style="color:var(--sub);font-weight:400">(해시태그 포함, 캡션 전체)</span>
-        <button class="btn-sm" onclick="copySec('titleDescText',this)">복사</button>
-      </div>
-      <textarea class="edit-area" id="titleDescText" rows="4"></textarea>
-      <div class="sep"></div>
-      <div class="result-label">고정 댓글 <span style="color:var(--sub);font-weight:400">(댓글 유도형)</span>
-        <button class="btn-sm" onclick="copySec('pinnedComment',this)">복사</button>
-      </div>
-      <textarea class="edit-area" id="pinnedComment" rows="2"></textarea>
-    </div>
-  </div>
-
-  <!-- 완성 -->
-  <div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:8px;align-items:center;margin-bottom:10px">
-    <label style="display:flex;align-items:center;gap:5px;white-space:nowrap;margin-bottom:0;text-transform:none;font-size:12px;color:var(--sub)">
-      <input type="checkbox" id="bgmOnlyMode"> BGM+효과음+CTA만
-    </label>
-    <button class="btn btn-primary" id="exportBtn" onclick="startExport()" style="margin-top:0">완성 파일로 저장</button>
-    <button class="btn-sm" onclick="resetRemix()" style="justify-content:center;padding:12px">리셋</button>
-  </div>
-  <div id="exportStatus" style="display:none">
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-        <span style="font-size:12px;color:var(--sub)" id="exportMsg">준비 중...</span>
-        <span style="font-size:12px;font-weight:700;color:var(--green)" id="exportPct">0%</span>
-      </div>
-      <div style="background:var(--card2);border-radius:4px;height:6px;overflow:hidden">
-        <div id="exportBar" style="height:100%;background:var(--green);width:0%;transition:width .3s;border-radius:4px"></div>
+    <!-- 제목·설명·고정댓글 -->
+    <div class="card">
+      <div class="sec-title">📝 제목·설명·고정댓글</div>
+      <button class="btn btn-primary" id="titleGenBtn" onclick="genTitleDesc()" style="margin-bottom:10px">생성하기</button>
+      <div id="titleDescResult" style="display:none">
+        <div class="result-label">제목·설명 <span style="color:var(--sub);font-weight:400">(해시태그 포함)</span>
+          <button class="btn-sm" onclick="copySec('titleDescText',this)">복사</button>
+        </div>
+        <textarea class="edit-area" id="titleDescText" rows="4"></textarea>
+        <div class="sep"></div>
+        <div class="result-label">고정 댓글 <button class="btn-sm" onclick="copySec('pinnedComment',this)">복사</button></div>
+        <textarea class="edit-area" id="pinnedComment" rows="2"></textarea>
       </div>
     </div>
-    <div id="exportSummary" style="display:none;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px">
-      <div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:8px">✅ 설정 요약 (필모라에서 적용하세요)</div>
-      <div id="exportSummaryText" style="font-size:12px;color:var(--txt);line-height:1.8;white-space:pre-wrap"></div>
-      <button class="btn-sm" onclick="copyExportSummary()" style="margin-top:8px;width:100%;justify-content:center">📋 요약 전체 복사</button>
+
+    <!-- 완성 -->
+    <div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:8px;align-items:center;margin-bottom:10px">
+      <label style="display:flex;align-items:center;gap:5px;white-space:nowrap;margin-bottom:0;text-transform:none;font-size:12px;color:var(--sub)">
+        <input type="checkbox" id="bgmOnlyMode"> BGM+효과음+CTA만
+      </label>
+      <button class="btn btn-primary" id="exportBtn" onclick="startExport()" style="margin-top:0">완성 파일로 저장</button>
+      <button class="btn-sm" onclick="resetRemix()" style="justify-content:center;padding:12px">리셋</button>
+    </div>
+    <div id="exportStatus" style="display:none">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span style="font-size:12px;color:var(--sub)" id="exportMsg">준비 중...</span>
+          <span style="font-size:12px;font-weight:700;color:var(--green)" id="exportPct">0%</span>
+        </div>
+        <div style="background:var(--card2);border-radius:4px;height:6px;overflow:hidden">
+          <div id="exportBar" style="height:100%;background:var(--green);width:0%;transition:width .3s;border-radius:4px"></div>
+        </div>
+      </div>
+      <div id="exportSummary" style="display:none;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px">
+        <div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:8px">✅ 설정 요약 (필모라에서 적용하세요)</div>
+        <div id="exportSummaryText" style="font-size:12px;color:var(--txt);line-height:1.8;white-space:pre-wrap"></div>
+        <button class="btn-sm" onclick="copyExportSummary()" style="margin-top:8px;width:100%;justify-content:center">📋 요약 전체 복사</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1464,40 +1475,296 @@ function updateTrimLabel(){
   document.getElementById('trimStartLabel').textContent=sl.value+'초';
 }
 
+// ── Tab2 전용 함수 ──────────────────────────────────────────
+let _curVSrc = 'tiktok';
+let _curVRatio = '9:16';
+let _vSubColor = '#ffffff';
+let _vSubPos   = 'mid';
+let _vSubStyle = 'none';
+let _viralScriptLen = 'normal';
+let _vHookType = '문제해결';
+let _viralAutoTimer = null;
+let _viralProdData = null;
+
+function selVSrc(src, btn){
+  _curVSrc = src;
+  document.querySelectorAll('#vSrcPlatRow .plat-btn').forEach(b=>b.classList.toggle('active', b===btn));
+}
+
+function autoDetectPlatform(url){
+  if(!url) return;
+  const st = document.getElementById('viralUrlStatus');
+  let detected = '';
+  if(/tiktok\.com/i.test(url)) detected = 'tiktok';
+  else if(/instagram\.com/i.test(url)) detected = 'instagram';
+  else if(/douyin\.com/i.test(url)) detected = 'douyin';
+  else if(/xiaohongshu\.com|xhslink\.com|hscdn\.com/i.test(url)) detected = 'xiaohongshu';
+  else if(/youtube\.com|youtu\.be/i.test(url)) detected = 'youtube';
+  if(detected){
+    const names={tiktok:'🎵 TikTok',instagram:'📸 인스타그램',douyin:'🇨🇳 도우인',xiaohongshu:'📕 샤우홍슈',youtube:'▶ YouTube'};
+    st.textContent = '✓ '+names[detected]+' 감지됨';
+    document.querySelectorAll('#vSrcPlatRow .plat-btn').forEach(b=>{
+      b.classList.toggle('active', b.dataset.vsrc===detected);
+    });
+    _curVSrc = detected;
+  } else {
+    st.textContent = '';
+  }
+}
+
+function switchVTab(tab, btn){
+  document.querySelectorAll('.vtab').forEach(b=>b.classList.toggle('active',b===btn));
+  document.querySelectorAll('.vtab-panel').forEach(p=>p.style.display='none');
+  const panel = document.getElementById('vtab-'+tab);
+  if(panel) panel.style.display='block';
+  if(tab==='subtitle'){
+    const hookTxt = document.getElementById('vHook')?.value||'';
+    const subEl = document.getElementById('vSubText');
+    if(subEl && !subEl.value) subEl.value = hookTxt;
+    updateVSubPreview();
+  }
+}
+
+function setVRatio(ratio, btn){
+  _curVRatio = ratio;
+  ['916','11','169','45'].forEach(k=>{
+    const el = document.getElementById('vratio-'+k);
+    if(!el) return;
+    const isActive = (ratio==='9:16'&&k==='916')||(ratio==='1:1'&&k==='11')||(ratio==='16:9'&&k==='169')||(ratio==='4:5'&&k==='45');
+    el.style.border = isActive ? '2px solid var(--accent)' : '1px solid var(--border)';
+    el.style.background = isActive ? 'rgba(124,111,255,.12)' : 'var(--card2)';
+  });
+  const notes = {
+    '9:16':'📐 9:16 (1080×1920px) — TikTok · YouTube Shorts · Instagram Reels 에 최적화된 세로 영상',
+    '1:1':'📐 1:1 (1080×1080px) — Instagram 피드에 최적화',
+    '16:9':'📐 16:9 (1920×1080px) — YouTube 가로 영상에 최적화',
+    '4:5':'📐 4:5 (1080×1350px) — Instagram 피드 세로 최적화 (가장 넓은 노출 면적)'
+  };
+  const note = document.getElementById('vRatioNote');
+  if(note) note.innerHTML = notes[ratio]||'';
+}
+
+function setVSubColor(color){
+  _vSubColor = color;
+  const txt = document.getElementById('vPrevTxt');
+  if(txt) txt.style.color = color;
+}
+
+function setVSubPos(pos){
+  _vSubPos = pos;
+  ['top','mid','bot'].forEach(p=>{
+    const el = document.getElementById('vpos-'+p);
+    if(!el) return;
+    const isActive = p===pos;
+    el.style.border = isActive ? '1px solid var(--accent)' : '1px solid var(--border)';
+    el.style.background = isActive ? 'rgba(124,111,255,.12)' : 'var(--card2)';
+    el.style.color = isActive ? 'var(--accent)' : 'var(--sub)';
+  });
+  const box = document.getElementById('vPrevBox');
+  if(!box) return;
+  box.style.alignItems = pos==='top'?'flex-start':pos==='bot'?'flex-end':'center';
+}
+
+function setVSubStyle(style){
+  _vSubStyle = style;
+  ['none','shadow','outline'].forEach(s=>{
+    const el = document.getElementById('vsty-'+s);
+    if(!el) return;
+    const isActive = s===style;
+    el.style.border = isActive ? '1px solid var(--accent)' : '1px solid var(--border)';
+    el.style.background = isActive ? 'rgba(124,111,255,.12)' : 'var(--card2)';
+    el.style.color = isActive ? 'var(--accent)' : 'var(--sub)';
+  });
+  const txt = document.getElementById('vPrevTxt');
+  if(!txt) return;
+  const sh = {none:'none',shadow:'2px 2px 8px rgba(0,0,0,.9)',outline:'-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000'};
+  txt.style.textShadow = sh[style]||'none';
+}
+
+function onVSubSize(val){
+  document.getElementById('vSubSizeVal').textContent = val+'px';
+  const txt = document.getElementById('vPrevTxt');
+  if(txt) txt.style.fontSize = val+'px';
+}
+
+function updateVSubPreview(){
+  const txt = document.getElementById('vSubText')?.value||'자막 미리보기';
+  const el = document.getElementById('vPrevTxt');
+  if(el) el.textContent = txt||'자막 미리보기';
+}
+
+function onVSpeed(val){
+  document.getElementById('vSpeedVal').textContent = (val/100).toFixed(1)+'배';
+}
+
+function onVVol(val){
+  document.getElementById('vVolVal').textContent = val+'%';
+}
+
+function setViralScriptLen(len, btn){
+  _viralScriptLen = len;
+  ['short','normal','long'].forEach(l=>{
+    const el = document.getElementById('vlen-'+l);
+    if(el) el.classList.toggle('active', l===len);
+  });
+}
+
+function selVHookType(type, btn){
+  _vHookType = type;
+  document.querySelectorAll('#vHookTypeRow .plat-btn').forEach(b=>b.classList.toggle('active',b===btn));
+}
+
+let _viralAutoFillTimer = null;
+function scheduleViralAutoFill(){
+  clearTimeout(_viralAutoFillTimer);
+  _viralAutoFillTimer = setTimeout(doViralAutoFill, 900);
+}
+
+async function doViralAutoFill(){
+  if(!getKey()) return;
+  const name = document.getElementById('viralProdName').value.trim();
+  const url  = document.getElementById('viralSrcUrl').value.trim();
+  if(!name && !url) return;
+  const st = document.getElementById('viralProdAutoStatus');
+  if(st) st.textContent = '⏳ AI 인식 중...';
+  const prompt = [
+    `다음 정보로 쿠팡 상품을 추정해줘.`,
+    name ? `상품명: ${name}` : '',
+    url  ? `영상 URL: ${url} (플랫폼: ${_curVSrc})` : '',
+    '',
+    `JSON으로만 답해줘: {"name":"정확한 상품명","category":"상품 카테고리","coupang_keyword":"쿠팡 검색 키워드","features":["특징1","특징2","특징3"]}`
+  ].filter(Boolean).join('\n');
+  try{
+    const raw = await callClaude(prompt, 300);
+    const d = parseJSON(raw);
+    if(d){
+      _viralProdData = d;
+      if(d.name && !document.getElementById('viralProdName').value.trim())
+        document.getElementById('viralProdName').value = d.name;
+      if(st) st.textContent = '✓ 자동인식 완료';
+      setTimeout(()=>{ if(st) st.textContent=''; }, 2500);
+    }
+  }catch(e){ if(st) st.textContent=''; }
+}
+
+async function findSimilarProduct(){
+  if(!getKey()){ openSettings(); return; }
+  const name = document.getElementById('viralProdName').value.trim() ||
+               (_viralProdData && _viralProdData.name) || '상품';
+  const card = document.getElementById('coupangProductCard');
+  card.innerHTML='<div style="text-align:center;padding:12px;color:var(--sub);font-size:12px">⏳ AI가 유사 인기상품을 찾고 있어...</div>';
+  const prompt = [
+    `쿠팡에서 "${name}"과 동일하거나 비슷한 용도의 인기 상품을 추천해줘.`,
+    `상품이 없으면 같은 카테고리에서 가장 인기 있는 대체 상품을 찾아줘.`,
+    `JSON으로만 답해줘:`,
+    `{"product_name":"쿠팡에서 찾을 정확한 상품명","reason":"이 상품을 추천하는 이유","coupang_keyword":"쿠팡 검색 키워드","is_same":true/false,"popularity":"인기 이유 한 줄"}`
+  ].join('\n');
+  try{
+    const raw = await callClaude(prompt, 400);
+    const d = parseJSON(raw);
+    if(d){
+      const searchUrl = `https://www.coupang.com/np/search?q=${encodeURIComponent(d.coupang_keyword||d.product_name||name)}`;
+      card.innerHTML=`
+        <div style="margin-bottom:6px">
+          <div style="font-size:12px;font-weight:800;color:var(--txt);margin-bottom:2px">${d.product_name||name}</div>
+          <div style="font-size:10px;color:var(--green)">${d.is_same?'✓ 동일 상품':'🔄 유사 인기 대체상품'}</div>
+        </div>
+        <div style="font-size:11px;color:var(--sub);margin-bottom:6px;line-height:1.5">${d.reason||''}</div>
+        <div style="font-size:10px;color:var(--accent);margin-bottom:6px">🔥 ${d.popularity||''}</div>
+        <a href="${searchUrl}" target="_blank" style="display:block;text-align:center;padding:6px;background:linear-gradient(135deg,#ff6b8a,#ff4c4c);color:#fff;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none">🛒 쿠팡 검색 →</a>
+      `;
+      const affBox = document.getElementById('coupangAffLink');
+      const affInput = document.getElementById('coupangLinkInput');
+      if(affBox && affInput){ affInput.value = searchUrl; affBox.style.display='block'; }
+    }
+  }catch(e){ card.innerHTML='<div style="color:var(--accent2);font-size:11px;text-align:center;padding:8px">상품 검색 오류</div>'; }
+}
+
+async function regenViralScript(){
+  if(!getKey()){ openSettings(); return; }
+  const name = document.getElementById('viralProdName').value.trim()||'상품';
+  const desc = document.getElementById('vidDesc').value.trim();
+  const lenMap = {short:'10~15초 (매우 짧고 임팩트 있게)',normal:'20~30초 (표준)',long:'40~60초 (스토리형)'};
+  const prompt = [
+    `쇼핑쇼츠 바이럴 전문가야. 아래 정보로 ${lenMap[_viralScriptLen]} 대본을 만들어줘.`,
+    `상품명: ${name}`,
+    desc?`영상 설명: ${desc}`:'',
+    `후킹 유형: ${_vHookType}형`,
+    `JSON으로만 답해줘: {"hook":"첫 3초 훅","script":"전체 대본","hashtags":"#태그10개","cta":"CTA 문구"}`
+  ].filter(Boolean).join('\n');
+  const hookEl = document.getElementById('vHook');
+  const scriptEl = document.getElementById('vScript');
+  if(hookEl) hookEl.value = '⏳ 재생성 중...';
+  if(scriptEl) scriptEl.value = '';
+  try{
+    const raw = await callClaude(prompt, 800);
+    const d = parseJSON(raw);
+    if(d){
+      if(hookEl) hookEl.value = d.hook||'';
+      if(scriptEl) scriptEl.value = d.script||'';
+      const hashEl = document.getElementById('vHash');
+      const ctaEl  = document.getElementById('vCta');
+      if(hashEl) hashEl.value = d.hashtags||'';
+      if(ctaEl)  ctaEl.value  = d.cta||'';
+    }
+  }catch(e){ if(hookEl) hookEl.value=''; }
+}
+
+function copyViralAll(){
+  const parts = [
+    '🎣 훅: '+(document.getElementById('vHook')?.value||''),
+    '',
+    '📝 대본:\n'+(document.getElementById('vScript')?.value||''),
+    '',
+    '🏷 해시태그: '+(document.getElementById('vHash')?.value||''),
+    '',
+    '📣 CTA: '+(document.getElementById('vCta')?.value||''),
+  ];
+  navigator.clipboard.writeText(parts.join('\n')).then(()=>{
+    const btn = event.target;
+    btn.textContent='✓ 복사됨!';
+    setTimeout(()=>btn.textContent='📋 전체복사', 1500);
+  });
+}
+
 async function analyzeViralVideo(){
   if(!getKey()){openSettings();return;}
   const desc = document.getElementById('vidDesc').value.trim();
   const prodName = document.getElementById('viralProdName').value.trim();
+  const srcUrl = document.getElementById('viralSrcUrl')?.value?.trim()||'';
   const vidFile = document.getElementById('mainVidFile').files[0];
-  if(!desc && !prodName && !vidFile){alert('영상 내용 설명 또는 상품명을 입력해줘.');return;}
+  if(!desc && !prodName && !vidFile && !srcUrl){alert('영상 URL, 내용 설명, 또는 상품명 중 하나를 입력해줘.');return;}
 
   const btn = document.getElementById('viralAnalyzeBtn');
   btn.disabled=true;
-  btn.innerHTML='<div class="spinner"></div> 바이럴 플랜 생성 중...';
+  btn.innerHTML='<div class="spinner"></div> AI 분석 중...';
 
-  const res = document.getElementById('viralAnalysisResult');
-  res.style.display='block';
-  res.innerHTML='<div class="loading-overlay"><div class="sp"></div>Claude AI가 바이럴 플랜을 생성하고 있어...</div>';
-
-  const platNames={youtube:'YouTube Shorts',tiktok:'TikTok',instagram:'Instagram Reels',all:'YouTube Shorts / TikTok / Instagram Reels 전체'};
-  const platform = platNames[curViralPlat];
+  const platNames={youtube:'YouTube Shorts',tiktok:'TikTok',instagram:'Instagram Reels',douyin:'도우인',xiaohongshu:'샤우홍슈',all:'전체 플랫폼'};
+  const platform = platNames[curViralPlat]||platNames[_curVSrc]||'전체 플랫폼';
+  const lenMap={short:'10~15초',normal:'20~30초',long:'40~60초'};
 
   const prompt=[
-    `쇼핑쇼츠 바이럴 전문가야. 아래 영상 정보를 바탕으로 ${platform}용 바이럴 리메이크 플랜을 만들어줘.`,
-    vidFile ? `원본 영상 파일명: ${vidFile.name}` : '',
-    desc ? `영상 내용/설명: ${desc}` : '',
-    prodName ? `상품명: ${prodName}` : '',
-    '',
-    '다음 JSON 형식으로만 반환해줘 (다른 텍스트 없이):',
+    `쇼핑쇼츠 바이럴 전문가야. 아래 영상 정보를 기반으로 ${platform}용 바이럴 쇼핑쇼츠 대본을 만들어줘.`,
+    srcUrl  ? `영상 URL: ${srcUrl} (플랫폼: ${_curVSrc})` : '',
+    vidFile ? `업로드된 영상 파일명: ${vidFile.name}` : '',
+    desc    ? `영상 내용/설명: ${desc}` : '',
+    prodName? `상품명: ${prodName}` : '',
+    `대본 길이: ${lenMap[_viralScriptLen]}`,
+    `후킹 유형: ${_vHookType}형`,
+    `[절대 금지 — 허위·과장 광고 방지]`,
+    `- 상품 실제 용도를 벗어난 효능 주장 금지`,
+    `- 체중·다이어트 효능은 명백한 다이어트·건강 상품 아닌 이상 금지`,
+    ``,
+    `JSON으로만 답해줘:`,
     JSON.stringify({
-      hook:'첫 3초 훅 문구 (임팩트 강하게)',
-      script:'15~30초 전체 대본 (구어체, 줄바꿈 포함)',
-      editing_tips:['편집팁1','편집팁2','편집팁3'],
-      hashtags:'#태그1 #태그2 ... (10개)',
+      hook:'첫 3초 훅 (임팩트 강하게, 구어체)',
+      script:'전체 대본 (구어체, 줄바꿈 포함)',
+      hashtags:'#태그10개',
+      cta:'CTA 문구',
       title:'업로드 제목',
       description:'업로드 설명+해시태그',
-      pinned_comment:'고정댓글 (CTA+댓글유도)',
-      cta:['CTA문구1','CTA문구2'],
+      pinned_comment:'고정댓글',
+      editing_tips:['편집팁1','편집팁2','편집팁3'],
       coupang_keyword:'쿠팡 검색 키워드'
     })
   ].filter(Boolean).join('\n');
@@ -1507,79 +1774,64 @@ async function analyzeViralVideo(){
     const d = parseJSON(raw);
     if(!d) throw new Error('JSON 파싱 실패');
 
-    res.innerHTML=`
-<div class="card" style="border-color:rgba(124,111,255,.4);margin-top:0">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
-    <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:16px">🚀</div>
-    <div>
-      <div style="font-size:13px;font-weight:800;color:#fff">바이럴 리메이크 플랜</div>
-      <div style="font-size:11px;color:var(--sub)">${platform}</div>
-    </div>
-  </div>
+    // 대본 탭 채우기
+    const setV = (id, val) => { const el=document.getElementById(id); if(el) el.value=val||''; };
+    setV('vHook',   d.hook);
+    setV('vScript', d.script);
+    setV('vHash',   d.hashtags);
+    setV('vCta',    d.cta);
 
-  <div style="margin-bottom:10px">
-    <div class="result-label">🎯 첫 3초 훅</div>
-    <div style="background:rgba(255,107,138,.08);border:1px solid rgba(255,107,138,.3);border-radius:10px;padding:10px 12px;font-size:15px;font-weight:800;color:var(--accent2);line-height:1.5">${d.hook||''}</div>
-  </div>
+    // 제목·설명·고정댓글도 채우기
+    setV('titleDescText', [d.title||'','\n\n',d.description||''].join(''));
+    setV('pinnedComment', d.pinned_comment||'');
+    const tdRes = document.getElementById('titleDescResult');
+    if(tdRes && d.title) tdRes.style.display='block';
 
-  <div style="margin-bottom:10px">
-    <div class="result-label" style="justify-content:space-between">📝 대본 <button class="btn-sm" onclick="copyText('vScript')">복사</button></div>
-    <textarea id="vScript" class="edit-area script-area">${d.script||''}</textarea>
-  </div>
+    // 원본 영상 박스에 비디오 표시
+    const vidBox = document.getElementById('vOriginalBox');
+    if(vidBox){
+      const player = document.getElementById('mainVidPlayer');
+      if(player && player.src){
+        vidBox.innerHTML=`<video src="${player.src}" controls style="width:100%;height:100%;object-fit:cover;border-radius:10px;max-height:240px"></video>`;
+      } else if(srcUrl){
+        vidBox.innerHTML=`<div style="color:var(--sub);font-size:11px;text-align:center;padding:16px;word-break:break-all">${srcUrl.substring(0,60)}...</div>`;
+      }
+    }
 
-  <div style="margin-bottom:10px">
-    <div class="result-label">✂️ 편집 팁</div>
-    <div style="background:var(--card2);border-radius:10px;padding:10px 12px">
-      ${(Array.isArray(d.editing_tips)?d.editing_tips:[d.editing_tips]).map((t,i)=>`<div style="margin-bottom:6px;font-size:13px;line-height:1.5"><span style="color:var(--accent);font-weight:700">${i+1}.</span> ${t}</div>`).join('')}
-    </div>
-  </div>
+    // 쿠팡 상품 자동 연동
+    const cpKeyword = d.coupang_keyword||(prodName||'상품');
+    const card = document.getElementById('coupangProductCard');
+    if(card){
+      const searchUrl = `https://www.coupang.com/np/search?q=${encodeURIComponent(cpKeyword)}`;
+      card.innerHTML=`
+        <div style="margin-bottom:6px">
+          <div style="font-size:12px;font-weight:800;color:var(--txt);margin-bottom:2px">${prodName||cpKeyword}</div>
+          <div style="font-size:10px;color:var(--green)">✓ AI 자동 인식</div>
+        </div>
+        <div style="font-size:10px;color:var(--accent);margin-bottom:6px">🔍 쿠팡 검색 키워드: ${cpKeyword}</div>
+        <a href="${searchUrl}" target="_blank" style="display:block;text-align:center;padding:6px;background:linear-gradient(135deg,#ff6b8a,#ff4c4c);color:#fff;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none">🛒 쿠팡 검색 →</a>
+      `;
+      const affInput = document.getElementById('coupangLinkInput');
+      const affBox = document.getElementById('coupangAffLink');
+      if(affInput){ affInput.value=searchUrl; if(affBox) affBox.style.display='block'; }
+    }
 
-  <div style="margin-bottom:10px">
-    <div class="result-label" style="justify-content:space-between">📣 제목 <button class="btn-sm" onclick="copyText('vTitle')">복사</button></div>
-    <textarea id="vTitle" class="edit-area" style="min-height:50px">${d.title||''}</textarea>
-  </div>
+    // 결과 패널 표시 (스크롤 이동)
+    const resultPanel = document.getElementById('viralResultPanel');
+    resultPanel.style.display='block';
+    resultPanel.scrollIntoView({behavior:'smooth',block:'start'});
 
-  <div style="margin-bottom:10px">
-    <div class="result-label" style="justify-content:space-between">📋 설명+해시태그 <button class="btn-sm" onclick="copyText('vDesc')">복사</button></div>
-    <textarea id="vDesc2" class="edit-area script-area">${d.description||''}</textarea>
-  </div>
+    // 자막 미리보기 초기화
+    const vPrevTxt = document.getElementById('vPrevTxt');
+    if(vPrevTxt) vPrevTxt.textContent = d.hook||'자막 미리보기';
 
-  <div style="margin-bottom:10px">
-    <div class="result-label" style="justify-content:space-between">📌 고정댓글 <button class="btn-sm" onclick="copyText('vPinned')">복사</button></div>
-    <textarea id="vPinned" class="edit-area" style="min-height:60px">${d.pinned_comment||''}</textarea>
-  </div>
-
-  <div style="margin-bottom:10px">
-    <div class="result-label">💬 CTA 문구</div>
-    <div style="display:flex;flex-direction:column;gap:6px">
-      ${(Array.isArray(d.cta)?d.cta:[d.cta]).map((c,i)=>`
-        <div style="background:var(--card2);border-radius:8px;padding:8px 12px;font-size:13px;display:flex;align-items:center;justify-content:space-between;gap:8px">
-          <span>${c}</span>
-          <button class="btn-sm" onclick="navigator.clipboard.writeText(this.previousElementSibling.textContent)">복사</button>
-        </div>`).join('')}
-    </div>
-  </div>
-
-  <div style="margin-bottom:10px">
-    <div class="result-label">#️⃣ 해시태그</div>
-    <div style="background:var(--card2);border-radius:8px;padding:8px 12px;font-size:13px;color:var(--accent);word-break:break-all">${d.hashtags||''}</div>
-  </div>
-
-  ${d.coupang_keyword?`<div>
-    <div class="result-label">🛒 쿠팡 검색 키워드</div>
-    <a href="https://www.coupang.com/np/search?q=${encodeURIComponent(d.coupang_keyword)}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:linear-gradient(135deg,#ff6b8a,#ff4c4c);color:#fff;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none">🔍 ${d.coupang_keyword} 쿠팡 검색</a>
-  </div>`:''}
-
-  <button class="btn btn-primary" style="margin-top:14px" onclick="copyAllViralPlan()">📋 전체 플랜 복사</button>
-</div>`;
-
-    // 전체 복사용 데이터 저장
     window._viralPlanData = d;
+
   }catch(e){
-    res.innerHTML=`<div class="card" style="border-color:rgba(255,107,138,.4)"><div style="color:var(--accent2);font-size:13px;text-align:center;padding:12px">⚠️ 오류: ${e.message}</div></div>`;
+    alert('오류: '+e.message);
   }finally{
     btn.disabled=false;
-    btn.innerHTML='🚀 바이럴 리메이크 플랜 생성';
+    btn.innerHTML='🚀 바이럴 리메이크 + 쿠팡 자동연동 시작';
   }
 }
 
@@ -1701,8 +1953,8 @@ function renderSFX(){
 
 async function genTitleDesc(){
   if(!getKey()){openSettings();return;}
-  const script=document.getElementById('dubScript').value.trim();
-  const name=document.getElementById('prodName')?.value?.trim()||'상품';
+  const script=(document.getElementById('vScript')||document.getElementById('dubScript'))?.value?.trim()||'';
+  const name=document.getElementById('viralProdName')?.value?.trim()||document.getElementById('prodName')?.value?.trim()||'상품';
   const platNames={youtube:'YouTube Shorts',instagram:'Instagram Reels',tiktok:'TikTok'};
   const btn=document.getElementById('titleGenBtn');
   btn.disabled=true;btn.innerHTML='<div class="spinner"></div> 생성 중...';
@@ -1778,13 +2030,29 @@ function copyExportSummary(){
   });
 }
 function resetRemix(){
-  document.getElementById('viralUrl').value='';
-  document.getElementById('viralEmbed').style.display='none';
-  document.getElementById('dubScript').value='';
-  document.getElementById('sfxList').innerHTML='';
+  ['viralSrcUrl','viralProdName','viralProdUrl','vidDesc'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  ['vHook','vScript','vHash','vCta','titleDescText','pinnedComment'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  const sfxList=document.getElementById('sfxList');
+  if(sfxList) sfxList.innerHTML='';
   sfxItems=[];
-  document.getElementById('titleDescResult').style.display='none';
-  document.getElementById('exportStatus').style.display='none';
+  const tdRes=document.getElementById('titleDescResult');
+  if(tdRes) tdRes.style.display='none';
+  const expSt=document.getElementById('exportStatus');
+  if(expSt) expSt.style.display='none';
+  const resPanel=document.getElementById('viralResultPanel');
+  if(resPanel) resPanel.style.display='none';
+  const cpCard=document.getElementById('coupangProductCard');
+  if(cpCard) cpCard.innerHTML='분석 후 자동 매칭';
+  const vidBox=document.getElementById('vOriginalBox');
+  if(vidBox) vidBox.innerHTML='<div style="color:var(--sub);font-size:11px;text-align:center;padding:16px">영상 업로드 후<br>여기에 표시됩니다</div>';
+  clearMainVideo();
+  _viralProdData=null;
+  _curVSrc='tiktok';
+  window._viralPlanData=null;
 }
 </script>
 </body>
