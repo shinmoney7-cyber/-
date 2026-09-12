@@ -108,6 +108,54 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
 .loading-overlay .sp{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;margin:0 auto 12px}
 /* destination buttons */
 /* thumbnail preview */
+
+/* ── 모바일 최적화 ─────────────────────────── */
+@media (max-width:480px){
+  /* safe-area for iOS */
+  body{padding-bottom:calc(80px + env(safe-area-inset-bottom));padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+  /* 탭/버튼 터치 타겟 최소 44px */
+  .tab{min-height:44px;font-size:11px;padding:10px 4px}
+  .btn{min-height:48px;font-size:15px;padding:14px}
+  .btn-sm{min-height:38px;padding:8px 12px;font-size:12px}
+  .chip{min-height:36px;padding:8px 14px;font-size:13px}
+  .plat-btn{min-height:36px;padding:8px 12px;font-size:12px}
+  .set-btn{min-height:36px;padding:8px 14px}
+  /* 입력 필드 */
+  input[type=text],input[type=url],textarea{font-size:16px}  /* iOS 줌 방지 */
+  .edit-area{font-size:16px}
+  /* 상단바 */
+  .topbar{padding:12px 12px 0}
+  .logo{font-size:15px}
+  /* 탭 영역 */
+  .tabs{padding:10px 12px 0;gap:6px}
+  .panel{padding:10px 12px}
+  /* 스크립트 바 — 2줄로 */
+  .sb-wrap{flex-wrap:wrap;gap:4px 3px}
+  .sb-wrap .sb-btn{min-height:36px;padding:5px 8px;font-size:11px}
+  /* 이모지/특수문자 팝업 — 전체 너비 */
+  .emoji-popup,.special-popup{width:calc(100vw - 24px) !important;left:0 !important;right:auto !important;font-size:18px !important}
+  /* 폰트 팝업 */
+  .font-popup{width:calc(100vw - 24px) !important;left:0 !important;right:auto !important}
+  .font-popup button{padding:10px 8px !important;font-size:12px !important;min-height:40px}
+  /* 고급편집 패널 */
+  details summary{min-height:40px;display:flex;align-items:center}
+  /* 게시 체크박스 영역 */
+  #pubPlatGrid-0,#pubPlatGrid-1,#pubPlatGrid-2,#pubPlatGrid-3,#pubPlatGrid-4,#pubPlatGrid-5{gap:10px 16px}
+  label[for^="pub-"]{display:flex;align-items:center;gap:6px;min-height:36px;cursor:pointer}
+  label[for^="pub-"] input[type=checkbox]{width:20px;height:20px}
+  /* 결과 rtabs 스크롤 */
+  .rtabs{padding-bottom:4px;-webkit-overflow-scrolling:touch}
+  /* 카드 패딩 축소 */
+  .card{padding:12px}
+  /* 모달 */
+  .modal-box{padding:16px 12px;max-height:88vh}
+  /* 범위 슬라이더 높이 */
+  input[type=range]{height:28px}
+}
+@media (max-width:360px){
+  .tab{font-size:10px;padding:9px 2px}
+  .chip{padding:7px 10px;font-size:12px}
+}
 </style>
 </head>
 <body>
@@ -1110,7 +1158,7 @@ function buildScriptPanelHTML(i, s){
     <div class="result-label">📝 스크립트 (자막 ${curSubtitleSize}px 미리보기)<button class="btn-sm" onclick="copySec('script-${i}',this)">복사</button></div>
 
     <!-- 대본 텍스트 바 -->
-    <div id="scriptBar-${i}" style="background:var(--card3);border:1px solid var(--border);border-bottom:none;border-radius:10px 10px 0 0;padding:6px 8px;display:flex;flex-wrap:wrap;gap:4px;align-items:center">
+    <div id="scriptBar-${i}" class="sb-wrap" style="background:var(--card3);border:1px solid var(--border);border-bottom:none;border-radius:10px 10px 0 0;padding:6px 8px;display:flex;flex-wrap:wrap;gap:4px;align-items:center">
 
       <!-- 타임스탬프 삽입 -->
       <button onclick="sbInsertTimestamp(${i})" title="커서 위치에 타임스탬프 삽입"
