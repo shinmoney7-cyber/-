@@ -808,8 +808,9 @@ function renderScripts(scripts){
 
       <div class="sep"></div>
       <div style="display:flex;gap:8px;margin-top:2px">
-        <button class="btn-sm" onclick="regenOne(${i})" style="flex:1;justify-content:center">🔄 이 대본 다시 생성</button>
-        <button class="btn-sm green" onclick="copyAll(${i})" style="flex:1;justify-content:center">📋 전체 복사</button>
+        <button class="btn-sm" onclick="regenOne(${i})" style="flex:1;justify-content:center">🔄 다시생성</button>
+        <button class="btn-sm green" onclick="copyAll(${i})" style="flex:1;justify-content:center">📋 전체복사</button>
+        <button class="btn-sm" onclick="sendToViral(${i})" style="flex:1;justify-content:center;background:rgba(124,111,255,.18);border-color:var(--accent);color:var(--accent)">🔗 바이럴연동</button>
       </div>
     `;
     panels.appendChild(panel);
@@ -879,6 +880,32 @@ function copyAll(i){
     const btn=document.querySelector(`#sp-${i} .btn-sm.green`);
     if(btn){const o=btn.textContent;btn.textContent='✓ 복사됨';setTimeout(()=>btn.textContent=o,1500);}
   });
+}
+
+function sendToViral(i){
+  const hook = document.getElementById(`hook-${i}`)?.value||'';
+  const script = document.getElementById(`script-${i}`)?.value||'';
+  const hashtags = document.getElementById(`hash-${i}`)?.value||'';
+  const prodName = document.getElementById('prodName')?.value?.trim()||'';
+
+  // Tab2 필드에 채우기
+  const descEl = document.getElementById('vidDesc');
+  const nameEl = document.getElementById('viralProdName');
+  const dubEl = document.getElementById('dubScript');
+  const hashEl2 = document.getElementById('dubHashtags');
+
+  if(descEl) descEl.value = hook ? `[훅] ${hook}\n\n[대본]\n${script}` : script;
+  if(nameEl && prodName) nameEl.value = prodName;
+  if(dubEl) dubEl.value = script;
+  if(hashEl2) hashEl2.value = hashtags;
+
+  // Tab2로 전환
+  const viralTab = document.querySelector('.tab[onclick*="viral"]');
+  if(viralTab) viralTab.click();
+
+  // 피드백 토스트
+  const btn = document.querySelector(`#sp-${i} .btn-sm[onclick*="sendToViral"]`);
+  if(btn){ const o=btn.textContent; btn.textContent='✓ 연동됨!'; setTimeout(()=>btn.textContent=o,1500); }
 }
 
 // ── 바이럴 자동연동 ───────────────────────────────────────
