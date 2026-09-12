@@ -208,7 +208,7 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
       <span>🔥 욕망 / 욕구 <span style="color:var(--sub);font-size:10px;font-weight:400;text-transform:none">복수 선택 가능</span></span>
       <button id="desireAllBtn" onclick="toggleAllDesire()" style="font-size:11px;padding:4px 10px;border-radius:12px;border:1px solid var(--border);background:var(--card2);color:var(--sub);cursor:pointer;font-weight:600;white-space:nowrap">전체 선택</button>
     </div>
-    <div class="chip-row" id="desireRow" onclick="desireChipClick(event)">
+    <div class="chip-row" id="desireRow">
       <div class="chip" data-type="desire">🔥 과시욕</div>
       <div class="chip" data-type="desire">💰 절약욕</div>
       <div class="chip" data-type="desire">💪 건강욕</div>
@@ -232,6 +232,31 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
       <div class="chip" data-type="desire">🏆 성취욕</div>
       <div class="chip" data-type="desire">💝 자기선물</div>
     </div>
+    <script>
+    (function(){
+      var row = document.getElementById('desireRow');
+      if(!row) return;
+      row.addEventListener('click', function(e){
+        var el = e.target;
+        while(el && el !== row){
+          if(el.classList && el.classList.contains('chip')){
+            var isOn = el.classList.toggle('sel-desire');
+            var btn = document.getElementById('desireAllBtn');
+            if(btn){
+              var chips = row.querySelectorAll('.chip');
+              var allOn = true;
+              for(var i=0;i<chips.length;i++){ if(!chips[i].classList.contains('sel-desire')){ allOn=false; break; } }
+              btn.textContent = allOn ? '전체 해제' : '전체 선택';
+              btn.style.borderColor = allOn ? '#ff6b8a' : '';
+              btn.style.color = allOn ? '#ff6b8a' : '';
+            }
+            break;
+          }
+          el = el.parentElement;
+        }
+      });
+    })();
+    </script>
   </div>
 
   <!-- 유행어 / 인기템 트렌드 -->
@@ -1101,18 +1126,21 @@ function desireChipClick(e){
 
 // ── 욕망 전체 선택 / 전체 해제 ──────────────────────────
 function toggleAllDesire(){
-  const chips = [...document.querySelectorAll('.chip[data-type="desire"]')];
-  const allSel = chips.every(c=>c.classList.contains('sel-desire'));
-  const btn = document.getElementById('desireAllBtn');
+  var row = document.getElementById('desireRow');
+  if(!row) return;
+  var chips = row.querySelectorAll('.chip');
+  var allSel = true;
+  for(var i=0;i<chips.length;i++){ if(!chips[i].classList.contains('sel-desire')){ allSel=false; break; } }
+  var btn = document.getElementById('desireAllBtn');
   if(allSel){
-    chips.forEach(c=>c.classList.remove('sel-desire'));
-    if(btn){ btn.textContent='전체 선택'; btn.style.borderColor='var(--border)'; btn.style.color='var(--sub)'; }
+    chips.forEach(function(c){ c.classList.remove('sel-desire'); });
+    if(btn){ btn.textContent='전체 선택'; btn.style.borderColor=''; btn.style.color=''; }
   } else {
-    chips.forEach(c=>c.classList.add('sel-desire'));
-    if(btn){ btn.textContent='전체 해제'; btn.style.borderColor='var(--accent2)'; btn.style.color='var(--accent2)'; }
+    chips.forEach(function(c){ c.classList.add('sel-desire'); });
+    if(btn){ btn.textContent='전체 해제'; btn.style.borderColor='#ff6b8a'; btn.style.color='#ff6b8a'; }
   }
-  if(lastScripts.length > 0){
-    const bar = document.getElementById('autoUpdateBar');
+  if(typeof lastScripts !== 'undefined' && lastScripts.length > 0){
+    var bar = document.getElementById('autoUpdateBar');
     if(bar) bar.style.display='flex';
   }
 }
