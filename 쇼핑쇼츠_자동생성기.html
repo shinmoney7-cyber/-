@@ -355,7 +355,12 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
 
     <!-- 영상 미리보기 -->
     <div id="mainVidPreview" style="display:none;margin-bottom:10px">
-      <video id="mainVidPlayer" controls style="width:100%;border-radius:10px;background:#000;max-height:280px"></video>
+      <div style="position:relative;display:inline-block;width:100%" id="vidPlayerWrap">
+        <video id="mainVidPlayer" controls style="width:100%;border-radius:10px;background:#000;max-height:280px"></video>
+        <div id="viralSubtitleOverlay" style="display:none;position:absolute;bottom:20px;left:50%;transform:translateX(-50%);width:90%;text-align:center;pointer-events:none;z-index:10">
+          <span id="viralSubText" style="background:rgba(0,0,0,0.72);color:#fff;font-size:clamp(12px,3vw,18px);font-weight:700;padding:6px 14px;border-radius:10px;display:inline-block;line-height:1.5;max-width:100%;word-break:keep-all"></span>
+        </div>
+      </div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
         <span id="mainVidInfo" style="font-size:12px;color:var(--green)"></span>
         <button onclick="clearMainVideo()" style="background:none;border:1px solid var(--border);border-radius:8px;padding:4px 10px;color:var(--sub);cursor:pointer;font-size:12px">× 지우기</button>
@@ -421,6 +426,17 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
 
     <!-- ── 통합 편집 카드 (Tab1과 동일한 수정바) ──────────── -->
     <div class="card">
+      <!-- 자막 다운로드 + 오버레이 컨트롤 -->
+      <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+        <button onclick="downloadViralSRT()" id="srtDownBtn"
+          style="flex:1;min-width:140px;padding:11px;border-radius:11px;border:none;background:linear-gradient(135deg,#20d9a0,#7c6fff);color:#fff;font-size:13px;font-weight:900;cursor:pointer">
+          📥 자막 파일 다운로드 (.srt)
+        </button>
+        <button onclick="toggleViralOverlay()" id="overlayToggleBtn"
+          style="flex:1;min-width:140px;padding:11px;border-radius:11px;border:1px solid var(--border);background:var(--card2);color:var(--sub);font-size:13px;font-weight:700;cursor:pointer">
+          👁 자막 미리보기 ON/OFF
+        </button>
+      </div>
       <!-- 편집 탭 버튼 -->
       <div style="display:flex;gap:4px;margin-bottom:12px;border-bottom:1px solid var(--border);padding-bottom:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none">
         <button class="vtab active" onclick="switchVTab('script',this)">📝 대본</button>
@@ -1089,6 +1105,19 @@ function buildScriptPanelHTML(i, s){
       <button class="btn-sm" onclick="regenOne(${i})" style="flex:1;justify-content:center">🔄 다시생성</button>
       <button class="btn-sm green" onclick="copyAll(${i})" style="flex:1;justify-content:center">📋 전체복사</button>
       <button class="btn-sm" onclick="sendToViral(${i})" style="flex:1;justify-content:center;background:rgba(124,111,255,.18);border-color:var(--accent);color:var(--accent)">🔗 바이럴연동</button>
+    </div>
+    <button onclick="generateVideoFromScript(${i})" id="vidGenBtn-${i}"
+      style="width:100%;margin-top:8px;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#7c6fff,#ff6b8a);color:#fff;font-size:14px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+      🎬 영상 직접 생성 (브라우저 렌더링)
+    </button>
+    <div id="vidGenStatus-${i}" style="display:none;background:var(--card2);border-radius:10px;padding:10px 12px;margin-top:6px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span style="font-size:12px;color:var(--sub)" id="vidGenMsg-${i}">렌더링 중...</span>
+        <span style="font-size:12px;font-weight:700;color:var(--green)" id="vidGenPct-${i}">0%</span>
+      </div>
+      <div style="background:var(--card3);border-radius:4px;height:6px;overflow:hidden">
+        <div id="vidGenBar-${i}" style="height:100%;background:linear-gradient(90deg,var(--accent),var(--green));width:0%;transition:width .3s;border-radius:4px"></div>
+      </div>
     </div>
     <div style="background:rgba(124,111,255,.08);border:1px solid rgba(124,111,255,.2);border-radius:10px;padding:10px 12px;margin-top:8px;font-size:11px;color:var(--sub);line-height:1.7">
       <div style="font-size:11px;font-weight:800;color:var(--accent);margin-bottom:4px">📌 다음 단계 — 영상 완성 방법</div>
@@ -2394,6 +2423,284 @@ function calcRevenue(){
   set('rv-m-click',fmt(clicks*30));
   set('rv-m-buy',fmt(buys*30));
   set('rv-m-earn',fmtW(earn*30));
+}
+
+// ══════════════════════════════════════════════════════════════
+// 브라우저 직접 영상 생성 엔진 (Canvas + MediaRecorder)
+// ══════════════════════════════════════════════════════════════
+
+// 타임스탬프 파싱: [0:00] 텍스트 → [{startTime, endTime, text}]
+function parseScriptLines(script){
+  const lines = [];
+  const re = /\[(\d+):(\d{2})\]\s*(.+?)(?=\[\d+:\d{2}\]|$)/gs;
+  let m;
+  while((m = re.exec(script)) !== null){
+    const t = parseInt(m[1])*60 + parseInt(m[2]);
+    lines.push({ startTime: t, text: m[3].trim() });
+  }
+  // endTime 계산 (다음 라인 시작 - 0.1s, 마지막은 +3s)
+  lines.forEach((l,i)=>{
+    l.endTime = i<lines.length-1 ? lines[i+1].startTime - 0.1 : l.startTime + 3;
+  });
+  // 타임스탬프 없으면 3초 간격으로 분할
+  if(lines.length===0){
+    const parts = script.split(/[.!?。！？
+]+/).filter(p=>p.trim());
+    parts.forEach((p,i)=>lines.push({startTime:i*3, endTime:(i+1)*3-0.1, text:p.trim()}));
+  }
+  return lines;
+}
+
+// SRT 포맷 시간 변환 (초 → 00:00:00,000)
+function toSrtTime(sec){
+  const h=Math.floor(sec/3600).toString().padStart(2,'0');
+  const m=Math.floor((sec%3600)/60).toString().padStart(2,'0');
+  const s=Math.floor(sec%60).toString().padStart(2,'0');
+  const ms=Math.round((sec%1)*1000).toString().padStart(3,'0');
+  return `${h}:${m}:${s},${ms}`;
+}
+
+// 텍스트 줄바꿈 렌더링
+function canvasWrapText(ctx, text, x, y, maxWidth, lineHeight){
+  const words = text.split(' ');
+  let line = '';
+  const lineArr = [];
+  for(const w of words){
+    const test = line + w + ' ';
+    if(ctx.measureText(test).width > maxWidth && line!==''){
+      lineArr.push(line.trim());
+      line = w + ' ';
+    } else { line = test; }
+  }
+  if(line.trim()) lineArr.push(line.trim());
+  const totalH = lineArr.length * lineHeight;
+  let startY = y - totalH/2;
+  for(const l of lineArr){
+    ctx.fillText(l, x, startY + lineHeight/2);
+    startY += lineHeight;
+  }
+}
+
+// 이미지 로드 헬퍼
+function loadImg(url){
+  return new Promise(res=>{
+    if(!url){ res(null); return; }
+    const img = new Image();
+    img.crossOrigin='anonymous';
+    img.onload=()=>res(img);
+    img.onerror=()=>res(null);
+    img.src=url;
+  });
+}
+
+// ── Tab1: 상품 쇼츠 영상 생성 ─────────────────────────────────────────────
+async function generateVideoFromScript(idx){
+  const script = document.getElementById(`script-${idx}`)?.value||'';
+  const hook   = document.getElementById(`hook-${idx}`)?.value||'';
+  const prodImgUrl = document.getElementById('prodImg')?.value||'';
+  const prodName   = document.getElementById('prodName')?.value||'';
+
+  const subSize = typeof curSubtitleSize!=='undefined' ? curSubtitleSize : 24;
+  const subColor = '#ffffff';
+
+  const btn = document.getElementById(`vidGenBtn-${idx}`);
+  const statusBox = document.getElementById(`vidGenStatus-${idx}`);
+  const msgEl = document.getElementById(`vidGenMsg-${idx}`);
+  const pctEl = document.getElementById(`vidGenPct-${idx}`);
+  const barEl = document.getElementById(`vidGenBar-${idx}`);
+  if(btn){ btn.disabled=true; btn.textContent='⏳ 렌더링 중...'; }
+  if(statusBox) statusBox.style.display='block';
+
+  const setProgress=(p,msg)=>{
+    if(pctEl) pctEl.textContent=p+'%';
+    if(barEl) barEl.style.width=p+'%';
+    if(msgEl) msgEl.textContent=msg;
+  };
+
+  try{
+    setProgress(5,'이미지 로딩...');
+    const prodImg = await loadImg(prodImgUrl);
+
+    const lines = parseScriptLines(script);
+    if(hook && lines.length>0 && lines[0].startTime>0){
+      lines.unshift({startTime:0, endTime:lines[0].startTime-0.1, text:hook});
+    }
+    const totalDur = lines.length>0 ? lines[lines.length-1].endTime+1 : 15;
+
+    setProgress(10,'캔버스 설정...');
+    const W=1080, H=1920;
+    const canvas = document.createElement('canvas');
+    canvas.width=W; canvas.height=H;
+    const ctx = canvas.getContext('2d');
+
+    const supported = ['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'].find(t=>MediaRecorder.isTypeSupported(t))||'video/webm';
+    const stream = canvas.captureStream(30);
+    const recorder = new MediaRecorder(stream,{mimeType:supported, videoBitsPerSecond:8000000});
+    const chunks=[];
+    recorder.ondataavailable=e=>{ if(e.data.size>0) chunks.push(e.data); };
+
+    recorder.onstop=()=>{
+      const blob=new Blob(chunks,{type:'video/webm'});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=url; a.download=`쇼핑쇼츠_${prodName||idx+1}.webm`; a.click();
+      setTimeout(()=>URL.revokeObjectURL(url),3000);
+      if(btn){ btn.disabled=false; btn.innerHTML='🎬 영상 직접 생성 (브라우저 렌더링)'; }
+      if(statusBox) statusBox.style.display='none';
+    };
+
+    recorder.start(200);
+    const startMs = performance.now();
+
+    function renderFrame(){
+      const elapsed = (performance.now()-startMs)/1000;
+      const prog = Math.min(99, 10 + Math.round(elapsed/totalDur*88));
+      setProgress(prog, `렌더링 ${elapsed.toFixed(1)}s / ${totalDur.toFixed(1)}s`);
+
+      ctx.fillStyle='#0a0a12';
+      ctx.fillRect(0,0,W,H);
+
+      if(prodImg){
+        const iw=prodImg.naturalWidth, ih=prodImg.naturalHeight;
+        const scale=Math.max(W/iw, H*0.62/ih);
+        const dw=iw*scale, dh=ih*scale;
+        const dx=(W-dw)/2, dy=0;
+        ctx.drawImage(prodImg, 0,0,iw,ih, dx,dy,dw,dh);
+        const grad=ctx.createLinearGradient(0,H*0.35,0,H);
+        grad.addColorStop(0,'rgba(10,10,18,0)');
+        grad.addColorStop(0.4,'rgba(10,10,18,0.75)');
+        grad.addColorStop(1,'rgba(10,10,18,0.97)');
+        ctx.fillStyle=grad;
+        ctx.fillRect(0,0,W,H);
+      }
+
+      if(prodName){
+        ctx.font='bold 48px sans-serif';
+        ctx.fillStyle='rgba(255,255,255,0.85)';
+        ctx.textAlign='center';
+        ctx.textBaseline='middle';
+        ctx.fillText(prodName, W/2, 80);
+      }
+
+      const cur=lines.find(l=>elapsed>=l.startTime && elapsed<l.endTime);
+      if(cur){
+        const fs=subSize*2.8;
+        ctx.font=`bold ${fs}px sans-serif`;
+        ctx.textAlign='center';
+        ctx.textBaseline='middle';
+        ctx.shadowColor='rgba(0,0,0,0.8)';
+        ctx.shadowBlur=12;
+        ctx.shadowOffsetX=2; ctx.shadowOffsetY=2;
+        ctx.fillStyle=subColor;
+        canvasWrapText(ctx, cur.text, W/2, H*0.78, W*0.88, fs*1.35);
+        ctx.shadowColor='transparent'; ctx.shadowBlur=0; ctx.shadowOffsetX=0; ctx.shadowOffsetY=0;
+      }
+
+      const cpUrl=document.getElementById('prodUrl')?.value||'';
+      if(cpUrl){
+        const bx=W/2-200, by=H-200, bw=400, bh=80;
+        ctx.fillStyle='rgba(255,71,87,0.95)';
+        ctx.beginPath();
+        ctx.roundRect(bx,by,bw,bh,20);
+        ctx.fill();
+        ctx.font='bold 38px sans-serif';
+        ctx.fillStyle='#fff';
+        ctx.textAlign='center';
+        ctx.textBaseline='middle';
+        ctx.fillText('🛒 쿠팡에서 구매하기', W/2, by+bh/2);
+      }
+
+      if(elapsed<totalDur){
+        requestAnimationFrame(renderFrame);
+      } else {
+        setProgress(100,'완료! 다운로드 중...');
+        recorder.stop();
+      }
+    }
+
+    setProgress(12,'렌더링 시작...');
+    renderFrame();
+
+  } catch(e){
+    if(btn){ btn.disabled=false; btn.innerHTML='🎬 영상 직접 생성 (브라우저 렌더링)'; }
+    if(statusBox) statusBox.style.display='none';
+    alert('영상 생성 오류: '+e.message);
+  }
+}
+
+// ── Tab2: 바이럴 자막 SRT 다운로드 (원본 영상 건드리지 않음) ──────────────
+function downloadViralSRT(){
+  const script  = document.getElementById('vScript')?.value||'';
+  const prodName= document.getElementById('viralProdName')?.value||'바이럴';
+  const btn     = document.getElementById('srtDownBtn');
+
+  if(!script.trim()){
+    alert('먼저 대본을 생성해주세요.');
+    return;
+  }
+
+  const lines = parseScriptLines(script);
+  if(lines.length===0){
+    alert('대본에서 자막 타이밍을 파싱할 수 없습니다. [0:00] 형식의 타임스탬프를 추가해주세요.');
+    return;
+  }
+
+  let srt = '';
+  lines.forEach((l,i)=>{
+    srt += (i+1) + '\n';
+    srt += toSrtTime(l.startTime) + ' --> ' + toSrtTime(l.endTime) + '\n';
+    srt += l.text + '\n\n';
+  });
+
+  const blob = new Blob([srt], {type:'text/plain;charset=utf-8'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href=url; a.download=`자막_${prodName}.srt`; a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),3000);
+
+  if(btn){
+    const orig = btn.innerHTML;
+    btn.innerHTML = '✅ 자막 파일 저장됨!';
+    setTimeout(()=>{ btn.innerHTML=orig; },2500);
+  }
+}
+
+// ── Tab2: 자막 오버레이 미리보기 ON/OFF ────────────────────────────────────
+let _viralOverlayOn = false;
+let _viralOverlayTimer = null;
+
+function toggleViralOverlay(){
+  const overlay = document.getElementById('viralSubtitleOverlay');
+  const btn     = document.getElementById('overlayToggleBtn');
+  const video   = document.getElementById('mainVidPlayer');
+
+  _viralOverlayOn = !_viralOverlayOn;
+
+  if(!_viralOverlayOn){
+    if(overlay) overlay.style.display='none';
+    if(btn){ btn.style.borderColor=''; btn.style.color=''; }
+    if(_viralOverlayTimer){ clearInterval(_viralOverlayTimer); _viralOverlayTimer=null; }
+    return;
+  }
+
+  const script = document.getElementById('vScript')?.value||'';
+  if(!script.trim()||!video||!video.src){
+    alert('영상과 대본이 모두 있어야 미리보기가 가능합니다.');
+    _viralOverlayOn=false;
+    return;
+  }
+
+  const lines = parseScriptLines(script);
+  if(overlay) overlay.style.display='block';
+  if(btn){ btn.style.borderColor='var(--accent)'; btn.style.color='var(--accent)'; }
+
+  _viralOverlayTimer = setInterval(()=>{
+    if(!_viralOverlayOn){ clearInterval(_viralOverlayTimer); return; }
+    const t = video.currentTime;
+    const cur = lines.find(l=>t>=l.startTime && t<l.endTime);
+    const textEl = document.getElementById('viralSubText');
+    if(textEl) textEl.textContent = cur ? cur.text : '';
+  }, 100);
 }
 </script>
 </body>
