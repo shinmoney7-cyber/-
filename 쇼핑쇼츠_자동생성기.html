@@ -117,6 +117,7 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
 <div class="tabs">
   <button class="tab active" onclick="switchTab('shorts',this)">🎬 쇼츠 생성</button>
   <button class="tab" onclick="switchTab('viral',this)">🔗 바이럴 연동</button>
+  <button class="tab" onclick="switchTab('schedule',this)">📅 스케줄&수익</button>
 </div>
 
 <!-- ══ Tab 1: 쇼핑쇼츠 생성 ══════════════════════════════ -->
@@ -381,7 +382,11 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
       <button class="plat-btn" data-vplat="youtube" onclick="selViralPlat('youtube',this)"><span class="badge badge-yt">YT</span> Shorts</button>
       <button class="plat-btn" data-vplat="tiktok" onclick="selViralPlat('tiktok',this)"><span class="badge badge-tt">TT</span> TikTok</button>
       <button class="plat-btn" data-vplat="instagram" onclick="selViralPlat('instagram',this)"><span class="badge badge-ig">IG</span> Reels</button>
+      <button class="plat-btn" data-vplat="naver" onclick="selViralPlat('naver',this)" style="background:var(--card2);color:var(--sub)">🟢 네이버 클립</button>
+      <button class="plat-btn" data-vplat="kakao" onclick="selViralPlat('kakao',this)" style="background:var(--card2);color:var(--sub)">💛 카카오TV</button>
+      <button class="plat-btn" data-vplat="threads" onclick="selViralPlat('threads',this)" style="background:var(--card2);color:var(--sub)">🧵 Threads</button>
     </div>
+    <div id="platOptHint" style="font-size:11px;color:var(--accent);margin-bottom:6px;min-height:14px"></div>
 
     <button class="btn btn-primary" id="viralAnalyzeBtn" onclick="analyzeViralVideo()">
       🚀 바이럴 리메이크 + 쿠팡 자동연동 시작
@@ -499,7 +504,7 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
         <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">
           <div style="flex:1;min-width:150px">
             <div style="font-size:10px;font-weight:700;color:var(--sub);margin-bottom:5px;text-transform:uppercase">색상</div>
-            <div style="display:flex;gap:5px;flex-wrap:wrap">
+            <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px">
               <button onclick="setVSubColor('#ffffff')" title="흰색" style="width:26px;height:26px;border-radius:50%;background:#fff;border:2px solid var(--accent);cursor:pointer"></button>
               <button onclick="setVSubColor('#ffd060')" title="노랑" style="width:26px;height:26px;border-radius:50%;background:#ffd060;border:1px solid var(--border);cursor:pointer"></button>
               <button onclick="setVSubColor('#ff6b8a')" title="분홍" style="width:26px;height:26px;border-radius:50%;background:#ff6b8a;border:1px solid var(--border);cursor:pointer"></button>
@@ -508,6 +513,24 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
               <button onclick="setVSubColor('#ff8c42')" title="주황" style="width:26px;height:26px;border-radius:50%;background:#ff8c42;border:1px solid var(--border);cursor:pointer"></button>
               <button onclick="setVSubColor('#00cfff')" title="하늘" style="width:26px;height:26px;border-radius:50%;background:#00cfff;border:1px solid var(--border);cursor:pointer"></button>
               <button onclick="setVSubColor('#ff4444')" title="빨강" style="width:26px;height:26px;border-radius:50%;background:#ff4444;border:1px solid var(--border);cursor:pointer"></button>
+            </div>
+            <!-- HSL 슬라이더 -->
+            <div style="margin-top:4px">
+              <div style="display:flex;justify-content:space-between;margin-bottom:2px">
+                <span style="font-size:9px;color:var(--sub);font-weight:700">색조(H)</span>
+                <span id="vHueVal" style="font-size:9px;color:var(--accent);font-weight:700">0°</span>
+              </div>
+              <input type="range" id="vHueSlider" min="0" max="360" value="0" style="width:100%;background:linear-gradient(to right,hsl(0,100%,50%),hsl(60,100%,50%),hsl(120,100%,50%),hsl(180,100%,50%),hsl(240,100%,50%),hsl(300,100%,50%),hsl(360,100%,50%));border-radius:4px;height:8px" oninput="onVSubHSL()">
+              <div style="display:flex;justify-content:space-between;margin-bottom:2px;margin-top:4px">
+                <span style="font-size:9px;color:var(--sub);font-weight:700">채도(S)</span>
+                <span id="vSatVal" style="font-size:9px;color:var(--accent);font-weight:700">100%</span>
+              </div>
+              <input type="range" id="vSatSlider" min="0" max="100" value="100" style="width:100%" oninput="onVSubHSL()">
+              <div style="display:flex;justify-content:space-between;margin-bottom:2px;margin-top:4px">
+                <span style="font-size:9px;color:var(--sub);font-weight:700">밝기(L)</span>
+                <span id="vLitVal" style="font-size:9px;color:var(--accent);font-weight:700">100%</span>
+              </div>
+              <input type="range" id="vLitSlider" min="10" max="100" value="100" style="width:100%" oninput="onVSubHSL()">
             </div>
           </div>
           <div style="flex:0;min-width:80px">
@@ -544,47 +567,45 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
       <div id="vtab-voice" class="vtab-panel" style="display:none">
         <label>성우 선택</label>
         <select id="vVoiceSelect" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--txt);font-size:14px;outline:none;margin-bottom:8px">
-          <optgroup label="👨 남성 — 에너지/활력">
-            <option>강민호 Minho — 힘차고 에너지 넘치는 남성</option>
-            <option>한성민 Sungmin — 활기차고 발랄한 남성</option>
-            <option>정민재 Minjae — 10대 느낌 신선한 남성</option>
-            <option>황인서 Inseo — 스포티 활력 남성</option>
-            <option>조성현 Seonghyeon — 힙하고 캐주얼 남성</option>
-            <option>박지훈 Jihoon — MZ 젊은 남성</option>
+          <optgroup label="🗣️ 표준어 남성">
+            <option>강민호 — 힘차고 에너지 넘치는 표준어 남성</option>
+            <option>박창수 — 중저음 신뢰감 내레이터 남성</option>
+            <option>정민재 — MZ 신선하고 캐주얼 남성</option>
+            <option>신동훈 — 차분하고 지적인 전문가 남성</option>
+            <option>임재원 — 드라마틱하고 강렬한 남성</option>
+            <option>류승호 — 중후하고 안정적인 시니어 남성</option>
           </optgroup>
-          <optgroup label="👨 남성 — 신뢰/안정">
-            <option>박창수 Changsoo — 중저음 신뢰감 남성</option>
-            <option>이동현 Donghyun — 진지하고 안정적 남성</option>
-            <option>조현우 Hyunwoo — 성숙한 30대 남성</option>
-            <option>권도윤 Doyoon — 차분한 지성파 남성</option>
-            <option>신동훈 Donghoon — 내레이터 느낌 남성</option>
-            <option>류승호 Seungho — 중후한 시니어 남성</option>
+          <optgroup label="🗣️ 표준어 여성">
+            <option>이민지 — 밝고 경쾌한 표준어 여성</option>
+            <option>최유진 — 귀엽고 친근한 MZ 여성</option>
+            <option>김소연 — 감성 풍부한 스토리텔러 여성</option>
+            <option>박하나 — 차분하고 세련된 프로 여성</option>
+            <option>오지은 — 비즈니스 신뢰감 여성</option>
+            <option>이하늘 — 자연스러운 일상 친근 여성</option>
           </optgroup>
-          <optgroup label="👨 남성 — 드라마틱">
-            <option>임재원 Jaewon — 드라마틱하고 강렬한 남성</option>
-            <option>고준혁 Junhyeok — 긴장감 있는 남성</option>
-            <option>김태양 Taeyang — 시원시원한 남성</option>
+          <optgroup label="🌶️ 사투리 남성">
+            <option>김도훈(경상) — 구수하고 직설적인 경상도 남성</option>
+            <option>이철민(경상) — 억세고 시원시원한 경상도 남성</option>
+            <option>박길동(전라) — 구수하고 정감 넘치는 전라도 남성</option>
+            <option>최순남(전라) — 느긋하고 인간미 넘치는 전라도 남성</option>
+            <option>장덕수(충청) — 느릿하고 소탈한 충청도 남성</option>
+            <option>오강원(강원) — 구수하고 순박한 강원도 남성</option>
           </optgroup>
-          <optgroup label="👩 여성 — 밝음/귀여움">
-            <option>이민지 Minji — 밝고 경쾌한 여성</option>
-            <option>최유진 Yujin — 귀엽고 친근한 여성</option>
-            <option>서다영 Dayoung — MZ 활발한 여성</option>
-            <option>문가영 Gayoung — 상큼 발랄 여성</option>
-            <option>김아름 Areum — 사랑스럽고 친근한 여성</option>
-            <option>이하늘 Haneul — 자연스러운 일상 여성</option>
+          <optgroup label="🌶️ 사투리 여성">
+            <option>박영희(경상) — 붙임성 좋고 생동감 넘치는 경상 여성</option>
+            <option>임순이(전라) — 정감 있고 다정한 전라도 여성</option>
+            <option>홍정옥(충청) — 여유 있고 편안한 충청도 여성</option>
+            <option>신선화(강원) — 소박하고 따뜻한 강원도 여성</option>
+            <option>고해녀(제주) — 독특하고 매력적인 제주 사투리 여성</option>
           </optgroup>
-          <optgroup label="👩 여성 — 감성/세련">
-            <option>김소연 Soyeon — 감성 풍부한 여성</option>
-            <option>박하나 Hana — 차분하고 세련된 여성</option>
-            <option>윤서연 Seoyeon — 트렌디 20대 여성</option>
-            <option>백채원 Chaewon — 고급스러운 여성</option>
-            <option>나지현 Jihyeon — 감동적인 스토리텔러 여성</option>
-            <option>송미래 Mirae — 고요하고 우아한 여성</option>
-          </optgroup>
-          <optgroup label="👩 여성 — 신뢰/프로">
-            <option>오지은 Jieun — 프로페셔널 비즈니스 여성</option>
-            <option>이수아 Sua — 따뜻하고 부드러운 여성</option>
-            <option>엄지원 Jiwon — 따뜻한 공감형 여성</option>
+          <optgroup label="✨ 특수 스타일">
+            <option>ASMR 속삭임 — 귀에 속삭이는 릴렉스 목소리</option>
+            <option>나레이션 다큐 — 진지하고 신뢰감 있는 다큐 내레이터</option>
+            <option>MZ 속사포 — 빠르고 트렌디한 MZ 속사포 랩</option>
+            <option>어르신 정겨운 — 인자하고 정겨운 어르신 목소리</option>
+            <option>외국인 억양 — 한국어 외국인 억양으로 재미와 신선함</option>
+            <option>어린이 — 귀엽고 사랑스러운 어린이 목소리</option>
+            <option>성우극 — 감정 풍부한 드라마 성우 스타일</option>
           </optgroup>
         </select>
         <label>감정</label>
@@ -659,6 +680,13 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
       <!-- 🔊 효과음 탭 -->
       <div id="vtab-sfx" class="vtab-panel" style="display:none">
         <div style="font-size:11px;color:var(--sub);margin-bottom:8px">대본의 전환·반전·강조·CTA 지점을 분석해 어울리는 효과음을 자동 배치합니다</div>
+        <div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <div style="font-size:10px;font-weight:700;color:var(--sub);text-transform:uppercase">🔊 마스터 볼륨</div>
+            <span id="sfxMasterVolVal" style="font-size:10px;color:var(--accent);font-weight:700">80%</span>
+          </div>
+          <input type="range" id="sfxMasterVolSlider" min="0" max="200" value="80" style="width:100%" oninput="onSFXMasterVol(this.value)">
+        </div>
         <button class="btn-sm" onclick="autoPlaceSFX()" style="width:100%;justify-content:center;margin-bottom:8px">🔊 효과음 자동 배치</button>
         <div id="sfxList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:6px"></div>
         <button class="btn-sm" onclick="addSFX()" style="width:100%;justify-content:center">+ 효과음 추가</button>
@@ -704,6 +732,107 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
         <button class="btn-sm" onclick="copyExportSummary()" style="margin-top:8px;width:100%;justify-content:center">📋 요약 전체 복사</button>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- ══ Tab 3: 스케줄 & 수익 ══════════════════════════════════ -->
+<div id="panel-schedule" class="panel">
+
+  <!-- 업로드 스케줄 -->
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div class="sec-title" style="margin-bottom:0">📅 일일 업로드 스케줄</div>
+      <span style="font-size:11px;color:var(--green);font-weight:700">목표: 하루 5개</span>
+    </div>
+    <div style="font-size:11px;color:var(--sub);margin-bottom:10px">오늘 올린 영상을 체크해요. 부족하면 내일 자동으로 이월됩니다.</div>
+
+    <!-- 오늘 날짜 & 진행바 -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <span id="todayDateLabel" style="font-size:13px;font-weight:800"></span>
+      <span id="todayCountLabel" style="font-size:12px;color:var(--accent);font-weight:700">0 / 5</span>
+    </div>
+    <div style="background:var(--card2);border-radius:6px;height:8px;overflow:hidden;margin-bottom:10px">
+      <div id="todayProgressBar" style="height:100%;background:linear-gradient(90deg,var(--accent),var(--green));width:0%;transition:width .4s;border-radius:6px"></div>
+    </div>
+
+    <!-- 오늘 체크리스트 -->
+    <div id="todayChecklist" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px"></div>
+
+    <!-- 영상 추가 버튼 -->
+    <button class="btn-sm" onclick="addTodayUpload()" style="width:100%;justify-content:center;padding:10px">＋ 오늘 업로드 추가</button>
+
+    <!-- 이월 알림 -->
+    <div id="carryoverBanner" style="display:none;margin-top:8px;background:rgba(255,208,96,.1);border:1px solid rgba(255,208,96,.3);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--yellow)"></div>
+  </div>
+
+  <!-- 주간 달력 -->
+  <div class="card">
+    <div class="sec-title">📆 주간 현황</div>
+    <div id="weekCalendar" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center"></div>
+    <div style="display:flex;gap:12px;margin-top:8px;justify-content:flex-end">
+      <span style="font-size:10px;color:var(--green)">✅ 달성</span>
+      <span style="font-size:10px;color:var(--yellow)">🟡 부분</span>
+      <span style="font-size:10px;color:var(--sub)">⬜ 미달</span>
+    </div>
+  </div>
+
+  <!-- 예상 수익 계산기 -->
+  <div class="card">
+    <div class="sec-title">💰 예상 수익 계산기</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+      <div>
+        <label>일 평균 조회수</label>
+        <input type="number" id="revViews" placeholder="예: 10000" value="10000" min="0" oninput="calcRevenue()">
+      </div>
+      <div>
+        <label>운영 영상 수</label>
+        <input type="number" id="revVidCnt" placeholder="예: 30" value="30" min="1" oninput="calcRevenue()">
+      </div>
+      <div>
+        <label>쿠팡 클릭률 (%)</label>
+        <input type="number" id="revCTR" placeholder="예: 3" value="3" min="0" max="100" step="0.1" oninput="calcRevenue()">
+      </div>
+      <div>
+        <label>구매 전환율 (%)</label>
+        <input type="number" id="revCVR" placeholder="예: 2" value="2" min="0" max="100" step="0.1" oninput="calcRevenue()">
+      </div>
+      <div>
+        <label>평균 주문금액 (원)</label>
+        <input type="number" id="revAOV" placeholder="예: 30000" value="30000" min="0" oninput="calcRevenue()">
+      </div>
+      <div>
+        <label>수수료율 (%)</label>
+        <input type="number" id="revComm" placeholder="예: 3" value="3" min="0" max="20" step="0.1" oninput="calcRevenue()">
+      </div>
+    </div>
+    <!-- 결과 테이블 -->
+    <div style="background:var(--card2);border-radius:10px;overflow:hidden">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;background:var(--card3);padding:8px 12px">
+        <span style="font-size:10px;font-weight:700;color:var(--sub)">기간</span>
+        <span style="font-size:10px;font-weight:700;color:var(--sub);text-align:right">클릭</span>
+        <span style="font-size:10px;font-weight:700;color:var(--sub);text-align:right">구매</span>
+        <span style="font-size:10px;font-weight:700;color:var(--accent);text-align:right">수익</span>
+      </div>
+      <div id="revTableDaily" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;padding:8px 12px;border-top:1px solid var(--border)">
+        <span style="font-size:12px;font-weight:700">일</span>
+        <span id="rv-d-click" style="font-size:12px;text-align:right;color:var(--txt)">-</span>
+        <span id="rv-d-buy" style="font-size:12px;text-align:right;color:var(--txt)">-</span>
+        <span id="rv-d-earn" style="font-size:12px;text-align:right;color:var(--green);font-weight:800">-</span>
+      </div>
+      <div id="revTableWeekly" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;padding:8px 12px;border-top:1px solid var(--border)">
+        <span style="font-size:12px;font-weight:700">주</span>
+        <span id="rv-w-click" style="font-size:12px;text-align:right;color:var(--txt)">-</span>
+        <span id="rv-w-buy" style="font-size:12px;text-align:right;color:var(--txt)">-</span>
+        <span id="rv-w-earn" style="font-size:12px;text-align:right;color:var(--green);font-weight:800">-</span>
+      </div>
+      <div id="revTableMonthly" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;padding:8px 12px;border-top:1px solid var(--border)">
+        <span style="font-size:12px;font-weight:700">월</span>
+        <span id="rv-m-click" style="font-size:12px;text-align:right;color:var(--txt)">-</span>
+        <span id="rv-m-buy" style="font-size:12px;text-align:right;color:var(--txt)">-</span>
+        <span id="rv-m-earn" style="font-size:12px;font-weight:900;text-align:right;color:var(--accent)">-</span>
+      </div>
+    </div>
+    <div style="margin-top:8px;font-size:10px;color:var(--sub);text-align:right">* 참고용 추정치 — 실제 수익과 다를 수 있음</div>
   </div>
 </div>
 
@@ -1918,6 +2047,8 @@ document.addEventListener('DOMContentLoaded',()=>{
       e.target.value='';
     }
   });
+  initSchedule();
+  calcRevenue();
 });
 function addCapTag(text){
   capTags.push(text);
@@ -2053,6 +2184,210 @@ function resetRemix(){
   _viralProdData=null;
   _curVSrc='tiktok';
   window._viralPlanData=null;
+}
+
+// ── SFX 마스터 볼륨 ──────────────────────────────────────────────────────
+function onSFXMasterVol(val){
+  document.getElementById('sfxMasterVolVal').textContent=val+'%';
+}
+
+// ── 자막 HSL 슬라이더 ────────────────────────────────────────────────────
+function onVSubHSL(){
+  const h=document.getElementById('vHueSlider').value;
+  const s=document.getElementById('vSatSlider').value;
+  const l=document.getElementById('vLitSlider').value;
+  document.getElementById('vHueVal').textContent=h+'°';
+  document.getElementById('vSatVal').textContent=s+'%';
+  document.getElementById('vLitVal').textContent=l+'%';
+  const color=`hsl(${h},${s}%,${l}%)`;
+  setVSubColor(color);
+}
+
+// ── 플랫폼별 최적화 힌트 ────────────────────────────────────────────────
+const PLAT_HINTS={
+  all:'모든 플랫폼 공통 최적화',
+  youtube:'📐 16:9 or 9:16 권장 · 제목 100자 이내 · #Shorts 필수 해시태그',
+  tiktok:'📐 9:16 필수 · 제목 150자 이내 · 트렌드 사운드 사용 권장',
+  instagram:'📐 9:16 필수 · 짧은 캡션 · 해시태그 5-10개 권장',
+  naver:'📐 9:16 권장 · 네이버 클립 채널 연동 · 쇼핑 태그 활용',
+  kakao:'📐 16:9 또는 9:16 · 카카오TV 채널 등록 · 키워드 중심 제목',
+  threads:'📐 1:1 or 4:5 · 짧은 문장 · 링크 프리뷰 활용',
+};
+function selViralPlat(plat,btn){
+  document.querySelectorAll('#viralPlatRow .plat-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const hint=document.getElementById('platOptHint');
+  if(hint) hint.textContent=PLAT_HINTS[plat]||'';
+}
+
+// ── 스케줄 관리 ─────────────────────────────────────────────────────────
+const SCHED_KEY='ss_schedule';
+const DAILY_GOAL=5;
+
+function getTodayKey(){
+  return new Date().toISOString().slice(0,10);
+}
+function loadSchedule(){
+  try{return JSON.parse(localStorage.getItem(SCHED_KEY)||'{}');}catch{return {};}
+}
+function saveSchedule(d){
+  localStorage.setItem(SCHED_KEY,JSON.stringify(d));
+}
+function getOrInitDay(sched,dateKey){
+  if(!sched[dateKey]) sched[dateKey]={uploads:[],carried:0};
+  return sched[dateKey];
+}
+
+function initSchedule(){
+  const sched=loadSchedule();
+  const today=getTodayKey();
+  const day=getOrInitDay(sched,today);
+
+  // 이월 계산 — 어제 미달분 확인
+  const yesterday=new Date(); yesterday.setDate(yesterday.getDate()-1);
+  const yKey=yesterday.toISOString().slice(0,10);
+  const yDay=sched[yKey];
+  if(yDay){
+    const yTotal=(yDay.uploads||[]).length+(yDay.carried||0);
+    const yShort=Math.max(0,DAILY_GOAL-yTotal);
+    if(yShort>0&&!day._carriedFromYesterday){
+      day.carried=(day.carried||0)+yShort;
+      day._carriedFromYesterday=true;
+      saveSchedule(sched);
+    }
+  }
+
+  // 날짜 레이블
+  const opts={month:'long',day:'numeric',weekday:'short'};
+  document.getElementById('todayDateLabel').textContent=new Date().toLocaleDateString('ko-KR',opts);
+
+  renderTodayChecklist(sched,today);
+  renderWeekCalendar(sched);
+  calcRevenue();
+}
+
+function renderTodayChecklist(sched,today){
+  const day=getOrInitDay(sched,today);
+  const effective=DAILY_GOAL+(day.carried||0);
+  const uploads=day.uploads||[];
+  const done=uploads.filter(u=>u.done).length;
+
+  document.getElementById('todayCountLabel').textContent=`${done} / ${effective}`;
+  const pct=Math.min(100,Math.round(done/effective*100));
+  document.getElementById('todayProgressBar').style.width=pct+'%';
+
+  const list=document.getElementById('todayChecklist');
+  list.innerHTML='';
+
+  for(let i=0;i<effective;i++){
+    const u=uploads[i]||{title:`영상 ${i+1}`,done:false};
+    const isCarried=i>=DAILY_GOAL;
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:8px;background:var(--card2);border-radius:8px;padding:8px 10px';
+    row.innerHTML=`
+      <input type="checkbox" id="uc${i}" ${u.done?'checked':''} onchange="toggleUploadDone(${i})" style="accent-color:var(--accent);width:16px;height:16px">
+      <input type="text" value="${u.title||''}" placeholder="${isCarried?'⬆️ 이월 영상':'영상 제목 입력'}" oninput="updateUploadTitle(${i},this.value)"
+        style="flex:1;background:transparent;border:none;color:${isCarried?'var(--yellow)':'var(--txt)'};font-size:12px;outline:none">
+      <span style="font-size:10px;color:${isCarried?'var(--yellow)':'var(--sub)'}">${isCarried?'이월':'#'+(i+1)}</span>`;
+    list.appendChild(row);
+  }
+
+  const banner=document.getElementById('carryoverBanner');
+  if(day.carried>0){
+    banner.style.display='block';
+    banner.textContent=`⬆️ 어제 ${day.carried}개 미달 → 오늘 목표 ${effective}개로 자동 이월됨`;
+  } else {
+    banner.style.display='none';
+  }
+}
+
+function addTodayUpload(){
+  const sched=loadSchedule();
+  const today=getTodayKey();
+  const day=getOrInitDay(sched,today);
+  if(!day.uploads) day.uploads=[];
+  day.uploads.push({title:'새 영상',done:false});
+  saveSchedule(sched);
+  renderTodayChecklist(sched,today);
+}
+
+function toggleUploadDone(idx){
+  const sched=loadSchedule();
+  const today=getTodayKey();
+  const day=getOrInitDay(sched,today);
+  if(!day.uploads) day.uploads=[];
+  if(!day.uploads[idx]) day.uploads[idx]={title:'영상 '+(idx+1),done:false};
+  day.uploads[idx].done=!day.uploads[idx].done;
+  saveSchedule(sched);
+  renderTodayChecklist(sched,today);
+  renderWeekCalendar(sched);
+}
+
+function updateUploadTitle(idx,val){
+  const sched=loadSchedule();
+  const today=getTodayKey();
+  const day=getOrInitDay(sched,today);
+  if(!day.uploads) day.uploads=[];
+  if(!day.uploads[idx]) day.uploads[idx]={title:val,done:false};
+  else day.uploads[idx].title=val;
+  saveSchedule(sched);
+}
+
+function renderWeekCalendar(sched){
+  const cal=document.getElementById('weekCalendar');
+  if(!cal) return;
+  cal.innerHTML='';
+  const days=['일','월','화','수','목','금','토'];
+  const today=new Date();
+  for(let i=6;i>=0;i--){
+    const d=new Date(today);
+    d.setDate(today.getDate()-i);
+    const key=d.toISOString().slice(0,10);
+    const day=sched[key];
+    const effective=DAILY_GOAL+(day?.carried||0);
+    const done=(day?.uploads||[]).filter(u=>u.done).length;
+    const isToday=i===0;
+    let emoji='⬜', color='var(--sub)';
+    if(day){
+      if(done>=effective){emoji='✅';color='var(--green)';}
+      else if(done>0){emoji='🟡';color='var(--yellow)';}
+    }
+    const cell=document.createElement('div');
+    cell.style.cssText=`text-align:center;padding:6px 2px;border-radius:8px;background:${isToday?'rgba(124,111,255,.15)':'transparent'};border:${isToday?'1px solid var(--accent)':'1px solid transparent'}`;
+    cell.innerHTML=`<div style="font-size:9px;color:${isToday?'var(--accent)':'var(--sub)'};font-weight:700;margin-bottom:3px">${days[d.getDay()]}</div>
+      <div style="font-size:16px">${emoji}</div>
+      <div style="font-size:9px;color:${color};font-weight:700;margin-top:2px">${done}/${effective}</div>`;
+    cal.appendChild(cell);
+  }
+}
+
+// ── 예상 수익 계산기 ─────────────────────────────────────────────────────
+function calcRevenue(){
+  const views=parseFloat(document.getElementById('revViews')?.value)||0;
+  const vids=parseFloat(document.getElementById('revVidCnt')?.value)||1;
+  const ctr=parseFloat(document.getElementById('revCTR')?.value)||0;
+  const cvr=parseFloat(document.getElementById('revCVR')?.value)||0;
+  const aov=parseFloat(document.getElementById('revAOV')?.value)||0;
+  const comm=parseFloat(document.getElementById('revComm')?.value)||0;
+
+  const totalViews=views*vids;
+  const clicks=totalViews*(ctr/100);
+  const buys=clicks*(cvr/100);
+  const earn=buys*aov*(comm/100);
+
+  function fmt(n){return n>=10000?Math.round(n/10000*10)/10+'만':Math.round(n).toLocaleString();}
+  function fmtW(n){return (n>=10000?Math.round(n/10000)+'만':'₩'+Math.round(n).toLocaleString())+'원';}
+
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  set('rv-d-click',fmt(clicks));
+  set('rv-d-buy',fmt(buys));
+  set('rv-d-earn',fmtW(earn));
+  set('rv-w-click',fmt(clicks*7));
+  set('rv-w-buy',fmt(buys*7));
+  set('rv-w-earn',fmtW(earn*7));
+  set('rv-m-click',fmt(clicks*30));
+  set('rv-m-buy',fmt(buys*30));
+  set('rv-m-earn',fmtW(earn*30));
 }
 </script>
 </body>
