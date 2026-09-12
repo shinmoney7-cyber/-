@@ -177,11 +177,30 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
 
   <!-- 상품 정보 -->
   <div class="card">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
       <div class="sec-title" style="margin-bottom:0">📦 상품 정보</div>
       <span style="font-size:10px;color:var(--green);font-weight:700" id="autoFillStatus"></span>
     </div>
-    <div style="font-size:11px;color:var(--sub);margin-bottom:8px">📌 이름 · 이미지 URL · 상품 URL 중 <b style="color:var(--accent)">하나만 입력</b>하면 나머지를 AI가 자동으로 채워줘요</div>
+
+    <!-- 통합 검색 바 -->
+    <div style="display:flex;gap:6px;margin-bottom:10px">
+      <input type="text" id="quickSearch"
+        placeholder="🔍 상품명 or 쿠팡/네이버/11번가 URL 붙여넣기"
+        style="flex:1;margin-bottom:0;font-size:13px"
+        oninput="scheduleAutoFill('qs')"
+        onkeydown="if(event.key==='Enter'){clearTimeout(_autoFillTimer);doAutoFill('qs')}">
+      <button id="searchBtn" onclick="clearTimeout(_autoFillTimer);doAutoFill('qs')"
+        style="padding:0 14px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;flex-shrink:0;min-height:42px">
+        AI 검색
+      </button>
+    </div>
+
+    <!-- 구분선 -->
+    <div style="position:relative;text-align:center;margin-bottom:8px">
+      <div style="position:absolute;top:50%;left:0;right:0;height:1px;background:var(--border)"></div>
+      <span style="position:relative;background:var(--card);padding:0 8px;font-size:10px;color:var(--sub);font-weight:700">또는 직접 입력</span>
+    </div>
+
     <div class="img-row">
       <div>
         <div class="img-ph" id="imgPh" onclick="document.getElementById('prodImg').focus()">📦</div>
@@ -196,11 +215,19 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
           oninput="previewImg(this.value);scheduleAutoFill('img')">
       </div>
     </div>
-    <label style="margin-top:8px">상품 URL <span style="color:var(--sub);font-weight:400">(쿠팡 / 네이버 / 11번가 등)</span></label>
-    <input type="url" id="prodUrl" placeholder="https://www.coupang.com/..." style="margin-bottom:8px"
-      oninput="scheduleAutoFill('url')">
-    <label>추가 정보 <span style="color:var(--sub);font-weight:400">(선택 — AI가 자동 보완해요)</span></label>
-    <textarea id="prodInfo" placeholder="가격, 특징, 타깃 등..." style="min-height:52px"></textarea>
+    <div style="display:grid;grid-template-columns:3fr 1fr;gap:6px;margin-top:8px">
+      <div>
+        <label>상품 URL <span style="color:var(--sub);font-weight:400">(쿠팡 / 네이버 / 11번가 등)</span></label>
+        <input type="url" id="prodUrl" placeholder="https://www.coupang.com/..." style="margin-bottom:0"
+          oninput="scheduleAutoFill('url')">
+      </div>
+      <div>
+        <label>가격</label>
+        <input type="text" id="prodPrice" placeholder="예: 89,000원" style="margin-bottom:0">
+      </div>
+    </div>
+    <label style="margin-top:8px">추가 정보 <span style="color:var(--sub);font-weight:400">(AI가 자동 채워줘요)</span></label>
+    <textarea id="prodInfo" placeholder="가격, 특징, 타깃, 키워드 등..." style="min-height:64px"></textarea>
   </div>
 
   <!-- 욕망/욕구 확장 -->
@@ -345,17 +372,35 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
   <div class="card">
     <div class="sec-title">🎙 음성 스타일</div>
     <div class="chip-row" id="voiceRow">
-      <div class="chip" data-type="voice" onclick="selChip(this,'voice',1)">😊 친근한 언니/오빠</div>
-      <div class="chip" data-type="voice" onclick="selChip(this,'voice',1)">🎓 전문가</div>
-      <div class="chip" data-type="voice" onclick="selChip(this,'voice',1)">😂 유머러스</div>
-      <div class="chip" data-type="voice" onclick="selChip(this,'voice',1)">💕 감성적</div>
-      <div class="chip" data-type="voice" onclick="selChip(this,'voice',1)">🚨 긴박감</div>
-      <div class="chip sel-voice" data-type="voice" onclick="selChip(this,'voice',1)">🔥 MZ 트렌디</div>
-      <div class="chip" data-type="voice" onclick="selChip(this,'voice',1)">🌸 따뜻한 엄마</div>
-      <div class="chip" data-type="voice" onclick="selChip(this,'voice',1)">💥 파워풀</div>
-      <div class="chip" data-type="voice" onclick="selChip(this,'voice',1)">🤫 ASMR 속삭임</div>
-      <div class="chip" data-type="voice" onclick="selChip(this,'voice',1)">🎉 신나는 쇼핑</div>
+      <div class="chip" data-type="voice">😊 친근한 언니/오빠</div>
+      <div class="chip" data-type="voice">🎓 전문가</div>
+      <div class="chip" data-type="voice">😂 유머러스</div>
+      <div class="chip" data-type="voice">💕 감성적</div>
+      <div class="chip" data-type="voice">🚨 긴박감</div>
+      <div class="chip sel-voice" data-type="voice">🔥 MZ 트렌디</div>
+      <div class="chip" data-type="voice">🌸 따뜻한 엄마</div>
+      <div class="chip" data-type="voice">💥 파워풀</div>
+      <div class="chip" data-type="voice">🤫 ASMR 속삭임</div>
+      <div class="chip" data-type="voice">🎉 신나는 쇼핑</div>
     </div>
+    <script>
+    (function(){
+      var row = document.getElementById('voiceRow');
+      if(!row) return;
+      row.addEventListener('click', function(e){
+        var el = e.target;
+        while(el && el !== row){
+          if(el.classList && el.classList.contains('chip')){
+            var chips = row.querySelectorAll('.chip');
+            for(var i=0;i<chips.length;i++) chips[i].classList.remove('sel-voice');
+            el.classList.add('sel-voice');
+            break;
+          }
+          el = el.parentElement;
+        }
+      });
+    })();
+    </script>
   </div>
 
   <!-- 자막 크기 + 음량 슬라이더 -->
@@ -1092,85 +1137,134 @@ function coupangDeepLink(kw){
 let _autoFillTimer = null;
 function scheduleAutoFill(src){
   clearTimeout(_autoFillTimer);
-  _autoFillTimer = setTimeout(()=>doAutoFill(src), 900);
+  _autoFillTimer = setTimeout(()=>doAutoFill(src), src==='img'?500:1200);
 }
+
+async function _fetchPageContent(targetUrl){
+  try {
+    const pr = await fetch('https://api.allorigins.win/get?url='+encodeURIComponent(targetUrl));
+    if(pr.ok){ const pj=await pr.json(); if(pj.contents) return pj.contents; }
+  } catch(_){}
+  try {
+    const pr = await fetch(targetUrl);
+    if(pr.ok) return await pr.text();
+  } catch(_){}
+  return '';
+}
+
+function _extractFromHtml(html){
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html
+    .replace(/<script[\s\S]*?<\/script>/gi,'')
+    .replace(/<style[\s\S]*?<\/style>/gi,'')
+    .replace(/<noscript[\s\S]*?<\/noscript>/gi,'');
+  const text = tmp.textContent.replace(/\s+/g,' ').trim().slice(0,2500);
+  const imgMatches = html.match(/https?:\/\/[^\s"'<>]+\.(?:jpg|jpeg|png|webp)(?:\?[^\s"'<>]*)?/gi)||[];
+  const imgUrl = imgMatches.find(u=>!/(icon|logo|thumb|1x1|pixel|banner|badge|sns)/i.test(u)&&u.length<300)||'';
+  const priceMatch = text.match(/[\d,]{3,9}\s*원/);
+  return {text, imgUrl, price: priceMatch?priceMatch[0]:''};
+}
+
 async function doAutoFill(src){
   if(!getKey()) return;
-  const name = document.getElementById('prodName').value.trim();
-  const img  = document.getElementById('prodImg').value.trim();
-  const url  = document.getElementById('prodUrl').value.trim();
-  if(!name && !img && !url) return;
+  const qsEl  = document.getElementById('quickSearch');
+  const qs    = qsEl ? qsEl.value.trim() : '';
+  const name  = document.getElementById('prodName').value.trim();
+  const img   = document.getElementById('prodImg').value.trim();
+  const url   = document.getElementById('prodUrl').value.trim();
+
+  const inputUrl  = (qs && /^https?:\/\//.test(qs)) ? qs : url;
+  const inputName = (qs && !/^https?:\/\//.test(qs)) ? qs : name;
+
+  if(!inputName && !img && !inputUrl) return;
 
   const st = document.getElementById('autoFillStatus');
-  st.textContent = '⏳ AI 자동채우기 중...';
+  const searchBtn = document.getElementById('searchBtn');
+  st.textContent = '⏳ 상품 분석 중...';
+  if(searchBtn){ searchBtn.disabled=true; searchBtn.textContent='분석 중...'; }
 
-  const jsonSchema = '{"name":"정확한 상품명","info":"핵심 특징 및 장점 3-4줄","price_range":"가격대 추정 (예: 2-3만원대)","target":"타깃 고객 (예: 20-30대 여성)","category":"주방/뷰티/패션/건강/리빙/전자기기/스포츠/기타 중 하나","keywords":"쿠팡 검색 키워드 3개 (쉼표 구분)"}';
+  const jsonSchema = '{"name":"정확한 상품명","price":"가격 (예: 89,000원, 없으면 빈값)","info":"핵심 특징·장점 3-4줄","price_range":"가격대 (예: 8-10만원대)","target":"타깃 고객 (예: 20-30대 여성)","category":"주방/뷰티/패션/건강/리빙/전자기기/스포츠/기타 중 하나","keywords":"쿠팡 검색 키워드 3개 (쉼표 구분)","img_url":"상품 대표 이미지 URL (있으면, 없으면 빈값)"}';
 
   try {
     let messages;
+    let extractedImg='', extractedPrice='', pageText='';
 
-    if(img && /^https?:\/\//.test(img)){
-      // 이미지 URL → 비전 API로 상품 분석
-      const textLines = ['이 상품 이미지를 분석해서 아래 JSON만 반환해 (코드블록 없이):', jsonSchema];
-      if(name) textLines.push(`참고 상품명: ${name}`);
-      if(url)  textLines.push(`참고 상품URL: ${url}`);
-      messages = [{role:'user', content:[
-        {type:'image', source:{type:'url', url:img}},
-        {type:'text', text:textLines.join('\n')}
-      ]}];
-    } else {
-      // URL 또는 상품명으로 추론
-      let pageHint = '';
-      if(url){
-        try {
-          const pr = await fetch(url);
-          if(pr.ok){
-            const html = await pr.text();
-            const tmp = document.createElement('div');
-            tmp.innerHTML = html.replace(/<script[\s\S]*?<\/script>/gi,'').replace(/<style[\s\S]*?<\/style>/gi,'');
-            pageHint = tmp.textContent.replace(/\s+/g,' ').slice(0,1500);
-          }
-        } catch(_){}
-      }
-      const parts = [];
-      if(url)  parts.push(`상품URL: ${url}`);
-      if(name) parts.push(`상품명: ${name}`);
-      if(pageHint) parts.push(`페이지 내용 (일부): ${pageHint}`);
-      const prompt = [
-        '쇼핑 상품 분석가야. 아래 정보로 빠진 모든 항목을 추론해서 채워줘.',
-        parts.join('\n'),
-        '',
-        `JSON만 반환 (코드블록 없이):`,
-        jsonSchema
-      ].join('\n');
-      messages = [{role:'user', content:prompt}];
+    if(inputUrl){
+      st.textContent = '⏳ 페이지 읽는 중...';
+      const html = await _fetchPageContent(inputUrl);
+      if(html){ const ex=_extractFromHtml(html); pageText=ex.text; extractedImg=ex.imgUrl; extractedPrice=ex.price; }
     }
 
+    if(img && /^https?:\/\//.test(img)){
+      const textLines=['이 상품 이미지 분석 → JSON만 반환 (코드블록 없이):', jsonSchema];
+      if(inputName) textLines.push('참고 상품명: '+inputName);
+      if(inputUrl)  textLines.push('참고 URL: '+inputUrl);
+      if(pageText)  textLines.push('페이지 내용: '+pageText.slice(0,800));
+      messages=[{role:'user',content:[
+        {type:'image',source:{type:'url',url:img}},
+        {type:'text',text:textLines.join('\n')}
+      ]}];
+    } else {
+      const parts=[];
+      if(inputUrl)  parts.push('상품URL: '+inputUrl);
+      if(inputName) parts.push('상품명: '+inputName);
+      if(pageText)  parts.push('페이지 내용: '+pageText);
+      if(extractedPrice) parts.push('페이지 추출 가격: '+extractedPrice);
+      messages=[{role:'user',content:[
+        {type:'text',text:[
+          '쇼핑 상품 분석 전문가야. 아래 정보로 모든 항목을 최대한 정확하게 채워줘.',
+          parts.join('\n'),'','JSON만 반환 (코드블록 없이):',jsonSchema
+        ].join('\n')}
+      ]}];
+    }
+
+    st.textContent = '⏳ AI 분석 중...';
     const r = await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST', headers:getHeaders(),
-      body:JSON.stringify({model:'claude-sonnet-4-5', max_tokens:600, messages})
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:800,messages})
     });
     const resp = await r.json();
     if(!r.ok) throw new Error(resp.error?.message||'API 오류');
     const d = parseJSON(resp.content?.[0]?.text||'');
-    if(!d) throw new Error('파싱 실패');
+    if(!d||!d.name) throw new Error('파싱 실패');
 
-    if(d.name && !name) document.getElementById('prodName').value = d.name;
+    const nameEl=document.getElementById('prodName');
+    const imgEl=document.getElementById('prodImg');
+    const urlEl=document.getElementById('prodUrl');
+    const priceEl=document.getElementById('prodPrice');
+    const infoEl=document.getElementById('prodInfo');
 
-    const infoEl = document.getElementById('prodInfo');
-    if(!infoEl.value.trim() && d.info){
-      const lines = [d.info];
-      if(d.price_range) lines.push(`💰 가격대: ${d.price_range}`);
-      if(d.target)      lines.push(`👤 타깃: ${d.target}`);
-      if(d.keywords)    lines.push(`🔑 키워드: ${d.keywords}`);
-      infoEl.value = lines.join('\n');
+    if(d.name) nameEl.value=d.name;
+
+    const finalImg=d.img_url||extractedImg;
+    if(finalImg && !imgEl.value.trim()){ imgEl.value=finalImg; previewImg(finalImg); }
+
+    if(inputUrl && !urlEl.value.trim()) urlEl.value=inputUrl;
+
+    const finalPrice=d.price||extractedPrice;
+    if(finalPrice && priceEl && !priceEl.value.trim()) priceEl.value=finalPrice;
+
+    const forceRefill=(src==='qs');
+    if(!infoEl.value.trim()||forceRefill){
+      const lines=[];
+      if(d.info)        lines.push(d.info);
+      if(d.price_range) lines.push('💰 가격대: '+d.price_range);
+      if(finalPrice)    lines.push('💵 가격: '+finalPrice);
+      if(d.target)      lines.push('👤 타깃: '+d.target);
+      if(d.category)    lines.push('📂 카테고리: '+d.category);
+      if(d.keywords)    lines.push('🔑 키워드: '+d.keywords);
+      infoEl.value=lines.filter(Boolean).join('\n');
     }
 
-    st.textContent = '✓ 자동채우기 완료';
-    setTimeout(()=>st.textContent='', 2500);
+    if(qsEl && qs) qsEl.value='';
+    st.textContent='✓ 상품정보 채우기 완료!';
+    setTimeout(()=>st.textContent='',3000);
   } catch(e){
-    st.textContent = '⚠️ 자동채우기 실패';
-    setTimeout(()=>st.textContent='', 2000);
+    console.error('[doAutoFill]',e);
+    st.textContent='⚠️ 분석 실패 — API 키 확인';
+    setTimeout(()=>st.textContent='',3000);
+  } finally {
+    if(searchBtn){ searchBtn.disabled=false; searchBtn.textContent='AI 검색'; }
   }
 }
 
@@ -1690,6 +1784,7 @@ async function generateShorts(){
     '',
     `상품명: ${name}`,
     url?`상품URL: ${url}`:'',
+    (()=>{ const p=document.getElementById('prodPrice')?.value?.trim(); return p?`가격: ${p}`:''; })(),
     info?`추가정보: ${info}`:'',
     desires.length?`공략할 심리: ${desires.join(', ')}`:'',
     (()=>{ const t=getSelectedTrends(); return t.length?`반드시 활용할 유행어·트렌드: ${t.join(', ')}`:''; })(),
