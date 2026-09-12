@@ -172,20 +172,30 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
     </div>
   </div>
 
-  <!-- 자막 크기 (10개) -->
+  <!-- 자막 크기 + 음량 슬라이더 -->
   <div class="card">
-    <div class="sec-title">📝 자막 크기</div>
-    <div class="chip-row" id="sizeRow">
-      <div class="chip" data-size="12" data-type="size" onclick="selChip(this,'size',1)">12px</div>
-      <div class="chip" data-size="14" data-type="size" onclick="selChip(this,'size',1)">14px</div>
-      <div class="chip sel-size" data-size="16" data-type="size" onclick="selChip(this,'size',1)">16px</div>
-      <div class="chip" data-size="18" data-type="size" onclick="selChip(this,'size',1)">18px</div>
-      <div class="chip" data-size="20" data-type="size" onclick="selChip(this,'size',1)">20px</div>
-      <div class="chip" data-size="22" data-type="size" onclick="selChip(this,'size',1)">22px</div>
-      <div class="chip" data-size="24" data-type="size" onclick="selChip(this,'size',1)">24px</div>
-      <div class="chip" data-size="28" data-type="size" onclick="selChip(this,'size',1)">28px</div>
-      <div class="chip" data-size="32" data-type="size" onclick="selChip(this,'size',1)">32px</div>
-      <div class="chip" data-size="36" data-type="size" onclick="selChip(this,'size',1)">36px</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div>
+        <div class="sec-title" style="margin-bottom:6px">📝 자막 크기</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">
+          <span style="font-size:11px;color:var(--sub)">작게</span>
+          <span id="subtitleSizeVal" style="font-size:13px;font-weight:800;color:var(--yellow)">16px</span>
+          <span style="font-size:11px;color:var(--sub)">크게</span>
+        </div>
+        <input type="range" id="subtitleSlider" min="10" max="40" value="16" step="1"
+          style="accent-color:var(--yellow)"
+          oninput="onSubtitleSlide(this.value)">
+      </div>
+      <div>
+        <div class="sec-title" style="margin-bottom:6px">🔊 음량</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">
+          <span style="font-size:11px;color:var(--sub)">🔇</span>
+          <span id="volumeVal" style="font-size:13px;font-weight:800;color:var(--accent)">100%</span>
+          <span style="font-size:11px;color:var(--sub)">🔊</span>
+        </div>
+        <input type="range" id="volumeSlider" min="0" max="200" value="100" step="5"
+          oninput="onVolumeSlide(this.value)">
+      </div>
     </div>
     <!-- 자막 미리보기 -->
     <div id="captionPreview" style="margin-top:10px;padding:10px 14px;background:#000;border-radius:8px;text-align:center;color:#fff;font-weight:700;display:none"></div>
@@ -646,6 +656,22 @@ function selChip(el, type, max){
 function getSelected(type){
   const selClass = type==='desire'?'sel-desire':type==='voice'?'sel-voice':'sel-size';
   return [...document.querySelectorAll(`.chip[data-type="${type}"].${selClass}`)].map(c=>c.textContent.trim());
+}
+
+let curVolume = 100;
+
+function onSubtitleSlide(val){
+  curSubtitleSize = parseInt(val);
+  document.getElementById('subtitleSizeVal').textContent = val+'px';
+  updateCaptionPreview();
+  updateScriptSizes();
+}
+
+function onVolumeSlide(val){
+  curVolume = parseInt(val);
+  document.getElementById('volumeVal').textContent = val+'%';
+  // 페이지 내 재생 중인 오디오 전체에 적용
+  document.querySelectorAll('audio,video').forEach(el=>{ el.volume = Math.min(1, curVolume/100); });
 }
 
 function updateCaptionPreview(){
