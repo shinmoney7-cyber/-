@@ -209,6 +209,16 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
   </div>
 </div>
 
+<!-- ══ API 키 발급 클릭바 ══════════════════════════════ -->
+<div style="padding:0 16px 10px;max-width:560px;margin:0 auto">
+  <a href="https://console.anthropic.com/settings/keys" target="_blank"
+    style="display:flex;align-items:center;justify-content:center;gap:10px;padding:13px 18px;border-radius:14px;border:1.5px solid rgba(124,111,255,.5);background:linear-gradient(135deg,rgba(124,111,255,.13),rgba(255,107,138,.08));color:var(--accent);font-size:14px;font-weight:900;text-decoration:none;transition:.2s;letter-spacing:-.3px"
+    onmouseover="this.style.background='linear-gradient(135deg,rgba(124,111,255,.22),rgba(255,107,138,.14))';"
+    onmouseout="this.style.background='linear-gradient(135deg,rgba(124,111,255,.13),rgba(255,107,138,.08))';">
+    🔑 Claude API 키 발급받기 <span style="font-size:11px;opacity:.7;font-weight:600">console.anthropic.com →</span>
+  </a>
+</div>
+
 <div class="tabs">
   <button class="tab active" onclick="switchTab('shorts',this)">🎬 쇼츠 생성</button>
   <button class="tab" onclick="switchTab('viral',this)">🔗 바이럴 연동</button>
@@ -217,6 +227,26 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
 
 <!-- ══ Tab 1: 쇼핑쇼츠 생성 ══════════════════════════════ -->
 <div id="panel-shorts" class="panel active">
+
+  <!-- 결과 영역 (항상 맨 위) -->
+  <div id="shortsResult" style="display:none;margin-bottom:12px">
+    <div class="rtabs" id="scriptTabs"></div>
+    <div id="scriptPanels"></div>
+
+    <!-- 추가 생성 클릭바 -->
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button onclick="addOneScript()" id="addScriptBtn"
+        style="flex:1;padding:12px;border-radius:12px;border:2px dashed var(--accent);background:rgba(124,111,255,.08);color:var(--accent);font-size:13px;font-weight:800;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:6px"
+        onmouseover="this.style.background='rgba(124,111,255,.18)'" onmouseout="this.style.background='rgba(124,111,255,.08)'">
+        ＋ 대본 추가 생성
+      </button>
+      <button onclick="generateShorts()"
+        style="flex:1;padding:12px;border-radius:12px;border:2px dashed var(--accent2);background:rgba(255,107,138,.08);color:var(--accent2);font-size:13px;font-weight:800;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:6px"
+        onmouseover="this.style.background='rgba(255,107,138,.18)'" onmouseout="this.style.background='rgba(255,107,138,.08)'">
+        🔄 전체 새로 생성
+      </button>
+    </div>
+  </div>
 
   <!-- 상품 정보 -->
   <div class="card">
@@ -495,25 +525,6 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
     ✨ 대본 5개 생성
   </button>
 
-  <!-- 결과 영역 -->
-  <div id="shortsResult" style="display:none;margin-top:12px">
-    <div class="rtabs" id="scriptTabs"></div>
-    <div id="scriptPanels"></div>
-
-    <!-- 추가 생성 클릭바 -->
-    <div style="display:flex;gap:8px;margin-top:12px">
-      <button onclick="addOneScript()" id="addScriptBtn"
-        style="flex:1;padding:12px;border-radius:12px;border:2px dashed var(--accent);background:rgba(124,111,255,.08);color:var(--accent);font-size:13px;font-weight:800;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:6px"
-        onmouseover="this.style.background='rgba(124,111,255,.18)'" onmouseout="this.style.background='rgba(124,111,255,.08)'">
-        ＋ 대본 추가 생성
-      </button>
-      <button onclick="generateShorts()"
-        style="flex:1;padding:12px;border-radius:12px;border:2px dashed var(--accent2);background:rgba(255,107,138,.08);color:var(--accent2);font-size:13px;font-weight:800;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:6px"
-        onmouseover="this.style.background='rgba(255,107,138,.18)'" onmouseout="this.style.background='rgba(255,107,138,.08)'">
-        🔄 전체 새로 생성
-      </button>
-    </div>
-  </div>
 </div>
 
 <!-- ══ Tab 2: 바이럴 리믹서 ════════════════════════════ -->
@@ -1849,7 +1860,9 @@ async function generateShorts(){
 
   const btn = document.getElementById('genBtn');
   btn.disabled=true; btn.innerHTML='<div class="spinner"></div> 5개 대본 생성 중...';
-  document.getElementById('shortsResult').style.display='block';
+  const _sr = document.getElementById('shortsResult');
+  _sr.style.display='block';
+  _sr.scrollIntoView({behavior:'smooth',block:'start'});
   document.getElementById('scriptTabs').innerHTML='';
   document.getElementById('scriptPanels').innerHTML='<div class="loading-overlay"><div class="sp"></div><div>AI가 5가지 각도로 대본을 작성하고 있어요...</div></div>';
 
