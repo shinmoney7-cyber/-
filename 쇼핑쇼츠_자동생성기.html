@@ -157,6 +157,7 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
   .tab{font-size:10px;padding:9px 2px}
   .chip{padding:7px 10px;font-size:12px}
 }
+@keyframes _pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
 </style>
 </head>
 <body>
@@ -164,6 +165,48 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
 <div class="topbar">
   <div class="logo">🛍 쇼핑쇼츠 AI</div>
   <button class="set-btn" onclick="openSettings()">⚙️ 설정</button>
+</div>
+
+<!-- ══ API 키 설정 카드 (항상 표시) ══════════════════════ -->
+<div id="apiKeyCard" style="padding:10px 16px;max-width:560px;margin:0 auto">
+  <!-- 미설정 상태 -->
+  <div id="apiKeySetup" style="background:linear-gradient(135deg,rgba(255,59,92,.12),rgba(255,107,138,.08));border:1.5px solid rgba(255,59,92,.4);border-radius:14px;padding:14px 14px 12px;display:none">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <div style="width:8px;height:8px;border-radius:50%;background:#ff3b5c;box-shadow:0 0 8px #ff3b5c;flex-shrink:0;animation:_pulse 1.4s ease-in-out infinite"></div>
+      <span style="font-size:13px;font-weight:900;color:#ff6b8a">Claude API 키 미설정 — 먼저 입력해주세요</span>
+      <a href="https://console.anthropic.com/settings/keys" target="_blank" style="margin-left:auto;font-size:11px;color:var(--accent);font-weight:700;text-decoration:none;white-space:nowrap;border:1px solid rgba(124,111,255,.4);padding:3px 8px;border-radius:8px;background:rgba(124,111,255,.08);flex-shrink:0">🔑 키 발급 →</a>
+    </div>
+    <div style="display:flex;gap:6px">
+      <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-... 붙여넣기"
+        style="flex:1;margin-bottom:0;font-size:13px;border-color:rgba(255,59,92,.5)"
+        onkeydown="if(event.key==='Enter')saveApiKey()"
+        oninput="document.getElementById('apiKeyInput').style.borderColor=this.value?'var(--accent)':'rgba(255,59,92,.5)'">
+      <button onclick="toggleApiKeyVisibility()" id="eyeBtn"
+        style="padding:0 11px;border-radius:10px;border:1px solid var(--border);background:var(--card2);color:var(--sub);font-size:15px;cursor:pointer;flex-shrink:0" title="보기/숨기기">👁</button>
+      <button onclick="saveApiKey()"
+        style="padding:0 14px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:13px;font-weight:800;cursor:pointer;flex-shrink:0;white-space:nowrap">
+        💾 저장
+      </button>
+    </div>
+    <div style="font-size:11px;color:var(--sub);margin-top:7px;line-height:1.5">① 위 <b style="color:var(--accent)">키 발급 →</b> 클릭 → Anthropic 콘솔에서 키 복사 → ② 여기 붙여넣고 <b style="color:var(--accent)">저장</b></div>
+  </div>
+
+  <!-- 설정됨 상태 -->
+  <div id="apiKeyDone" style="background:rgba(32,217,160,.08);border:1.5px solid rgba(32,217,160,.35);border-radius:14px;padding:11px 14px;display:none">
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="width:8px;height:8px;border-radius:50%;background:#20d9a0;flex-shrink:0"></div>
+      <span id="apiKeyMasked" style="font-size:12px;font-weight:700;color:#20d9a0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">sk-ant-...설정됨</span>
+      <button onclick="testApiKey()" id="testKeyBtn"
+        style="font-size:11px;padding:4px 10px;border-radius:8px;border:1px solid rgba(32,217,160,.5);background:rgba(32,217,160,.12);color:#20d9a0;cursor:pointer;font-weight:700;white-space:nowrap;flex-shrink:0">
+        ✓ 테스트
+      </button>
+      <button onclick="changeApiKey()"
+        style="font-size:11px;padding:4px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--sub);cursor:pointer;font-weight:700;white-space:nowrap;flex-shrink:0">
+        변경
+      </button>
+    </div>
+    <div id="testKeyResult" style="font-size:11px;margin-top:6px;padding:6px 10px;border-radius:8px;display:none"></div>
+  </div>
 </div>
 
 <div class="tabs">
@@ -2114,13 +2157,83 @@ function openSettings(focusKey=false){
   updateKeyBadge();
 }
 function updateKeyBadge(){
-  const badge = document.getElementById('_keyBadge');
-  if(!badge) return;
+  // 상단 인라인 카드 업데이트
   const has = !!getKey();
-  badge.textContent = has ? '✅ API 키 설정됨' : '⚠️ API 키 없음 — 버튼을 눌러 설정';
-  badge.style.background = has ? 'rgba(32,217,160,.15)' : 'rgba(255,59,92,.13)';
-  badge.style.color = has ? '#20d9a0' : '#ff3b5c';
-  badge.style.borderColor = has ? 'rgba(32,217,160,.35)' : 'rgba(255,59,92,.35)';
+  const setup = document.getElementById('apiKeySetup');
+  const done  = document.getElementById('apiKeyDone');
+  const masked= document.getElementById('apiKeyMasked');
+  if(setup) setup.style.display = has ? 'none' : 'block';
+  if(done)  done.style.display  = has ? 'block' : 'none';
+  if(masked && has){
+    const k = getKey();
+    masked.textContent = k.length > 12 ? k.slice(0,10)+'···'+k.slice(-4) : '설정됨';
+  }
+  // 버튼 위 작은 배지 업데이트
+  const badge = document.getElementById('_keyBadge');
+  if(badge){
+    badge.textContent = has ? '✅ API 키 설정됨' : '⚠️ API 키 없음 — 여기를 눌러 설정';
+    badge.style.background = has ? 'rgba(32,217,160,.15)' : 'rgba(255,59,92,.13)';
+    badge.style.color = has ? '#20d9a0' : '#ff3b5c';
+    badge.style.borderColor = has ? 'rgba(32,217,160,.35)' : 'rgba(255,59,92,.35)';
+  }
+  // 테스트 결과 초기화
+  const res = document.getElementById('testKeyResult');
+  if(res) res.style.display='none';
+}
+
+// ── 상단 API 키 카드 전용 함수 ────────────────────────────
+let _apiKeyVisible = false;
+function toggleApiKeyVisibility(){
+  const inp = document.getElementById('apiKeyInput');
+  if(!inp) return;
+  _apiKeyVisible = !_apiKeyVisible;
+  inp.type = _apiKeyVisible ? 'text' : 'password';
+  document.getElementById('eyeBtn').textContent = _apiKeyVisible ? '🙈' : '👁';
+}
+function saveApiKey(){
+  const val = (document.getElementById('apiKeyInput')?.value||'').trim();
+  if(!val){ showToast('API 키를 입력해줘!','warn'); return; }
+  if(!val.startsWith('sk-')){ showToast('올바른 Claude API 키는 sk- 로 시작해야 해','error',4000); return; }
+  LS.set('ss_claude_key', val);
+  // 설정창의 키도 동기화
+  const modalEl = document.getElementById('claudeKey');
+  if(modalEl) modalEl.value = val;
+  updateKeyBadge();
+  showToast('✅ API 키 저장 완료!','success');
+}
+function changeApiKey(){
+  const k = getKey();
+  const inp = document.getElementById('apiKeyInput');
+  if(inp) inp.value = k || '';
+  LS.set('ss_claude_key','');
+  updateKeyBadge();
+  setTimeout(()=>{ if(inp){ inp.focus(); inp.select(); } },80);
+}
+async function testApiKey(){
+  const btn = document.getElementById('testKeyBtn');
+  const res  = document.getElementById('testKeyResult');
+  if(!getKey()){ showToast('API 키가 없어!','warn'); return; }
+  if(btn){ btn.disabled=true; btn.textContent='테스트 중...'; }
+  if(res){ res.style.display='none'; }
+  try{
+    const r = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST', headers:getHeaders(),
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:10,messages:[{role:'user',content:'hi'}]})
+    });
+    const d = await r.json();
+    if(r.ok && d.content){
+      if(res){ res.style.cssText='display:block;background:rgba(32,217,160,.12);color:#20d9a0;border:1px solid rgba(32,217,160,.4);'; res.textContent='✅ API 키 정상 작동 확인됨!'; }
+      showToast('✅ API 키 정상!','success');
+    } else {
+      const msg = d.error?.message||'오류';
+      if(res){ res.style.cssText='display:block;background:rgba(255,59,92,.1);color:#ff6b8a;border:1px solid rgba(255,59,92,.3);'; res.textContent='❌ 오류: '+msg; }
+      showToast('API 키 오류: '+msg,'error',5000);
+    }
+  } catch(e){
+    if(res){ res.style.cssText='display:block;background:rgba(255,59,92,.1);color:#ff6b8a;border:1px solid rgba(255,59,92,.3);'; res.textContent='❌ 네트워크 오류 — '+e.message; }
+    showToast('네트워크 오류','error');
+  }
+  if(btn){ btn.disabled=false; btn.textContent='✓ 테스트'; }
 }
 function closeSettings(){document.getElementById('settingsModal').classList.remove('open');}
 function closeIfBg(e){if(e.target.id==='settingsModal')closeSettings();}
