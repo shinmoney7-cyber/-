@@ -1111,6 +1111,29 @@ const VOICE_PROMPTS = {
   '🎉 신나는 쇼핑': '활기차고 에너제틱한 쇼핑 호스트 톤.',
 };
 
+// ── 토스트 알림 (iframe에서 alert 차단 대체) ──────────────
+function showToast(msg, type='info', dur=3200){
+  let wrap = document.getElementById('_toastWrap');
+  if(!wrap){
+    wrap = document.createElement('div');
+    wrap.id = '_toastWrap';
+    wrap.style.cssText='position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:99999;display:flex;flex-direction:column;gap:8px;pointer-events:none;width:min(92vw,360px)';
+    document.body.appendChild(wrap);
+  }
+  const colors={info:'#7c6fff',success:'#20d9a0',warn:'#ffd060',error:'#ff6b8a'};
+  const t=document.createElement('div');
+  t.style.cssText=`background:${colors[type]||colors.info};color:#fff;padding:12px 18px;border-radius:12px;font-size:13px;font-weight:700;box-shadow:0 4px 24px rgba(0,0,0,.4);animation:_tSlide .25s ease;text-align:center;line-height:1.5`;
+  t.textContent=msg;
+  if(!document.getElementById('_toastKf')){
+    const s=document.createElement('style');
+    s.id='_toastKf';
+    s.textContent='@keyframes _tSlide{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:none}}';
+    document.head.appendChild(s);
+  }
+  wrap.appendChild(t);
+  setTimeout(()=>t.remove(), dur);
+}
+
 // ── 스토리지 ──────────────────────────────────────────────
 const LS = { get: k => localStorage.getItem(k)||'', set:(k,v)=>localStorage.setItem(k,v) };
 function getKey(){ return LS.get('ss_claude_key'); }
@@ -1177,7 +1200,7 @@ function _extractFromHtml(html){
 }
 
 async function doAutoFill(src){
-  if(!getKey()) return;
+  if(!getKey()){ showToast('⚙️ 먼저 설정에서 Claude API 키를 입력해줘!','warn',4000); openSettings(); return; }
   const qsEl  = document.getElementById('quickSearch');
   const qs    = qsEl ? qsEl.value.trim() : '';
   const name  = document.getElementById('prodName').value.trim();
@@ -1386,7 +1409,7 @@ async function addOneScript(){
     lastScripts.push(d);
     initPreview(newIdx, d.hook||'');
     panel.scrollIntoView({behavior:'smooth',block:'nearest'});
-  } catch(e){ alert('추가 생성 실패: '+e.message); }
+  } catch(e){ showToast('추가 생성 실패: '+e.message,'error'); }
   finally { btn.disabled=false; btn.innerHTML=origTxt; }
 }
 
@@ -1770,9 +1793,14 @@ function previewImg(url){
 
 // ── 쇼츠 생성 (5개 대본) ──────────────────────────────────
 async function generateShorts(){
-  const name = document.getElementById('prodName').value.trim();
-  if(!name){ alert('상품명을 입력해줘.'); return; }
-  if(!getKey()){ openSettings(); return; }
+  const qs = document.getElementById('quickSearch')?.value?.trim();
+  let name = document.getElementById('prodName').value.trim();
+  if(!name && qs && !/^https?:\/\//.test(qs)){
+    document.getElementById('prodName').value = qs;
+    name = qs;
+  }
+  if(!name){ showToast('📦 상품명 또는 상품 URL을 먼저 입력해줘!','warn'); return; }
+  if(!getKey()){ showToast('⚙️ 설정에서 Claude API 키를 입력해줘!','warn',4000); openSettings(); return; }
 
   const btn = document.getElementById('genBtn');
   btn.disabled=true; btn.innerHTML='<div class="spinner"></div> 5개 대본 생성 중...';
@@ -1909,7 +1937,7 @@ async function regenOne(i){
     if(ctaEl) ctaEl.value=d.cta||'';
     const badge=document.querySelector(`#sp-${i} .angle-badge`);
     if(badge&&d.angle) badge.textContent=d.angle;
-  } catch(e){ alert('재생성 실패: '+e.message); }
+  } catch(e){ showToast('재생성 실패: '+e.message,'error'); }
   finally { [hookEl,scriptEl,hashEl,ctaEl].forEach(el=>{if(el)el.style.opacity='1';}); }
 }
 
@@ -2027,7 +2055,7 @@ async function analyzeViral(){
   const single=document.getElementById('viralUrl').value.trim();
   const multi=document.getElementById('viralUrls').value.trim();
   const allUrls=[...new Set([single,...multi.split('\n').map(s=>s.trim())].filter(Boolean))];
-  if(!allUrls.length){alert('링크를 입력해줘.');return;}
+  if(!allUrls.length){showToast('링크를 입력해줘.','warn');return;}
   if(!getKey()){openSettings();return;}
   const btn=document.getElementById('viralBtn');
   btn.disabled=true; btn.innerHTML='<div class="spinner"></div> 분석 중...';
@@ -2140,7 +2168,7 @@ function loadPcVideo(n, input){
 
 async function loadViralPreview(){
   const url=document.getElementById('viralUrl').value.trim();
-  if(!url){alert('URL을 입력해줘.');return;}
+  if(!url){showToast('URL을 입력해줘.','warn');return;}
   const box=document.getElementById('viralEmbed');
   box.style.display='block';
   if(/youtube\.com|youtu\.be/.test(url)){
@@ -2462,7 +2490,7 @@ async function analyzeViralVideo(){
   const prodName = document.getElementById('viralProdName').value.trim();
   const srcUrl = document.getElementById('viralSrcUrl')?.value?.trim()||'';
   const vidFile = document.getElementById('mainVidFile').files[0];
-  if(!desc && !prodName && !vidFile && !srcUrl){alert('영상 URL, 내용 설명, 또는 상품명 중 하나를 입력해줘.');return;}
+  if(!desc && !prodName && !vidFile && !srcUrl){showToast('영상 URL, 내용 설명, 또는 상품명 중 하나를 입력해줘.','warn');return;}
 
   const btn = document.getElementById('viralAnalyzeBtn');
   btn.disabled=true;
@@ -2557,7 +2585,7 @@ async function analyzeViralVideo(){
     window._viralPlanData = d;
 
   }catch(e){
-    alert('오류: '+e.message);
+    showToast('오류: '+e.message,'error');
   }finally{
     btn.disabled=false;
     btn.innerHTML='🚀 바이럴 리메이크 + 쿠팡 자동연동 시작';
@@ -2634,7 +2662,7 @@ async function genDubbingScript(){
   try{
     const raw=await callClaude(prompt,800);
     document.getElementById('dubScript').value=raw.trim();
-  }catch(e){alert('대본 생성 실패: '+e.message);}
+  }catch(e){showToast('대본 생성 실패: '+e.message,'error');}
   finally{btn.innerHTML='📝 화면 분석에서 대본 만들기';btn.disabled=false;}
 }
 
@@ -2705,7 +2733,7 @@ async function genTitleDesc(){
     document.getElementById('titleDescText').value=d.title_desc||raw;
     document.getElementById('pinnedComment').value=d.pinned||'';
     document.getElementById('titleDescResult').style.display='block';
-  }catch(e){alert('생성 실패: '+e.message);}
+  }catch(e){showToast('생성 실패: '+e.message,'error');}
   finally{btn.disabled=false;btn.innerHTML='📝 제목·설명·고정댓글 생성하기';}
 }
 
@@ -3071,7 +3099,7 @@ async function oneClickComplete(){
   const qs   = document.getElementById('quickSearch')?.value?.trim();
 
   if(!name && !img && !url && !qs){
-    alert('상품명, 이미지 URL, 상품 URL 중 하나는 입력해줘!');
+    showToast('📦 상품명, 이미지 URL, 상품 URL 중 하나는 입력해줘!','warn');
     return;
   }
 
@@ -3091,7 +3119,7 @@ async function oneClickComplete(){
 
     // Step 2: 대본 생성
     const nameNow = document.getElementById('prodName')?.value?.trim();
-    if(!nameNow){ alert('상품명이 채워지지 않았어. 직접 입력해줘.'); if(btn){btn.disabled=false;setMsg('🚀 AI 원클릭 완성 — 입력→대본→영상→게시');} return; }
+    if(!nameNow){ showToast('상품명이 채워지지 않았어. 직접 입력해줘.','warn'); if(btn){btn.disabled=false;setMsg('🚀 AI 원클릭 완성 — 입력→대본→영상→게시');} return; }
 
     setMsg('⏳ 2/4 대본 5개 생성 중...');
     await generateShorts();
@@ -3119,7 +3147,7 @@ async function oneClickComplete(){
 
   } catch(e) {
     console.error('[oneClickComplete]',e);
-    alert('원클릭 완성 중 오류: '+e.message);
+    showToast('원클릭 완성 중 오류: '+e.message,'error');
     if(btn){ btn.disabled=false; btn.innerHTML='🚀 AI 원클릭 완성 — 입력→대본→영상→게시'; btn.style.background='linear-gradient(135deg,#7c6fff,#ff6b8a,#20d9a0)'; }
   }
 }
@@ -3132,7 +3160,7 @@ async function viralOneClick(){
   const viralProd = document.getElementById('viralProdUrl')?.value?.trim();
 
   if(!viralUrl && !viralName && !viralProd){
-    alert('영상 URL 또는 상품명·상품URL 중 하나를 먼저 입력해줘!');
+    showToast('영상 URL 또는 상품명·상품URL 중 하나를 먼저 입력해줘!','warn');
     return;
   }
   if(!getKey()){ openSettings(); return; }
@@ -3147,7 +3175,7 @@ async function viralOneClick(){
     setTimeout(()=>{ if(btn){btn.disabled=false;btn.innerHTML='⚡ 바이럴 원클릭 — 입력→대본→영상→플랫폼';} },4000);
   } catch(e) {
     console.error('[viralOneClick]',e);
-    alert('바이럴 원클릭 중 오류: '+e.message);
+    showToast('바이럴 원클릭 중 오류: '+e.message,'error');
     if(btn){ btn.disabled=false; btn.innerHTML='⚡ 바이럴 원클릭 — 입력→대본→영상→플랫폼'; }
   }
 }
@@ -3283,7 +3311,7 @@ async function generateVideoFromScript(idx){
   } catch(e){
     if(btn){ btn.disabled=false; btn.innerHTML='🎬 영상 직접 생성 (브라우저 렌더링)'; }
     if(statusBox) statusBox.style.display='none';
-    alert('영상 생성 오류: '+e.message);
+    showToast('영상 생성 오류: '+e.message,'error');
   }
 }
 
@@ -3294,13 +3322,13 @@ function downloadViralSRT(){
   const btn     = document.getElementById('srtDownBtn');
 
   if(!script.trim()){
-    alert('먼저 대본을 생성해주세요.');
+    showToast('먼저 대본을 생성해줘!','warn');
     return;
   }
 
   const lines = parseScriptLines(script);
   if(lines.length===0){
-    alert('대본에서 자막 타이밍을 파싱할 수 없습니다. [0:00] 형식의 타임스탬프를 추가해주세요.');
+    showToast('대본에서 자막 타이밍을 파싱할 수 없어. [0:00] 형식의 타임스탬프를 추가해줘.','warn');
     return;
   }
 
@@ -3344,7 +3372,7 @@ function toggleViralOverlay(){
 
   const script = document.getElementById('vScript')?.value||'';
   if(!script.trim()||!video||!video.src){
-    alert('영상과 대본이 모두 있어야 미리보기가 가능합니다.');
+    showToast('영상과 대본이 모두 있어야 미리보기가 가능해.','warn');
     _viralOverlayOn=false;
     return;
   }
@@ -3738,7 +3766,7 @@ async function publishAll(idx){
   const ic = document.getElementById(`pub-ic-${idx}`)?.checked;
 
   if(!yt&&!tt&&!ig&&!nv&&!th&&!ic){
-    alert('게시할 플랫폼을 하나 이상 선택하세요.');
+    showToast('게시할 플랫폼을 하나 이상 선택해줘.','warn');
     if(btn){ btn.disabled=false; btn.textContent='🚀 선택 플랫폼 전체 게시'; }
     return;
   }
