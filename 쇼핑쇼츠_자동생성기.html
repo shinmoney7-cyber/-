@@ -1025,10 +1025,10 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
       <a href="https://console.anthropic.com/settings/keys" target="_blank" style="font-size:11px;color:var(--accent);text-decoration:none;font-weight:700;padding:3px 8px;border:1px solid rgba(124,111,255,.4);border-radius:8px;background:rgba(124,111,255,.08)">🔑 키 발급받기 →</a>
     </div>
     <div style="display:flex;gap:6px;margin-bottom:6px;align-items:center">
-      <input type="text" id="claudeKey" placeholder="클릭 → 붙여넣기 → 확인" style="flex:1;margin-bottom:0;cursor:pointer" readonly onclick="promptKeyInput()" title="클릭하여 API 키 입력">
-      <button class="btn-sm" onclick="promptKeyInput()" style="flex-shrink:0;white-space:nowrap">✏️ 입력 <span class="saved-ok" id="keySaved">✓</span></button>
+      <input type="text" id="claudeKey" placeholder="sk-ant-... 붙여넣기" style="flex:1;margin-bottom:0" title="API 키를 여기에 직접 붙여넣기">
+      <button class="btn-sm" onclick="saveKey()" style="flex-shrink:0;white-space:nowrap">💾 저장 <span class="saved-ok" id="keySaved">✓</span></button>
     </div>
-    <div style="font-size:11px;color:var(--sub);margin-bottom:4px">① "키 발급받기" 클릭 → 콘솔에서 키 복사 → ② ✏️ 입력 클릭 → 붙여넣기 → 확인</div>
+    <div style="font-size:11px;color:var(--sub);margin-bottom:4px">① "키 발급받기" 클릭 → 콘솔에서 키 복사 → ② 위 칸에 붙여넣기 → 💾 저장</div>
 
     <div class="sep"></div>
     <div style="font-size:12px;font-weight:700;color:var(--sub);margin-bottom:10px">쿠팡파트너스 <span style="font-weight:400">(선택 — 딥링크용)</span></div>
@@ -1189,9 +1189,9 @@ async function _fetchPageContent(targetUrl){
 function _extractFromHtml(html){
   const tmp = document.createElement('div');
   tmp.innerHTML = html
-    .replace(/<script[\s\S]*?<\/script>/gi,'')
-    .replace(/<style[\s\S]*?<\/style>/gi,'')
-    .replace(/<noscript[\s\S]*?<\/noscript>/gi,'');
+    .replace(new RegExp('<script[\\s\\S]*?<\\/scr'+'ipt>','gi'),'')
+    .replace(new RegExp('<style[\\s\\S]*?<\\/sty'+'le>','gi'),'')
+    .replace(new RegExp('<noscript[\\s\\S]*?<\\/noscr'+'ipt>','gi'),'');
   const text = tmp.textContent.replace(/\s+/g,' ').trim().slice(0,2500);
   const imgMatches = html.match(/https?:\/\/[^\s"'<>]+\.(?:jpg|jpeg|png|webp)(?:\?[^\s"'<>]*)?/gi)||[];
   const imgUrl = imgMatches.find(u=>!/(icon|logo|thumb|1x1|pixel|banner|badge|sns)/i.test(u)&&u.length<300)||'';
@@ -2090,25 +2090,16 @@ async function analyzeOneUrl(url){
 }
 
 // ── 설정 ──────────────────────────────────────────────────
-function promptKeyInput(){
-  const cur = LS.get('ss_claude_key') || '';
-  const val = window.prompt('Claude API 키를 붙여넣기 또는 입력하세요\n(sk-ant-... 형태):', cur);
-  if(val === null) return;
-  const trimmed = val.trim();
-  if(!trimmed) return;
-  LS.set('ss_claude_key', trimmed);
-  document.getElementById('claudeKey').value = trimmed;
-  const s = document.getElementById('keySaved');
-  s.textContent = '✓ 저장됨';
-  s.classList.add('show');
-  setTimeout(()=>{s.textContent='✓';s.classList.remove('show');}, 2000);
-}
 function openSettings(){
-  document.getElementById('claudeKey').value = LS.get('ss_claude_key');
-  document.getElementById('cpAccess').value=LS.get('ss_cp_access');
-  document.getElementById('cpSecret').value=LS.get('ss_cp_secret');
-  document.getElementById('cpSubid').value=LS.get('ss_cp_subid');
   document.getElementById('settingsModal').classList.add('open');
+  const k = getKey();
+  const el = document.getElementById('claudeKey');
+  if(el) el.value = k || '';
+  const c = getCoupangCreds();
+  if(document.getElementById('cpAccess')) document.getElementById('cpAccess').value=c.access||'';
+  if(document.getElementById('cpSecret')) document.getElementById('cpSecret').value=c.secret||'';
+  if(document.getElementById('cpSubid'))  document.getElementById('cpSubid').value=c.subid||'';
+  if(typeof loadPlatTokens==='function') loadPlatTokens();
 }
 function closeSettings(){document.getElementById('settingsModal').classList.remove('open');}
 function closeIfBg(e){if(e.target.id==='settingsModal')closeSettings();}
@@ -3589,19 +3580,7 @@ function loadPlatTokens(){
   ids.forEach(id=>{ const el=document.getElementById(id); if(el) el.value=LS.get('ss_'+id)||''; });
 }
 
-// 기존 openSettings에 loadPlatTokens 후킹
-const _origOpenSettings = typeof openSettings==='function' ? openSettings : null;
-function openSettings(){
-  document.getElementById('settingsModal').classList.add('open');
-  const k=getKey();
-  const el=document.getElementById('claudeKey');
-  if(el) el.value=k?k.slice(0,8)+'••••••••':'';
-  const c=getCoupangCreds();
-  if(document.getElementById('cpAccess')) document.getElementById('cpAccess').value=c.access||'';
-  if(document.getElementById('cpSecret')) document.getElementById('cpSecret').value=c.secret||'';
-  if(document.getElementById('cpSubid'))  document.getElementById('cpSubid').value=c.subid||'';
-  loadPlatTokens();
-}
+// loadPlatTokens는 openSettings 안에 통합됨
 
 // ══════════════════════════════════════════════════════════════
 // 플랫폼 게시 함수들
