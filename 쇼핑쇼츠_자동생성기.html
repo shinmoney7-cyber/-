@@ -439,6 +439,8 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
     </div>
   </div>
 
+  <div id="_keyBadge" onclick="openSettings(true)" style="cursor:pointer;margin-bottom:10px;padding:9px 14px;border-radius:10px;font-size:12px;font-weight:700;text-align:center;border:1px solid;transition:.2s">⚠️ API 키 없음 — 여기를 눌러 설정</div>
+
   <button id="oneClickBtn" onclick="oneClickComplete()"
     style="width:100%;padding:16px;border-radius:14px;border:none;background:linear-gradient(135deg,#7c6fff,#ff6b8a,#20d9a0);color:#fff;font-size:15px;font-weight:900;cursor:pointer;margin-bottom:10px;letter-spacing:.3px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 20px rgba(124,111,255,.35);transition:.2s"
     onmouseover="this.style.opacity='.88';this.style.transform='translateY(-1px)'"
@@ -1117,17 +1119,17 @@ function showToast(msg, type='info', dur=3200){
   if(!wrap){
     wrap = document.createElement('div');
     wrap.id = '_toastWrap';
-    wrap.style.cssText='position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:99999;display:flex;flex-direction:column;gap:8px;pointer-events:none;width:min(92vw,360px)';
+    wrap.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:99999;display:flex;flex-direction:column;gap:8px;pointer-events:none;width:min(92vw,380px)';
     document.body.appendChild(wrap);
   }
-  const colors={info:'#7c6fff',success:'#20d9a0',warn:'#ffd060',error:'#ff6b8a'};
+  const colors={info:'#7c6fff',success:'#20d9a0',warn:'#e08800',error:'#ff3b5c'};
   const t=document.createElement('div');
-  t.style.cssText=`background:${colors[type]||colors.info};color:#fff;padding:12px 18px;border-radius:12px;font-size:13px;font-weight:700;box-shadow:0 4px 24px rgba(0,0,0,.4);animation:_tSlide .25s ease;text-align:center;line-height:1.5`;
+  t.style.cssText=`background:${colors[type]||colors.info};color:#fff;padding:14px 20px;border-radius:14px;font-size:14px;font-weight:800;box-shadow:0 6px 32px rgba(0,0,0,.55);animation:_tSlide .28s ease;text-align:center;line-height:1.5;letter-spacing:.2px`;
   t.textContent=msg;
   if(!document.getElementById('_toastKf')){
     const s=document.createElement('style');
     s.id='_toastKf';
-    s.textContent='@keyframes _tSlide{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:none}}';
+    s.textContent='@keyframes _tSlide{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}} @keyframes _shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}';
     document.head.appendChild(s);
   }
   wrap.appendChild(t);
@@ -1800,7 +1802,7 @@ async function generateShorts(){
     name = qs;
   }
   if(!name){ showToast('📦 상품명 또는 상품 URL을 먼저 입력해줘!','warn'); return; }
-  if(!getKey()){ showToast('⚙️ 설정에서 Claude API 키를 입력해줘!','warn',4000); openSettings(); return; }
+  if(!getKey()){ showToast('⚙️ API 키가 없어! 지금 설정창이 열렸어 — API 키를 입력해줘','warn',4500); openSettings(true); return; }
 
   const btn = document.getElementById('genBtn');
   btn.disabled=true; btn.innerHTML='<div class="spinner"></div> 5개 대본 생성 중...';
@@ -2090,8 +2092,9 @@ async function analyzeOneUrl(url){
 }
 
 // ── 설정 ──────────────────────────────────────────────────
-function openSettings(){
-  document.getElementById('settingsModal').classList.add('open');
+function openSettings(focusKey=false){
+  const modal = document.getElementById('settingsModal');
+  modal.classList.add('open');
   const k = getKey();
   const el = document.getElementById('claudeKey');
   if(el) el.value = k || '';
@@ -2100,6 +2103,24 @@ function openSettings(){
   if(document.getElementById('cpSecret')) document.getElementById('cpSecret').value=c.secret||'';
   if(document.getElementById('cpSubid'))  document.getElementById('cpSubid').value=c.subid||'';
   if(typeof loadPlatTokens==='function') loadPlatTokens();
+  if(focusKey && el){
+    setTimeout(()=>{
+      el.scrollIntoView({behavior:'smooth',block:'center'});
+      el.focus();
+      const box = el.closest('.modal-box')||modal.querySelector('.modal-box');
+      if(box){ box.style.animation='_shake .5s ease'; setTimeout(()=>box.style.animation='',600); }
+    },80);
+  }
+  updateKeyBadge();
+}
+function updateKeyBadge(){
+  const badge = document.getElementById('_keyBadge');
+  if(!badge) return;
+  const has = !!getKey();
+  badge.textContent = has ? '✅ API 키 설정됨' : '⚠️ API 키 없음 — 버튼을 눌러 설정';
+  badge.style.background = has ? 'rgba(32,217,160,.15)' : 'rgba(255,59,92,.13)';
+  badge.style.color = has ? '#20d9a0' : '#ff3b5c';
+  badge.style.borderColor = has ? 'rgba(32,217,160,.35)' : 'rgba(255,59,92,.35)';
 }
 function closeSettings(){document.getElementById('settingsModal').classList.remove('open');}
 function closeIfBg(e){if(e.target.id==='settingsModal')closeSettings();}
@@ -2107,6 +2128,7 @@ function saveKey(){
   const val = document.getElementById('claudeKey').value.trim();
   LS.set('ss_claude_key', val);
   const s=document.getElementById('keySaved'); s.classList.add('show'); setTimeout(()=>s.classList.remove('show'),2000);
+  updateKeyBadge();
 }
 function saveCoupang(){
   LS.set('ss_cp_access',document.getElementById('cpAccess').value.trim());
@@ -2668,6 +2690,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   });
   initSchedule();
   calcRevenue();
+  updateKeyBadge();
 });
 function addCapTag(text){
   capTags.push(text);
@@ -3082,7 +3105,7 @@ async function oneClickComplete(){
   const btn = document.getElementById('oneClickBtn');
   const setMsg = (m,color='#fff')=>{ if(btn){btn.innerHTML=m;btn.style.background=color||'linear-gradient(135deg,#7c6fff,#ff6b8a,#20d9a0)';} };
 
-  if(!getKey()){ openSettings(); return; }
+  if(!getKey()){ showToast('⚙️ API 키가 없어! 지금 설정창이 열렸어 — API 키를 입력해줘','warn',4500); openSettings(true); return; }
 
   const name = document.getElementById('prodName')?.value?.trim();
   const img  = document.getElementById('prodImg')?.value?.trim();
