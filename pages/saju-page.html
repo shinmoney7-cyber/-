@@ -479,7 +479,7 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
   <div class="wrap">
     <div class="eyebrow">상담 항목 · 복채</div>
     <h2>무엇을 알고 싶으신가요?</h2>
-    <p class="lead">항목을 고르신 후 아래 계좌로 복채를 입금하시고, 이메일로 신청 정보를 보내주세요.</p>
+
 
     <div class="item-grid" id="itemGrid">
       <button type="button" class="item-card" data-price="9900">
@@ -612,6 +612,25 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
       </div>
       <div style="margin-top:14px;background:rgba(217,167,90,.1);border:1px solid rgba(217,167,90,.25);border-radius:12px;padding:14px 18px;font-family:var(--f);font-size:14px;color:var(--brass);line-height:1.75;text-align:center;">
         각 항목 A4 20페이지 내외 (평생운 30페이지) · 접수 순서에 따라 정성껏 보내드립니다
+      </div>
+      <div class="contact-select-box" id="contactSelectBox" style="margin-top:20px;background:var(--paper-raised);border:1px solid var(--line);border-radius:16px;padding:22px 22px 18px;">
+        <div style="font-family:var(--f);font-size:15px;font-weight:800;color:var(--brass);margin-bottom:14px;">✦ 사주 분석 자료 받을 방법 선택</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+          <label style="display:flex;align-items:center;gap:8px;background:var(--paper);border:1.5px solid var(--line);border-radius:10px;padding:10px 18px;cursor:pointer;font-family:var(--f);font-size:15px;font-weight:800;transition:border-color .2s;" id="cLabel0">
+            <input type="radio" name="contactMethod" value="이메일" id="cEmail" style="accent-color:var(--brass);width:16px;height:16px;" checked onchange="updateContactInput(this)"/> 이메일
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;background:var(--paper);border:1.5px solid var(--line);border-radius:10px;padding:10px 18px;cursor:pointer;font-family:var(--f);font-size:15px;font-weight:800;transition:border-color .2s;" id="cLabel1">
+            <input type="radio" name="contactMethod" value="카카오톡" id="cKakao" style="accent-color:var(--brass);width:16px;height:16px;" onchange="updateContactInput(this)"/> 카카오톡
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;background:var(--paper);border:1.5px solid var(--line);border-radius:10px;padding:10px 18px;cursor:pointer;font-family:var(--f);font-size:15px;font-weight:800;transition:border-color .2s;" id="cLabel2">
+            <input type="radio" name="contactMethod" value="문자" id="cSms" style="accent-color:var(--brass);width:16px;height:16px;" onchange="updateContactInput(this)"/> 문자 (SMS)
+          </label>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <input type="text" id="contactValue" placeholder="이메일 주소를 입력해주세요" style="flex:1;padding:11px 14px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:15px;font-family:var(--f);" oninput="updateSubContact(this.value)"/>
+          <button type="button" class="btn btn--primary" id="copyContactBtn" onclick="copyContact()" style="flex-shrink:0;white-space:nowrap;">복사</button>
+        </div>
+        <p style="font-family:var(--f);font-size:13px;color:var(--ink-soft);margin-top:9px;line-height:1.7;">입금 후 선택하신 방법으로 신청 정보를 보내주시면 순서대로 풀이를 전달해드립니다.</p>
       </div>
     </div>
   </div>
@@ -1185,6 +1204,41 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
   if(ha) ha.addEventListener('click',function(){
     navigator.clipboard&&navigator.clipboard.writeText('하나은행 679-910416-32607 예금주 황선화').then(function(){flashBtn(ha);});
   });
+
+
+  // Contact method selector
+  function updateContactInput(radio) {
+    var input = document.getElementById('contactValue');
+    var placeholders = {
+      '이메일': '이메일 주소를 입력해주세요',
+      '카카오톡': '카카오톡 ID를 입력해주세요',
+      '문자': '전화번호를 입력해주세요'
+    };
+    if(input) input.placeholder = placeholders[radio.value] || '';
+    // Update label borders
+    document.querySelectorAll('[id^="cLabel"]').forEach(function(l){ l.style.borderColor = 'var(--line)'; });
+    if(radio && radio.closest('label')) radio.closest('label').style.borderColor = 'var(--brass)';
+  }
+  function updateSubContact(val) {
+    var subContact = document.getElementById('smContact');
+    if(subContact) subContact.value = val;
+  }
+  function copyContact() {
+    var val = document.getElementById('contactValue').value.trim();
+    var method = document.querySelector('input[name="contactMethod"]:checked');
+    var methodName = method ? method.value : '';
+    if(!val){ alert('수신 계정을 먼저 입력해주세요.'); return; }
+    var text = '[사주마루 수신 정보] '+methodName+': '+val;
+    navigator.clipboard && navigator.clipboard.writeText(text).then(function(){
+      var btn = document.getElementById('copyContactBtn');
+      if(btn){ var orig=btn.textContent; btn.textContent='✓ 복사됨'; setTimeout(function(){btn.textContent=orig;},1800); }
+    });
+  }
+  // Init first label border
+  (function(){
+    var first = document.getElementById('cLabel0');
+    if(first) first.style.borderColor = 'var(--brass)';
+  })();
 
 })();
 </script>
