@@ -1040,7 +1040,8 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
 
     <div id="subConfirm" class="sub-confirm" hidden>
       <div class="sub-confirm__icon">✦</div>
-      <p>신청이 접수되었습니다.<br><br>카카오뱅크 <strong>3333-28-9077788</strong><br>예금주 황홍식<br><br>입금 후 접수 순서에 따라<br>정성껏 풀이해 보내드립니다.</p>
+      <p>신청이 접수되었습니다.<br><br>카카오뱅크 <strong>3333-28-9077788</strong><br>예금주 황홍식<br><br>입금 확인 후<br><span id="subDeliveryTime" style="font-weight:700;color:var(--brass);">5시간 내 전달</span></p>
+      <a id="subSmsBtn" href="#" class="btn btn--outline" style="display:block;margin-bottom:12px;text-decoration:none;" onclick="if(this.href==='#'){alert('전화번호 미설정');return false;}">📱 신청 내용 문자로 알리기</a>
       <button type="button" class="btn btn--primary" id="subDoneBtn">확인</button>
     </div>
   </div>
@@ -1174,8 +1175,7 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
       if(isNaN(idx)) idx = 0;
       _targetFreeTab = idx;
       var result = document.getElementById('freeResult');
-      if(_freeResultShown && result) {
-        // Results exist — show and switch to the right tab
+      if(result){
         result.style.display = 'block';
         document.querySelectorAll('.free-tab-btn').forEach(function(b){ b.classList.remove('is-active'); });
         document.querySelectorAll('.free-tab-panel').forEach(function(p){ p.classList.remove('is-active'); });
@@ -1184,10 +1184,6 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
         if(tb) tb.classList.add('is-active');
         if(tp) tp.classList.add('is-active');
         result.scrollIntoView({behavior:'smooth', block:'start'});
-      } else {
-        // No results yet — scroll to form to fill in
-        var form = document.getElementById('freeForm');
-        if(form) form.scrollIntoView({behavior:'smooth', block:'center'});
       }
     });
   });
@@ -1395,6 +1391,34 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
         '👤 고객 정보\n성함: '+name+'\n생년월일: '+birth+'\n성별: '+gender+'\n태어난 시간: '+time+'\n연락처: '+contact+'\n\n'+
         '📌 사주마루 사이트에서 작성된 신청입니다.\n입금 확인 후 순서대로 풀이를 보내드립니다.\n카카오뱅크 3333-28-9077788 예금주 황홍식'
       );
+      // 사업주 알림 이메일 발송 (Formspree)
+      var nfBody=document.getElementById('__nf_body');
+      var nfSubj=document.getElementById('__nf_subject');
+      var nfForm=document.getElementById('__nf_form');
+      if(nfBody&&nfForm){
+        nfSubj.value='[사주마루] '+name+' 님 신청 접수 ('+fmtWon(total)+')';
+        nfBody.value='📋 신청 항목\n'+lines.join('\n')+'\n합계: '+fmtWon(total)+'\n\n👤 고객 정보\n성함: '+name+'\n생년월일: '+birth+'\n성별: '+gender+'\n시간: '+time+'\n연락처: '+contact;
+        try{nfForm.submit();}catch(e){}
+      }
+      // 배송 예정 시간 계산
+      var now=new Date();
+      var deliveryMsg;
+      if(now.getHours()>=17){
+        deliveryMsg='내일 오전 10시까지 '+contact+'으로 보내드립니다.';
+      } else {
+        var eta=new Date(now.getTime()+5*3600*1000);
+        var h=eta.getHours(),m=eta.getMinutes();
+        deliveryMsg='오늘 '+h+'시'+(m>0?' '+m+'분':'')+'까지 '+contact+'으로 보내드립니다.';
+      }
+      var dtEl=document.getElementById('subDeliveryTime');
+      if(dtEl) dtEl.textContent=deliveryMsg;
+      // 확인 화면에 문자 알림용 데이터 주입
+      var smsBtn=document.getElementById('subSmsBtn');
+      if(smsBtn){
+        var OWNER_PHONE='010-8386-3712';
+        var smsBody=encodeURIComponent('[사주마루 신청]\n성함: '+name+'\n생년월일: '+birth+'\n연락처: '+contact+'\n신청: '+lines.join(', ')+'\n합계: '+fmtWon(total));
+        smsBtn.href='sms:'+OWNER_PHONE+'?body='+smsBody;
+      }
       subFormWrap.hidden=true;
       subConfirm.hidden=false;
     });
@@ -1452,4 +1476,10 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
 })();
 </script>
 
+<!-- 신청 알림용 숨김 폼 (Formspree → 이메일 수신) -->
+<iframe id="__nf_frame" name="__nf_frame" style="display:none;width:0;height:0;border:0;position:absolute;left:-9999px" aria-hidden="true"></iframe>
+<form id="__nf_form" action="https://formspree.io/shinmoney7@gmail.com" method="POST" target="__nf_frame" style="display:none">
+  <input type="hidden" name="_subject" id="__nf_subject" value="[사주마루] 신청 접수">
+  <input type="hidden" name="내용" id="__nf_body">
+</form>
 </body></html>
