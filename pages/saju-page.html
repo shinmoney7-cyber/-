@@ -203,10 +203,10 @@ fieldset{border:0;padding:0;margin:0;}
 
 /* === FREE ITEM PREVIEW BUTTONS === */
 .free-items-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:36px;}
-.free-item-btn{display:inline-flex;align-items:center;gap:10px;background:var(--paper-raised);border:1.5px solid var(--line);border-radius:12px;padding:14px 22px;cursor:pointer;font-family:var(--f);font-size:16px;font-weight:800;color:var(--ink);transition:border-color .2s,box-shadow .2s,transform .15s;}
+.free-item-btn{display:inline-flex;align-items:center;gap:10px;background:var(--paper-raised);border:1.5px solid var(--line);border-radius:12px;padding:14px 22px;cursor:pointer;font-family:var(--f);font-size:19px;font-weight:800;color:var(--ink);transition:border-color .2s,box-shadow .2s,transform .15s;}
 .free-item-btn:hover{border-color:var(--brass);box-shadow:0 6px 20px -8px var(--shadow);transform:translateY(-2px);}
 .free-item-btn.is-picked{border-color:var(--brass);background:rgba(217,167,90,.1);}
-.free-badge-tag{background:var(--brass);color:#1a1000;border-radius:6px;padding:2px 9px;font-size:11px;font-weight:800;letter-spacing:.04em;flex-shrink:0;}
+.free-badge-tag{background:var(--brass);color:#1a1000;border-radius:6px;padding:2px 9px;font-size:13px;font-weight:800;letter-spacing:.04em;flex-shrink:0;}
 /* === FREE RESULT TABS === */
 .free-tabs{display:flex;gap:0;border-bottom:2px solid var(--line);}
 .free-tab-btn{flex:1;padding:14px 8px;background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;font-family:var(--f);font-size:15px;font-weight:800;color:var(--ink-soft);cursor:pointer;transition:color .2s,border-color .2s;letter-spacing:.02em;}
@@ -272,6 +272,9 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
 /* === FREE FORTUNE === */
 .free-form-wrap{max-width:600px;margin:0 auto;}
 .free-form{background:var(--paper-raised);border:1px solid var(--line);border-radius:18px;padding:28px 24px;}
+.free-form .field label,.free-form .field legend{font-size:18px;}
+.free-form .field input,.free-form .field select{font-size:18px;padding:14px 16px;}
+.free-form .radiorow label{font-size:18px;}
 .free-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 @media(max-width:560px){.free-grid{grid-template-columns:1fr;}}
 .free-result{display:none;margin-top:24px;border-radius:18px;overflow:hidden;border:1px solid var(--line);}
@@ -379,7 +382,7 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
   <div class="wrap">
     <div class="eyebrow" style="justify-content:center;">무료 사주 체험</div>
     <h2 style="text-align:center;font-size:clamp(28px,4vw,42px);">생년월일을 입력하면 바로 알려드려요</h2>
-    <p class="lead" style="margin:0 auto 32px;text-align:center;font-size:18px;word-break:keep-all;">이름과 생년월일만 넣으시면, 타고난 기운과 오늘의 흐름을 <strong>무료</strong>로 알려드려요.</p>
+    <p class="lead" style="margin:0 auto 32px;text-align:center;font-size:21px;word-break:keep-all;">이름과 생년월일만 넣으시면, 타고난 기운과 오늘의 흐름을 <strong>무료</strong>로 알려드려요.</p>
     <div class="free-items-row">
       <button class="free-item-btn" data-free-item="0">
         <span class="free-badge-tag">무료</span>성향 · 기질 분석
@@ -430,7 +433,7 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
             </select>
           </div>
         </div>
-        <button type="submit" class="btn btn--primary btn--block" style="margin-top:8px;">나의 기운 알아보기 ✦</button>
+        <button type="submit" class="btn btn--primary btn--block" style="margin-top:8px;font-size:19px;padding:16px 24px;">나의 기운 알아보기 ✦</button>
       </form>
       <div class="free-result" id="freeResult">
         <div class="free-result__header">
