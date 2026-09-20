@@ -20,11 +20,14 @@
   --wood:#4E8B5C; --fire:#C0503A; --earth:#C79A2E; --metal:#8F98A6; --water:#3B5BA9;
   --f:"Nanum Myeongjo","Noto Serif KR",serif;
 }
+@media (prefers-color-scheme:light){
+  :root:not([data-theme="dark"]){--ink:#0A0514;--ink-soft:#3A2400;--paper:#F6ECDD;--paper-raised:#FCF6EB;--line:rgba(36,26,46,.14);--brass:#BD8A3F;--brass-soft:#EDD9AE;--brass-ink:#3A2A10;--frame:#1F2A44;--frame-soft:#3A4A6B;--shadow:rgba(36,20,30,.22);}
+}
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){--ink:#F2E8DA;--ink-soft:#9AB0C4;--paper:#0d1624;--paper-raised:#162236;--line:rgba(200,220,255,.13);--brass:#D9A75A;--brass-soft:#3A2810;--brass-ink:#1a1000;--frame:#1F2A44;--frame-soft:#2A3A5A;--shadow:rgba(0,0,0,.55);}
 }
 :root[data-theme="dark"]{--ink:#F2E8DA;--ink-soft:#9AB0C4;--paper:#0d1624;--paper-raised:#162236;--line:rgba(200,220,255,.13);--brass:#D9A75A;--brass-soft:#3A2810;--brass-ink:#1a1000;--frame:#1F2A44;--frame-soft:#2A3A5A;--shadow:rgba(0,0,0,.55);}
-:root[data-theme="light"]{--ink:#0A0514;--ink-soft:#2C1840;--paper:#F6ECDD;--paper-raised:#FCF6EB;--line:rgba(36,26,46,.14);--brass:#BD8A3F;--brass-soft:#EDD9AE;--brass-ink:#3A2A10;--frame:#1F2A44;--frame-soft:#3A4A6B;--shadow:rgba(36,20,30,.22);}
+:root[data-theme="light"]{--ink:#0A0514;--ink-soft:#3A2400;--paper:#F6ECDD;--paper-raised:#FCF6EB;--line:rgba(36,26,46,.14);--brass:#BD8A3F;--brass-soft:#EDD9AE;--brass-ink:#3A2A10;--frame:#1F2A44;--frame-soft:#3A4A6B;--shadow:rgba(36,20,30,.22);}
 
 *,*::before,*::after{box-sizing:border-box;}
 html{scroll-behavior:smooth;min-height:100%;}
@@ -224,7 +227,7 @@ fieldset{border:0;padding:0;margin:0;}
 .item-card.is-selected .item-card__check{background:var(--brass);border-color:var(--brass);color:#fff;}
 .item-card__name{font-family:var(--f);font-size:17px;font-weight:800;padding-right:30px;margin-bottom:5px;}
 .item-card__price{font-family:var(--f);font-size:16px;font-weight:800;color:var(--brass);margin-bottom:8px;font-variant-numeric:tabular-nums;}
-.item-card__desc{font-family:var(--f);font-size:15px;color:var(--ink);line-height:1.65;font-weight:700;}
+.item-card__desc{font-family:var(--f);font-size:15px;color:var(--ink);line-height:1.65;font-weight:800;}
 .sel-bar{position:sticky;bottom:16px;z-index:20;background:var(--frame);color:#fff;border-radius:14px;padding:13px 18px;margin-top:20px;display:none;align-items:center;justify-content:space-between;gap:16px;box-shadow:0 8px 32px -6px rgba(0,0,0,.5);flex-wrap:wrap;}
 .sel-bar.is-shown{display:flex;animation:fadein .2s ease;}
 .sel-bar__info{font-family:var(--f);min-width:0;}
