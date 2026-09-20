@@ -200,6 +200,19 @@ fieldset{border:0;padding:0;margin:0;}
 @media(max-width:480px){.actions{flex-direction:column;align-items:stretch;}.accountbox{flex-direction:column;align-items:stretch;}.accountbox .btn{width:100%;}}
 
 
+/* === FREE ITEM PREVIEW BUTTONS === */
+.free-items-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:36px;}
+.free-item-btn{display:inline-flex;align-items:center;gap:10px;background:var(--paper-raised);border:1.5px solid var(--line);border-radius:12px;padding:14px 22px;cursor:pointer;font-family:var(--f);font-size:16px;font-weight:800;color:var(--ink);transition:border-color .2s,box-shadow .2s,transform .15s;}
+.free-item-btn:hover{border-color:var(--brass);box-shadow:0 6px 20px -8px var(--shadow);transform:translateY(-2px);}
+.free-item-btn.is-picked{border-color:var(--brass);background:rgba(217,167,90,.1);}
+.free-badge-tag{background:var(--brass);color:#1a1000;border-radius:6px;padding:2px 9px;font-size:11px;font-weight:800;letter-spacing:.04em;flex-shrink:0;}
+/* === FREE RESULT TABS === */
+.free-tabs{display:flex;gap:0;border-bottom:2px solid var(--line);}
+.free-tab-btn{flex:1;padding:14px 8px;background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;font-family:var(--f);font-size:15px;font-weight:800;color:var(--ink-soft);cursor:pointer;transition:color .2s,border-color .2s;letter-spacing:.02em;}
+.free-tab-btn.is-active{color:var(--brass);border-bottom-color:var(--brass);}
+.free-tab-panel{display:none;padding:22px 20px;}
+.free-tab-panel.is-active{display:block;animation:fadein .3s ease;}
+
 /* === MENU === */
 .item-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:28px;}
 @media(max-width:560px){.item-grid{grid-template-columns:1fr;}}
@@ -366,6 +379,17 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
     <div class="eyebrow" style="justify-content:center;">무료 사주 체험</div>
     <h2 style="text-align:center;font-size:clamp(28px,4vw,42px);">생년월일을 입력하면 바로 알려드려요</h2>
     <p class="lead" style="margin:0 auto 32px;text-align:center;font-size:18px;word-break:keep-all;">이름과 생년월일만 넣으시면, 타고난 기운과 오늘의 흐름을 <strong>무료</strong>로 알려드려요.</p>
+    <div class="free-items-row">
+      <button class="free-item-btn" data-free-item="0">
+        <span class="free-badge-tag">무료</span>성향 · 기질 분석
+      </button>
+      <button class="free-item-btn" data-free-item="1">
+        <span class="free-badge-tag">무료</span>오늘운
+      </button>
+      <button class="free-item-btn" data-free-item="2">
+        <span class="free-badge-tag">무료</span>내일운
+      </button>
+    </div>
     <div class="free-form-wrap">
       <form id="freeForm" class="free-form" novalidate>
         <div class="free-grid">
@@ -412,22 +436,25 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
           <span class="free-result__name" id="frName"></span>
           <span class="free-result__el" id="frEl"></span>
         </div>
-        <div class="free-cards">
-          <div class="free-card">
-            <div class="free-card__icon" id="frIcon1"></div>
-            <div class="free-card__label">✦ 성향 · 기질 분석</div>
-            <p class="free-card__body" id="frElement"></p>
-          </div>
-          <div class="free-card">
-            <div class="free-card__icon" id="frIcon2" style="background:linear-gradient(145deg,#080f28,#1a3068,#040818);"></div>
-            <div class="free-card__label">✦ 오늘운</div>
-            <p class="free-card__body" id="frToday"></p>
-          </div>
-          <div class="free-card">
-            <div class="free-card__icon" id="frIcon3" style="background:linear-gradient(145deg,#0a1a10,#1c4a2a,#050e07);"></div>
-            <div class="free-card__label">✦ 내일운</div>
-            <p class="free-card__body" id="frYear"></p>
-          </div>
+        <div class="free-tabs">
+          <button class="free-tab-btn is-active" data-ftab="0">성향 · 기질 분석</button>
+          <button class="free-tab-btn" data-ftab="1">오늘운</button>
+          <button class="free-tab-btn" data-ftab="2">내일운</button>
+        </div>
+        <div class="free-tab-panel is-active" id="ftab0">
+          <div class="free-card__icon" id="frIcon1" style="height:90px;border-radius:12px;margin-bottom:14px;position:relative;overflow:hidden;"></div>
+          <div class="free-card__label" style="font-size:15px;margin-bottom:10px;">✦ 성향 · 기질 분석</div>
+          <p class="free-card__body" id="frElement"></p>
+        </div>
+        <div class="free-tab-panel" id="ftab1">
+          <div class="free-card__icon" id="frIcon2" style="height:90px;border-radius:12px;margin-bottom:14px;position:relative;overflow:hidden;background:linear-gradient(145deg,#080f28,#1a3068,#040818);"></div>
+          <div class="free-card__label" style="font-size:15px;margin-bottom:10px;">✦ 오늘운</div>
+          <p class="free-card__body" id="frToday"></p>
+        </div>
+        <div class="free-tab-panel" id="ftab2">
+          <div class="free-card__icon" id="frIcon3" style="height:90px;border-radius:12px;margin-bottom:14px;position:relative;overflow:hidden;background:linear-gradient(145deg,#0a1a10,#1c4a2a,#050e07);"></div>
+          <div class="free-card__label" style="font-size:15px;margin-bottom:10px;">✦ 내일운</div>
+          <p class="free-card__body" id="frYear"></p>
         </div>
         <div class="free-result__cta">
           <div style="flex:1;min-width:0;">
@@ -941,6 +968,33 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
     }
   };
 
+
+  /* === free tabs + free-item-btn === */
+  var _targetFreeTab = 0; // which tab to activate after form submit
+
+  // Tab button clicks
+  document.querySelectorAll('.free-tab-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var idx = parseInt(this.dataset.ftab, 10);
+      document.querySelectorAll('.free-tab-btn').forEach(function(b){ b.classList.remove('is-active'); });
+      document.querySelectorAll('.free-tab-panel').forEach(function(p){ p.classList.remove('is-active'); });
+      this.classList.add('is-active');
+      var panel = document.getElementById('ftab'+idx);
+      if(panel) panel.classList.add('is-active');
+    });
+  });
+
+  // Free-item-btn clicks: highlight, remember target tab, scroll to form
+  document.querySelectorAll('.free-item-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.free-item-btn').forEach(function(b){ b.classList.remove('is-picked'); });
+      this.classList.add('is-picked');
+      _targetFreeTab = parseInt(this.dataset.freeItem, 10) || 0;
+      var form = document.getElementById('freeForm');
+      if(form) form.scrollIntoView({behavior:'smooth', block:'center'});
+    });
+  });
+
   document.getElementById('freeForm').addEventListener('submit',function(e){
     e.preventDefault();
     var birth=document.getElementById('freeBirth').value;
@@ -993,6 +1047,13 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
     result.style.display='block';
     document.getElementById('freeReco').style.display='block';
     result.scrollIntoView({behavior:'smooth',block:'start'});
+    // Activate the tab that was requested (or default to 0)
+    document.querySelectorAll('.free-tab-btn').forEach(function(b){ b.classList.remove('is-active'); });
+    document.querySelectorAll('.free-tab-panel').forEach(function(p){ p.classList.remove('is-active'); });
+    var activeTab = document.querySelector('.free-tab-btn[data-ftab="'+_targetFreeTab+'"]');
+    var activePanel = document.getElementById('ftab'+_targetFreeTab);
+    if(activeTab) activeTab.classList.add('is-active');
+    if(activePanel) activePanel.classList.add('is-active');
   });
 
   /* === item selection + submission modal === */
