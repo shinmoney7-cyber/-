@@ -200,6 +200,16 @@ fieldset{border:0;padding:0;margin:0;}
 @media(max-width:480px){.actions{flex-direction:column;align-items:stretch;}.accountbox{flex-direction:column;align-items:stretch;}.accountbox .btn{width:100%;}}
 
 
+/* === MENU === */
+.menu-list{border:1px solid var(--line);border-radius:14px;overflow:hidden;max-width:600px;margin-top:28px;}
+.menu-item{display:flex;align-items:center;justify-content:space-between;padding:13px 20px;border-bottom:1px solid var(--line);gap:16px;}
+.menu-item:last-child{border-bottom:0;}
+.menu-item__name{font-family:var(--f);font-size:16px;font-weight:800;}
+.menu-item__price{font-family:var(--f);font-size:16px;font-weight:800;color:var(--brass);white-space:nowrap;font-variant-numeric:tabular-nums;}
+.account-section{margin-top:48px;max-width:600px;}
+.account-row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;background:var(--paper-raised);border:1px dashed var(--brass);border-radius:12px;padding:14px 18px;margin-bottom:10px;}
+.account-row .num{font-family:var(--f);font-size:16px;font-weight:700;}
+@media(max-width:480px){.account-row{flex-direction:column;align-items:stretch;}.account-row .btn{width:100%;}}
 /* === CLOSING === */
 .closing{background:linear-gradient(160deg,var(--frame) 0%,#0a1018 100%);color:#fff;padding:80px 0;text-align:center;}
 .closing__circle{width:100px;height:100px;border-radius:50%;border:2px solid var(--brass-soft);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-family:var(--f);font-size:38px;font-weight:800;color:var(--brass-soft);animation:pulse 2.5s ease-in-out infinite;}
@@ -396,17 +406,55 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
   </div>
 </section>
 
-<!-- flow section removed --><section class="section" id="flow" hidden>
+<section class="section" id="menu">
   <div class="wrap">
+    <div class="eyebrow">상담 항목 · 복채</div>
+    <h2>무엇을 알고 싶으신가요?</h2>
+    <p class="lead">항목을 고르신 후 아래 계좌로 복채를 입금하시고, 이메일로 신청 정보를 보내주세요.</p>
 
-    <!-- Step indicator -->
-    <div class="flow-steps">
-      <button type="button" class="flow-step-btn is-active" id="stepBtn1">① 항목 선택</button>
-      <span class="flow-sep">→</span>
-      <button type="button" class="flow-step-btn" id="stepBtn2">② 신청 정보</button>
-      <span class="flow-sep">→</span>
-      <button type="button" class="flow-step-btn" id="stepBtn3">③ 복채 안내</button>
+    <div class="menu-list">
+      <div class="menu-item"><span class="menu-item__name">성향 · 기질 분석</span><span class="menu-item__price">9,900원</span></div>
+      <div class="menu-item"><span class="menu-item__name">평생운</span><span class="menu-item__price">29,000원</span></div>
+      <div class="menu-item"><span class="menu-item__name">연애운</span><span class="menu-item__price">14,900원</span></div>
+      <div class="menu-item"><span class="menu-item__name">배우자운 · 결혼운</span><span class="menu-item__price">19,900원</span></div>
+      <div class="menu-item"><span class="menu-item__name">재물운</span><span class="menu-item__price">14,900원</span></div>
+      <div class="menu-item"><span class="menu-item__name">건강운</span><span class="menu-item__price">12,900원</span></div>
+      <div class="menu-item"><span class="menu-item__name">대운 · 세운</span><span class="menu-item__price">29,000원</span></div>
+      <div class="menu-item"><span class="menu-item__name">부모운</span><span class="menu-item__price">12,900원</span></div>
+      <div class="menu-item"><span class="menu-item__name">자식운</span><span class="menu-item__price">12,900원</span></div>
+      <div class="menu-item"><span class="menu-item__name">형제간운</span><span class="menu-item__price">9,900원</span></div>
+      <div class="menu-item"><span class="menu-item__name">새해운세</span><span class="menu-item__price">19,900원</span></div>
+      <div class="menu-item"><span class="menu-item__name">월별운세</span><span class="menu-item__price">24,900원</span></div>
+      <div class="menu-item"><span class="menu-item__name">수능 · 입시운</span><span class="menu-item__price">14,900원</span></div>
+      <div class="menu-item"><span class="menu-item__name">재회운</span><span class="menu-item__price">14,900원</span></div>
+      <div class="menu-item"><span class="menu-item__name">사업운</span><span class="menu-item__price">24,900원</span></div>
+      <div class="menu-item"><span class="menu-item__name">이혼 · 결별운</span><span class="menu-item__price">19,900원</span></div>
+      <div class="menu-item"><span class="menu-item__name">도화살 전문분석</span><span class="menu-item__price">14,900원</span></div>
+      <div class="menu-item"><span class="menu-item__name">이런 사람 만나지 마라</span><span class="menu-item__price">9,900원</span></div>
     </div>
+
+    <div class="account-section">
+      <div class="eyebrow" style="margin-top:0;">입금 계좌</div>
+      <div class="account-row">
+        <div class="num">카카오뱅크 3333-28-9077788 · 예금주 황홍식</div>
+        <button type="button" class="btn btn--ghost" id="copyKakao">복사</button>
+      </div>
+      <div class="account-row">
+        <div class="num">하나은행 679-910416-32607 · 예금주 황선화</div>
+        <button type="button" class="btn btn--ghost" id="copyHana">복사</button>
+      </div>
+      <div class="email-cta-box">
+        <h3>✉ shinmoney7@gmail.com</h3>
+        <p>입금 후 성함 · 생년월일 · 성별 · 태어난 시간 · 신청 항목을<br>이메일로 보내주세요.</p>
+        <div class="notice">각 항목 A4 20페이지 내외 (평생운 30페이지) · 접수 순서에 따라 정성껏 보내드립니다</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- hidden legacy flow (not shown) --><section id="flow" hidden>
+  <div class="wrap">
+    <div>
 
     <!-- Panel 1: 항목 선택 -->
     <div id="flowPanel1">
@@ -595,12 +643,6 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
 
 </main>
 
-<footer>
-  <div class="mark">사주마루</div>
-  <p>정성껏 짚어드릴게요 · shinmoney7@gmail.com</p>
-</footer>
-
-
 <script>
 (function(){
   /* === generate stars === */
@@ -714,7 +756,21 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
   });
 
   document.getElementById('freeCtaBtn').addEventListener('click',function(){
-    document.querySelector('.closing').scrollIntoView({behavior:'smooth',block:'start'});
+    document.getElementById('menu').scrollIntoView({behavior:'smooth',block:'start'});
+  });
+
+  function flashBtn(btn){
+    var orig=btn.textContent;
+    btn.textContent='✓ 복사됨';
+    setTimeout(function(){btn.textContent=orig;},1800);
+  }
+  var kk=document.getElementById('copyKakao');
+  var ha=document.getElementById('copyHana');
+  if(kk) kk.addEventListener('click',function(){
+    navigator.clipboard&&navigator.clipboard.writeText('카카오뱅크 3333-28-9077788 예금주 황홍식').then(function(){flashBtn(kk);});
+  });
+  if(ha) ha.addEventListener('click',function(){
+    navigator.clipboard&&navigator.clipboard.writeText('하나은행 679-910416-32607 예금주 황선화').then(function(){flashBtn(ha);});
   });
 
 })();
