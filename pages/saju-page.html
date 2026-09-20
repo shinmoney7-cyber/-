@@ -282,6 +282,27 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
 .flow-step-btn:not(.is-active):hover{border-color:var(--brass);color:var(--brass);}
 .flow-sep{font-family:var(--f);font-size:14px;color:var(--ink-soft);padding:0 2px;opacity:.45;}
 .flow-nav{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap;}
+
+/* === SUBMISSION MODAL === */
+.sub-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9000;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;}
+.sub-modal{background:var(--paper-raised);border-radius:20px;max-width:520px;width:100%;padding:28px 24px 24px;position:relative;box-shadow:0 24px 60px -16px var(--shadow);margin:auto;}
+.sub-modal__close{position:absolute;top:14px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--ink-soft);line-height:1;padding:4px;}
+.sub-modal h3{font-family:var(--f);font-size:21px;font-weight:800;margin-bottom:6px;}
+.sub-modal__desc{font-family:var(--f);font-size:14px;color:var(--ink-soft);margin-bottom:20px;line-height:1.7;}
+.sub-field{margin-bottom:15px;}
+.sub-field label{display:block;font-family:var(--f);font-size:13px;color:var(--ink-soft);font-weight:700;letter-spacing:.04em;margin-bottom:6px;}
+.sub-field input,.sub-field select{width:100%;padding:11px 13px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:15px;font-family:var(--f);}
+.sub-radio-row{display:flex;gap:10px 16px;flex-wrap:wrap;}
+.sub-radio-row label{display:flex;align-items:center;gap:7px;font-family:var(--f);font-size:14px;font-weight:400;}
+.sub-selected-box{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:18px;font-family:var(--f);font-size:14px;line-height:1.85;}
+.sub-confirm{text-align:center;padding:16px 0;}
+.sub-confirm .sub-confirm__icon{font-size:42px;margin-bottom:14px;}
+.sub-confirm p{font-family:var(--f);font-size:15px;line-height:1.8;margin-bottom:20px;}
+/* === FREE RECO === */
+.free-reco{margin-top:10px;display:none;}
+.free-reco-label{font-family:var(--f);color:var(--brass);font-size:12px;font-weight:700;margin-bottom:7px;display:block;}
+.free-reco-chips{display:flex;gap:7px;flex-wrap:wrap;}
+.free-reco-chip{background:var(--brass-soft);color:var(--brass-ink);border:1px solid rgba(189,138,63,.3);border-radius:999px;padding:4px 12px;font-size:12px;font-family:var(--f);font-weight:700;}
 </style>
 </head>
 <body>
@@ -409,7 +430,17 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
           </div>
         </div>
         <div class="free-result__cta">
-          <p>더 자세한 풀이가 궁금하신가요?</p>
+          <div style="flex:1;min-width:0;">
+            <p>더 자세한 풀이가 궁금하신가요?</p>
+            <div class="free-reco" id="freeReco">
+              <span class="free-reco-label">✦ 무료 결과와 연관된 추천 항목 — 클릭하면 바로 선택됩니다</span>
+              <div class="free-reco-chips">
+                <span class="free-reco-chip">성향 · 기질 분석</span>
+                <span class="free-reco-chip">연애운</span>
+                <span class="free-reco-chip">새해운세</span>
+              </div>
+            </div>
+          </div>
           <button type="button" class="btn btn--primary" id="freeCtaBtn">상세 풀이 신청하기 →</button>
         </div>
       </div>
@@ -750,6 +781,66 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
   </div>
 </section>
 
+<!-- ===== SUBMISSION MODAL ===== -->
+<div id="subOverlay" class="sub-overlay" hidden>
+  <div class="sub-modal" role="dialog" aria-modal="true" aria-labelledby="subModalTitle">
+    <button type="button" class="sub-modal__close" id="subModalClose" aria-label="닫기">✕</button>
+    <h3 id="subModalTitle">신청 정보 입력</h3>
+    <p class="sub-modal__desc">아래 정보를 입력하시면 이메일 앱이 열립니다.<br>입금 후 순서대로 정성껏 보내드립니다.</p>
+
+    <div id="subFormWrap">
+      <div class="sub-selected-box" id="subSelectedBox"></div>
+      <form id="subForm" novalidate>
+        <div class="sub-field">
+          <label for="smName">성함 *</label>
+          <input type="text" id="smName" placeholder="예: 홍길동" required autocomplete="name"/>
+        </div>
+        <div class="sub-field">
+          <label for="smBirth">생년월일 *</label>
+          <input type="date" id="smBirth" required/>
+        </div>
+        <div class="sub-field">
+          <label>성별</label>
+          <div class="sub-radio-row">
+            <label><input type="radio" name="smGender" value="여성" checked/> 여성</label>
+            <label><input type="radio" name="smGender" value="남성"/> 남성</label>
+          </div>
+        </div>
+        <div class="sub-field">
+          <label for="smTime">태어난 시간</label>
+          <select id="smTime">
+            <option value="모름">모름 — 몰라도 괜찮아요</option>
+            <option value="자시(23~01시)">자시 (23~01시)</option>
+            <option value="축시(01~03시)">축시 (01~03시)</option>
+            <option value="인시(03~05시)">인시 (03~05시)</option>
+            <option value="묘시(05~07시)">묘시 (05~07시)</option>
+            <option value="진시(07~09시)">진시 (07~09시)</option>
+            <option value="사시(09~11시)">사시 (09~11시)</option>
+            <option value="오시(11~13시)">오시 (11~13시)</option>
+            <option value="미시(13~15시)">미시 (13~15시)</option>
+            <option value="신시(15~17시)">신시 (15~17시)</option>
+            <option value="유시(17~19시)">유시 (17~19시)</option>
+            <option value="술시(19~21시)">술시 (19~21시)</option>
+            <option value="해시(21~23시)">해시 (21~23시)</option>
+          </select>
+        </div>
+        <div class="sub-field">
+          <label for="smContact">연락처 (이메일 또는 전화번호) *</label>
+          <input type="text" id="smContact" placeholder="예: example@mail.com 또는 010-0000-0000" required/>
+        </div>
+        <p id="subFormErr" style="display:none;font-family:var(--f);font-size:13px;color:var(--blossom-deep);margin-bottom:12px;">성함, 생년월일, 연락처를 입력해주세요.</p>
+        <button type="submit" class="btn btn--primary btn--block">이메일로 신청서 보내기 ✉</button>
+      </form>
+    </div>
+
+    <div id="subConfirm" class="sub-confirm" hidden>
+      <div class="sub-confirm__icon">✦</div>
+      <p>이메일 앱이 열렸습니다.<br><strong>보내기</strong>를 눌러주세요.<br><br>입금 후 접수 순서에 따라<br>정성껏 풀이해 보내드립니다.</p>
+      <button type="button" class="btn btn--primary" id="subDoneBtn">확인</button>
+    </div>
+  </div>
+</div>
+
 </main>
 
 <script>
@@ -861,51 +952,125 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
 
     var result=document.getElementById('freeResult');
     result.style.display='block';
+    document.getElementById('freeReco').style.display='block';
     result.scrollIntoView({behavior:'smooth',block:'start'});
   });
 
+  /* === item selection + submission modal === */
+  var ITEM_IDS=['sg','ps','ya','bh','jm','gk','ds','bm','js','hb','sh','wb','sn','jh','sb','ib','dh','im'];
+  var cards=document.querySelectorAll('.item-card');
+  cards.forEach(function(c,i){c.dataset.id=ITEM_IDS[i]||'';});
+
+  var selBar=document.getElementById('selBar');
+  var selCount=document.getElementById('selCount');
+  var selTotal=document.getElementById('selTotal');
+  var selApplyBtn=document.getElementById('selApplyBtn');
+
+  function fmtWon(n){return n.toLocaleString('ko-KR')+'원';}
+
+  function updateSelBar(){
+    var selected=document.querySelectorAll('.item-card.is-selected');
+    var total=0;
+    selected.forEach(function(c){total+=parseInt(c.dataset.price,10);});
+    if(selected.length>0){
+      selCount.textContent=selected.length+'개 선택됨';
+      selTotal.textContent=fmtWon(total);
+      selBar.classList.add('is-shown');
+    } else {
+      selBar.classList.remove('is-shown');
+    }
+  }
+
+  cards.forEach(function(card){
+    card.addEventListener('click',function(){
+      card.classList.toggle('is-selected');
+      updateSelBar();
+    });
+  });
+
   document.getElementById('freeCtaBtn').addEventListener('click',function(){
+    ['sg','ya','sh'].forEach(function(id){
+      var card=document.querySelector('.item-card[data-id="'+id+'"]');
+      if(card&&!card.classList.contains('is-selected'))card.classList.add('is-selected');
+    });
+    updateSelBar();
     document.getElementById('menu').scrollIntoView({behavior:'smooth',block:'start'});
   });
 
-  /* === item selection === */
-  (function(){
-    var cards=document.querySelectorAll('.item-card');
-    var selBar=document.getElementById('selBar');
-    var selCount=document.getElementById('selCount');
-    var selTotal=document.getElementById('selTotal');
-    var selApplyBtn=document.getElementById('selApplyBtn');
+  var subOverlay=document.getElementById('subOverlay');
+  var subModalClose=document.getElementById('subModalClose');
+  var subForm=document.getElementById('subForm');
+  var subFormWrap=document.getElementById('subFormWrap');
+  var subConfirm=document.getElementById('subConfirm');
+  var subDoneBtn=document.getElementById('subDoneBtn');
+  var subSelectedBox=document.getElementById('subSelectedBox');
 
-    function fmt(n){return n.toLocaleString('ko-KR')+'원';}
-
-    function updateBar(){
-      var selected=document.querySelectorAll('.item-card.is-selected');
-      var total=0;
-      selected.forEach(function(c){total+=parseInt(c.dataset.price,10);});
-      if(selected.length>0){
-        selCount.textContent=selected.length+'개 선택됨';
-        selTotal.textContent=fmt(total);
-        selBar.classList.add('is-shown');
-      } else {
-        selBar.classList.remove('is-shown');
-      }
+  function openSubModal(){
+    var selected=document.querySelectorAll('.item-card.is-selected');
+    if(selected.length===0){
+      var acct=document.querySelector('.account-section');
+      if(acct) acct.scrollIntoView({behavior:'smooth',block:'start'});
+      return;
     }
-
-    cards.forEach(function(card){
-      card.addEventListener('click',function(){
-        card.classList.toggle('is-selected');
-        updateBar();
-      });
+    var lines=[],total=0;
+    selected.forEach(function(c){
+      var n=c.querySelector('.item-card__name').textContent;
+      var p=parseInt(c.dataset.price,10);
+      lines.push('ㆍ'+n+' ('+fmtWon(p)+')');
+      total+=p;
     });
+    subSelectedBox.innerHTML=
+      '<span style="font-family:var(--f);font-size:12px;color:var(--ink-soft);display:block;margin-bottom:6px;font-weight:700;">선택 항목</span>'+
+      lines.join('<br>')+
+      '<br><strong style="font-family:var(--f);color:var(--brass);">합계: '+fmtWon(total)+'</strong>';
+    subFormWrap.hidden=false;
+    subConfirm.hidden=true;
+    subOverlay.hidden=false;
+    document.body.style.overflow='hidden';
+  }
 
-    if(selApplyBtn){
-      selApplyBtn.addEventListener('click',function(){
-        document.getElementById('account-section') && document.getElementById('account-section').scrollIntoView({behavior:'smooth',block:'start'});
-        var acct=document.querySelector('.account-section');
-        if(acct) acct.scrollIntoView({behavior:'smooth',block:'start'});
+  function closeSubModal(){
+    subOverlay.hidden=true;
+    document.body.style.overflow='';
+  }
+
+  if(selApplyBtn) selApplyBtn.addEventListener('click',openSubModal);
+  if(subModalClose) subModalClose.addEventListener('click',closeSubModal);
+  if(subDoneBtn) subDoneBtn.addEventListener('click',closeSubModal);
+  if(subOverlay) subOverlay.addEventListener('click',function(e){if(e.target===subOverlay)closeSubModal();});
+
+  if(subForm){
+    subForm.addEventListener('submit',function(e){
+      e.preventDefault();
+      var name=document.getElementById('smName').value.trim();
+      var birth=document.getElementById('smBirth').value;
+      var contact=document.getElementById('smContact').value.trim();
+      var errEl=document.getElementById('subFormErr');
+      if(!name||!birth||!contact){errEl.style.display='block';return;}
+      errEl.style.display='none';
+      var gender=document.querySelector('input[name="smGender"]:checked').value;
+      var time=document.getElementById('smTime').value;
+      var selected=document.querySelectorAll('.item-card.is-selected');
+      var lines=[],total=0;
+      selected.forEach(function(c){
+        var n=c.querySelector('.item-card__name').textContent;
+        var p=parseInt(c.dataset.price,10);
+        lines.push('ㆍ'+n+' ('+fmtWon(p)+')');
+        total+=p;
       });
-    }
-  })();
+      var subject=encodeURIComponent('[사주마루 신청] '+name+' 님');
+      var body=encodeURIComponent(
+        '📋 신청 항목\n'+lines.join('\n')+'\n합계: '+fmtWon(total)+'\n\n'+
+        '👤 고객 정보\n성함: '+name+'\n생년월일: '+birth+'\n성별: '+gender+'\n태어난 시간: '+time+'\n연락처: '+contact+'\n\n'+
+        '📌 사주마루 사이트에서 작성된 신청입니다.\n입금 확인 후 순서대로 풀이를 보내드립니다.\n카카오뱅크 3333-28-9077788 예금주 황홍식'
+      );
+      window.location.href='mailto:shinmoney7@gmail.com?subject='+subject+'&body='+body;
+      setTimeout(function(){
+        subFormWrap.hidden=true;
+        subConfirm.hidden=false;
+      },400);
+    });
+  }
 
   function flashBtn(btn){
     var orig=btn.textContent;
