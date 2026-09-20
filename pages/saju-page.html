@@ -233,6 +233,34 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
 .exitpopup__card h3{font-family:var(--f);font-size:20px;margin-bottom:10px;font-weight:800;}
 .exitpopup__card p{font-family:var(--f);font-size:14px;color:var(--ink-soft);margin-bottom:18px;}
 .exitpopup__card .btn{width:100%;}
+
+/* === FREE FORTUNE === */
+.free-form-wrap{max-width:600px;margin:0 auto;}
+.free-form{background:var(--paper-raised);border:1px solid var(--line);border-radius:18px;padding:28px 24px;}
+.free-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:560px){.free-grid{grid-template-columns:1fr;}}
+.free-result{display:none;margin-top:24px;border-radius:18px;overflow:hidden;border:1px solid var(--line);}
+.free-result__header{background:var(--frame);color:#fff;padding:16px 22px;display:flex;align-items:center;gap:14px;font-family:var(--f);}
+.free-result__name{font-size:20px;font-weight:800;}
+.free-result__el{font-size:14px;opacity:.8;padding:3px 10px;border-radius:999px;}
+.free-cards{display:grid;grid-template-columns:repeat(3,1fr);background:var(--paper-raised);}
+@media(max-width:560px){.free-cards{grid-template-columns:1fr;}}
+.free-card{padding:18px 16px;border-right:1px solid var(--line);}
+.free-card:last-child{border-right:0;}
+@media(max-width:560px){.free-card{border-right:0;border-bottom:1px solid var(--line);}.free-card:last-child{border-bottom:0;}}
+.free-card__icon{height:80px;border-radius:10px;margin-bottom:12px;position:relative;overflow:hidden;}
+.free-card__label{font-family:var(--f);font-size:12px;color:var(--brass);font-weight:700;letter-spacing:.05em;margin-bottom:6px;}
+.free-card__body{font-family:var(--f);font-size:14px;line-height:1.7;color:var(--ink);}
+.free-result__cta{background:var(--paper);padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid var(--line);}
+.free-result__cta p{font-family:var(--f);font-size:14px;color:var(--ink-soft);}
+
+/* === FLOW STEPS === */
+.flow-steps{display:flex;align-items:center;gap:6px;margin-bottom:32px;flex-wrap:wrap;}
+.flow-step-btn{background:none;border:1px solid var(--line);border-radius:999px;padding:8px 18px;font-family:var(--f);font-size:14px;font-weight:700;color:var(--ink-soft);cursor:pointer;transition:all .2s ease;}
+.flow-step-btn.is-active{background:var(--brass);border-color:var(--brass);color:var(--brass-ink);}
+.flow-step-btn:not(.is-active):hover{border-color:var(--brass);color:var(--brass);}
+.flow-sep{font-family:var(--f);font-size:14px;color:var(--ink-soft);padding:0 2px;opacity:.45;}
+.flow-nav{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap;}
 </style>
 </head>
 <body>
@@ -282,7 +310,7 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
   </div>
 
   <div class="hero__scrollcue">
-    <a href="#stage">항목 고르러 가기
+    <a href="#flow">항목 고르러 가기
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 4v16M5 13l7 7 7-7"/></svg>
     </a>
   </div>
@@ -290,168 +318,262 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
 
 <main>
 
-<!-- ===== 항목 선택 ===== -->
-<section class="section" id="stage">
+<!-- ===== 무료 사주 체험 ===== -->
+<section class="section" id="free">
   <div class="wrap">
-    <div class="eyebrow">항목 선택</div>
-    <h2>무엇을 알고 싶으신가요?</h2>
-    <div class="callout">포장 없이, 있는 그대로의 사주를 쉬운 말로 풀어드립니다.<br>좋은 것도, 나쁜 것도 솔직하게 전달해요.</div>
-    <p class="lead">카드를 톡 짚으면 그 항목의 이야기를 시작해요. 여러 개 골라서 한 번에 신청해도 좋습니다.</p>
-
-    <div class="stage">
-      <div class="stage__expanded" id="expandedPanel">
-        <div class="stage__media"><div id="expandedVisual" class="stage__visual"><span id="expandedHan" class="stage__visual-han"></span></div></div>
-        <div class="stage__talk">
-          <div class="scroll-bubble"><p id="expandedText"></p></div>
+    <div class="eyebrow">무료 사주 체험</div>
+    <h2>생년월일을 입력하면 바로 알려드려요</h2>
+    <p class="lead" style="margin-bottom:32px;">이름과 생년월일만 넣으시면, 타고난 기운과 오늘의 흐름을 <strong>무료</strong>로 살짝 알려드려요.</p>
+    <div class="free-form-wrap">
+      <form id="freeForm" class="free-form" novalidate>
+        <div class="free-grid">
+          <div class="field">
+            <label for="freeName">이름</label>
+            <input type="text" id="freeName" placeholder="예: 홍길동" autocomplete="name"/>
+          </div>
+          <div class="field">
+            <label for="freeBirth">생년월일 <span style="font-size:13px;color:var(--ink-soft);font-weight:700;">(필수)</span></label>
+            <input type="date" id="freeBirth" required/>
+          </div>
+          <div class="field">
+            <fieldset>
+              <legend>성별</legend>
+              <div class="radiorow">
+                <label><input type="radio" name="frGender" value="여성" checked/> 여성</label>
+                <label><input type="radio" name="frGender" value="남성"/> 남성</label>
+              </div>
+            </fieldset>
+          </div>
+          <div class="field">
+            <label for="freeTime">태어난 시간</label>
+            <select id="freeTime">
+              <option value="">몰라도 괜찮아요</option>
+              <option value="자">자시 (23~01시)</option>
+              <option value="축">축시 (01~03시)</option>
+              <option value="인">인시 (03~05시)</option>
+              <option value="묘">묘시 (05~07시)</option>
+              <option value="진">진시 (07~09시)</option>
+              <option value="사">사시 (09~11시)</option>
+              <option value="오">오시 (11~13시)</option>
+              <option value="미">미시 (13~15시)</option>
+              <option value="신">신시 (15~17시)</option>
+              <option value="유">유시 (17~19시)</option>
+              <option value="술">술시 (19~21시)</option>
+              <option value="해">해시 (21~23시)</option>
+            </select>
+          </div>
         </div>
-      </div>
-      <div class="cardgrid" id="cardGrid"></div>
-    </div>
-
-    <div class="selectionbar" id="selectionBar">
-      <div class="selectionbar__list" id="selectionList"></div>
-      <div class="selectionbar__row">
-        <div class="selectionbar__total">합계 <strong id="selectionTotal">0원</strong></div>
-        <button type="button" class="btn btn--primary" id="applyBtn">선택한 항목으로 신청할게요 →</button>
+        <button type="submit" class="btn btn--primary btn--block" style="margin-top:8px;">나의 기운 알아보기 ✦</button>
+      </form>
+      <div class="free-result" id="freeResult">
+        <div class="free-result__header">
+          <span class="free-result__name" id="frName"></span>
+          <span class="free-result__el" id="frEl"></span>
+        </div>
+        <div class="free-cards">
+          <div class="free-card">
+            <div class="free-card__icon" id="frIcon1"></div>
+            <div class="free-card__label">✦ 타고난 오행과 성향</div>
+            <p class="free-card__body" id="frElement"></p>
+          </div>
+          <div class="free-card">
+            <div class="free-card__icon" id="frIcon2" style="background:linear-gradient(145deg,#080f28,#1a3068,#040818);"></div>
+            <div class="free-card__label">✦ 오늘의 기운</div>
+            <p class="free-card__body" id="frToday"></p>
+          </div>
+          <div class="free-card">
+            <div class="free-card__icon" id="frIcon3" style="background:linear-gradient(145deg,#280a02,#8a3012,#140501);"></div>
+            <div class="free-card__label">✦ 2026년 병오년 흐름</div>
+            <p class="free-card__body" id="frYear"></p>
+          </div>
+        </div>
+        <div class="free-result__cta">
+          <p>더 자세한 풀이가 궁금하신가요?</p>
+          <button type="button" class="btn btn--primary" id="freeCtaBtn">상세 풀이 신청하기 →</button>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ===== 신청 접수 ===== -->
-<section class="section" id="apply">
-  <div class="prose-wrap">
-    <div class="eyebrow">신청 접수</div>
-    <h2>몇 가지만 여쭤볼게요</h2>
-    <p class="lead" style="margin-bottom:30px;">생시를 정확히 적어주실수록 풀이가 더 정밀해집니다. 시간을 모르셔도 괜찮아요.</p>
+<!-- ===== 신청 흐름 ===== -->
+<section class="section" id="flow">
+  <div class="wrap">
 
-    <form class="ledger" id="orderForm" novalidate>
-      <div class="field">
-        <label>선택하신 항목</label>
-        <div id="selectedPill"><span class="selected-pill">아직 선택 전 · 위에서 카드를 먼저 골라주세요</span></div>
+    <!-- Step indicator -->
+    <div class="flow-steps">
+      <button type="button" class="flow-step-btn is-active" id="stepBtn1">① 항목 선택</button>
+      <span class="flow-sep">→</span>
+      <button type="button" class="flow-step-btn" id="stepBtn2">② 신청 정보</button>
+      <span class="flow-sep">→</span>
+      <button type="button" class="flow-step-btn" id="stepBtn3">③ 복채 안내</button>
+    </div>
+
+    <!-- Panel 1: 항목 선택 -->
+    <div id="flowPanel1">
+      <div class="eyebrow">항목 선택</div>
+      <h2>무엇을 알고 싶으신가요?</h2>
+      <div class="callout">포장 없이, 있는 그대로의 사주를 쉬운 말로 풀어드립니다.<br>좋은 것도, 나쁜 것도 솔직하게 전달해요.</div>
+      <p class="lead">카드를 톡 짚으면 그 항목의 이야기를 시작해요. 여러 개 골라서 한 번에 신청해도 좋습니다.</p>
+
+      <div class="stage">
+        <div class="stage__expanded" id="expandedPanel">
+          <div class="stage__media"><div id="expandedVisual" class="stage__visual"><span id="expandedHan" class="stage__visual-han"></span></div></div>
+          <div class="stage__talk">
+            <div class="scroll-bubble"><p id="expandedText"></p></div>
+          </div>
+        </div>
+        <div class="cardgrid" id="cardGrid"></div>
       </div>
 
-      <div class="grid2">
-        <div class="field">
-          <label for="fName">성함</label>
-          <input type="text" id="fName" name="성함" placeholder="예: 김민지" autocomplete="name" required/>
+      <div class="selectionbar" id="selectionBar">
+        <div class="selectionbar__list" id="selectionList"></div>
+        <div class="selectionbar__row">
+          <div class="selectionbar__total">합계 <strong id="selectionTotal">0원</strong></div>
+          <button type="button" class="btn btn--primary" id="applyBtn">선택한 항목으로 신청할게요 →</button>
         </div>
-        <div class="field">
-          <label for="fBirth">생년월일</label>
-          <input type="date" id="fBirth" name="생년월일" required/>
-        </div>
-      </div>
-
-      <div class="grid2">
-        <div class="field">
-          <fieldset>
-            <legend>양력 / 음력</legend>
-            <div class="radiorow">
-              <label><input type="radio" name="calendar" value="양력" checked/> 양력</label>
-              <label><input type="radio" name="calendar" value="음력"/> 음력</label>
-            </div>
-          </fieldset>
-        </div>
-        <div class="field">
-          <fieldset>
-            <legend>성별</legend>
-            <div class="radiorow">
-              <label><input type="radio" name="gender" value="여성" checked/> 여성</label>
-              <label><input type="radio" name="gender" value="남성"/> 남성</label>
-            </div>
-          </fieldset>
-        </div>
-      </div>
-
-      <div class="field">
-        <label for="fTime">태어난 시간 (시진)</label>
-        <select id="fTime" name="태어난시간">
-          <option value="모름">모름 — 몰라도 괜찮아요</option>
-          <option value="자시(子時, 23~01시)">자시 子時 (23~01시)</option>
-          <option value="축시(丑時, 01~03시)">축시 丑時 (01~03시)</option>
-          <option value="인시(寅時, 03~05시)">인시 寅時 (03~05시)</option>
-          <option value="묘시(卯時, 05~07시)">묘시 卯時 (05~07시)</option>
-          <option value="진시(辰時, 07~09시)">진시 辰時 (07~09시)</option>
-          <option value="사시(巳時, 09~11시)">사시 巳時 (09~11시)</option>
-          <option value="오시(午時, 11~13시)">오시 午時 (11~13시)</option>
-          <option value="미시(未時, 13~15시)">미시 未時 (13~15시)</option>
-          <option value="신시(申時, 15~17시)">신시 申時 (15~17시)</option>
-          <option value="유시(酉時, 17~19시)">유시 酉時 (17~19시)</option>
-          <option value="술시(戌時, 19~21시)">술시 戌時 (19~21시)</option>
-          <option value="해시(亥時, 21~23시)">해시 亥時 (21~23시)</option>
-        </select>
-      </div>
-
-      <div class="grid2">
-        <div class="field">
-          <fieldset>
-            <legend>결과 받는 방법</legend>
-            <div class="radiorow">
-              <label><input type="radio" name="contactType" value="이메일" checked/> 이메일</label>
-              <label><input type="radio" name="contactType" value="카카오톡"/> 카카오톡</label>
-              <label><input type="radio" name="contactType" value="문자"/> 문자(SMS)</label>
-            </div>
-          </fieldset>
-        </div>
-        <div class="field">
-          <label for="fContact">연락처 (이메일 / 카카오톡 ID / 전화번호)</label>
-          <input type="text" id="fContact" name="연락처" placeholder="예: example@mail.com 또는 kakao_id" required/>
-        </div>
-      </div>
-
-      <div class="field">
-        <label for="fNote">더 알려주고 싶은 이야기 (선택)</label>
-        <textarea id="fNote" name="요청사항" placeholder="궁금한 점이나 현재 상황을 조금 더 적어주셔도 좋아요."></textarea>
-      </div>
-
-      <div class="error" id="formError">항목 선택, 성함, 생년월일, 연락처는 꼭 확인해주세요.</div>
-      <button type="submit" class="btn btn--primary btn--block">접수 내용 확인하기 →</button>
-    </form>
-  </div>
-</section>
-
-<!-- ===== 복채 안내 ===== -->
-<section class="section section--tight paypanel" id="payPanel">
-  <div class="prose-wrap">
-    <div class="eyebrow">복채 안내</div>
-    <h2>입금 후 아래 내용을 보내주세요</h2>
-    <p class="lead">입금 확인 후, 접수 순서에 따라 정성껏 풀이해서 보내드립니다.</p>
-
-    <div class="ledger" style="margin-top:26px;">
-      <p style="font-family:var(--f);font-size:14px;color:var(--ink-soft);margin-bottom:4px;">복채 (상담료)</p>
-      <p style="font-family:var(--f);font-size:28px;font-weight:800;" id="priceLine">29,000원</p>
-
-      <fieldset style="margin:16px 0 0;">
-        <legend style="font-family:var(--f);font-size:13px;color:var(--ink-soft);margin-bottom:8px;">입금하실 계좌를 선택해주세요</legend>
-        <div class="radiorow" id="bankChoice">
-          <label><input type="radio" name="bankChoice" value="kakao" checked/> 카카오뱅크 (황홍식)</label>
-          <label><input type="radio" name="bankChoice" value="hana"/> 하나은행 (황선화)</label>
-        </div>
-      </fieldset>
-
-      <div class="accountbox">
-        <div>
-          <div style="font-family:var(--f);font-size:12px;color:var(--ink-soft);margin-bottom:3px;">입금 계좌</div>
-          <div class="num" id="accountNum">카카오뱅크 3333-28-9077788 · 예금주 황홍식</div>
-        </div>
-        <button type="button" class="btn btn--ghost" id="copyAccountBtn">계좌번호 복사</button>
-      </div>
-
-      <p class="hint">입금 후, 아래 접수 내용을 이메일 또는 카카오톡으로 보내주시면 순서대로 안내드려요.</p>
-
-      <div class="ledgerbox" id="orderSummary"></div>
-
-      <div class="actions">
-        <button type="button" class="btn btn--primary" id="emailBtn">이메일로 접수 보내기 ✉</button>
-        <button type="button" class="btn btn--ghost" id="copySummaryBtn">접수 내용 복사하기</button>
-        <span class="copied-msg" id="copiedMsg">복사됐어요</span>
-      </div>
-
-      <div style="margin-top:18px;background:var(--brass-soft);border-radius:10px;padding:14px 16px;">
-        <p style="font-family:var(--f);font-size:15px;font-weight:700;color:var(--brass-ink);">✦ 사주풀이는 접수 순서에 따라 보내드립니다</p>
-        <p style="font-family:var(--f);font-size:13px;color:var(--ink-soft);margin-top:4px;">한 분 한 분 정성껏 풀이하기 때문에 시간이 걸릴 수 있습니다. 기다려주셔서 감사합니다.</p>
       </div>
     </div>
+
+    <!-- Panel 2: 신청 접수 -->
+    <div id="flowPanel2" hidden>
+      <div class="eyebrow">신청 접수</div>
+      <h2>몇 가지만 여쭤볼게요</h2>
+      <p class="lead" style="margin-bottom:30px;">생시를 정확히 적어주실수록 풀이가 더 정밀해집니다. 시간을 모르셔도 괜찮아요.</p>
+
+      <form class="ledger" id="orderForm" novalidate>
+        <div class="field">
+          <label>선택하신 항목</label>
+          <div id="selectedPill"><span class="selected-pill">아직 선택 전 · 위에서 카드를 먼저 골라주세요</span></div>
+        </div>
+
+        <div class="grid2">
+          <div class="field">
+            <label for="fName">성함</label>
+            <input type="text" id="fName" name="성함" placeholder="예: 김민지" autocomplete="name" required/>
+          </div>
+          <div class="field">
+            <label for="fBirth">생년월일</label>
+            <input type="date" id="fBirth" name="생년월일" required/>
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="field">
+            <fieldset>
+              <legend>양력 / 음력</legend>
+              <div class="radiorow">
+                <label><input type="radio" name="calendar" value="양력" checked/> 양력</label>
+                <label><input type="radio" name="calendar" value="음력"/> 음력</label>
+              </div>
+            </fieldset>
+          </div>
+          <div class="field">
+            <fieldset>
+              <legend>성별</legend>
+              <div class="radiorow">
+                <label><input type="radio" name="gender" value="여성" checked/> 여성</label>
+                <label><input type="radio" name="gender" value="남성"/> 남성</label>
+              </div>
+            </fieldset>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="fTime">태어난 시간 (시진)</label>
+          <select id="fTime" name="태어난시간">
+            <option value="모름">모름 — 몰라도 괜찮아요</option>
+            <option value="자시(子時, 23~01시)">자시 子時 (23~01시)</option>
+            <option value="축시(丑時, 01~03시)">축시 丑時 (01~03시)</option>
+            <option value="인시(寅時, 03~05시)">인시 寅時 (03~05시)</option>
+            <option value="묘시(卯時, 05~07시)">묘시 卯時 (05~07시)</option>
+            <option value="진시(辰時, 07~09시)">진시 辰時 (07~09시)</option>
+            <option value="사시(巳時, 09~11시)">사시 巳時 (09~11시)</option>
+            <option value="오시(午時, 11~13시)">오시 午時 (11~13시)</option>
+            <option value="미시(未時, 13~15시)">미시 未時 (13~15시)</option>
+            <option value="신시(申時, 15~17시)">신시 申時 (15~17시)</option>
+            <option value="유시(酉時, 17~19시)">유시 酉時 (17~19시)</option>
+            <option value="술시(戌時, 19~21시)">술시 戌時 (19~21시)</option>
+            <option value="해시(亥時, 21~23시)">해시 亥時 (21~23시)</option>
+          </select>
+        </div>
+
+        <div class="grid2">
+          <div class="field">
+            <fieldset>
+              <legend>결과 받는 방법</legend>
+              <div class="radiorow">
+                <label><input type="radio" name="contactType" value="이메일" checked/> 이메일</label>
+                <label><input type="radio" name="contactType" value="카카오톡"/> 카카오톡</label>
+                <label><input type="radio" name="contactType" value="문자"/> 문자(SMS)</label>
+              </div>
+            </fieldset>
+          </div>
+          <div class="field">
+            <label for="fContact">연락처 (이메일 / 카카오톡 ID / 전화번호)</label>
+            <input type="text" id="fContact" name="연락처" placeholder="예: example@mail.com 또는 kakao_id" required/>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="fNote">더 알려주고 싶은 이야기 (선택)</label>
+          <textarea id="fNote" name="요청사항" placeholder="궁금한 점이나 현재 상황을 조금 더 적어주셔도 좋아요."></textarea>
+        </div>
+
+        <div class="error" id="formError">항목 선택, 성함, 생년월일, 연락처는 꼭 확인해주세요.</div>
+        <button type="submit" class="btn btn--primary btn--block">접수 내용 확인하기 →</button>
+      </form>
+      <div class="flow-nav">
+        <button type="button" class="btn btn--ghost" id="backToStep1Btn">← 항목 다시 고르기</button>
+      </div>
+    </div>
+
+    <!-- Panel 3: 복채 안내 -->
+    <div id="flowPanel3" hidden>
+      <div class="eyebrow">복채 안내</div>
+      <h2>입금 후 아래 내용을 보내주세요</h2>
+      <p class="lead">입금 확인 후, 접수 순서에 따라 정성껏 풀이해서 보내드립니다.</p>
+
+      <div class="ledger" style="margin-top:26px;">
+        <p style="font-family:var(--f);font-size:14px;color:var(--ink-soft);margin-bottom:4px;">복채 (상담료)</p>
+        <p style="font-family:var(--f);font-size:28px;font-weight:800;" id="priceLine">29,000원</p>
+
+        <fieldset style="margin:16px 0 0;">
+          <legend style="font-family:var(--f);font-size:13px;color:var(--ink-soft);margin-bottom:8px;">입금하실 계좌를 선택해주세요</legend>
+          <div class="radiorow" id="bankChoice">
+            <label><input type="radio" name="bankChoice" value="kakao" checked/> 카카오뱅크 (황홍식)</label>
+            <label><input type="radio" name="bankChoice" value="hana"/> 하나은행 (황선화)</label>
+          </div>
+        </fieldset>
+
+        <div class="accountbox">
+          <div>
+            <div style="font-family:var(--f);font-size:12px;color:var(--ink-soft);margin-bottom:3px;">입금 계좌</div>
+            <div class="num" id="accountNum">카카오뱅크 3333-28-9077788 · 예금주 황홍식</div>
+          </div>
+          <button type="button" class="btn btn--ghost" id="copyAccountBtn">계좌번호 복사</button>
+        </div>
+
+        <p class="hint">입금 후, 아래 접수 내용을 이메일 또는 카카오톡으로 보내주시면 순서대로 안내드려요.</p>
+
+        <div class="ledgerbox" id="orderSummary"></div>
+
+        <div class="actions">
+          <button type="button" class="btn btn--primary" id="emailBtn">이메일로 접수 보내기 ✉</button>
+          <button type="button" class="btn btn--ghost" id="copySummaryBtn">접수 내용 복사하기</button>
+          <span class="copied-msg" id="copiedMsg">복사됐어요</span>
+        </div>
+
+        <div style="margin-top:18px;background:var(--brass-soft);border-radius:10px;padding:14px 16px;">
+          <p style="font-family:var(--f);font-size:15px;font-weight:700;color:var(--brass-ink);">✦ 사주풀이는 접수 순서에 따라 보내드립니다</p>
+          <p style="font-family:var(--f);font-size:13px;color:var(--ink-soft);margin-top:4px;">한 분 한 분 정성껏 풀이하기 때문에 시간이 걸릴 수 있습니다. 기다려주셔서 감사합니다.</p>
+        </div>
+      </div>
+      <div class="flow-nav">
+        <button type="button" class="btn btn--ghost" id="backToStep2Btn">← 다시 확인하기</button>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -500,27 +622,19 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
 
 <script>
 (function(){
-  /* bar chart */
-  var barVals = [75,20,55,55,55,20,55,20,20,100,55,20];
-  var barMax = 100;
-  var bc = document.getElementById('barChart');
-  var bm = document.getElementById('barMonths');
-  barVals.forEach(function(v,i){
-    var col = document.createElement('div');
-    col.className = 'bar-col';
-    var valEl = document.createElement('div');
-    valEl.className = 'bar-val';
-    valEl.textContent = v;
-    var bar = document.createElement('div');
-    bar.className = v === barMax ? 'bar hi' : 'bar';
-    bar.style.height = Math.round(v/barMax*110) + 'px';
-    col.appendChild(valEl);
-    col.appendChild(bar);
-    bc.appendChild(col);
-    var m = document.createElement('span');
-    m.textContent = (i+1)+'월';
-    bm.appendChild(m);
-  });
+  /* goStep — switch between the 3 flow panels */
+  function goStep(n){
+    [1,2,3].forEach(function(i){
+      document.getElementById('flowPanel'+i).hidden=(i!==n);
+      var btn=document.getElementById('stepBtn'+i);
+      if(btn) btn.classList.toggle('is-active',i===n);
+    });
+    document.getElementById('flow').scrollIntoView({behavior:'smooth',block:'start'});
+    stickyHiddenByView=(n>1);
+    var sticky=document.getElementById('stickyBar');
+    if(n>1) sticky.classList.remove('is-shown');
+    else if(selectedIds&&selectedIds.length) sticky.classList.add('is-shown');
+  }
 
   /* === generate stars === */
   (function(){
@@ -802,23 +916,19 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
   renderExpanded(CATEGORIES[0]);
   renderSelectionBar();
 
-  document.getElementById('applyBtn').addEventListener('click',function(){
-    document.getElementById('apply').scrollIntoView({behavior:'smooth',block:'start'});
+  document.getElementById('applyBtn').addEventListener('click',function(){goStep(2);});
+  document.getElementById('stickyApplyBtn').addEventListener('click',function(){goStep(2);});
+  document.getElementById('backToStep1Btn').addEventListener('click',function(){goStep(1);});
+  document.getElementById('backToStep2Btn').addEventListener('click',function(){goStep(2);});
+  document.getElementById('freeCtaBtn').addEventListener('click',function(){
+    goStep(1);
+    document.getElementById('flow').scrollIntoView({behavior:'smooth',block:'start'});
   });
-  document.getElementById('stickyApplyBtn').addEventListener('click',function(){
-    document.getElementById('apply').scrollIntoView({behavior:'smooth',block:'start'});
-  });
+  document.getElementById('stepBtn1').addEventListener('click',function(){goStep(1);});
+  document.getElementById('stepBtn2').addEventListener('click',function(){goStep(2);});
+  document.getElementById('stepBtn3').addEventListener('click',function(){goStep(3);});
 
   if('IntersectionObserver' in window){
-    var applyEl=document.getElementById('apply');
-    new IntersectionObserver(function(entries){
-      entries.forEach(function(e){
-        stickyHiddenByView=e.isIntersecting;
-        var sticky=document.getElementById('stickyBar');
-        if(e.isIntersecting) sticky.classList.remove('is-shown');
-        else if(selectedIds.length) sticky.classList.add('is-shown');
-      });
-    },{threshold:.15}).observe(applyEl);
     document.querySelectorAll('.card').forEach(function(c){
       new IntersectionObserver(function(entries){
         entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('is-visible');}});
@@ -830,7 +940,6 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
 
   /* form submit */
   var form=document.getElementById('orderForm');
-  var payPanel=document.getElementById('payPanel');
   form.addEventListener('submit',function(e){
     e.preventDefault();
     var name=document.getElementById('fName').value.trim();
@@ -863,8 +972,7 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
     var rawBody=summary;
     var emailBtn=document.getElementById('emailBtn');
     emailBtn.onclick=function(){openEmailModal(rawSubj,rawBody);};
-    payPanel.classList.add('is-shown');
-    payPanel.scrollIntoView({behavior:'smooth',block:'start'});
+    goStep(3);
   });
 
   function flashCopied(){
@@ -906,10 +1014,11 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
   exitPopup.addEventListener('click',function(e){if(e.target===exitPopup) exitPopup.classList.remove('is-shown');});
   document.getElementById('exitPopupBtn').addEventListener('click',function(){
     exitPopup.classList.remove('is-shown');
-    document.getElementById(selectedIds.length?'apply':'stage').scrollIntoView({behavior:'smooth',block:'start'});
+    document.getElementById('flow').scrollIntoView({behavior:'smooth',block:'start'});
   });
 
   /* ─── EMAIL MODAL ─── */
+  window.closeEmailModal=closeEmailModal;
   function openEmailModal(subj,body){
     document.getElementById('emSubj').textContent=subj||'사주마루 사주 신청';
     document.getElementById('emBody').value=body||'';
