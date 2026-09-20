@@ -3,14 +3,14 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>사주마루</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --ink:#241A2E; --ink-soft:#5B4B62;
+  --ink:#0A0514; --ink-soft:#2C1840;
   --paper:#F6ECDD; --paper-raised:#FCF6EB;
   --line:rgba(36,26,46,.14);
   --blossom:#E48AA0; --blossom-deep:#B85C78;
@@ -21,15 +21,15 @@
   --f:"Nanum Myeongjo","Noto Serif KR",serif;
 }
 @media (prefers-color-scheme:dark){
-  :root{--ink:#F2E8DA;--ink-soft:#CBB7C4;--paper:#1A1523;--paper-raised:#241C33;--line:rgba(242,232,218,.14);--brass:#D9A75A;--brass-soft:#4A3820;--brass-ink:#241A0C;--frame:#D9C9A8;--frame-soft:#8A7A5A;--shadow:rgba(0,0,0,.45);}
+  :root{--ink:#F2E8DA;--ink-soft:#D4C2DC;--paper:#1A1523;--paper-raised:#241C33;--line:rgba(242,232,218,.14);--brass:#D9A75A;--brass-soft:#4A3820;--brass-ink:#241A0C;--frame:#D9C9A8;--frame-soft:#8A7A5A;--shadow:rgba(0,0,0,.45);}
 }
-:root[data-theme="dark"]{--ink:#F2E8DA;--ink-soft:#CBB7C4;--paper:#1A1523;--paper-raised:#241C33;--line:rgba(242,232,218,.14);--brass:#D9A75A;--brass-soft:#4A3820;--brass-ink:#241A0C;--frame:#D9C9A8;--frame-soft:#8A7A5A;--shadow:rgba(0,0,0,.45);}
-:root[data-theme="light"]{--ink:#241A2E;--ink-soft:#5B4B62;--paper:#F6ECDD;--paper-raised:#FCF6EB;--line:rgba(36,26,46,.14);--brass:#BD8A3F;--brass-soft:#EDD9AE;--brass-ink:#3A2A10;--frame:#1F2A44;--frame-soft:#3A4A6B;--shadow:rgba(36,20,30,.22);}
+:root[data-theme="dark"]{--ink:#F2E8DA;--ink-soft:#D4C2DC;--paper:#1A1523;--paper-raised:#241C33;--line:rgba(242,232,218,.14);--brass:#D9A75A;--brass-soft:#4A3820;--brass-ink:#241A0C;--frame:#D9C9A8;--frame-soft:#8A7A5A;--shadow:rgba(0,0,0,.45);}
+:root[data-theme="light"]{--ink:#0A0514;--ink-soft:#2C1840;--paper:#F6ECDD;--paper-raised:#FCF6EB;--line:rgba(36,26,46,.14);--brass:#BD8A3F;--brass-soft:#EDD9AE;--brass-ink:#3A2A10;--frame:#1F2A44;--frame-soft:#3A4A6B;--shadow:rgba(36,20,30,.22);}
 
 *,*::before,*::after{box-sizing:border-box;}
-html{scroll-behavior:smooth;}
+html{scroll-behavior:smooth;min-height:100%;}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto;}}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f);font-size:16px;line-height:1.7;overflow-x:hidden;}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f);font-size:16px;line-height:1.7;overflow-x:hidden;font-weight:700;min-height:100%;width:100%;}
 img{max-width:100%;display:block;}
 h1,h2,h3,h4,h5{font-family:var(--f);margin:0;text-wrap:balance;}
 p{margin:0;}
@@ -90,7 +90,7 @@ a{color:inherit;}
 .eyebrow{font-family:var(--f);font-size:17px;letter-spacing:.08em;color:var(--brass);font-weight:700;display:flex;align-items:center;gap:10px;margin-bottom:16px;}
 .eyebrow::before{content:"";width:18px;height:1px;background:var(--brass);}
 .section h2{font-family:var(--f);font-size:clamp(25px,3.5vw,36px);font-weight:800;margin-bottom:14px;}
-.section .lead{color:var(--ink-soft);max-width:600px;font-size:17px;line-height:1.8;}
+.section .lead{color:var(--ink);max-width:600px;font-size:17px;line-height:1.8;font-weight:700;}
 .section .lead strong{color:var(--brass);font-weight:700;}
 
 /* === FREE FORTUNE FORM === */
@@ -113,8 +113,8 @@ a{color:inherit;}
 @media(max-width:640px){.free-cards{grid-template-columns:1fr;}}
 .free-card{background:var(--paper);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;}
 .free-card__icon{height:78px;position:relative;overflow:hidden;background:var(--frame);}
-.free-card__label{padding:10px 12px 4px;font-family:var(--f);font-size:12px;color:var(--brass);font-weight:700;letter-spacing:.04em;}
-.free-card__body{padding:5px 12px 14px;font-family:var(--f);font-size:14px;line-height:1.78;color:var(--ink);flex:1;}
+.free-card__label{padding:12px 14px 5px;font-family:var(--f);font-size:15px;color:var(--brass);font-weight:700;letter-spacing:.04em;}
+.free-card__body{padding:6px 14px 16px;font-family:var(--f);font-size:16px;line-height:1.8;color:var(--ink);flex:1;}
 
 /* === ANALYSIS CHARTS SECTION === */
 .analysis-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:26px;}
@@ -126,9 +126,9 @@ a{color:inherit;}
 /* 명식 컬러 카드 */
 .myeongsik-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
 .myeongsik-col{display:flex;flex-direction:column;align-items:center;gap:5px;}
-.myeongsik-label{font-family:var(--f);font-size:12px;color:var(--ink-soft);font-weight:700;letter-spacing:.04em;}
-.myeongsik-char{width:54px;height:54px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--f);font-size:24px;font-weight:800;line-height:1;color:#fff;box-shadow:0 4px 12px -4px rgba(0,0,0,.25);}
-.myeongsik-char small{font-size:10px;font-weight:400;opacity:.85;margin-top:2px;}
+.myeongsik-label{font-family:var(--f);font-size:16px;color:var(--ink);font-weight:800;letter-spacing:.04em;}
+.myeongsik-char{width:62px;height:62px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--f);font-size:28px;font-weight:800;line-height:1;color:#fff;box-shadow:0 4px 12px -4px rgba(0,0,0,.25);}
+.myeongsik-char small{font-size:12px;font-weight:400;opacity:.85;margin-top:2px;}
 .bg-earth{background:var(--earth);}
 .bg-wood{background:var(--wood);}
 .bg-fire{background:var(--fire);}
@@ -140,26 +140,26 @@ a{color:inherit;}
 .donut{position:relative;width:120px;height:120px;border-radius:50%;flex:none;}
 .donut__hole{position:absolute;inset:22px;border-radius:50%;background:var(--paper-raised);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
 .donut__hole strong{font-family:var(--f);font-size:15px;font-weight:800;color:var(--earth);}
-.donut__hole span{font-family:var(--f);font-size:10px;color:var(--ink-soft);line-height:1.3;}
+.donut__hole span{font-family:var(--f);font-size:14px;color:var(--ink);font-weight:700;line-height:1.3;}
 .legend-list{display:flex;flex-direction:column;gap:6px;flex:1;}
-.legend-row{display:flex;align-items:center;gap:8px;font-family:var(--f);font-size:13px;}
+.legend-row{display:flex;align-items:center;gap:8px;font-family:var(--f);font-size:15px;}
 .legend-dot{width:11px;height:11px;border-radius:50%;flex:none;}
 .legend-num{margin-left:auto;font-weight:700;color:var(--ink-soft);}
 
 /* 오행 상생상극 */
 .ohaeng-svg-wrap{display:flex;justify-content:center;}
-.ohaeng-legend{font-family:var(--f);font-size:12px;color:var(--ink-soft);text-align:center;margin-top:10px;}
+.ohaeng-legend{font-family:var(--f);font-size:15px;color:var(--ink);font-weight:700;text-align:center;margin-top:10px;}
 
 /* 월별 강도 바 차트 */
 .barchart-wrap{padding:0 4px;}
 .barchart{display:flex;align-items:flex-end;gap:5px;height:120px;}
 .bar-col{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;}
-.bar-val{font-family:var(--f);font-size:9px;color:var(--ink-soft);}
+.bar-val{font-family:var(--f);font-size:13px;color:var(--ink);font-weight:700;}
 .bar{width:100%;border-radius:3px 3px 0 0;background:var(--brass);min-width:8px;transition:opacity .2s;}
 .bar:hover{opacity:.75;}
 .bar.hi{background:var(--fire);}
 .barchart-months{display:flex;gap:5px;margin:4px 4px 0;}
-.barchart-months span{flex:1;text-align:center;font-family:var(--f);font-size:9px;color:var(--ink-soft);}
+.barchart-months span{flex:1;text-align:center;font-family:var(--f);font-size:13px;color:var(--ink);font-weight:700;}
 
 /* lock teaser */
 .lockteaser{margin-top:16px;border-radius:12px;overflow:hidden;position:relative;}
@@ -183,9 +183,9 @@ a{color:inherit;}
 .card .seal{position:absolute;top:10px;right:10px;width:22px;height:22px;border-radius:50%;background:var(--brass);opacity:.2;box-shadow:0 0 0 2px rgba(255,255,255,.5);}
 .card.is-selected .seal{opacity:1;}
 .card__body{padding:13px 13px 15px;}
-.card h3{font-family:var(--f);font-size:20px;margin-bottom:6px;font-weight:800;}
-.card p{font-family:var(--f);font-size:15px;color:var(--ink-soft);font-weight:600;}
-.card .pick{margin-top:8px;font-family:var(--f);font-size:16px;color:var(--brass);font-weight:800;display:flex;align-items:center;gap:5px;}
+.card h3{font-family:var(--f);font-size:22px;margin-bottom:6px;font-weight:800;}
+.card p{font-family:var(--f);font-size:16px;color:var(--ink);font-weight:700;}
+.card .pick{margin-top:8px;font-family:var(--f);font-size:17px;color:var(--brass);font-weight:800;display:flex;align-items:center;gap:5px;}
 .stage{margin-top:30px;}
 .stage__expanded{background:var(--paper-raised);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:grid;grid-template-columns:300px 1fr;align-items:stretch;box-shadow:0 18px 40px -24px var(--shadow);margin-bottom:20px;}
 @media(max-width:680px){.stage__expanded{grid-template-columns:1fr;}}
@@ -218,7 +218,7 @@ a{color:inherit;}
 .ledger{background:var(--paper-raised);border:1px solid var(--line);border-radius:18px;padding:36px;box-shadow:0 18px 40px -26px var(--shadow);}
 @media(max-width:560px){.ledger{padding:22px 16px;}}
 .field{margin-bottom:20px;}
-.field label,.field legend{display:block;font-family:var(--f);font-size:14px;color:var(--ink-soft);margin-bottom:7px;padding:0;font-weight:700;}
+.field label,.field legend{display:block;font-family:var(--f);font-size:15px;color:var(--ink);margin-bottom:7px;padding:0;font-weight:800;}
 .field input[type="text"],.field input[type="date"],.field input[type="tel"],.field input[type="email"],.field select,.field textarea{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:16px;font-family:var(--f);}
 .field textarea{min-height:82px;resize:vertical;}
 .radiorow{display:flex;gap:10px 16px;flex-wrap:wrap;}
@@ -238,16 +238,27 @@ fieldset{border:0;padding:0;margin:0;}
 .error{font-family:var(--f);font-size:14px;color:var(--blossom-deep);margin-top:7px;display:none;}
 .error.is-shown{display:block;}
 
-/* === CONTACT SECTION === */
-.contact-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-top:26px;}
-.contact-item{background:var(--paper-raised);border:1px solid var(--line);border-radius:14px;padding:20px 18px;display:flex;flex-direction:column;gap:5px;}
-.contact-item__label{font-family:var(--f);font-size:12px;color:var(--ink-soft);font-weight:700;letter-spacing:.06em;}
-.contact-item__value{font-family:var(--f);font-size:15px;font-weight:800;color:var(--ink);word-break:break-all;}
-.contact-item__icon{font-size:20px;margin-bottom:3px;}
+/* === EMAIL CTA === */
 .email-cta-box{margin-top:30px;background:var(--frame);border-radius:16px;padding:30px 26px;text-align:center;color:#fff;}
 .email-cta-box h3{font-family:var(--f);font-size:22px;font-weight:800;margin-bottom:10px;}
-.email-cta-box p{font-family:var(--f);font-size:15px;opacity:.85;margin-bottom:18px;line-height:1.75;}
+.email-cta-box p{font-family:var(--f);font-size:16px;font-weight:700;margin-bottom:18px;line-height:1.75;}
 .email-cta-box .notice{margin-top:18px;padding:14px 16px;background:rgba(255,255,255,.12);border-radius:10px;font-family:var(--f);font-size:15px;line-height:1.75;}
+
+/* === EMAIL MODAL === */
+.email-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px;}
+.email-modal{background:var(--paper-raised);border-radius:20px;max-width:520px;width:100%;padding:28px 26px 24px;position:relative;box-shadow:0 24px 60px -16px var(--shadow);max-height:88vh;overflow-y:auto;}
+.email-modal__close{position:absolute;top:16px;right:18px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--ink-soft);line-height:1;padding:4px;}
+.email-modal h3{font-family:var(--f);font-size:22px;font-weight:800;margin-bottom:8px;color:var(--ink);}
+.email-modal__desc{font-family:var(--f);font-size:15px;color:var(--ink-soft);margin-bottom:22px;}
+.email-modal__field{margin-bottom:16px;}
+.email-modal__field label{display:block;font-family:var(--f);font-size:13px;color:var(--ink-soft);font-weight:700;letter-spacing:.05em;margin-bottom:6px;}
+.email-modal__row{display:flex;align-items:center;gap:8px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px;}
+.email-modal__row span,.email-modal__row textarea{font-family:var(--f);font-size:15px;color:var(--ink);flex:1;border:none;background:none;resize:none;line-height:1.6;min-height:0;}
+.email-modal__row textarea{min-height:130px;}
+.email-modal__copy-btn{flex-shrink:0;background:var(--brass);color:#fff;border:none;border-radius:7px;padding:5px 12px;font-size:13px;font-family:var(--f);font-weight:700;cursor:pointer;white-space:nowrap;transition:opacity .2s;}
+.email-modal__copy-btn:active{opacity:.75;}
+.email-modal__copy-btn.copied{background:var(--wood);}
+.email-modal__tip{font-family:var(--f);font-size:14px;color:var(--ink-soft);text-align:center;margin-top:8px;line-height:1.6;}
 
 /* === PAYMENT === */
 .paypanel{display:none;}
@@ -269,9 +280,9 @@ fieldset{border:0;padding:0;margin:0;}
 .result-row:last-child{border-bottom:0;}
 .result-row__icon{font-size:20px;flex:none;margin-top:2px;}
 .result-row__body{}
-.result-row__title{font-family:var(--f);font-size:16px;font-weight:800;margin-bottom:4px;}
-.result-row__desc{font-family:var(--f);font-size:14px;color:var(--ink-soft);line-height:1.75;}
-.result-row__pages{display:inline-block;margin-top:6px;font-family:var(--f);font-size:12px;font-weight:700;color:var(--wood);background:rgba(78,139,92,.12);padding:3px 10px;border-radius:999px;}
+.result-row__title{font-family:var(--f);font-size:19px;font-weight:800;margin-bottom:6px;}
+.result-row__desc{font-family:var(--f);font-size:16px;color:var(--ink);line-height:1.8;}
+.result-row__pages{display:inline-block;margin-top:7px;font-family:var(--f);font-size:14px;font-weight:700;color:var(--wood);background:rgba(78,139,92,.12);padding:4px 12px;border-radius:999px;}
 
 /* === CLOSING === */
 .closing{background:linear-gradient(160deg,var(--frame) 0%,#0a1018 100%);color:#fff;padding:80px 0;text-align:center;}
@@ -280,7 +291,7 @@ fieldset{border:0;padding:0;margin:0;}
 .closing__name{font-family:var(--f);font-size:40px;font-weight:800;color:var(--brass-soft);letter-spacing:.08em;display:block;margin-bottom:6px;animation:glow 3s ease-in-out infinite;}
 @keyframes glow{0%,100%{text-shadow:0 0 20px rgba(237,217,174,.25);}50%{text-shadow:0 0 50px rgba(237,217,174,.55);}}
 .closing h2{font-family:var(--f);font-size:clamp(20px,3.5vw,30px);font-weight:800;margin:18px 0 14px;}
-.closing p{font-family:var(--f);font-size:16px;opacity:.85;line-height:1.85;max-width:460px;margin:0 auto;}
+.closing p{font-family:var(--f);font-size:16px;font-weight:700;line-height:1.85;max-width:460px;margin:0 auto;}
 .closing__sub{margin-top:20px;font-family:var(--f);font-size:13px;opacity:.55;}
 .closing__divider{width:40px;height:1px;background:var(--brass-soft);margin:22px auto;opacity:.5;}
 
@@ -760,7 +771,7 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
       <div class="ledgerbox" id="orderSummary"></div>
 
       <div class="actions">
-        <a class="btn btn--primary" id="emailBtn" href="#">이메일로 접수 보내기 ✉</a>
+        <button type="button" class="btn btn--primary" id="emailBtn">이메일로 접수 보내기 ✉</button>
         <button type="button" class="btn btn--ghost" id="copySummaryBtn">접수 내용 복사하기</button>
         <span class="copied-msg" id="copiedMsg">복사됐어요</span>
       </div>
@@ -768,43 +779,6 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
       <div style="margin-top:18px;background:var(--brass-soft);border-radius:10px;padding:14px 16px;">
         <p style="font-family:var(--f);font-size:15px;font-weight:700;color:var(--brass-ink);">✦ 사주풀이는 접수 순서에 따라 보내드립니다</p>
         <p style="font-family:var(--f);font-size:13px;color:var(--ink-soft);margin-top:4px;">한 분 한 분 정성껏 풀이하기 때문에 시간이 걸릴 수 있습니다. 기다려주셔서 감사합니다.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== 연락처 ===== -->
-<section class="section section--tight" style="background:var(--paper-raised);">
-  <div class="prose-wrap">
-    <div class="eyebrow">연락처</div>
-    <h2>문의는 편하게 주세요</h2>
-    <p class="lead">신청 전 궁금하신 점이 있으면 아래로 연락주세요.</p>
-
-    <div class="contact-grid">
-      <div class="contact-item">
-        <span class="contact-item__icon">✉️</span>
-        <span class="contact-item__label">이메일</span>
-        <span class="contact-item__value">shinmoney7@gmail.com</span>
-      </div>
-      <div class="contact-item">
-        <span class="contact-item__icon">💬</span>
-        <span class="contact-item__label">카카오톡 ID</span>
-        <span class="contact-item__value">사주마루</span>
-      </div>
-      <div class="contact-item">
-        <span class="contact-item__icon">📞</span>
-        <span class="contact-item__label">전화번호</span>
-        <span class="contact-item__value">문의 후 안내</span>
-      </div>
-    </div>
-
-    <div class="email-cta-box">
-      <h3>이메일로 바로 접수하기</h3>
-      <p>아래 버튼을 누르면 이메일이 자동으로 열립니다.<br>생년월일시와 이름, 원하는 항목을 적어서 보내주세요.</p>
-      <a class="btn btn--primary" href="mailto:shinmoney7@gmail.com?subject=사주마루 사주 신청&body=안녕하세요, 사주마루 풀이를 신청합니다.%0A%0A● 성함:%0A● 생년월일:%0A● 양력/음력:%0A● 성별:%0A● 태어난 시간 (모름 가능):%0A● 신청 항목 (예: 평생운, 연애운 등):%0A● 연락처 (이메일 또는 카카오톡 ID):%0A● 기타 전달 사항:%0A%0A감사합니다." style="font-size:17px;padding:16px 30px;">이메일로 접수하기 ✉</a>
-      <div class="notice">
-        ✦ 사주풀이는 접수 순서에 따라 보내드립니다<br>
-        한 분 한 분 직접 정성껏 풀이하기 때문에, 다소 시간이 걸릴 수 있습니다. 기다려주셔서 감사합니다.
       </div>
     </div>
   </div>
@@ -994,14 +968,14 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
     lifelong:'<svg viewBox="0 0 100 100" '+_sv+' aria-hidden="true"><circle cx="50" cy="50" r="4.5" fill="rgba(255,255,255,.9)"/><circle cx="50" cy="50" r="9" fill="rgba(255,255,255,.12)"/><line x1="50" y1="50" x2="28" y2="30" stroke="rgba(255,255,255,.25)" stroke-width="0.9"/><line x1="50" y1="50" x2="72" y2="28" stroke="rgba(255,255,255,.25)" stroke-width="0.9"/><line x1="50" y1="50" x2="76" y2="60" stroke="rgba(255,255,255,.22)" stroke-width="0.9"/><line x1="50" y1="50" x2="38" y2="74" stroke="rgba(255,255,255,.22)" stroke-width="0.9"/><line x1="50" y1="50" x2="20" y2="60" stroke="rgba(255,255,255,.22)" stroke-width="0.9"/><circle cx="28" cy="30" r="2.5" fill="rgba(255,255,255,.75)"/><circle cx="72" cy="28" r="2" fill="rgba(255,255,255,.7)"/><circle cx="76" cy="60" r="2.8" fill="rgba(255,255,255,.8)"/><circle cx="38" cy="74" r="2" fill="rgba(255,255,255,.7)"/><circle cx="20" cy="60" r="1.8" fill="rgba(255,255,255,.65)"/><circle cx="62" cy="18" r="1" fill="rgba(255,255,255,.4)"/><circle cx="14" cy="40" r="0.8" fill="rgba(255,255,255,.35)"/><circle cx="88" cy="35" r="0.9" fill="rgba(255,255,255,.38)"/><circle cx="82" cy="80" r="0.9" fill="rgba(255,255,255,.38)"/></svg>',
     love:'<svg viewBox="0 0 100 100" '+_sv+' aria-hidden="true"><path d="M50,72C28,56,13,43,13,29c0-11,8-18,17-18c6,0,12,3,20,12c8-9,14-12,20-12c9,0,17,7,17,18C87,43,72,56,50,72Z" fill="rgba(255,255,255,.2)" stroke="rgba(255,255,255,.3)" stroke-width="1"/><ellipse cx="23" cy="42" rx="5" ry="3" transform="rotate(-25 23 42)" fill="rgba(255,255,255,.15)"/><ellipse cx="78" cy="48" rx="4.5" ry="2.5" transform="rotate(20 78 48)" fill="rgba(255,255,255,.13)"/><ellipse cx="38" cy="78" rx="5" ry="3" transform="rotate(15 38 78)" fill="rgba(255,255,255,.13)"/><ellipse cx="64" cy="80" rx="4" ry="2.5" transform="rotate(-10 64 80)" fill="rgba(255,255,255,.11)"/><circle cx="50" cy="46" r="3.5" fill="rgba(255,255,255,.22)"/><circle cx="22" cy="22" r="1.2" fill="rgba(255,255,255,.35)"/><circle cx="78" cy="20" r="1" fill="rgba(255,255,255,.3)"/></svg>',
     marriage:'<svg viewBox="0 0 100 100" '+_sv+' aria-hidden="true"><circle cx="38" cy="52" r="18" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="4.5"/><circle cx="62" cy="52" r="18" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="4.5"/><circle cx="50" cy="20" r="2" fill="rgba(255,255,255,.5)"/><circle cx="42" cy="15" r="1.2" fill="rgba(255,255,255,.4)"/><circle cx="58" cy="15" r="1.2" fill="rgba(255,255,255,.4)"/><circle cx="34" cy="21" r="1" fill="rgba(255,255,255,.35)"/><circle cx="66" cy="21" r="1" fill="rgba(255,255,255,.35)"/><circle cx="50" cy="28" r="1.5" fill="rgba(255,255,255,.25)"/></svg>',
-    wealth:'<svg viewBox="0 0 100 100" '+_sv+' aria-hidden="true"><ellipse cx="50" cy="74" rx="24" ry="7" fill="rgba(255,255,255,.14)"/><rect x="26" y="57" width="48" height="17" rx="3" fill="rgba(255,255,255,.12)"/><ellipse cx="50" cy="57" rx="24" ry="7" fill="rgba(255,255,255,.2)"/><rect x="26" y="42" width="48" height="15" rx="3" fill="rgba(255,255,255,.11)"/><ellipse cx="50" cy="42" rx="24" ry="7" fill="rgba(255,255,255,.18)"/><rect x="26" y="28" width="48" height="14" rx="3" fill="rgba(255,255,255,.1)"/><ellipse cx="50" cy="28" rx="24" ry="7" fill="rgba(255,255,255,.24)"/><text x="50" y="32" text-anchor="middle" dominant-baseline="middle" font-size="10" fill="rgba(255,220,80,.65)" font-weight="bold" font-family="sans-serif">₩</text></svg>',
+    wealth:'<svg viewBox="0 0 100 100" '+_sv+' aria-hidden="true"><ellipse cx="50" cy="74" rx="24" ry="7" fill="rgba(255,255,255,.14)"/><rect x="26" y="57" width="48" height="17" rx="3" fill="rgba(255,255,255,.12)"/><ellipse cx="50" cy="57" rx="24" ry="7" fill="rgba(255,255,255,.2)"/><rect x="26" y="42" width="48" height="15" rx="3" fill="rgba(255,255,255,.11)"/><ellipse cx="50" cy="42" rx="24" ry="7" fill="rgba(255,255,255,.18)"/><rect x="26" y="28" width="48" height="14" rx="3" fill="rgba(255,255,255,.1)"/><ellipse cx="50" cy="28" rx="24" ry="7" fill="rgba(255,255,255,.24)"/><text x="50" y="32" text-anchor="middle" dominant-baseline="middle" font-size="13" fill="rgba(255,230,100,.85)" font-weight="bold" font-family="sans-serif">₩</text></svg>',
     health:'<svg viewBox="0 0 100 100" '+_sv+' aria-hidden="true"><rect x="46" y="55" width="8" height="30" rx="2.5" fill="rgba(255,255,255,.25)"/><polygon points="50,10,33,55,67,55" fill="rgba(255,255,255,.28)"/><rect x="20" y="63" width="6" height="22" rx="2" fill="rgba(255,255,255,.2)"/><polygon points="23,25,10,63,36,63" fill="rgba(255,255,255,.22)"/><rect x="74" y="63" width="6" height="22" rx="2" fill="rgba(255,255,255,.2)"/><polygon points="77,25,64,63,90,63" fill="rgba(255,255,255,.22)"/><line x1="6" y1="85" x2="94" y2="85" stroke="rgba(255,255,255,.14)" stroke-width="1.5"/></svg>',
-    daeun:'<svg viewBox="0 0 100 100" '+_sv+' aria-hidden="true"><path d="M10,50 C22,34,38,66,50,50 C62,34,78,66,90,50" fill="none" stroke="rgba(255,255,255,.38)" stroke-width="2.5" stroke-linecap="round"/><circle cx="10" cy="50" r="4.5" fill="rgba(255,255,255,.5)"/><circle cx="50" cy="50" r="6" fill="rgba(255,255,255,.7)"/><circle cx="90" cy="50" r="4.5" fill="rgba(255,255,255,.5)"/><circle cx="30" cy="41" r="3" fill="rgba(255,255,255,.32)"/><circle cx="70" cy="59" r="3" fill="rgba(255,255,255,.32)"/><text x="10" y="68" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.38)" font-family="serif">20대</text><text x="50" y="68" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.5)" font-family="serif">40대</text><text x="90" y="68" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.38)" font-family="serif">60대</text><path d="M86,46 L94,50 L86,54" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5" stroke-linecap="round"/><text x="50" y="24" text-anchor="middle" font-size="12" font-weight="bold" fill="rgba(255,255,255,.32)" font-family="serif">大運</text></svg>',
+    daeun:'<svg viewBox="0 0 100 100" '+_sv+' aria-hidden="true"><path d="M10,50 C22,34,38,66,50,50 C62,34,78,66,90,50" fill="none" stroke="rgba(255,255,255,.38)" stroke-width="2.5" stroke-linecap="round"/><circle cx="10" cy="50" r="4.5" fill="rgba(255,255,255,.5)"/><circle cx="50" cy="50" r="6" fill="rgba(255,255,255,.7)"/><circle cx="90" cy="50" r="4.5" fill="rgba(255,255,255,.5)"/><circle cx="30" cy="41" r="3" fill="rgba(255,255,255,.32)"/><circle cx="70" cy="59" r="3" fill="rgba(255,255,255,.32)"/><text x="10" y="70" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.65)" font-family="serif">20대</text><text x="50" y="70" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.8)" font-family="serif">40대</text><text x="90" y="70" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.65)" font-family="serif">60대</text><path d="M86,46 L94,50 L86,54" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="1.5" stroke-linecap="round"/><text x="50" y="24" text-anchor="middle" font-size="15" font-weight="bold" fill="rgba(255,255,255,.65)" font-family="serif">大運</text></svg>',
     parents:'<svg viewBox="0 0 100 100" '+_sv+' aria-hidden="true"><polygon points="50,14,16,74,84,74" fill="rgba(255,255,255,.22)"/><polygon points="28,40,6,74,50,74" fill="rgba(255,255,255,.13)"/><polygon points="72,40,50,74,94,74" fill="rgba(255,255,255,.13)"/><line x1="50" y1="74" x2="50" y2="87" stroke="rgba(255,255,255,.22)" stroke-width="2.5"/><line x1="50" y1="84" x2="37" y2="92" stroke="rgba(255,255,255,.18)" stroke-width="2"/><line x1="50" y1="82" x2="63" y2="90" stroke="rgba(255,255,255,.18)" stroke-width="2"/><circle cx="50" cy="17" r="3" fill="rgba(255,255,255,.45)"/><line x1="6" y1="74" x2="94" y2="74" stroke="rgba(255,255,255,.13)" stroke-width="1"/></svg>',
     children:'<svg viewBox="0 0 100 100" '+_sv+' aria-hidden="true"><rect x="46" y="55" width="8" height="34" rx="3" fill="rgba(255,255,255,.25)"/><path d="M50,55 C48,42,27,35,22,47 C28,46,40,51,50,55Z" fill="rgba(255,255,255,.3)"/><path d="M50,44 C52,31,73,24,78,36 C72,36,60,40,50,44Z" fill="rgba(255,255,255,.27)"/><ellipse cx="50" cy="31" rx="7" ry="9" fill="rgba(255,255,255,.2)"/><circle cx="50" cy="24" r="4" fill="rgba(255,255,255,.25)"/><ellipse cx="50" cy="88" rx="22" ry="5" fill="rgba(255,255,255,.1)"/><circle cx="26" cy="28" r="1.5" fill="rgba(255,255,255,.4)"/><circle cx="76" cy="20" r="1.2" fill="rgba(255,255,255,.35)"/></svg>',
     siblings:'<svg viewBox="0 0 100 100" '+_sv+' aria-hidden="true"><rect x="28" y="52" width="6" height="34" rx="2" fill="rgba(255,255,255,.22)"/><polygon points="31,11,16,52,46,52" fill="rgba(255,255,255,.24)"/><rect x="66" y="52" width="6" height="34" rx="2" fill="rgba(255,255,255,.22)"/><polygon points="69,11,54,52,84,52" fill="rgba(255,255,255,.21)"/><path d="M31,86 Q50,93 69,86" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1.5"/><line x1="8" y1="86" x2="92" y2="86" stroke="rgba(255,255,255,.1)" stroke-width="1"/></svg>',
-    newyear:'<svg viewBox="0 0 100 100" '+_sv+' aria-hidden="true"><circle cx="50" cy="43" r="5.5" fill="rgba(255,255,255,.8)"/><line x1="50" y1="43" x2="50" y2="11" stroke="rgba(255,255,255,.55)" stroke-width="2" stroke-linecap="round"/><line x1="50" y1="43" x2="73" y2="20" stroke="rgba(255,255,255,.5)" stroke-width="2" stroke-linecap="round"/><line x1="50" y1="43" x2="82" y2="43" stroke="rgba(255,255,255,.5)" stroke-width="2" stroke-linecap="round"/><line x1="50" y1="43" x2="73" y2="66" stroke="rgba(255,255,255,.5)" stroke-width="2" stroke-linecap="round"/><line x1="50" y1="43" x2="27" y2="20" stroke="rgba(255,255,255,.5)" stroke-width="2" stroke-linecap="round"/><line x1="50" y1="43" x2="18" y2="43" stroke="rgba(255,255,255,.5)" stroke-width="2" stroke-linecap="round"/><line x1="50" y1="43" x2="27" y2="66" stroke="rgba(255,255,255,.5)" stroke-width="2" stroke-linecap="round"/><circle cx="50" cy="12" r="3" fill="rgba(255,255,255,.7)"/><circle cx="73" cy="21" r="2.5" fill="rgba(255,255,255,.65)"/><circle cx="82" cy="43" r="2.5" fill="rgba(255,255,255,.65)"/><circle cx="73" cy="65" r="2.5" fill="rgba(255,255,255,.65)"/><circle cx="27" cy="65" r="2.5" fill="rgba(255,255,255,.65)"/><circle cx="18" cy="43" r="2.5" fill="rgba(255,255,255,.65)"/><circle cx="27" cy="21" r="2.5" fill="rgba(255,255,255,.65)"/><text x="50" y="88" text-anchor="middle" font-size="11" font-weight="bold" fill="rgba(255,255,255,.4)" font-family="serif">2026</text></svg>',
-    monthly:'<svg viewBox="0 0 100 100" '+_sv+' aria-hidden="true"><circle cx="14" cy="50" r="9" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/><circle cx="32" cy="50" r="9" fill="rgba(255,255,255,.28)"/><circle cx="50" cy="50" r="9" fill="rgba(255,255,255,.52)"/><circle cx="68" cy="50" r="9" fill="rgba(255,255,255,.72)"/><circle cx="86" cy="50" r="9" fill="rgba(255,255,255,.88)"/><circle cx="22" cy="26" r="1.2" fill="rgba(255,255,255,.5)"/><circle cx="50" cy="23" r="1.5" fill="rgba(255,255,255,.55)"/><circle cx="78" cy="26" r="1.2" fill="rgba(255,255,255,.5)"/><circle cx="8" cy="34" r="0.9" fill="rgba(255,255,255,.35)"/><circle cx="92" cy="34" r="0.9" fill="rgba(255,255,255,.35)"/><text x="50" y="74" text-anchor="middle" font-size="8" fill="rgba(255,255,255,.38)" font-family="serif">月별 기운</text></svg>',
+    newyear:'<svg viewBox="0 0 100 100" '+_sv+' aria-hidden="true"><circle cx="50" cy="43" r="5.5" fill="rgba(255,255,255,.8)"/><line x1="50" y1="43" x2="50" y2="11" stroke="rgba(255,255,255,.55)" stroke-width="2" stroke-linecap="round"/><line x1="50" y1="43" x2="73" y2="20" stroke="rgba(255,255,255,.5)" stroke-width="2" stroke-linecap="round"/><line x1="50" y1="43" x2="82" y2="43" stroke="rgba(255,255,255,.5)" stroke-width="2" stroke-linecap="round"/><line x1="50" y1="43" x2="73" y2="66" stroke="rgba(255,255,255,.5)" stroke-width="2" stroke-linecap="round"/><line x1="50" y1="43" x2="27" y2="20" stroke="rgba(255,255,255,.5)" stroke-width="2" stroke-linecap="round"/><line x1="50" y1="43" x2="18" y2="43" stroke="rgba(255,255,255,.5)" stroke-width="2" stroke-linecap="round"/><line x1="50" y1="43" x2="27" y2="66" stroke="rgba(255,255,255,.5)" stroke-width="2" stroke-linecap="round"/><circle cx="50" cy="12" r="3" fill="rgba(255,255,255,.7)"/><circle cx="73" cy="21" r="2.5" fill="rgba(255,255,255,.65)"/><circle cx="82" cy="43" r="2.5" fill="rgba(255,255,255,.65)"/><circle cx="73" cy="65" r="2.5" fill="rgba(255,255,255,.65)"/><circle cx="27" cy="65" r="2.5" fill="rgba(255,255,255,.65)"/><circle cx="18" cy="43" r="2.5" fill="rgba(255,255,255,.65)"/><circle cx="27" cy="21" r="2.5" fill="rgba(255,255,255,.65)"/><text x="50" y="88" text-anchor="middle" font-size="13" font-weight="bold" fill="rgba(255,255,255,.75)" font-family="serif">2026</text></svg>',
+    monthly:'<svg viewBox="0 0 100 100" '+_sv+' aria-hidden="true"><circle cx="14" cy="50" r="9" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/><circle cx="32" cy="50" r="9" fill="rgba(255,255,255,.28)"/><circle cx="50" cy="50" r="9" fill="rgba(255,255,255,.52)"/><circle cx="68" cy="50" r="9" fill="rgba(255,255,255,.72)"/><circle cx="86" cy="50" r="9" fill="rgba(255,255,255,.88)"/><circle cx="22" cy="26" r="1.2" fill="rgba(255,255,255,.5)"/><circle cx="50" cy="23" r="1.5" fill="rgba(255,255,255,.55)"/><circle cx="78" cy="26" r="1.2" fill="rgba(255,255,255,.5)"/><circle cx="8" cy="34" r="0.9" fill="rgba(255,255,255,.35)"/><circle cx="92" cy="34" r="0.9" fill="rgba(255,255,255,.35)"/><text x="50" y="74" text-anchor="middle" font-size="10" fill="rgba(255,255,255,.7)" font-family="serif">月별 기운</text></svg>',
     exam:'<svg viewBox="0 0 100 100" '+_sv+' aria-hidden="true"><path d="M13,27 L50,21 L87,27 L87,79 L50,73 L13,79Z" fill="rgba(255,255,255,.14)" stroke="rgba(255,255,255,.25)" stroke-width="0.8"/><line x1="50" y1="21" x2="50" y2="73" stroke="rgba(255,255,255,.3)" stroke-width="1.5"/><line x1="21" y1="35" x2="44" y2="33" stroke="rgba(255,255,255,.3)" stroke-width="1.2" stroke-linecap="round"/><line x1="21" y1="42" x2="44" y2="40" stroke="rgba(255,255,255,.22)" stroke-width="1" stroke-linecap="round"/><line x1="21" y1="49" x2="44" y2="47" stroke="rgba(255,255,255,.22)" stroke-width="1" stroke-linecap="round"/><line x1="21" y1="56" x2="38" y2="54" stroke="rgba(255,255,255,.18)" stroke-width="1" stroke-linecap="round"/><line x1="56" y1="33" x2="79" y2="35" stroke="rgba(255,255,255,.3)" stroke-width="1.2" stroke-linecap="round"/><line x1="56" y1="40" x2="79" y2="42" stroke="rgba(255,255,255,.22)" stroke-width="1" stroke-linecap="round"/><line x1="56" y1="47" x2="79" y2="49" stroke="rgba(255,255,255,.22)" stroke-width="1" stroke-linecap="round"/><line x1="56" y1="54" x2="74" y2="56" stroke="rgba(255,255,255,.18)" stroke-width="1" stroke-linecap="round"/></svg>',
     reunion:'<svg viewBox="0 0 100 100" '+_sv+' aria-hidden="true"><path d="M14,18 Q24,50,50,72" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2.5" stroke-linecap="round"/><path d="M86,18 Q76,50,50,72" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2.5" stroke-linecap="round"/><path d="M50,72 L50,90" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2.5" stroke-linecap="round"/><circle cx="50" cy="72" r="7" fill="rgba(255,255,255,.6)"/><circle cx="50" cy="72" r="13" fill="rgba(255,255,255,.14)"/><circle cx="14" cy="18" r="4.5" fill="rgba(255,255,255,.45)"/><circle cx="86" cy="18" r="4.5" fill="rgba(255,255,255,.4)"/><circle cx="38" cy="58" r="1.5" fill="rgba(255,255,255,.35)"/><circle cx="62" cy="58" r="1.5" fill="rgba(255,255,255,.35)"/></svg>',
     business:'<svg viewBox="0 0 100 100" '+_sv+' aria-hidden="true"><rect x="12" y="66" width="13" height="18" rx="2" fill="rgba(255,255,255,.2)"/><rect x="30" y="52" width="13" height="32" rx="2" fill="rgba(255,255,255,.25)"/><rect x="48" y="37" width="13" height="47" rx="2" fill="rgba(255,255,255,.3)"/><rect x="66" y="22" width="13" height="62" rx="2" fill="rgba(255,255,255,.38)"/><polyline points="18,70,36,56,54,41,72,28" fill="none" stroke="rgba(255,210,50,.75)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="72" cy="28" r="4" fill="rgba(255,210,50,.75)"/><line x1="8" y1="84" x2="92" y2="84" stroke="rgba(255,255,255,.18)" stroke-width="1"/></svg>',
@@ -1214,9 +1188,10 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
       '연락 방법: '+contactType+' / '+contact+'\n'+
       (note?('요청사항: '+note+'\n'):'');
     document.getElementById('orderSummary').textContent=summary;
-    var subj=encodeURIComponent('[사주마루 신청] '+(cats.length>1?cats[0].title+' 외 '+(cats.length-1)+'건':cats[0].title)+' - '+name);
-    var body=encodeURIComponent(summary);
-    document.getElementById('emailBtn').href='mailto:shinmoney7@gmail.com?subject='+subj+'&body='+body;
+    var rawSubj='[사주마루 신청] '+(cats.length>1?cats[0].title+' 외 '+(cats.length-1)+'건':cats[0].title)+' - '+name;
+    var rawBody=summary;
+    var emailBtn=document.getElementById('emailBtn');
+    emailBtn.onclick=function(){openEmailModal(rawSubj,rawBody);};
     payPanel.classList.add('is-shown');
     payPanel.scrollIntoView({behavior:'smooth',block:'start'});
   });
@@ -1262,8 +1237,73 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
     exitPopup.classList.remove('is-shown');
     document.getElementById(selectedIds.length?'apply':'stage').scrollIntoView({behavior:'smooth',block:'start'});
   });
+
+  /* ─── EMAIL MODAL ─── */
+  function openEmailModal(subj,body){
+    document.getElementById('emSubj').textContent=subj||'사주마루 사주 신청';
+    document.getElementById('emBody').value=body||'';
+    document.getElementById('emailModalOverlay').hidden=false;
+    document.body.style.overflow='hidden';
+  }
+  function closeEmailModal(){
+    document.getElementById('emailModalOverlay').hidden=true;
+    document.body.style.overflow='';
+  }
+  document.getElementById('emailModalOverlay').addEventListener('click',function(e){
+    if(e.target===this) closeEmailModal();
+  });
+  function copyModalField(id,btn){
+    var el=document.getElementById(id);
+    var txt=el.value!==undefined?el.value:el.textContent;
+    if(navigator.clipboard){
+      navigator.clipboard.writeText(txt).then(function(){flashModalBtn(btn);});
+    } else {
+      if(el.select){el.select();}
+      try{document.execCommand('copy');flashModalBtn(btn);}catch(e){}
+    }
+  }
+  function flashModalBtn(btn){
+    var orig=btn.textContent;
+    btn.textContent='✓ 복사됨';
+    btn.classList.add('copied');
+    setTimeout(function(){btn.textContent=orig;btn.classList.remove('copied');},1800);
+  }
+  document.querySelectorAll('.email-modal__copy-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){copyModalField(this.dataset.target,this);});
+  });
 })();
 </script>
+
+<!-- email modal -->
+<div class="email-overlay" id="emailModalOverlay" hidden>
+  <div class="email-modal" role="dialog" aria-modal="true" aria-labelledby="emModalTitle">
+    <button class="email-modal__close" onclick="closeEmailModal()" aria-label="닫기">✕</button>
+    <h3 id="emModalTitle">이메일 접수하기 ✉</h3>
+    <p class="email-modal__desc">아래 내용을 복사해서 이메일 앱에 붙여넣기 해주세요.</p>
+    <div class="email-modal__field">
+      <label>받는 사람 (이메일 주소)</label>
+      <div class="email-modal__row">
+        <span id="emTo">shinmoney7@gmail.com</span>
+        <button class="email-modal__copy-btn" data-target="emTo">복사</button>
+      </div>
+    </div>
+    <div class="email-modal__field">
+      <label>제목</label>
+      <div class="email-modal__row">
+        <span id="emSubj" style="font-size:14px;"></span>
+        <button class="email-modal__copy-btn" data-target="emSubj">복사</button>
+      </div>
+    </div>
+    <div class="email-modal__field">
+      <label>본문</label>
+      <div class="email-modal__row">
+        <textarea id="emBody" readonly></textarea>
+        <button class="email-modal__copy-btn" data-target="emBody">복사</button>
+      </div>
+    </div>
+    <p class="email-modal__tip">📋 각 항목을 복사한 후 이메일 앱에서 직접 보내주세요.</p>
+  </div>
+</div>
 </body>
 </html>
 
