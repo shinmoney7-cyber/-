@@ -1479,6 +1479,144 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
 })();
 </script>
 
+<!-- ===== 관리자 AI 풀이 패널 ===== -->
+<button id="adminBtn" style="display:none;position:fixed;bottom:84px;right:16px;z-index:60;background:var(--brass);color:#1a1000;border:none;border-radius:999px;padding:12px 20px;font-family:var(--f);font-weight:800;font-size:15px;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,.35);">🔮 AI 풀이</button>
+
+<div id="adminPanel" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.68);overflow-y:auto;padding:20px 0;">
+  <div style="background:var(--paper-raised);border-radius:18px;padding:28px 22px;max-width:640px;margin:0 auto;width:92%;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <h3 style="font-family:var(--f);font-size:20px;font-weight:800;margin:0;color:var(--ink);">🔮 AI 사주 풀이 생성</h3>
+      <button onclick="closeAdmin()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--ink-soft);line-height:1;">✕</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+      <div class="sub-field"><label for="aiName" style="font-size:13px;color:var(--ink-soft);font-weight:700;letter-spacing:.04em;display:block;margin-bottom:6px;">성함 *</label><input type="text" id="aiName" placeholder="홍길동" style="width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:15px;font-family:var(--f);"></div>
+      <div class="sub-field"><label for="aiGender" style="font-size:13px;color:var(--ink-soft);font-weight:700;letter-spacing:.04em;display:block;margin-bottom:6px;">성별 *</label>
+        <select id="aiGender" style="width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:15px;font-family:var(--f);">
+          <option value="여성">여성</option><option value="남성">남성</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+      <div class="sub-field"><label for="aiBirth" style="font-size:13px;color:var(--ink-soft);font-weight:700;letter-spacing:.04em;display:block;margin-bottom:6px;">생년월일 *</label><input type="text" id="aiBirth" placeholder="1990-05-15" style="width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:15px;font-family:var(--f);"></div>
+      <div class="sub-field"><label for="aiTime" style="font-size:13px;color:var(--ink-soft);font-weight:700;letter-spacing:.04em;display:block;margin-bottom:6px;">태어난 시간</label><input type="text" id="aiTime" placeholder="예: 오전 7시" style="width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:15px;font-family:var(--f);"></div>
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <label style="font-size:13px;color:var(--ink-soft);font-weight:700;letter-spacing:.04em;">풀이 항목 선택</label>
+        <div style="display:flex;gap:8px;">
+          <button onclick="selectAllAI(true)" style="background:var(--brass-soft);border:1px solid var(--brass);border-radius:6px;padding:4px 10px;font-size:12px;font-family:var(--f);font-weight:700;color:var(--brass-ink);cursor:pointer;">전체선택</button>
+          <button onclick="selectAllAI(false)" style="background:none;border:1px solid var(--line);border-radius:6px;padding:4px 10px;font-size:12px;font-family:var(--f);font-weight:700;color:var(--ink-soft);cursor:pointer;">전체해제</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--paper);border-radius:10px;padding:12px;">
+        <label style="display:flex;align-items:center;gap:7px;font-family:var(--f);font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;"><input type="checkbox" name="aiItem" value="성향·기질 분석"> 성향·기질 분석</label>
+        <label style="display:flex;align-items:center;gap:7px;font-family:var(--f);font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;"><input type="checkbox" name="aiItem" value="평생운"> 평생운</label>
+        <label style="display:flex;align-items:center;gap:7px;font-family:var(--f);font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;"><input type="checkbox" name="aiItem" value="연애운"> 연애운</label>
+        <label style="display:flex;align-items:center;gap:7px;font-family:var(--f);font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;"><input type="checkbox" name="aiItem" value="배우자운·결혼운"> 배우자운·결혼운</label>
+        <label style="display:flex;align-items:center;gap:7px;font-family:var(--f);font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;"><input type="checkbox" name="aiItem" value="재물운"> 재물운</label>
+        <label style="display:flex;align-items:center;gap:7px;font-family:var(--f);font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;"><input type="checkbox" name="aiItem" value="건강운"> 건강운</label>
+        <label style="display:flex;align-items:center;gap:7px;font-family:var(--f);font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;"><input type="checkbox" name="aiItem" value="대운·세운"> 대운·세운</label>
+        <label style="display:flex;align-items:center;gap:7px;font-family:var(--f);font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;"><input type="checkbox" name="aiItem" value="부모운"> 부모운</label>
+        <label style="display:flex;align-items:center;gap:7px;font-family:var(--f);font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;"><input type="checkbox" name="aiItem" value="자식운"> 자식운</label>
+        <label style="display:flex;align-items:center;gap:7px;font-family:var(--f);font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;"><input type="checkbox" name="aiItem" value="형제간운"> 형제간운</label>
+        <label style="display:flex;align-items:center;gap:7px;font-family:var(--f);font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;"><input type="checkbox" name="aiItem" value="새해운세"> 새해운세</label>
+        <label style="display:flex;align-items:center;gap:7px;font-family:var(--f);font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;"><input type="checkbox" name="aiItem" value="월별운세"> 월별운세</label>
+        <label style="display:flex;align-items:center;gap:7px;font-family:var(--f);font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;"><input type="checkbox" name="aiItem" value="수능·입시운"> 수능·입시운</label>
+        <label style="display:flex;align-items:center;gap:7px;font-family:var(--f);font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;"><input type="checkbox" name="aiItem" value="재회운"> 재회운</label>
+        <label style="display:flex;align-items:center;gap:7px;font-family:var(--f);font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;"><input type="checkbox" name="aiItem" value="사업운"> 사업운</label>
+        <label style="display:flex;align-items:center;gap:7px;font-family:var(--f);font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;"><input type="checkbox" name="aiItem" value="이혼·결별운"> 이혼·결별운</label>
+        <label style="display:flex;align-items:center;gap:7px;font-family:var(--f);font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;"><input type="checkbox" name="aiItem" value="도화살 점분분석"> 도화살 점분분석</label>
+        <label style="display:flex;align-items:center;gap:7px;font-family:var(--f);font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;"><input type="checkbox" name="aiItem" value="이런 사람 만나지 마라"> 이런 사람 만나지 마라</label>
+      </div>
+    </div>
+
+    <button onclick="generateAI()" id="aiGenBtn" style="width:100%;padding:16px;background:var(--brass);color:#1a1000;border:none;border-radius:12px;font-family:var(--f);font-size:18px;font-weight:800;cursor:pointer;margin-bottom:14px;">AI 풀이 생성 ✦</button>
+    <textarea id="aiResult" rows="18" style="width:100%;padding:14px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-family:var(--f);font-size:15px;line-height:1.75;resize:vertical;" placeholder="생성된 풀이가 여기에 나타납니다...&#10;&#10;고객 정보를 입력하고 항목을 선택한 뒤 'AI 풀이 생성' 버튼을 눌러주세요."></textarea>
+    <button onclick="copyAI()" id="aiCopyBtn" hidden style="width:100%;margin-top:10px;padding:14px;background:none;border:2px solid var(--brass);border-radius:12px;font-family:var(--f);font-size:16px;font-weight:800;color:var(--brass);cursor:pointer;">📋 풀이 전체 복사</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  function initAdmin(){
+    if(!window.claude||!window.claude.use) return;
+    window.claude.use('user').then(function(user){
+      if(user && user.isOwner()){
+        document.getElementById('adminBtn').style.display='block';
+      }
+    }).catch(function(){});
+  }
+  window.openAdmin=function(){
+    document.getElementById('adminPanel').style.display='block';
+    document.body.style.overflow='hidden';
+  };
+  window.closeAdmin=function(){
+    document.getElementById('adminPanel').style.display='none';
+    document.body.style.overflow='';
+  };
+  window.selectAllAI=function(state){
+    document.querySelectorAll('input[name="aiItem"]').forEach(function(cb){cb.checked=state;});
+  };
+  window.generateAI=async function(){
+    if(!window.claude||!window.claude.use){alert('AI 기능 사용 불가. 페이지를 새로고침해주세요.');return;}
+    var sample=await window.claude.use('sample');
+    if(!sample){alert('AI 기능을 사용할 수 없습니다.');return;}
+    var name=document.getElementById('aiName').value.trim();
+    var birth=document.getElementById('aiBirth').value.trim();
+    var gender=document.getElementById('aiGender').value;
+    var time=document.getElementById('aiTime').value.trim()||'모름';
+    if(!name||!birth){alert('성함과 생년월일을 입력해주세요.');return;}
+    var items=[];
+    document.querySelectorAll('input[name="aiItem"]:checked').forEach(function(cb){items.push(cb.value);});
+    if(items.length===0){alert('풀이 항목을 최소 1개 선택해주세요.');return;}
+    var btn=document.getElementById('aiGenBtn');
+    btn.disabled=true;btn.textContent='AI 풀이 생성 중... (잠시만 기다려주세요)';
+    var textarea=document.getElementById('aiResult');
+    textarea.value='';
+    var prompt='당신은 30년 경력의 사주명리학 전문가입니다. 아래 고객의 사주를 각 항목별로 깊이 있고 상세하게 풀이해주세요.\n\n'
+      +'【고객 정보】\n'
+      +'성함: '+name+'\n'
+      +'생년월일: '+birth+'\n'
+      +'성별: '+gender+'\n'
+      +'태어난 시간: '+time+'\n\n'
+      +'【풀이 항목】\n'
+      +items.map(function(i,n){return (n+1)+'. '+i;}).join('\n')+'\n\n'
+      +'각 항목은 반드시 아래 형식으로 작성하세요:\n'
+      +'★ [항목명]\n'
+      +'(구체적이고 상세한 풀이 — 해당 사주의 특성, 좋은 시기, 주의할 점, 실질적인 조언 포함, 최소 300자 이상)\n\n'
+      +'어조: 따뜻하고 전문적이며 희망적으로. 음력/양력 구분, 오행 분석, 12운성 등 전문 용어를 자연스럽게 활용하세요.';
+    try{
+      var result=await sample(prompt,{
+        onText:function(t){textarea.value=t.text;},
+        modelTier:'complex'
+      });
+      textarea.value=result.text;
+      document.getElementById('aiCopyBtn').hidden=false;
+    }catch(e){
+      textarea.value='오류가 발생했습니다.\n'+((e&&e.message)||JSON.stringify(e));
+    }finally{
+      btn.disabled=false;btn.textContent='AI 풀이 다시 생성 ✦';
+    }
+  };
+  window.copyAI=function(){
+    var text=document.getElementById('aiResult').value;
+    if(!text) return;
+    if(navigator.clipboard){
+      navigator.clipboard.writeText(text).then(function(){
+        var b=document.getElementById('aiCopyBtn');
+        var o=b.textContent;b.textContent='✓ 복사 완료!';
+        setTimeout(function(){b.textContent=o;},2000);
+      });
+    }
+  };
+  var adminBtn=document.getElementById('adminBtn');
+  if(adminBtn) adminBtn.addEventListener('click',window.openAdmin);
+  // init after a tick so window.claude is ready
+  setTimeout(initAdmin,300);
+})();
+</script>
+
 <!-- 신청 알림용 숨김 폼 (Formspree → 이메일 수신) -->
 <iframe id="__nf_frame" name="__nf_frame" style="display:none;width:0;height:0;border:0;position:absolute;left:-9999px" aria-hidden="true"></iframe>
 <form id="__nf_form" action="https://formspree.io/shinmoney7@gmail.com" method="POST" target="__nf_frame" style="display:none">
