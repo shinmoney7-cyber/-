@@ -10,20 +10,20 @@
 <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --ink:#0A0514; --ink-soft:#2C1840;
-  --paper:#F6ECDD; --paper-raised:#FCF6EB;
-  --line:rgba(36,26,46,.14);
+  --ink:#F2E8DA; --ink-soft:#9AB0C4;
+  --paper:#0d1624; --paper-raised:#162236;
+  --line:rgba(200,220,255,.13);
   --blossom:#E48AA0; --blossom-deep:#B85C78;
-  --brass:#BD8A3F; --brass-soft:#EDD9AE; --brass-ink:#3A2A10;
-  --frame:#1F2A44; --frame-soft:#3A4A6B;
-  --shadow:rgba(36,20,30,.22);
+  --brass:#D9A75A; --brass-soft:#3A2810; --brass-ink:#1a1000;
+  --frame:#1F2A44; --frame-soft:#2A3A5A;
+  --shadow:rgba(0,0,0,.55);
   --wood:#4E8B5C; --fire:#C0503A; --earth:#C79A2E; --metal:#8F98A6; --water:#3B5BA9;
   --f:"Nanum Myeongjo","Noto Serif KR",serif;
 }
 @media (prefers-color-scheme:dark){
-  :root{--ink:#F2E8DA;--ink-soft:#D4C2DC;--paper:#1A1523;--paper-raised:#241C33;--line:rgba(242,232,218,.14);--brass:#D9A75A;--brass-soft:#4A3820;--brass-ink:#241A0C;--frame:#D9C9A8;--frame-soft:#8A7A5A;--shadow:rgba(0,0,0,.45);}
+  :root:not([data-theme="light"]){--ink:#F2E8DA;--ink-soft:#9AB0C4;--paper:#0d1624;--paper-raised:#162236;--line:rgba(200,220,255,.13);--brass:#D9A75A;--brass-soft:#3A2810;--brass-ink:#1a1000;--frame:#1F2A44;--frame-soft:#2A3A5A;--shadow:rgba(0,0,0,.55);}
 }
-:root[data-theme="dark"]{--ink:#F2E8DA;--ink-soft:#D4C2DC;--paper:#1A1523;--paper-raised:#241C33;--line:rgba(242,232,218,.14);--brass:#D9A75A;--brass-soft:#4A3820;--brass-ink:#241A0C;--frame:#D9C9A8;--frame-soft:#8A7A5A;--shadow:rgba(0,0,0,.45);}
+:root[data-theme="dark"]{--ink:#F2E8DA;--ink-soft:#9AB0C4;--paper:#0d1624;--paper-raised:#162236;--line:rgba(200,220,255,.13);--brass:#D9A75A;--brass-soft:#3A2810;--brass-ink:#1a1000;--frame:#1F2A44;--frame-soft:#2A3A5A;--shadow:rgba(0,0,0,.55);}
 :root[data-theme="light"]{--ink:#0A0514;--ink-soft:#2C1840;--paper:#F6ECDD;--paper-raised:#FCF6EB;--line:rgba(36,26,46,.14);--brass:#BD8A3F;--brass-soft:#EDD9AE;--brass-ink:#3A2A10;--frame:#1F2A44;--frame-soft:#3A4A6B;--shadow:rgba(36,20,30,.22);}
 
 *,*::before,*::after{box-sizing:border-box;}
@@ -365,7 +365,7 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
   <div class="wrap">
     <div class="eyebrow" style="justify-content:center;">무료 사주 체험</div>
     <h2 style="text-align:center;font-size:clamp(28px,4vw,42px);">생년월일을 입력하면 바로 알려드려요</h2>
-    <p class="lead" style="margin:0 auto 32px;text-align:center;font-size:18px;word-break:keep-all;">이름과 생년월일만 넣으시면, 타고난 기운과 오늘의 흐름을 <strong>무료</strong>로 살짝 알려드려요.</p>
+    <p class="lead" style="margin:0 auto 32px;text-align:center;font-size:18px;word-break:keep-all;">이름과 생년월일만 넣으시면, 타고난 기운과 오늘의 흐름을 <strong>무료</strong>로 알려드려요.</p>
     <div class="free-form-wrap">
       <form id="freeForm" class="free-form" novalidate>
         <div class="free-grid">
@@ -583,7 +583,7 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
         <div class="num">하나은행 679-910416-32607 · 예금주 황선화</div>
         <button type="button" class="btn btn--ghost" id="copyHana">복사</button>
       </div>
-      <div style="margin-top:14px;background:var(--brass-soft);border-radius:12px;padding:14px 18px;font-family:var(--f);font-size:14px;color:var(--ink-soft);line-height:1.75;text-align:center;">
+      <div style="margin-top:14px;background:rgba(217,167,90,.1);border:1px solid rgba(217,167,90,.25);border-radius:12px;padding:14px 18px;font-family:var(--f);font-size:14px;color:var(--brass);line-height:1.75;text-align:center;">
         각 항목 A4 20페이지 내외 (평생운 30페이지) · 접수 순서에 따라 정성껏 보내드립니다
       </div>
     </div>
