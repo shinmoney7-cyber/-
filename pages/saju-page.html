@@ -323,6 +323,155 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
 .free-reco-label{font-family:var(--f);color:var(--brass);font-size:12px;font-weight:700;margin-bottom:7px;display:block;}
 .free-reco-chips{display:flex;gap:7px;flex-wrap:wrap;}
 .free-reco-chip{background:var(--brass-soft);color:var(--brass-ink);border:1px solid rgba(189,138,63,.3);border-radius:999px;padding:5px 14px;font-size:14px;font-family:var(--f);font-weight:700;}
+
+/* ═══════════════════════════════════════════
+   MOBILE BOTTOM NAVIGATION
+═══════════════════════════════════════════ */
+.mob-nav{
+  display:none;
+  position:fixed;
+  bottom:0;left:0;right:0;
+  z-index:50;
+  background:var(--frame);
+  border-top:1px solid rgba(200,220,255,.12);
+  box-shadow:0 -8px 24px -8px rgba(0,0,0,.45);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+.mob-nav__inner{
+  display:flex;
+  align-items:stretch;
+  height:62px;
+}
+.mob-nav__btn{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  background:none;
+  border:none;
+  cursor:pointer;
+  font-family:var(--f);
+  color:rgba(255,255,255,.5);
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.04em;
+  padding:0;
+  transition:color .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.mob-nav__btn:active{background:rgba(255,255,255,.06);}
+.mob-nav__btn.is-active{color:var(--brass-soft);}
+.mob-nav__icon{font-size:22px;line-height:1;}
+.mob-nav__btn--cta{
+  flex:1.4;
+  background:var(--brass);
+  color:var(--brass-ink) !important;
+  margin:8px 10px;
+  border-radius:12px;
+  font-size:13px;
+  font-weight:800;
+}
+.mob-nav__btn--cta:active{opacity:.85;}
+.mob-nav__btn--admin{display:none;}
+.mob-nav__btn--admin.is-owner{display:flex;}
+
+/* ═══════════════════════════════════════════
+   MOBILE-SPECIFIC OVERRIDES (max 640px)
+═══════════════════════════════════════════ */
+@media(max-width:640px){
+  /* Show bottom nav, hide stickybar on mobile */
+  .mob-nav{display:block;}
+  body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px));}
+  .stickybar{display:none!important;}
+
+  /* ── Hero ── */
+  .hero{min-height:88vh;}
+  .hero__brand{padding:14px 18px;}
+  .hero__brand-name{font-size:21px;}
+  .hero__brand-sub{font-size:12px;}
+  .hero__mandala{width:170px;height:170px;margin-bottom:22px;}
+  .hero__mandala .core{inset:42px;font-size:38px;}
+  .hero h1{font-size:clamp(26px,7vw,34px);}
+  .hero p.lede{font-size:16px;}
+  .hero__eyebrow{font-size:17px;}
+  .hero__elements{gap:8px;margin-top:16px;}
+  .hero__el{width:32px;height:32px;font-size:13px;}
+  .hero__scrollcue a{font-size:17px;}
+
+  /* ── Sections ── */
+  .section{padding:36px 0;}
+  .section--tight{padding:40px 0;}
+  .wrap,.prose-wrap{padding:0 16px;}
+  .section h2{font-size:clamp(22px,5.5vw,30px);}
+  .section .lead{font-size:16px;}
+  .eyebrow{font-size:17px;}
+
+  /* ── Touch targets ── */
+  .btn{min-height:50px;font-size:16px;padding:14px 22px;}
+  .flow-step-btn{min-height:44px;padding:10px 16px;font-size:14px;}
+  .free-item-btn{padding:12px 18px;font-size:17px;}
+  .free-tab-btn{font-size:14px;padding:12px 6px;}
+
+  /* ── iOS zoom prevention ── */
+  input,select,textarea{font-size:16px!important;}
+
+  /* ── Free form ── */
+  .free-form{padding:20px 16px;}
+  .free-form .field label,.free-form .field legend{font-size:16px;}
+  .free-grid{grid-template-columns:1fr;}
+  .free-cards{grid-template-columns:1fr;}
+  .free-result__cta{flex-direction:column;align-items:stretch;}
+  .free-result__cta .btn{width:100%;text-align:center;}
+  .free-items-row{flex-wrap:nowrap;overflow-x:auto;padding-bottom:8px;justify-content:flex-start;-webkit-overflow-scrolling:touch;}
+
+  /* ── Cards ── */
+  .cardgrid{grid-template-columns:repeat(2,1fr);gap:10px;}
+  .card h3{font-size:18px;}
+  .card p{font-size:14px;}
+  .stage__expanded{grid-template-columns:1fr;}
+  .stage__media{min-height:200px;}
+
+  /* ── Item grid ── */
+  .item-grid{grid-template-columns:1fr;}
+  .item-card__name{font-size:18px;}
+  .item-card__price{font-size:17px;}
+  .item-card__desc{font-size:14px;}
+
+  /* ── Form / ledger ── */
+  .ledger{padding:20px 14px;}
+  .grid2{grid-template-columns:1fr;}
+
+  /* ── Modals full-screen on mobile ── */
+  .sub-overlay{padding:0;}
+  .sub-modal{border-radius:20px 20px 0 0;max-width:100%;margin-top:auto;margin-bottom:0;padding:24px 18px 32px;}
+  .email-overlay{padding:0;align-items:flex-end;}
+  .email-modal{border-radius:20px 20px 0 0;max-width:100%;max-height:90vh;padding:22px 18px 32px;}
+
+  /* ── Admin panel ── */
+  #adminPanel>div{border-radius:20px 20px 0 0 !important;margin:0 !important;max-width:100% !important;bottom:0;top:auto;position:fixed;left:0;right:0;max-height:90vh;overflow-y:auto;}
+
+  /* ── Closing ── */
+  .closing{padding:52px 0;}
+  .closing__name{font-size:32px;}
+  .closing h2{font-size:clamp(18px,5vw,24px);}
+
+  /* ── Flow steps ── */
+  .flow-steps{gap:6px 4px;}
+  .flow-sep{display:none;}
+
+  /* ── Account / payment ── */
+  .accountbox{flex-direction:column;align-items:stretch;}
+  .accountbox .btn{width:100%;text-align:center;}
+  .actions{flex-direction:column;align-items:stretch;}
+
+  /* ── Selection bar ── */
+  .sel-bar{border-radius:14px 14px 0 0;bottom:calc(62px + env(safe-area-inset-bottom,0px));left:0;right:0;margin:0;border-radius:0;}
+
+  /* ── Footer ── */
+  footer{padding:32px 0 24px;}
+}
 </style>
 </head>
 <body>
@@ -1556,6 +1705,8 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
     window.claude.use('user').then(function(user){
       if(user && user.isOwner()){
         document.getElementById('adminBtn').style.display='block';
+        var mob=document.getElementById('mobAdminBtn');
+        if(mob) mob.classList.add('is-owner');
       }
     }).catch(function(){});
   }
@@ -1781,4 +1932,22 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
   <input type="hidden" name="_subject" id="__nf_subject" value="[사주마루] 신청 접수">
   <input type="hidden" name="내용" id="__nf_body">
 </form>
+
+<!-- 모바일 하단 내비게이션 -->
+<nav class="mob-nav" id="mobNav" aria-label="하단 메뉴">
+  <div class="mob-nav__inner">
+    <button class="mob-nav__btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="홈">
+      <span class="mob-nav__icon">🏠</span>홈
+    </button>
+    <button class="mob-nav__btn" onclick="document.getElementById('free')&&document.getElementById('free').scrollIntoView({behavior:'smooth'})" aria-label="무료체험">
+      <span class="mob-nav__icon">🔮</span>무료체험
+    </button>
+    <button class="mob-nav__btn mob-nav__btn--cta" onclick="document.getElementById('flow')&&document.getElementById('flow').scrollIntoView({behavior:'smooth'})" aria-label="신청하기">
+      신청하기 ✦
+    </button>
+    <button class="mob-nav__btn mob-nav__btn--admin" id="mobAdminBtn" onclick="window.openAdmin&&window.openAdmin()" aria-label="관리자">
+      <span class="mob-nav__icon">🔧</span>관리자
+    </button>
+  </div>
+</nav>
 </body></html>
