@@ -137,9 +137,18 @@ def run():
     mail.login(GMAIL_USER, GMAIL_APP_PASSWORD)
     mail.select("inbox")
 
-    # 미읽은 사주마루 주문 메일 검색 (무료체험 제외)
-    _, ids = mail.search(None, 'UNSEEN SUBJECT "[사주마루]"')
-    email_ids = [i for i in ids[0].split() if i]
+    # 미읽은 메일 전체 검색 후 Python에서 제목 필터 (IMAP 한국어 인코딩 오류 방지)
+    _, ids = mail.search(None, 'UNSEEN')
+    all_unseen = [i for i in ids[0].split() if i]
+
+    email_ids = []
+    for eid in all_unseen:
+        _, hdr = mail.fetch(eid, "(BODY.PEEK[HEADER.FIELDS (SUBJECT)])")
+        raw_subj = hdr[0][1] if hdr and hdr[0] else b""
+        subj = decode_str(email.message_from_bytes(raw_subj).get("Subject", ""))
+        if "[사주마루]" in subj:
+            email_ids.append(eid)
+
     print(f"[Gmail] 미읽은 주문 메일: {len(email_ids)}건")
 
     if not email_ids:
