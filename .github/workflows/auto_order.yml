@@ -1,0 +1,33 @@
+name: 사주마루 자동 주문
+
+on:
+  schedule:
+    - cron: '0 * * * *'   # 매 시간 정각 (UTC) = 한국 시간 매 시간
+  workflow_dispatch:        # GitHub 웹에서 수동 실행 가능
+
+jobs:
+  process-orders:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Python 설정
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 의존성 설치
+        run: |
+          pip install playwright
+          playwright install chromium
+          playwright install-deps chromium
+
+      - name: 주문 처리
+        env:
+          GMAIL_USER: shinmoney7@gmail.com
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          FL_ID: ${{ secrets.FL_ID }}
+          FL_PW: ${{ secrets.FL_PW }}
+        run: python scripts/check_orders.py
