@@ -4,7 +4,16 @@ Fortune LAB 단건 주문 자동화
 사주마루 주문 데이터 → FL 단건 주문 자동 입력
 """
 import json, sys, os
+from pathlib import Path
 from playwright.sync_api import sync_playwright
+
+# .env 자동 로드
+_env = Path(__file__).parent / ".env"
+if _env.exists():
+    for line in _env.read_text().splitlines():
+        if "=" in line and not line.startswith("#"):
+            k, v = line.split("=", 1)
+            os.environ.setdefault(k.strip(), v.strip())
 
 FL_BASE  = "https://saju.coredev.co.kr"
 FL_ID    = os.getenv("FL_ID", "")
