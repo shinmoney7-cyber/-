@@ -58,8 +58,9 @@ def place_order(order: dict) -> dict:
     print(f"[FL] 주문 시작: {order['name']} / {order['product']} → {fl_product}")
 
     with sync_playwright() as p:
+        _chromium = "/opt/pw-browsers/chromium"
         browser = p.chromium.launch(
-            executable_path="/opt/pw-browsers/chromium",
+            **({"executable_path": _chromium} if os.path.exists(_chromium) else {}),
             headless=True,
             args=["--no-sandbox", "--disable-dev-shm-usage"],
         )
