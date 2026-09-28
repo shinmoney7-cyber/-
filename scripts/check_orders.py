@@ -91,11 +91,8 @@ def parse_order_email(body: str) -> list:
                 hour = val
                 break
 
-    # 이메일 전달인 경우만 자동으로 고객 이메일로, 카카오/문자는 운영자가 직접 전달
-    if delivery_method == "이메일" and "@" in contact:
-        customer_email = contact
-    else:
-        customer_email = OPERATOR_EMAIL
+    # FL 결과는 항상 운영자 이메일로 수신 → 운영자가 고객에게 직접 전달
+    customer_email = OPERATOR_EMAIL
 
     # 신청 상품 파싱 (ㆍ로 시작하는 줄)
     products = []
