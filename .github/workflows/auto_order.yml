@@ -1,4 +1,4 @@
-name: 사주마루 자동 주문
+name: Auto Order
 
 on:
   schedule:
@@ -13,21 +13,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Python 설정
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: 의존성 설치
+      - name: Install dependencies
         run: |
           pip install playwright
           playwright install chromium
           playwright install-deps chromium
 
-      - name: 주문 처리
+      - name: Process orders
         env:
           GMAIL_USER: shinmoney7@gmail.com
-          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
-          FL_ID: ${{ secrets.FL_ID }}
-          FL_PW: ${{ secrets.FL_PW }}
+          GMAIL_APP_PASSWORD: "${{ secrets.GMAIL_APP_PASSWORD }}"
+          FL_ID: "${{ secrets.FL_ID }}"
+          FL_PW: "${{ secrets.FL_PW }}"
         run: python scripts/check_orders.py
