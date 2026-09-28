@@ -325,6 +325,19 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
 .free-reco-chip{background:var(--brass-soft);color:var(--brass-ink);border:1px solid rgba(189,138,63,.3);border-radius:999px;padding:5px 14px;font-size:14px;font-family:var(--f);font-weight:700;}
 
 /* ═══════════════════════════════════════════
+   KAKAO CHANNEL BUTTON
+═══════════════════════════════════════════ */
+.btn--kakao{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  background:#FEE500;color:#191600;
+  font-weight:800;border-radius:12px;padding:13px 22px;
+  font-family:var(--f);font-size:15px;cursor:pointer;
+  border:none;text-decoration:none;transition:filter .15s;
+}
+.btn--kakao:hover{filter:brightness(.93);}
+.btn--kakao svg{width:22px;height:22px;flex-shrink:0;}
+
+/* ═══════════════════════════════════════════
    CALENDAR TOGGLE (양력/음력)
 ═══════════════════════════════════════════ */
 .cal-toggle{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;margin-bottom:8px;font-family:var(--f);}
@@ -517,6 +530,10 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
       <span class="hero__eyebrow">만세력 기반 정통 사주 분석</span>
       <h1>생년월일시로 보는<br><span style="color:var(--brass-soft);">평생의 흐름</span></h1>
       <p class="lede">마음 가는 항목 하나만 골라보세요.<br>나머지는 정성껏 풀어 보내드릴게요!</p>
+      <a href="https://pf.kakao.com/_WekxcC/chat" target="_blank" rel="noopener" class="btn--kakao" style="margin-top:18px;align-self:flex-start;">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 5.92 2 10.72c0 3.04 1.8 5.72 4.52 7.28l-1.08 3.92c-.08.28.22.52.48.36L10.6 19.6c.46.06.92.1 1.4.1 5.52 0 10-3.92 10-8.72S17.52 2 12 2z"/></svg>
+        카카오 채널 상담
+      </a>
     </div>
 
     <div class="hero__elements">
@@ -783,6 +800,10 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
           </div>
           <button type="button" class="btn btn--primary" id="freeCtaBtn">상세 풀이 신청하기 →</button>
           <a id="freeSmsNotify" href="#" style="display:none;align-items:center;justify-content:center;gap:8px;margin-top:10px;padding:13px 20px;border-radius:12px;border:1px solid rgba(200,220,255,.18);background:rgba(255,255,255,.06);color:rgba(255,255,255,.55);font-family:var(--f);font-size:14px;font-weight:700;text-decoration:none;cursor:pointer;">📱 문자로 내 결과 알리기</a>
+          <a href="https://pf.kakao.com/_WekxcC/chat" target="_blank" rel="noopener" class="btn--kakao" style="margin-top:10px;width:100%;box-sizing:border-box;">
+            <svg viewBox="0 0 24 24" fill="currentColor" style="width:20px;height:20px;" aria-hidden="true"><path d="M12 2C6.48 2 2 5.92 2 10.72c0 3.04 1.8 5.72 4.52 7.28l-1.08 3.92c-.08.28.22.52.48.36L10.6 19.6c.46.06.92.1 1.4.1 5.52 0 10-3.92 10-8.72S17.52 2 12 2z"/></svg>
+            카카오 채널로 더 자세히 상담하기
+          </a>
         </div>
       </div>
     </div>
@@ -1456,6 +1477,14 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
       freeSmsBtn.href='sms:'+OWNER_PHONE+'?body='+encodeURIComponent(freeMsg);
       freeSmsBtn.style.display='inline-flex';
     }
+    // Fortune LAB 무료 신청 저장
+    try{
+      var freeCalType=document.querySelector('input[name="freeCalType"]:checked');
+      localStorage.setItem('saju_free_order',JSON.stringify({
+        name:freeNameVal,birth:birth,gender:freeGenderVal,time:freeTimeVal,
+        calType:freeCalType?freeCalType.value:'양력',ts:nowStr,type:'free'
+      }));
+    }catch(e){}
   });
 
   /* === item selection + submission modal === */
@@ -1608,6 +1637,15 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
         nfBody.value='📋 신청 항목\n'+lines.join('\n')+'\n합계: '+fmtWon(total)+'\n\n👤 고객 정보\n성함: '+name+'\n생년월일: '+birth+'\n성별: '+gender+'\n시간: '+time+'\n연락처: '+contact;
         try{nfForm.submit();}catch(e){}
       }
+      // Fortune LAB 주문 도우미용 localStorage 저장
+      try{
+        var orderData={
+          name:name,birth:birth,gender:gender,time:time,contact:contact,
+          items:lines,total:total,calType:smCalType?smCalType.value:'양력',
+          ts:new Date().toLocaleString('ko-KR')
+        };
+        localStorage.setItem('saju_latest_order',JSON.stringify(orderData));
+      }catch(e){}
       // 배송 예정 시간 계산
       var now=new Date();
       var deliveryMsg;
@@ -1689,10 +1727,18 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
 
 <div id="adminPanel" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.68);overflow-y:auto;padding:20px 0;">
   <div style="background:var(--paper-raised);border-radius:18px;padding:28px 22px;max-width:640px;margin:0 auto;width:92%;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-      <h3 style="font-family:var(--f);font-size:20px;font-weight:800;margin:0;color:var(--ink);">🔮 AI 사주 풀이 생성</h3>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <h3 id="adminPanelTitle" style="font-family:var(--f);font-size:20px;font-weight:800;margin:0;color:var(--ink);">🔮 AI 사주 풀이 생성</h3>
       <button onclick="closeAdmin()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--ink-soft);line-height:1;">✕</button>
     </div>
+    <!-- 탭 -->
+    <div style="display:flex;gap:6px;margin-bottom:20px;border-bottom:1px solid var(--line);padding-bottom:0;">
+      <button id="adminTab1" onclick="switchAdminTab(1)" style="flex:1;padding:10px 8px;border:none;border-bottom:2px solid var(--brass);background:none;font-family:var(--f);font-size:14px;font-weight:800;color:var(--brass);cursor:pointer;">🔮 AI 풀이</button>
+      <button id="adminTab2" onclick="switchAdminTab(2)" style="flex:1;padding:10px 8px;border:none;border-bottom:2px solid transparent;background:none;font-family:var(--f);font-size:14px;font-weight:800;color:var(--ink-soft);cursor:pointer;">📦 Fortune LAB</button>
+      <button id="adminTab3" onclick="switchAdminTab(3)" style="flex:1;padding:10px 8px;border:none;border-bottom:2px solid transparent;background:none;font-family:var(--f);font-size:14px;font-weight:800;color:var(--ink-soft);cursor:pointer;">📋 신청내역</button>
+    </div>
+    <!-- 탭 1: AI 풀이 (기존) -->
+    <div id="adminTabContent1">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
       <div class="sub-field"><label for="aiName" style="font-size:13px;color:var(--ink-soft);font-weight:700;letter-spacing:.04em;display:block;margin-bottom:6px;">성함 *</label><input type="text" id="aiName" placeholder="홍길동" style="width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:15px;font-family:var(--f);"></div>
       <div class="sub-field"><label for="aiGender" style="font-size:13px;color:var(--ink-soft);font-weight:700;letter-spacing:.04em;display:block;margin-bottom:6px;">성별 *</label>
@@ -1759,6 +1805,105 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
     <button onclick="generateAI()" id="aiGenBtn" style="width:100%;padding:16px;background:var(--brass);color:#1a1000;border:none;border-radius:12px;font-family:var(--f);font-size:18px;font-weight:800;cursor:pointer;margin-bottom:14px;">AI 풀이 생성 ✦</button>
     <textarea id="aiResult" rows="18" style="width:100%;padding:14px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-family:var(--f);font-size:15px;line-height:1.75;resize:vertical;" placeholder="생성된 풀이가 여기에 나타납니다...&#10;&#10;고객 정보를 입력하고 항목을 선택한 뒤 'AI 풀이 생성' 버튼을 눌러주세요."></textarea>
     <button onclick="copyAI()" id="aiCopyBtn" hidden style="width:100%;margin-top:10px;padding:14px;background:none;border:2px solid var(--brass);border-radius:12px;font-family:var(--f);font-size:16px;font-weight:800;color:var(--brass);cursor:pointer;">📋 풀이 전체 복사</button>
+    </div><!-- end adminTabContent1 -->
+
+    <!-- 탭 2: Fortune LAB 주문 도우미 -->
+    <div id="adminTabContent2" hidden>
+      <div style="background:rgba(59,91,169,.1);border:1px solid rgba(59,91,169,.3);border-radius:12px;padding:14px 16px;margin-bottom:16px;">
+        <div style="font-family:var(--f);font-size:13px;font-weight:800;color:#3B5BA9;margin-bottom:6px;">💡 사용법</div>
+        <div style="font-family:var(--f);font-size:13px;line-height:1.7;color:var(--ink-soft);">고객 신청 후 아래 데이터를 복사해 Fortune LAB에 주문을 생성하세요.<br>최신 신청 자동 불러오기 버튼으로 마지막 신청 데이터를 채울 수 있습니다.</div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:16px;">
+        <button onclick="loadLatestOrderToFL()" style="flex:1;padding:11px;background:var(--brass-soft);border:1px solid var(--brass);border-radius:10px;font-family:var(--f);font-size:14px;font-weight:800;color:var(--brass-ink);cursor:pointer;">🔄 최신 신청 자동 불러오기</button>
+        <a href="https://saju.coredev.co.kr" target="_blank" rel="noopener" style="flex:1;padding:11px;background:#1F2A44;border:1px solid rgba(200,220,255,.2);border-radius:10px;font-family:var(--f);font-size:14px;font-weight:800;color:#9AB0C4;cursor:pointer;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px;">🌐 Fortune LAB 열기</a>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+        <div>
+          <label style="font-size:12px;color:var(--ink-soft);font-weight:700;display:block;margin-bottom:4px;">이름</label>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <input type="text" id="flName" style="flex:1;padding:9px 10px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:14px;font-family:var(--f);" placeholder="홍길동"/>
+            <button onclick="flCopy('flName')" style="padding:9px 10px;background:none;border:1px solid var(--line);border-radius:8px;font-size:12px;font-family:var(--f);color:var(--ink-soft);cursor:pointer;white-space:nowrap;">복사</button>
+          </div>
+        </div>
+        <div>
+          <label style="font-size:12px;color:var(--ink-soft);font-weight:700;display:block;margin-bottom:4px;">전화번호</label>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <input type="text" id="flPhone" style="flex:1;padding:9px 10px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:14px;font-family:var(--f);" placeholder="010-1234-5678"/>
+            <button onclick="flCopy('flPhone')" style="padding:9px 10px;background:none;border:1px solid var(--line);border-radius:8px;font-size:12px;font-family:var(--f);color:var(--ink-soft);cursor:pointer;white-space:nowrap;">복사</button>
+          </div>
+        </div>
+        <div>
+          <label style="font-size:12px;color:var(--ink-soft);font-weight:700;display:block;margin-bottom:4px;">생년월일</label>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <input type="text" id="flBirth" style="flex:1;padding:9px 10px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:14px;font-family:var(--f);" placeholder="1990-05-15"/>
+            <button onclick="flCopy('flBirth')" style="padding:9px 10px;background:none;border:1px solid var(--line);border-radius:8px;font-size:12px;font-family:var(--f);color:var(--ink-soft);cursor:pointer;white-space:nowrap;">복사</button>
+          </div>
+        </div>
+        <div>
+          <label style="font-size:12px;color:var(--ink-soft);font-weight:700;display:block;margin-bottom:4px;">음양력</label>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <input type="text" id="flCal" style="flex:1;padding:9px 10px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:14px;font-family:var(--f);" placeholder="양력"/>
+            <button onclick="flCopy('flCal')" style="padding:9px 10px;background:none;border:1px solid var(--line);border-radius:8px;font-size:12px;font-family:var(--f);color:var(--ink-soft);cursor:pointer;white-space:nowrap;">복사</button>
+          </div>
+        </div>
+        <div>
+          <label style="font-size:12px;color:var(--ink-soft);font-weight:700;display:block;margin-bottom:4px;">성별</label>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <input type="text" id="flGender" style="flex:1;padding:9px 10px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:14px;font-family:var(--f);" placeholder="여성"/>
+            <button onclick="flCopy('flGender')" style="padding:9px 10px;background:none;border:1px solid var(--line);border-radius:8px;font-size:12px;font-family:var(--f);color:var(--ink-soft);cursor:pointer;white-space:nowrap;">복사</button>
+          </div>
+        </div>
+        <div>
+          <label style="font-size:12px;color:var(--ink-soft);font-weight:700;display:block;margin-bottom:4px;">태어난 시간</label>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <input type="text" id="flTime" style="flex:1;padding:9px 10px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:14px;font-family:var(--f);" placeholder="오전 7시"/>
+            <button onclick="flCopy('flTime')" style="padding:9px 10px;background:none;border:1px solid var(--line);border-radius:8px;font-size:12px;font-family:var(--f);color:var(--ink-soft);cursor:pointer;white-space:nowrap;">복사</button>
+          </div>
+        </div>
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="font-size:12px;color:var(--ink-soft);font-weight:700;display:block;margin-bottom:4px;">신청 상품</label>
+        <div style="display:flex;gap:6px;align-items:flex-start;">
+          <textarea id="flItems" rows="3" style="flex:1;padding:9px 10px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:13px;font-family:var(--f);resize:vertical;" placeholder="연애운, 재물운..."></textarea>
+          <button onclick="flCopy('flItems')" style="padding:9px 10px;background:none;border:1px solid var(--line);border-radius:8px;font-size:12px;font-family:var(--f);color:var(--ink-soft);cursor:pointer;white-space:nowrap;margin-top:0;">복사</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="flCopyAll()" style="flex:1;padding:13px;background:var(--brass);color:#1a1000;border:none;border-radius:12px;font-family:var(--f);font-size:15px;font-weight:800;cursor:pointer;">📋 전체 데이터 복사</button>
+        <a href="https://saju.coredev.co.kr/purchase-landing/request" target="_blank" rel="noopener" style="flex:1;padding:13px;background:#0f2044;border:1px solid rgba(200,220,255,.2);border-radius:12px;font-family:var(--f);font-size:14px;font-weight:800;color:#9AB0C4;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px;">📦 구매 신청내역</a>
+      </div>
+      <div style="margin-top:12px;">
+        <label style="font-size:12px;color:var(--ink-soft);font-weight:700;display:block;margin-bottom:6px;">Fortune LAB 상품 매핑</label>
+        <div style="background:var(--paper);border-radius:10px;padding:10px 12px;font-family:var(--f);font-size:12px;line-height:1.9;color:var(--ink-soft);">
+          성향·기질 분석 → 정통사주 (4,000원)<br>
+          평생운 → 정통사주프리미엄 (4,000원)<br>
+          연애운 → 연애사주 (3,000원)<br>
+          배우자운·결혼운 → 결혼준비가이드 / 연애사주 (3,000원)<br>
+          재물운 → 재물사주 / 프리미엄재물사주 (3~4,000원)<br>
+          건강운 → 프리미엄건강운세 (3,000원)<br>
+          대운·세운 → 정통사주 / 정통사주프리미엄 (4,000원)<br>
+          부모운·자식운 → 프리미엄부모자식궁합 (4,000원)<br>
+          형제간운 → 정통사주 (4,000원)<br>
+          새해운세 → 2026년 신년운세 / 병오년 신년운세 (3,000원)<br>
+          월별운세 → 2026년 월별운세 / [월]월 운세 (1,000원)<br>
+          수능·입시운 → 수능운세 / 입시운세 (3,000원)<br>
+          재회운 → 재회운 / 재회사주 (3,000원)<br>
+          사업운 → 사업운세 (3,000원)<br>
+          이혼·결별운 → 이혼운세 (4,000원)<br>
+          도화살 → 도화살 (3,000원)<br>
+          이런 사람 만나지 마라 → 짝사랑알아보기 / 운명이야기 (3,000원)
+        </div>
+      </div>
+    </div><!-- end adminTabContent2 -->
+
+    <!-- 탭 3: 신청 내역 -->
+    <div id="adminTabContent3" hidden>
+      <div style="margin-bottom:12px;display:flex;gap:8px;">
+        <button onclick="loadOrderHistory()" style="flex:1;padding:11px;background:var(--brass-soft);border:1px solid var(--brass);border-radius:10px;font-family:var(--f);font-size:14px;font-weight:800;color:var(--brass-ink);cursor:pointer;">🔄 새로고침</button>
+        <button onclick="clearOrderHistory()" style="padding:11px 14px;background:none;border:1px solid rgba(200,90,90,.4);border-radius:10px;font-family:var(--f);font-size:13px;font-weight:700;color:#C05050;cursor:pointer;">삭제</button>
+      </div>
+      <div id="orderHistoryList" style="display:flex;flex-direction:column;gap:8px;max-height:420px;overflow-y:auto;"></div>
+    </div><!-- end adminTabContent3 -->
   </div>
 </div>
 
@@ -1781,6 +1926,114 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
   window.closeAdmin=function(){
     document.getElementById('adminPanel').style.display='none';
     document.body.style.overflow='';
+  };
+  // 탭 전환
+  window.switchAdminTab=function(n){
+    [1,2,3].forEach(function(i){
+      var c=document.getElementById('adminTabContent'+i);
+      var t=document.getElementById('adminTab'+i);
+      if(c) c.hidden=(i!==n);
+      if(t){
+        t.style.borderBottomColor=(i===n)?'var(--brass)':'transparent';
+        t.style.color=(i===n)?'var(--brass)':'var(--ink-soft)';
+      }
+    });
+    if(n===2) loadLatestOrderToFL();
+    if(n===3) loadOrderHistory();
+  };
+  // Fortune LAB 최신 신청 불러오기
+  window.loadLatestOrderToFL=function(){
+    var data=null;
+    try{
+      var paid=localStorage.getItem('saju_latest_order');
+      var free=localStorage.getItem('saju_free_order');
+      var pObj=paid?JSON.parse(paid):null;
+      var fObj=free?JSON.parse(free):null;
+      // 더 최신 데이터 선택
+      if(pObj&&fObj){data=new Date(pObj.ts)>new Date(fObj.ts)?pObj:fObj;}
+      else{data=pObj||fObj;}
+    }catch(e){}
+    if(!data){alert('아직 저장된 신청 내역이 없습니다.');return;}
+    var phone=data.contact||'';
+    // 이메일이면 제거
+    if(phone.indexOf('@')>-1) phone='';
+    document.getElementById('flName').value=data.name||'';
+    document.getElementById('flPhone').value=phone;
+    document.getElementById('flBirth').value=data.birth||'';
+    document.getElementById('flCal').value=data.calType||'양력';
+    document.getElementById('flGender').value=data.gender||'';
+    document.getElementById('flTime').value=data.time||'';
+    var items=data.items?data.items.join(', '):(data.type==='free'?'무료 체험':'');
+    document.getElementById('flItems').value=items;
+  };
+  window.flCopy=function(id){
+    var el=document.getElementById(id);
+    if(!el) return;
+    var val=el.value||el.textContent||'';
+    navigator.clipboard&&navigator.clipboard.writeText(val).then(function(){
+      var btn=el.nextElementSibling;
+      if(btn){var o=btn.textContent;btn.textContent='✓';setTimeout(function(){btn.textContent=o;},1500);}
+    });
+  };
+  window.flCopyAll=function(){
+    var lines=[
+      '이름: '+(document.getElementById('flName').value||''),
+      '전화번호: '+(document.getElementById('flPhone').value||''),
+      '생년월일: '+(document.getElementById('flBirth').value||''),
+      '음양력: '+(document.getElementById('flCal').value||'양력'),
+      '성별: '+(document.getElementById('flGender').value||''),
+      '태어난 시간: '+(document.getElementById('flTime').value||''),
+      '신청 상품: '+(document.getElementById('flItems').value||''),
+    ];
+    navigator.clipboard&&navigator.clipboard.writeText(lines.join('\n')).then(function(){
+      var btn=document.querySelector('#adminTabContent2 button[onclick="flCopyAll()"]');
+      if(btn){var o=btn.textContent;btn.textContent='✓ 복사됨!';setTimeout(function(){btn.textContent=o;},2000);}
+    });
+  };
+  // 신청 내역 로드
+  window.loadOrderHistory=function(){
+    var list=document.getElementById('orderHistoryList');
+    if(!list) return;
+    var orders=[];
+    try{
+      var paid=localStorage.getItem('saju_latest_order');
+      var free=localStorage.getItem('saju_free_order');
+      if(paid) orders.push(JSON.parse(paid));
+      if(free) orders.push(JSON.parse(free));
+    }catch(e){}
+    if(!orders.length){list.innerHTML='<div style="font-family:var(--f);font-size:14px;color:var(--ink-soft);text-align:center;padding:20px;">신청 내역이 없습니다.</div>';return;}
+    list.innerHTML=orders.map(function(o){
+      return '<div style="background:var(--paper);border-radius:10px;padding:12px 14px;border:1px solid var(--line);">'
+        +'<div style="font-family:var(--f);font-size:13px;font-weight:700;color:var(--brass);margin-bottom:6px;">'
+        +(o.type==='free'?'🆓 무료 체험':'💰 유료 신청')+' · '+o.ts+'</div>'
+        +'<div style="font-family:var(--f);font-size:14px;line-height:1.8;color:var(--ink);">'
+        +'<b>'+o.name+'</b> · '+o.birth+' · '+o.gender+(o.time?' · '+o.time:'')+'<br>'
+        +'연락처: '+(o.contact||'-')+'<br>'
+        +(o.items&&o.items.length?'신청: '+o.items.join(', '):'')
+        +(o.total?' · 합계: '+o.total.toLocaleString('ko-KR')+'원':'')
+        +'</div>'
+        +'<button onclick="loadOrderToFL('+JSON.stringify(o)+')" style="margin-top:8px;padding:7px 12px;background:var(--brass-soft);border:1px solid var(--brass);border-radius:8px;font-family:var(--f);font-size:12px;font-weight:800;color:var(--brass-ink);cursor:pointer;">📦 Fortune LAB 탭으로 보내기</button>'
+        +'</div>';
+    }).join('');
+  };
+  window.loadOrderToFL=function(o){
+    switchAdminTab(2);
+    if(!o) return;
+    var phone=o.contact||'';
+    if(phone.indexOf('@')>-1) phone='';
+    document.getElementById('flName').value=o.name||'';
+    document.getElementById('flPhone').value=phone;
+    document.getElementById('flBirth').value=o.birth||'';
+    document.getElementById('flCal').value=o.calType||'양력';
+    document.getElementById('flGender').value=o.gender||'';
+    document.getElementById('flTime').value=o.time||'';
+    var items=o.items?o.items.join(', '):(o.type==='free'?'무료 체험':'');
+    document.getElementById('flItems').value=items;
+  };
+  window.clearOrderHistory=function(){
+    if(!confirm('저장된 신청 내역을 모두 삭제할까요?')) return;
+    try{localStorage.removeItem('saju_latest_order');localStorage.removeItem('saju_free_order');}catch(e){}
+    loadOrderHistory();
   };
   window.selectAllAI=function(state){
     document.querySelectorAll('input[name="aiItem"]').forEach(function(cb){cb.checked=state;});
@@ -2008,6 +2261,10 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
     <button class="mob-nav__btn" onclick="document.getElementById('free')&&document.getElementById('free').scrollIntoView({behavior:'smooth'})" aria-label="무료체험">
       <span class="mob-nav__icon">🔮</span>무료체험
     </button>
+    <a class="mob-nav__btn" href="https://pf.kakao.com/_WekxcC/chat" target="_blank" rel="noopener" aria-label="카카오 상담" style="text-decoration:none;color:rgba(255,255,255,.5);">
+      <svg viewBox="0 0 24 24" fill="#FEE500" style="width:20px;height:20px;" aria-hidden="true"><path d="M12 2C6.48 2 2 5.92 2 10.72c0 3.04 1.8 5.72 4.52 7.28l-1.08 3.92c-.08.28.22.52.48.36L10.6 19.6c.46.06.92.1 1.4.1 5.52 0 10-3.92 10-8.72S17.52 2 12 2z"/></svg>
+      카카오
+    </a>
     <button class="mob-nav__btn mob-nav__btn--cta" onclick="document.getElementById('flow')&&document.getElementById('flow').scrollIntoView({behavior:'smooth'})" aria-label="신청하기">
       신청하기 ✦
     </button>
