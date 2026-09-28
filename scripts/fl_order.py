@@ -73,6 +73,7 @@ def place_order(order: dict) -> dict:
             page.goto(f"{FL_BASE}/order/single", wait_until="networkidle", timeout=20000)
             page.screenshot(path="/tmp/fl_3_order_page.png")
 
+            # 페이지 소스 저장 (선택자 확인용)
             with open("/tmp/fl_order_page.html", "w", encoding="utf-8") as f:
                 f.write(page.content())
             print("[FL] 주문 페이지 소스 저장됨 → /tmp/fl_order_page.html")
@@ -84,6 +85,7 @@ def place_order(order: dict) -> dict:
                 opts = s.locator("option").all_inner_texts()
                 print(f"  select[{i}]: {opts[:5]}")
 
+            # 첫 번째 select = 상품
             selects[0].select_option(label=fl_product)
 
             # ── 4. 이메일 ──────────────────────────────────────────────
@@ -137,6 +139,7 @@ def place_order(order: dict) -> dict:
 
 
 if __name__ == "__main__":
+    # 테스트 주문
     sample = {
         "name":           "테스트고객",
         "gender":         "여성",
@@ -144,7 +147,7 @@ if __name__ == "__main__":
         "year":           1990,
         "month":          5,
         "day":            20,
-        "hour":           None,
+        "hour":           None,  # 시간 모름
         "product":        "연애운",
         "customer_email": "shinmoney7@gmail.com",
     }
