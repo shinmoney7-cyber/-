@@ -1165,7 +1165,7 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
   <div class="sub-modal" role="dialog" aria-modal="true" aria-labelledby="subModalTitle">
     <button type="button" class="sub-modal__close" id="subModalClose" aria-label="닫기">✕</button>
     <h3 id="subModalTitle">신청 정보 입력</h3>
-    <p class="sub-modal__desc">아래 정보를 입력하시면 이메일 앱이 열립니다.<br>입금 후 순서대로 정성껏 보내드립니다.</p>
+    <p class="sub-modal__desc">아래 정보를 입력해주세요.<br>입금 후 선택하신 방법으로 결과를 보내드립니다.</p>
 
     <div id="subFormWrap">
       <div class="sub-selected-box" id="subSelectedBox"></div>
@@ -1224,11 +1224,23 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
           </select>
         </div>
         <div class="sub-field">
-          <label for="smContact">연락처 (이메일 또는 전화번호) *</label>
-          <input type="text" id="smContact" placeholder="예: example@mail.com 또는 010-0000-0000" required/>
+          <label>결과 받는 방법 *</label>
+          <div class="sub-radio-row" style="margin-bottom:10px;gap:8px;">
+            <label style="display:flex;align-items:center;gap:6px;padding:8px 14px;border:1.5px solid var(--line);border-radius:9px;cursor:pointer;font-size:14px;font-weight:700;font-family:var(--f);background:var(--paper);transition:border-color .2s;" id="smDelLabel0">
+              <input type="radio" name="smDelivery" value="이메일" id="smDelEmail" checked onchange="updateSmDelivery(this.value)" style="accent-color:var(--brass);width:15px;height:15px;"/> 📧 이메일
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;padding:8px 14px;border:1.5px solid var(--line);border-radius:9px;cursor:pointer;font-size:14px;font-weight:700;font-family:var(--f);background:var(--paper);transition:border-color .2s;" id="smDelLabel1">
+              <input type="radio" name="smDelivery" value="카카오톡" id="smDelKakao" onchange="updateSmDelivery(this.value)" style="accent-color:var(--brass);width:15px;height:15px;"/> 💬 카카오톡
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;padding:8px 14px;border:1.5px solid var(--line);border-radius:9px;cursor:pointer;font-size:14px;font-weight:700;font-family:var(--f);background:var(--paper);transition:border-color .2s;" id="smDelLabel2">
+              <input type="radio" name="smDelivery" value="문자" id="smDelSms" onchange="updateSmDelivery(this.value)" style="accent-color:var(--brass);width:15px;height:15px;"/> 📱 문자(SMS)
+            </label>
+          </div>
+          <input type="text" id="smContact" placeholder="이메일 주소를 입력해주세요" required autocomplete="email"/>
+          <p id="smDeliveryNote" style="font-family:var(--f);font-size:12px;color:var(--ink-soft);margin-top:5px;line-height:1.5;">결과 파일을 이메일로 전송해드립니다</p>
         </div>
         <p id="subFormErr" style="display:none;font-family:var(--f);font-size:13px;color:var(--blossom-deep);margin-bottom:12px;">성함, 생년월일, 연락처를 입력해주세요.</p>
-        <button type="submit" class="btn btn--primary btn--block">이메일로 신청서 보내기 ✉</button>
+        <button type="submit" class="btn btn--primary btn--block" id="smSubmitBtn">신청서 보내기 ✉</button>
       </form>
     </div>
 
@@ -1609,6 +1621,7 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
       var birth=bY&&bM&&bD ? bY+'-'+bM+'-'+bD+smCalLabel : '';
       document.getElementById('smBirth').value=birth;
       var contact=document.getElementById('smContact').value.trim();
+      var deliveryMethod=(document.querySelector('input[name="smDelivery"]:checked')||{value:'이메일'}).value;
       var errEl=document.getElementById('subFormErr');
       if(!name||!birth||!contact){errEl.style.display='block';return;}
       errEl.style.display='none';
@@ -1625,7 +1638,8 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
       var subject=encodeURIComponent('[사주마루 신청] '+name+' 님');
       var body=encodeURIComponent(
         '📋 신청 항목\n'+lines.join('\n')+'\n합계: '+fmtWon(total)+'\n\n'+
-        '👤 고객 정보\n성함: '+name+'\n생년월일: '+birth+'\n성별: '+gender+'\n태어난 시간: '+time+'\n연락처: '+contact+'\n\n'+
+        '👤 고객 정보\n성함: '+name+'\n생년월일: '+birth+'\n성별: '+gender+'\n태어난 시간: '+time+'\n\n'+
+        '📬 결과 전달 방법\n전달 방법: '+deliveryMethod+'\n전달 받을 곳: '+contact+'\n\n'+
         '📌 사주마루 사이트에서 작성된 신청입니다.\n입금 확인 후 순서대로 풀이를 보내드립니다.\n카카오뱅크 3333-28-9077788 예금주 황홍식'
       );
       // 사업주 알림 이메일 발송 (Formspree)
@@ -1633,14 +1647,15 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
       var nfSubj=document.getElementById('__nf_subject');
       var nfForm=document.getElementById('__nf_form');
       if(nfBody&&nfForm){
-        nfSubj.value='[사주마루] '+name+' 님 신청 접수 ('+fmtWon(total)+')';
-        nfBody.value='📋 신청 항목\n'+lines.join('\n')+'\n합계: '+fmtWon(total)+'\n\n👤 고객 정보\n성함: '+name+'\n생년월일: '+birth+'\n성별: '+gender+'\n시간: '+time+'\n연락처: '+contact;
+        nfSubj.value='[사주마루] '+name+' 님 신청 접수 ('+fmtWon(total)+') ['+deliveryMethod+']';
+        nfBody.value='📋 신청 항목\n'+lines.join('\n')+'\n합계: '+fmtWon(total)+'\n\n👤 고객 정보\n성함: '+name+'\n생년월일: '+birth+'\n성별: '+gender+'\n시간: '+time+'\n\n📬 결과 전달\n전달 방법: '+deliveryMethod+'\n전달 받을 곳: '+contact;
         try{nfForm.submit();}catch(e){}
       }
       // Fortune LAB 주문 도우미용 localStorage 저장
       try{
         var orderData={
-          name:name,birth:birth,gender:gender,time:time,contact:contact,
+          name:name,birth:birth,gender:gender,time:time,
+          delivery_method:deliveryMethod,contact:contact,
           items:lines,total:total,calType:smCalType?smCalType.value:'양력',
           ts:new Date().toLocaleString('ko-KR')
         };
@@ -1701,6 +1716,31 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
   function updateSubContact(val) {
     var subContact = document.getElementById('smContact');
     if(subContact) subContact.value = val;
+  }
+  function updateSmDelivery(method) {
+    var input = document.getElementById('smContact');
+    var note  = document.getElementById('smDeliveryNote');
+    var btn   = document.getElementById('smSubmitBtn');
+    var labels = [
+      document.getElementById('smDelLabel0'),
+      document.getElementById('smDelLabel1'),
+      document.getElementById('smDelLabel2'),
+    ];
+    labels.forEach(function(l){if(l)l.style.borderColor='var(--line)';});
+    var checked = document.querySelector('input[name="smDelivery"]:checked');
+    if(checked && checked.closest('label')) checked.closest('label').style.borderColor='var(--brass)';
+    if(!input) return;
+    var map = {
+      '이메일':   {ph:'이메일 주소를 입력해주세요',  note:'결과 파일을 이메일로 전송해드립니다',       type:'email'},
+      '카카오톡': {ph:'카카오톡 아이디를 입력해주세요', note:'카카오톡으로 결과를 전달해드립니다',       type:'text'},
+      '문자':     {ph:'전화번호를 입력해주세요 (예: 010-0000-0000)', note:'문자(SMS)로 결과 안내를 드립니다', type:'tel'},
+    };
+    var cfg = map[method] || map['이메일'];
+    input.placeholder = cfg.ph;
+    input.type = cfg.type;
+    input.value = '';
+    if(note) note.textContent = cfg.note;
+    if(btn) btn.textContent = '신청서 보내기 ✉';
   }
   function copyContact() {
     var val = document.getElementById('contactValue').value.trim();

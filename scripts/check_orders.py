@@ -69,7 +69,8 @@ def parse_order_email(body: str) -> list:
     birth_raw = get_field(lines, "생년월일")
     gender  = get_field(lines, "성별") or "여성"
     time_raw = get_field(lines, "시간") or get_field(lines, "태어난 시간")
-    contact = get_field(lines, "연락처")
+    delivery_method = get_field(lines, "전달 방법") or "이메일"
+    contact = get_field(lines, "전달 받을 곳") or get_field(lines, "연락처")
 
     if not name or not birth_raw:
         return []
@@ -90,8 +91,11 @@ def parse_order_email(body: str) -> list:
                 hour = val
                 break
 
-    # 연락처에 이메일이 있으면 사용, 없으면 운영자 이메일로 결과 수신 후 직접 전달
-    customer_email = contact if "@" in contact else OPERATOR_EMAIL
+    # 이메일 전달인 경우만 자동으로 고객 이메일로, 카카오/문자는 운영자가 직접 전달
+    if delivery_method == "이메일" and "@" in contact:
+        customer_email = contact
+    else:
+        customer_email = OPERATOR_EMAIL
 
     # 신청 상품 파싱 (ㆍ로 시작하는 줄)
     products = []
@@ -120,6 +124,8 @@ def parse_order_email(body: str) -> list:
             "hour": hour, "minute": 0,
             "product": p,
             "customer_email": customer_email,
+            "delivery_method": delivery_method,
+            "delivery_contact": contact,
         }
         for p in products
     ]
@@ -168,7 +174,9 @@ def run():
         for order in orders:
             result = place_order(order)
             if result.get("success"):
-                print(f"  ✅ {order['product']} → FL 주문 완료: {result.get('url')}")
+                dm = order.get("delivery_method", "이메일")
+                dc = order.get("delivery_contact", "")
+                print(f"  ✅ {order['product']} → FL 주문 완료 [{dm}: {dc}]: {result.get('url')}")
             else:
                 print(f"  ❌ {order['product']} → 실패: {result.get('error')}")
                 all_ok = False
