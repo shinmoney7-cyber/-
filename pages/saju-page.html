@@ -325,6 +325,14 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
 .free-reco-chip{background:var(--brass-soft);color:var(--brass-ink);border:1px solid rgba(189,138,63,.3);border-radius:999px;padding:5px 14px;font-size:14px;font-family:var(--f);font-weight:700;}
 
 /* ═══════════════════════════════════════════
+   CALENDAR TOGGLE (양력/음력)
+═══════════════════════════════════════════ */
+.cal-toggle{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;margin-bottom:8px;font-family:var(--f);}
+.cal-toggle input[type=radio]{position:absolute;opacity:0;width:0;height:0;pointer-events:none;}
+.cal-toggle label{padding:6px 18px;font-size:14px;font-weight:700;color:var(--ink-soft);cursor:pointer;background:transparent;transition:background .15s,color .15s;white-space:nowrap;}
+.cal-toggle input[type=radio]:checked+label{background:var(--brass);color:var(--brass-ink);}
+
+/* ═══════════════════════════════════════════
    MOBILE BOTTOM NAVIGATION
 ═══════════════════════════════════════════ */
 .mob-nav{
@@ -544,6 +552,12 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
           </div>
           <div class="field" style="grid-column:1/-1;">
             <label>생년월일 <span style="font-size:13px;color:var(--ink-soft);font-weight:700;">(필수)</span></label>
+            <div class="cal-toggle" style="margin-bottom:8px;">
+              <input type="radio" name="freeCalType" id="freeCalSolar" value="양력" checked/>
+              <label for="freeCalSolar">양력</label>
+              <input type="radio" name="freeCalType" id="freeCalLunar" value="음력"/>
+              <label for="freeCalLunar">음력</label>
+            </div>
             <div style="display:grid;grid-template-columns:2fr 1.2fr 1.2fr;gap:8px;">
               <select id="freeBirthY" required style="padding:14px 10px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:18px;font-family:var(--f);font-weight:700;">
               <option value="">년도</option>
@@ -1140,6 +1154,12 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
         </div>
         <div class="sub-field">
           <label>생년월일 *</label>
+          <div class="cal-toggle" style="margin-bottom:8px;">
+            <input type="radio" name="smCalType" id="smCalSolar" value="양력" checked/>
+            <label for="smCalSolar">양력</label>
+            <input type="radio" name="smCalType" id="smCalLunar" value="음력"/>
+            <label for="smCalLunar">음력</label>
+          </div>
           <div style="display:grid;grid-template-columns:2fr 1.2fr 1.2fr;gap:6px;">
             <select id="smBirthY" required style="padding:10px 8px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:15px;font-family:var(--f);font-weight:700;">
               <option value="">년도</option>
@@ -1351,9 +1371,11 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
       setTimeout(function(){document.getElementById('freeBirthY').style.borderColor='';},2000);
       return;
     }
-    var birth=bY+'-'+bM+'-'+bD;
+    var freeCalType=document.querySelector('input[name="freeCalType"]:checked');
+    var freeCalLabel=freeCalType&&freeCalType.value==='음력'?' (음력)':'';
+    var birth=bY+'-'+bM+'-'+bD+freeCalLabel;
     document.getElementById('freeBirth').value=birth;
-    var parts=birth.split('-');
+    var parts=(bY+'-'+bM+'-'+bD).split('-');
     var year=parseInt(parts[0]);
     var stemIdx=(year-4)%10; if(stemIdx<0) stemIdx+=10;
     var branchIdx=(year-4)%12; if(branchIdx<0) branchIdx+=12;
@@ -1493,6 +1515,12 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
     if(fy&&fy.value) document.getElementById('smBirthY').value=fy.value;
     if(fm&&fm.value) document.getElementById('smBirthM').value=fm.value;
     if(fd&&fd.value) document.getElementById('smBirthD').value=fd.value;
+    // sync calendar type
+    var freeCalSel=document.querySelector('input[name="freeCalType"]:checked');
+    if(freeCalSel){
+      var smCal=document.querySelector('input[name="smCalType"][value="'+freeCalSel.value+'"]');
+      if(smCal) smCal.checked=true;
+    }
     if(fg){
       var smg=document.querySelector('input[name="smGender"][value="'+fg.value+'"]');
       if(smg) smg.checked=true;
@@ -1522,7 +1550,9 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
       var bY=document.getElementById('smBirthY').value;
       var bM=document.getElementById('smBirthM').value;
       var bD=document.getElementById('smBirthD').value;
-      var birth=bY&&bM&&bD ? bY+'-'+bM+'-'+bD : '';
+      var smCalType=document.querySelector('input[name="smCalType"]:checked');
+      var smCalLabel=smCalType&&smCalType.value==='음력'?' (음력)':'';
+      var birth=bY&&bM&&bD ? bY+'-'+bM+'-'+bD+smCalLabel : '';
       document.getElementById('smBirth').value=birth;
       var contact=document.getElementById('smContact').value.trim();
       var errEl=document.getElementById('subFormErr');
@@ -1647,7 +1677,16 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
       </div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
-      <div class="sub-field"><label for="aiBirth" style="font-size:13px;color:var(--ink-soft);font-weight:700;letter-spacing:.04em;display:block;margin-bottom:6px;">생년월일 *</label><input type="text" id="aiBirth" placeholder="1990-05-15" style="width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:15px;font-family:var(--f);"></div>
+      <div class="sub-field">
+        <label style="font-size:13px;color:var(--ink-soft);font-weight:700;letter-spacing:.04em;display:block;margin-bottom:6px;">생년월일 *</label>
+        <div class="cal-toggle" style="margin-bottom:6px;">
+          <input type="radio" name="aiCalType" id="aiCalSolar" value="양력" checked/>
+          <label for="aiCalSolar">양력</label>
+          <input type="radio" name="aiCalType" id="aiCalLunar" value="음력"/>
+          <label for="aiCalLunar">음력</label>
+        </div>
+        <input type="text" id="aiBirth" placeholder="1990-05-15" style="width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:15px;font-family:var(--f);">
+      </div>
       <div class="sub-field"><label for="aiTime" style="font-size:13px;color:var(--ink-soft);font-weight:700;letter-spacing:.04em;display:block;margin-bottom:6px;">태어난 시간</label><input type="text" id="aiTime" placeholder="예: 오전 7시" style="width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:15px;font-family:var(--f);"></div>
     </div>
 
@@ -1742,10 +1781,12 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
     var sample=await window.claude.use('sample');
     if(!sample){alert('AI 기능을 사용할 수 없습니다.');return;}
     var name=document.getElementById('aiName').value.trim();
-    var birth=document.getElementById('aiBirth').value.trim();
+    var birthRaw=document.getElementById('aiBirth').value.trim();
+    var aiCalType=document.querySelector('input[name="aiCalType"]:checked');
+    var birth=birthRaw+(aiCalType&&aiCalType.value==='음력'?' (음력)':'');
     var gender=document.getElementById('aiGender').value;
     var time=document.getElementById('aiTime').value.trim()||'모름';
-    if(!name||!birth){alert('성함과 생년월일을 입력해주세요.');return;}
+    if(!name||!birthRaw){alert('성함과 생년월일을 입력해주세요.');return;}
     var reportTypeEl=document.querySelector('input[name="aiReportType"]:checked');
     var reportType=reportTypeEl?reportTypeEl.value:'30';
     var btn=document.getElementById('aiGenBtn');
