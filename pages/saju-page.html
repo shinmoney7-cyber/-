@@ -782,6 +782,7 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
             </div>
           </div>
           <button type="button" class="btn btn--primary" id="freeCtaBtn">상세 풀이 신청하기 →</button>
+          <a id="freeSmsNotify" href="#" style="display:none;align-items:center;justify-content:center;gap:8px;margin-top:10px;padding:13px 20px;border-radius:12px;border:1px solid rgba(200,220,255,.18);background:rgba(255,255,255,.06);color:rgba(255,255,255,.55);font-family:var(--f);font-size:14px;font-weight:700;text-decoration:none;cursor:pointer;">📱 문자로 내 결과 알리기</a>
         </div>
       </div>
     </div>
@@ -1431,6 +1432,30 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
     var activePanel = document.getElementById('ftab'+_targetFreeTab);
     if(activeTab) activeTab.classList.add('is-active');
     if(activePanel) activePanel.classList.add('is-active');
+
+    // ── 사업주 알림: 이메일 (Formspree) + 문자 링크 ──
+    var freeNameVal=document.getElementById('freeName').value.trim()||'이름 미입력';
+    var freeGenderEl=document.querySelector('input[name="frGender"]:checked');
+    var freeGenderVal=freeGenderEl?freeGenderEl.value:'미선택';
+    var freeTimeVal=document.getElementById('freeTime').value||'모름';
+    var nowStr=new Date().toLocaleString('ko-KR',{timeZone:'Asia/Seoul'});
+    var freeMsg='🆓 무료 체험 조회\n성함: '+freeNameVal+'\n생년월일: '+birth+'\n성별: '+freeGenderVal+'\n시간: '+freeTimeVal+'\n조회: '+nowStr;
+    // 이메일 (Formspree)
+    var nfBody2=document.getElementById('__nf_body');
+    var nfSubj2=document.getElementById('__nf_subject');
+    var nfForm2=document.getElementById('__nf_form');
+    if(nfBody2&&nfForm2){
+      nfSubj2.value='[사주마루 무료체험] '+freeNameVal+' 님';
+      nfBody2.value=freeMsg;
+      try{nfForm2.submit();}catch(e){}
+    }
+    // 문자 딥링크
+    var OWNER_PHONE='010-8386-3712';
+    var freeSmsBtn=document.getElementById('freeSmsNotify');
+    if(freeSmsBtn){
+      freeSmsBtn.href='sms:'+OWNER_PHONE+'?body='+encodeURIComponent(freeMsg);
+      freeSmsBtn.style.display='inline-flex';
+    }
   });
 
   /* === item selection + submission modal === */
