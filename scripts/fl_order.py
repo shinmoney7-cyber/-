@@ -61,10 +61,10 @@ def place_order(order: dict) -> dict:
             page.goto(f"{FL_BASE}/login", wait_until="networkidle", timeout=30000)
             page.screenshot(path="/tmp/fl_1_login.png")
 
-            id_sel = 'input[type="email"], input[name="email"], input[name="username"], input[name="id"]'
-            page.fill(id_sel, FL_ID)
+            # FL 로그인: 아이디(텍스트) + 비밀번호
+            page.locator('input[type="text"], input[name="id"], input[name="username"]').first.fill(FL_ID)
             page.fill('input[type="password"]', FL_PW)
-            page.click('button[type="submit"]')
+            page.click('button:has-text("로그인")')
             page.wait_for_load_state("networkidle", timeout=15000)
             page.screenshot(path="/tmp/fl_2_after_login.png")
             print(f"[FL] 로그인 완료: {page.url}")
