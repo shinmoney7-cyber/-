@@ -2,8 +2,8 @@ name: 사주마루 자동 주문
 
 on:
   schedule:
-    - cron: '0 * * * *'   # 매 시간 정각 (UTC) = 한국 시간 매 시간
-  workflow_dispatch:        # GitHub 웹에서 수동 실행 가능
+    - cron: '0 * * * *'
+  workflow_dispatch:
 
 jobs:
   process-orders:
