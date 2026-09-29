@@ -375,7 +375,7 @@ async function sha256(str) {
   return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
 }
 
-const DEFAULT_PW_HASH = 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3'; // '123'
+const DEFAULT_PW_HASH = 'b55f02885b1afb7cfa4545c479ff33e9c41f6d11cbc989cf961a32a6bd4f3c12';
 
 function getPwHash() { return localStorage.getItem('sm_pw') || DEFAULT_PW_HASH; }
 
