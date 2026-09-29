@@ -220,6 +220,16 @@ def build_html(data: dict, today: datetime) -> str:
     </div>
   </td></tr>
 
+  <!-- 공유 CTA -->
+  <tr><td style="background:#3A5E5E;padding:20px 36px;text-align:center;">
+    <div style="font-size:13px;color:rgba(240,216,144,.8);margin-bottom:12px;">
+      이 운세가 도움이 되셨나요? 카카오톡으로 친구에게도 공유해보세요!
+    </div>
+    <a href="https://shinmoney7-cyber.github.io/-/pages/free-fortune.html" style="display:inline-block;background:#FAE100;color:#391B1B;text-decoration:none;padding:11px 24px;border-radius:24px;font-size:13px;font-weight:bold;letter-spacing:.05em;">
+      💬 무료 운세 페이지 공유하기
+    </a>
+  </td></tr>
+
   <!-- 광고/CTA -->
   <tr><td style="background:#F8F4EC;padding:28px 36px;border-radius:0 0 8px 8px;text-align:center;">
     <div style="font-size:13px;color:#7A5C30;line-height:1.8;margin-bottom:18px;">

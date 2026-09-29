@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>사주마루 — 오늘의 무료 운세</title>
+<meta name="description" content="오늘 하루 나의 운세는? 사주마루에서 무료로 확인하세요. 총운, 재물운, 애정운, 건강운, 행운 아이템까지.">
+<!-- Open Graph (카카오톡/SNS 공유용) -->
+<meta property="og:title" content="사주마루 오늘의 무료 운세">
+<meta property="og:description" content="오늘 내 운세 확인해봐 ✨ 재물운·애정운·건강운 + 행운 아이템까지 무료로!">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ko_KR">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --teal: #2E4A4A;
+  --teal2: #3A5E5E;
+  --cream: #F4F0E8;
+  --gold: #C8A840;
+  --gold2: #F0D890;
+  --ink: #0E0A04;
+  --ink2: #3A2E20;
+  --card-bg: #fff;
+  --border: #E8E0D0;
+  --red: #8B1A1A;
+  --f: 'Nanum Myeongjo', 'Noto Serif KR', serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { background: var(--teal); }
+body {
+  font-family: var(--f);
+  background: var(--cream);
+  color: var(--ink);
+  min-height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+  box-shadow: 0 0 60px rgba(0,0,0,.3);
+}
+
+/* 헤더 */
+.header {
+  background: var(--teal);
+  padding: 28px 20px 24px;
+  text-align: center;
+  position: relative;
+}
+.header-sub { font-size: 12px; color: rgba(255,255,255,.5); letter-spacing: .22em; margin-bottom: 8px; }
+.header-brand { font-size: 28px; font-weight: 800; color: var(--cream); letter-spacing: .06em; margin-bottom: 4px; }
+.header-date { font-size: 13px; color: var(--gold2); letter-spacing: .1em; }
+
+/* 날짜 배너 */
+.date-banner {
+  background: var(--teal2);
+  padding: 12px 20px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--gold2);
+  letter-spacing: .12em;
+}
+
+/* 총운 카드 */
+.chongwoon {
+  margin: 20px 16px 0;
+  background: var(--card-bg);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,.08);
+}
+.chongwoon-header {
+  background: var(--teal);
+  padding: 16px 20px;
+  color: var(--cream);
+}
+.chongwoon-label {
+  font-size: 11px;
+  letter-spacing: .2em;
+  color: rgba(255,255,255,.55);
+  margin-bottom: 6px;
+}
+.chongwoon-title {
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+.chongwoon-body {
+  padding: 16px 20px;
+  font-size: 14px;
+  line-height: 1.85;
+  color: var(--ink2);
+}
+
+/* 4대 운 그리드 */
+.four-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 12px 16px 0;
+}
+.woon-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.05);
+}
+.woon-label {
+  font-size: 11px;
+  letter-spacing: .12em;
+  margin-bottom: 6px;
+  font-weight: 800;
+}
+.woon-label.jae { color: #B8900A; }
+.woon-label.ae  { color: #B83040; }
+.woon-label.geo { color: #3A7A3A; }
+.woon-label.jik { color: #3A5A8A; }
+.woon-text {
+  font-size: 13px;
+  line-height: 1.75;
+  color: var(--ink2);
+}
+
+/* 행운 아이템 */
+.lucky-box {
+  margin: 12px 16px 0;
+  background: var(--teal);
+  border-radius: 14px;
+  padding: 18px 16px;
+  text-align: center;
+}
+.lucky-title {
+  font-size: 11px;
+  color: rgba(240,216,144,.6);
+  letter-spacing: .18em;
+  margin-bottom: 12px;
+}
+.lucky-chips {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.lucky-chip {
+  background: rgba(255,255,255,.12);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 12px;
+  color: var(--gold2);
+}
+.lucky-advice {
+  font-size: 13px;
+  color: rgba(240,230,200,.75);
+  font-style: italic;
+  line-height: 1.6;
+}
+
+/* 내일 섹션 */
+.tomorrow-header {
+  background: var(--teal2);
+  padding: 12px 20px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--gold2);
+  letter-spacing: .12em;
+  margin-top: 20px;
+}
+.tomorrow-card {
+  margin: 12px 16px 0;
+  background: var(--card-bg);
+  border-left: 4px solid #8B6B3A;
+  border-radius: 0 12px 12px 0;
+  padding: 16px 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.05);
+}
+.tomorrow-label {
+  font-size: 11px;
+  color: #8B6B3A;
+  letter-spacing: .2em;
+  margin-bottom: 6px;
+}
+.tomorrow-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #4A3520;
+  margin-bottom: 8px;
+}
+.tomorrow-text {
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--ink2);
+}
+
+/* CTA */
+.cta-box {
+  margin: 20px 16px;
+  background: var(--cream);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 24px 20px;
+  text-align: center;
+}
+.cta-desc {
+  font-size: 14px;
+  color: #7A5C30;
+  line-height: 1.8;
+  margin-bottom: 16px;
+}
+.cta-btn {
+  display: block;
+  background: var(--teal);
+  color: var(--cream);
+  text-decoration: none;
+  padding: 14px 20px;
+  border-radius: 24px;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  margin-bottom: 10px;
+  transition: opacity .2s;
+}
+.cta-btn:active { opacity: .85; }
+.share-btn {
+  display: block;
+  background: #FAE100;
+  color: #391B1B;
+  text-decoration: none;
+  padding: 13px 20px;
+  border-radius: 24px;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: .05em;
+  cursor: pointer;
+  border: none;
+  width: 100%;
+  font-family: var(--f);
+}
+.share-btn:active { opacity: .85; }
+
+/* 푸터 */
+.footer {
+  padding: 20px;
+  text-align: center;
+  font-size: 11px;
+  color: rgba(90,70,40,.45);
+  letter-spacing: .1em;
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
+  margin-bottom: 16px;
+}
+
+/* 로딩 상태 */
+.skeleton {
+  background: linear-gradient(90deg, #e8e0d0 25%, #f4f0e8 50%, #e8e0d0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 6px;
+  display: inline-block;
+}
+@keyframes shimmer { 0%{background-position:200%} 100%{background-position:-200%} }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-sub">쉽게 보는 사주풀이</div>
+  <div class="header-brand">사주마루</div>
+  <div class="header-date" id="headerDate">로딩 중...</div>
+</div>
+
+<div class="date-banner" id="dateBanner">✦ 오늘의 무료 운세 ✦</div>
+
+<!-- 총운 -->
+<div class="chongwoon">
+  <div class="chongwoon-header">
+    <div class="chongwoon-label">총  운</div>
+    <div class="chongwoon-title" id="todayTitle">운세를 불러오는 중...</div>
+  </div>
+  <div class="chongwoon-body" id="todayChong">잠시만 기다려 주세요.</div>
+</div>
+
+<!-- 4대 운 -->
+<div class="four-grid">
+  <div class="woon-card">
+    <div class="woon-label jae">💰 재물운</div>
+    <div class="woon-text" id="todayJae">...</div>
+  </div>
+  <div class="woon-card">
+    <div class="woon-label ae">❤️ 애정운</div>
+    <div class="woon-text" id="todayAe">...</div>
+  </div>
+  <div class="woon-card">
+    <div class="woon-label geo">🌿 건강운</div>
+    <div class="woon-text" id="todayGeo">...</div>
+  </div>
+  <div class="woon-card">
+    <div class="woon-label jik">📘 직업운</div>
+    <div class="woon-text" id="todayJik">...</div>
+  </div>
+</div>
+
+<!-- 행운 아이템 -->
+<div class="lucky-box">
+  <div class="lucky-title">오늘의 행운 아이템</div>
+  <div class="lucky-chips">
+    <span class="lucky-chip" id="luckyColor">🎨 ...</span>
+    <span class="lucky-chip" id="luckyNum">🔢 ...</span>
+    <span class="lucky-chip" id="luckyDir">🧭 ...방</span>
+  </div>
+  <div class="lucky-advice" id="todayAdvice">"..."</div>
+</div>
+
+<!-- 내일 미리보기 -->
+<div class="tomorrow-header" id="tomorrowBanner">✦ 내일의 운세 미리보기 ✦</div>
+<div class="tomorrow-card">
+  <div class="tomorrow-label">내일 총운</div>
+  <div class="tomorrow-title" id="tmrTitle">...</div>
+  <div class="tomorrow-text" id="tmrChong">...</div>
+</div>
+
+<!-- CTA -->
+<div class="cta-box">
+  <div class="cta-desc">
+    무료 운세가 마음에 드셨나요?<br>
+    <strong>나만의 사주 분석</strong>은 더 깊고 정확합니다.<br>
+    생년월일시 하나로 평생운·재물운·애정운을 한눈에!
+  </div>
+  <a class="cta-btn" href="https://shinmoney7-cyber.github.io/-/">
+    📋 나의 사주 분석 신청하기
+  </a>
+  <button class="share-btn" onclick="shareKakao()">
+    💬 카카오톡으로 친구에게 공유하기
+  </button>
+</div>
+
+<div class="footer">사주마루 · SAJU MARU</div>
+
+<script>
+// ─── 날짜 기반 시드 난수 ───────────────────────────────────────
+function seededRand(seed) {
+  var x = Math.sin(seed + 1) * 10000;
+  return x - Math.floor(x);
+}
+function pick(arr, seed) {
+  return arr[Math.floor(seededRand(seed) * arr.length)];
+}
+
+// ─── 운세 데이터 풀 ───────────────────────────────────────────
+var todayTitles = [
+  "화기(火氣)가 충만한 활력의 날",
+  "수기(水氣)의 흐름으로 지혜가 빛나는 날",
+  "목기(木氣)의 기운으로 새싹이 돋는 날",
+  "금기(金氣)의 예리함으로 결실 맺는 날",
+  "토기(土氣)의 안정으로 중심 잡는 날",
+  "갑목(甲木)의 기운이 전진을 이끄는 날",
+  "을목(乙木)의 유연함이 기회를 잡는 날",
+  "병화(丙火)의 열정이 빛나는 하루",
+  "정화(丁火)의 섬세함이 빛을 발하는 날",
+  "무토(戊土)의 든든함이 지지가 되는 날",
+  "경금(庚金)의 결단력이 돋보이는 날",
+  "임수(壬水)의 지혜가 흘러넘치는 날",
+];
+var chongTexts = [
+  "오늘은 오행 중 화(火)의 기운이 강하게 작용합니다. 적극적으로 의사표현을 하면 좋은 결과를 얻을 수 있는 날입니다. 주변의 도움이 예상치 못한 곳에서 오니 마음을 열어두세요.",
+  "수(水)의 기운이 흐르는 날로, 직관력과 통찰력이 높아집니다. 중요한 결정은 오늘 내리는 것이 유리하며, 새로운 인연과의 만남도 기대해볼 만합니다.",
+  "목(木)의 기운이 상승하는 날입니다. 시작하려 했던 일에 도전하기 좋은 타이밍입니다. 인내심을 갖고 꾸준히 나아가면 뜻밖의 성과를 거둘 수 있습니다.",
+  "금(金)의 기운이 충만하여 집중력과 분석력이 탁월합니다. 복잡한 문제를 해결하거나 계획을 세우기에 더없이 좋은 날입니다.",
+  "토(土)의 기운으로 안정감이 넘치는 날입니다. 주변 사람들과 신뢰를 쌓고 협력하면 큰 힘이 됩니다. 서두르지 않고 차분히 임하면 원하는 결과를 얻습니다.",
+  "오늘은 전반적으로 길한 기운이 감돌고 있습니다. 미루어 두었던 일을 처리하기에 좋으며, 재물 운에서도 예상치 못한 횡재수가 보입니다.",
+];
+var jaeTexts = [
+  "재물 흐름이 원활합니다. 작은 지출을 조심하면 큰 손해를 막을 수 있습니다.",
+  "예상치 못한 수입이 생길 수 있습니다. 투자보다는 저축에 집중하세요.",
+  "경제적으로 안정된 하루입니다. 충동구매는 자제하는 것이 좋습니다.",
+  "금전 운이 상승 중입니다. 오랜 채권 회수나 미뤄뒀던 정산을 하기 좋은 날입니다.",
+  "재물운이 다소 불안정합니다. 보증이나 투기성 거래는 피하는 것이 현명합니다.",
+  "수입과 지출의 균형을 잘 맞추는 날입니다. 절약 습관이 미래 재물을 만듭니다.",
+];
+var aeTexts = [
+  "연인과의 관계가 따뜻하게 무르익는 날입니다. 작은 배려가 큰 감동을 줍니다.",
+  "새로운 인연의 기운이 감돕니다. 적극적으로 자신을 표현해보세요.",
+  "기존 관계에서 오해가 생길 수 있습니다. 솔직한 대화로 풀어나가세요.",
+  "사랑하는 사람에게 마음을 전하기 좋은 날입니다. 용기를 내세요.",
+  "혼자만의 시간이 오히려 관계에 도움이 됩니다. 자신을 돌보는 것도 사랑입니다.",
+  "인연의 실이 엮이는 날입니다. 소개팅이나 모임에 적극 참여해보세요.",
+];
+var geoTexts = [
+  "전반적으로 건강 상태가 양호합니다. 충분한 수분 섭취를 잊지 마세요.",
+  "조금 피곤함을 느낄 수 있습니다. 무리한 일정보다는 규칙적인 생활을 유지하세요.",
+  "소화기 계통에 주의가 필요합니다. 과식을 피하고 가벼운 식사가 좋습니다.",
+  "가벼운 운동이 큰 도움이 됩니다. 스트레칭으로 몸의 긴장을 풀어주세요.",
+  "정신적 스트레스가 신체에 영향을 줄 수 있습니다. 명상이나 산책을 권합니다.",
+  "오늘은 활력이 넘칩니다. 새로운 운동을 시작하기에 좋은 날입니다.",
+];
+var jikTexts = [
+  "집중력이 높아지는 날입니다. 중요한 업무나 공부를 오전 시간에 처리하세요.",
+  "동료나 상사와의 협력으로 좋은 성과를 낼 수 있습니다. 소통을 게을리 말아요.",
+  "창의적인 아이디어가 샘솟는 날입니다. 메모해두면 나중에 큰 도움이 됩니다.",
+  "발표나 면접 등 자신을 드러낼 기회가 온다면 자신감 있게 임하세요.",
+  "세부적인 작업보다는 전략적 사고가 빛을 발하는 날입니다.",
+  "학업이나 자격증 공부에 집중하기 좋습니다. 꾸준함이 결실을 맺습니다.",
+];
+var adviceTexts = [
+  "오늘 하루, 작은 친절이 큰 인연을 만듭니다.",
+  "서두르지 않아도 됩니다. 당신의 속도가 맞습니다.",
+  "의심보다 믿음을, 두려움보다 용기를 선택하세요.",
+  "지금 이 순간에 집중하면 길이 보입니다.",
+  "감사하는 마음이 복을 불러옵니다.",
+  "완벽하지 않아도 됩니다. 성실함이 빛납니다.",
+];
+var colors = ["청록색","황금색","흰색","붉은색","진청색","연보라색","연두색","베이지색","자줏빛","산호색"];
+var directions = ["동","서","남","북","동남","동북","서남","서북"];
+var tmrTitles = [
+  "내일은 더 큰 기운이 기다립니다",
+  "새로운 바람이 불어오는 내일",
+  "결실을 맺는 내일의 기운",
+  "내일은 인연과 기회의 날",
+  "차분한 지혜가 빛나는 내일",
+  "내일은 하늘의 도움이 함께합니다",
+];
+var tmrTexts = [
+  "내일은 오늘보다 더 순탄한 흐름이 예상됩니다. 오늘 준비한 것들이 내일 빛을 발할 것입니다.",
+  "내일은 중요한 만남이나 소식이 올 수 있습니다. 마음의 여유를 갖고 맞이하세요.",
+  "내일은 창의적인 영감이 가득한 날입니다. 새로운 도전을 두려워하지 마세요.",
+  "내일은 가족이나 가까운 이들과의 시간이 행복을 줍니다. 소중한 관계를 챙기세요.",
+  "내일은 자기 계발에 집중하기 좋은 날입니다. 배움의 기회를 놓치지 마세요.",
+];
+
+// ─── 간지 계산 ───────────────────────────────────────────────
+var gan = ["갑","을","병","정","무","기","경","신","임","계"];
+var ji  = ["자(쥐)","축(소)","인(호랑이)","묘(토끼)","진(용)","사(뱀)","오(말)","미(양)","신(원숭이)","유(닭)","술(개)","해(돼지)"];
+function ganjiYear(y) {
+  return gan[(y-4)%10] + ji[(y-4)%12] + "년";
+}
+
+// ─── 날짜 시드 생성 ──────────────────────────────────────────
+var now = new Date();
+var kst = new Date(now.getTime() + 9*3600*1000);
+var y = kst.getUTCFullYear(), m = kst.getUTCMonth()+1, d = kst.getUTCDate();
+var seed = y * 10000 + m * 100 + d;
+var tmrSeed = seed + 1;
+
+// ─── 날짜 포맷 ───────────────────────────────────────────────
+var weekdays = ["일","월","화","수","목","금","토"];
+var wday = weekdays[kst.getUTCDay()];
+var tmrDate = new Date(kst.getTime() + 86400000);
+
+function pad(n){ return n<10?"0"+n:n; }
+var todayStr = y+"년 "+m+"월 "+d+"일 ("+wday+")";
+var tmrStr   = tmrDate.getUTCFullYear()+"년 "+(tmrDate.getUTCMonth()+1)+"월 "+tmrDate.getUTCDate()+"일";
+
+// ─── DOM 업데이트 ─────────────────────────────────────────────
+document.getElementById("headerDate").textContent  = ganjiYear(y)+" · "+todayStr;
+document.getElementById("dateBanner").textContent  = "✦ "+todayStr+" 오늘의 운세 ✦";
+document.getElementById("tomorrowBanner").textContent = "✦ "+tmrStr+" 내일의 운세 미리보기 ✦";
+
+document.getElementById("todayTitle").textContent = pick(todayTitles, seed);
+document.getElementById("todayChong").textContent = pick(chongTexts,  seed+1);
+document.getElementById("todayJae").textContent   = pick(jaeTexts,    seed+2);
+document.getElementById("todayAe").textContent    = pick(aeTexts,     seed+3);
+document.getElementById("todayGeo").textContent   = pick(geoTexts,    seed+4);
+document.getElementById("todayJik").textContent   = pick(jikTexts,    seed+5);
+
+var luckyNum = Math.floor(seededRand(seed+6) * 99) + 1;
+document.getElementById("luckyColor").textContent = "🎨 " + pick(colors, seed+7);
+document.getElementById("luckyNum").textContent   = "🔢 " + luckyNum;
+document.getElementById("luckyDir").textContent   = "🧭 " + pick(directions, seed+8) + "방";
+document.getElementById("todayAdvice").textContent = '"' + pick(adviceTexts, seed+9) + '"';
+
+document.getElementById("tmrTitle").textContent = pick(tmrTitles, tmrSeed);
+document.getElementById("tmrChong").textContent = pick(tmrTexts,  tmrSeed+1);
+
+// ─── 카카오톡 공유 ────────────────────────────────────────────
+function shareKakao() {
+  var url = "https://shinmoney7-cyber.github.io/-/pages/free-fortune.html";
+  var title = pick(todayTitles, seed);
+  var text = "[사주마루] "+todayStr+" 오늘의 무료 운세\n"+title+"\n\n무료 운세 보러 가기 👉 "+url;
+
+  if (navigator.share) {
+    navigator.share({ title: "사주마루 오늘의 무료 운세", text: text, url: url });
+  } else {
+    // 클립보드 복사 폴백
+    navigator.clipboard.writeText(text).then(function(){
+      alert("링크가 복사됐어요!\n카카오톡에 붙여넣기 해주세요 😊");
+    }).catch(function(){
+      alert("이 링크를 공유해주세요:\n" + url);
+    });
+  }
+}
+</script>
+</body>
+</html>
