@@ -550,10 +550,13 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
       <span class="hero__eyebrow">만세력 기반 정통 사주 분석</span>
       <h1>생년월일시로 보는<br><span style="color:var(--brass-soft);">평생의 흐름</span></h1>
       <p class="lede">마음 가는 항목 하나만 골라보세요.<br>나머지는 정성껏 풀어 보내드릴게요!</p>
-      <a href="https://pf.kakao.com/_WekxcC/chat" target="_blank" rel="noopener" class="btn--kakao" style="margin-top:18px;align-self:flex-start;">
-        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 5.92 2 10.72c0 3.04 1.8 5.72 4.52 7.28l-1.08 3.92c-.08.28.22.52.48.36L10.6 19.6c.46.06.92.1 1.4.1 5.52 0 10-3.92 10-8.72S17.52 2 12 2z"/></svg>
-        카카오 채널 상담
-      </a>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:18px;justify-content:center;">
+        <a href="user-app.html" class="btn btn--primary" style="font-size:17px;padding:16px 32px;border-radius:12px;text-decoration:none;letter-spacing:.04em;">✦ 지금 바로 신청하기</a>
+        <a href="https://pf.kakao.com/_WekxcC/chat" target="_blank" rel="noopener" class="btn--kakao" style="align-self:center;">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 5.92 2 10.72c0 3.04 1.8 5.72 4.52 7.28l-1.08 3.92c-.08.28.22.52.48.36L10.6 19.6c.46.06.92.1 1.4.1 5.52 0 10-3.92 10-8.72S17.52 2 12 2z"/></svg>
+          카카오 채널 상담
+        </a>
+      </div>
     </div>
 
     <div class="hero__elements">
@@ -2307,9 +2310,9 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
       <svg viewBox="0 0 24 24" fill="#FEE500" style="width:20px;height:20px;" aria-hidden="true"><path d="M12 2C6.48 2 2 5.92 2 10.72c0 3.04 1.8 5.72 4.52 7.28l-1.08 3.92c-.08.28.22.52.48.36L10.6 19.6c.46.06.92.1 1.4.1 5.52 0 10-3.92 10-8.72S17.52 2 12 2z"/></svg>
       카카오
     </a>
-    <button class="mob-nav__btn mob-nav__btn--cta" onclick="document.getElementById('flow')&&document.getElementById('flow').scrollIntoView({behavior:'smooth'})" aria-label="신청하기">
+    <a class="mob-nav__btn mob-nav__btn--cta" href="user-app.html" style="text-decoration:none;" aria-label="신청하기">
       신청하기 ✦
-    </button>
+    </a>
     <button class="mob-nav__btn mob-nav__btn--admin" id="mobAdminBtn" onclick="window.openAdmin&&window.openAdmin()" aria-label="관리자">
       <span class="mob-nav__icon">🔧</span>관리자
     </button>
