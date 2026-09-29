@@ -18,7 +18,7 @@
 *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { height: 100%; }
 body {
-  min-height: 100%; background: var(--bg); color: #F0E8D0;
+  min-height: 100%; background: var(--bg); color: var(--text);
   font-family: var(--f); font-size: 16px; line-height: 1.6;
   padding: 0 0 env(safe-area-inset-bottom,0) 0;
 }
@@ -74,9 +74,9 @@ input, select, textarea { font-family: var(--f); }
   background: var(--gold); color: #0A0514; font-size: 11px; font-weight: 800;
   padding: 3px 12px; border-radius: 20px; white-space: nowrap;
 }
-.pkg-card__name { font-size: 17px; font-weight: 800; color: #F0E8D0; margin-bottom: 4px; }
+.pkg-card__name { font-size: 17px; font-weight: 800; margin-bottom: 4px; }
 .pkg-card.selected .pkg-card__name { color: var(--gold); }
-.pkg-card__items { font-size: 13px; color: rgba(240,232,208,0.65); margin-bottom: 8px; line-height: 1.55; }
+.pkg-card__items { font-size: 13px; color: var(--muted); margin-bottom: 8px; line-height: 1.55; }
 .pkg-row2 { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .pkg-card__orig { font-size: 12px; color: var(--muted); text-decoration: line-through; }
 .pkg-card__price { font-size: 22px; font-weight: 800; color: var(--gold); }
@@ -101,12 +101,12 @@ input, select, textarea { font-family: var(--f); }
 .item-card.selected { border-color: var(--gold); background: var(--gold-dim); }
 .item-card__check {
   position: absolute; top: 10px; right: 10px; width: 20px; height: 20px;
-  border-radius: 50%; border: 2px solid var(--border2);
+  border-radius: 50%; border: 2px solid var(--border);
   background: var(--bg); display: flex; align-items: center; justify-content: center;
   font-size: 11px; color: transparent; transition: all .15s;
 }
 .item-card.selected .item-card__check { background: var(--gold); border-color: var(--gold); color: #fff; }
-.item-card__name { font-size: 15px; font-weight: 800; color: #F0E8D0; padding-right: 26px; margin-bottom: 4px; }
+.item-card__name { font-size: 15px; font-weight: 800; padding-right: 26px; margin-bottom: 4px; }
 .item-card__price { font-size: 14px; font-weight: 800; color: var(--gold); }
 .item-card.free .item-card__price { color: var(--green); }
 
