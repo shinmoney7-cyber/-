@@ -337,7 +337,7 @@ body {
 <div class="footer">사주마루 · SAJU MARU</div>
 
 <script>
-// ─── 날짜 기반 시드 난수 ───────────────────────────────────────
+// 날짜 기반 시드 난수
 function seededRand(seed) {
   var x = Math.sin(seed + 1) * 10000;
   return x - Math.floor(x);
@@ -346,7 +346,7 @@ function pick(arr, seed) {
   return arr[Math.floor(seededRand(seed) * arr.length)];
 }
 
-// ─── 운세 데이터 풀 ───────────────────────────────────────────
+// 운세 데이터 풀
 var todayTitles = [
   "화기(火氣)가 충만한 활력의 날",
   "수기(水氣)의 흐름으로 지혜가 빛나는 날",
@@ -427,21 +427,21 @@ var tmrTexts = [
   "내일은 자기 계발에 집중하기 좋은 날입니다. 배움의 기회를 놓치지 마세요.",
 ];
 
-// ─── 간지 계산 ───────────────────────────────────────────────
+// 간지 계산
 var gan = ["갑","을","병","정","무","기","경","신","임","계"];
 var ji  = ["자(쥐)","축(소)","인(호랑이)","묘(토끼)","진(용)","사(뱀)","오(말)","미(양)","신(원숭이)","유(닭)","술(개)","해(돼지)"];
 function ganjiYear(y) {
   return gan[(y-4)%10] + ji[(y-4)%12] + "년";
 }
 
-// ─── 날짜 시드 생성 ──────────────────────────────────────────
+// 날짜 시드 생성
 var now = new Date();
 var kst = new Date(now.getTime() + 9*3600*1000);
 var y = kst.getUTCFullYear(), m = kst.getUTCMonth()+1, d = kst.getUTCDate();
 var seed = y * 10000 + m * 100 + d;
 var tmrSeed = seed + 1;
 
-// ─── 날짜 포맷 ───────────────────────────────────────────────
+// 날짜 포맷
 var weekdays = ["일","월","화","수","목","금","토"];
 var wday = weekdays[kst.getUTCDay()];
 var tmrDate = new Date(kst.getTime() + 86400000);
@@ -450,7 +450,7 @@ function pad(n){ return n<10?"0"+n:n; }
 var todayStr = y+"년 "+m+"월 "+d+"일 ("+wday+")";
 var tmrStr   = tmrDate.getUTCFullYear()+"년 "+(tmrDate.getUTCMonth()+1)+"월 "+tmrDate.getUTCDate()+"일";
 
-// ─── DOM 업데이트 ─────────────────────────────────────────────
+// DOM 업데이트
 document.getElementById("headerDate").textContent  = ganjiYear(y)+" · "+todayStr;
 document.getElementById("dateBanner").textContent  = "✦ "+todayStr+" 오늘의 운세 ✦";
 document.getElementById("tomorrowBanner").textContent = "✦ "+tmrStr+" 내일의 운세 미리보기 ✦";
@@ -471,7 +471,7 @@ document.getElementById("todayAdvice").textContent = '"' + pick(adviceTexts, see
 document.getElementById("tmrTitle").textContent = pick(tmrTitles, tmrSeed);
 document.getElementById("tmrChong").textContent = pick(tmrTexts,  tmrSeed+1);
 
-// ─── 카카오톡 공유 ────────────────────────────────────────────
+// 카카오톡 공유
 function shareKakao() {
   var url = "https://shinmoney7-cyber.github.io/-/pages/free-fortune.html";
   var title = pick(todayTitles, seed);
@@ -480,7 +480,6 @@ function shareKakao() {
   if (navigator.share) {
     navigator.share({ title: "사주마루 오늘의 무료 운세", text: text, url: url });
   } else {
-    // 클립보드 복사 폴백
     navigator.clipboard.writeText(text).then(function(){
       alert("링크가 복사됐어요!\n카카오톡에 붙여넣기 해주세요 😊");
     }).catch(function(){

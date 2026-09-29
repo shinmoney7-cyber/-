@@ -16,7 +16,7 @@ except ImportError:
     subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'anthropic', '-q'])
     import anthropic
 
-# .env 자동 로드 (로컬 개발용)
+# .env 자동 로드 (로친 개발용)
 _env = Path(__file__).parent / ".env"
 if _env.exists():
     for line in _env.read_text().splitlines():
@@ -27,14 +27,14 @@ if _env.exists():
 ANTHROPIC_API_KEY  = os.getenv("ANTHROPIC_API_KEY", "")
 GMAIL_USER         = os.getenv("GMAIL_USER", "shinmoney7@gmail.com")
 GMAIL_APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD", "")
-FORTUNE_TO         = os.getenv("FORTUNE_TO", GMAIL_USER)  # 수신자 (여러 명: 쉼표 구분)
+FORTUNE_TO         = os.getenv("FORTUNE_TO", GMAIL_USER)  # 수신자 (여러 명: 쉬표 구분)
 
 KST = timezone(timedelta(hours=9))
 
 
-# ─── 간지 계산 ─────────────────────────────────────────────────────────────
+# ─── 간지 계산 ───────────────────────────────────────────────────────────
 CHEONGAN = ["갑", "을", "병", "정", "무", "기", "경", "신", "임", "계"]
-JIJI     = ["자", "축", "인", "묘", "진", "사", "오", "미", "신", "유", "술", "해"]
+JIJI     = ["자", "축", "인", "볐", "진", "사", "오", "미", "신", "유", "술", "해"]
 JIJI_ZO  = ["쥐", "소", "호랑이", "토끼", "용", "뱀", "말", "양", "원숭이", "닭", "개", "돼지"]
 
 def ganjija_year(year: int) -> str:
@@ -53,7 +53,7 @@ def generate_fortune(today: datetime) -> dict:
 내일 날짜: {tomorrow.strftime('%Y년 %m월 %d일')}
 
 아래 JSON 형식으로 오늘과 내일의 무료 일일 운세를 작성해주세요.
-각 항목은 2~3문장으로 구체적이고 따뜻하게, 사주 전통 용어(오행, 간지 등)를 자연스럽게 섞어서 작성해주세요.
+각 항목은 2~3문장으로 구체적이고 따뜻하게, 사주 전통 용어(오행, 간지 등)를 자연스럽게 섭어서 작성해주세요.
 
 {{
   "today_date": "{today.strftime('%Y년 %m월 %d일')}",
@@ -116,7 +116,7 @@ def build_html(data: dict, today: datetime) -> str:
 
   <!-- 오늘 날짜 배너 -->
   <tr><td style="background:#3A5E5E;padding:16px 36px;text-align:center;">
-    <span style="font-size:15px;color:#F0D890;letter-spacing:.12em;">✦ {data['today_date']} 오늘의 운세 ✦</span>
+    <span style="font-size:15px;color:#F0D890;letter-spacing:.12em;">❆ {data['today_date']} 오늘의 운세 ❆</span>
   </td></tr>
 
   <!-- 오늘 총운 -->
@@ -191,7 +191,7 @@ def build_html(data: dict, today: datetime) -> str:
 
   <!-- 내일 운세 -->
   <tr><td style="background:#3A5E5E;padding:16px 36px;text-align:center;">
-    <span style="font-size:15px;color:#F0D890;letter-spacing:.12em;">✦ {data['tomorrow_date']} 내일의 운세 미리보기 ✦</span>
+    <span style="font-size:15px;color:#F0D890;letter-spacing:.12em;">❆ {data['tomorrow_date']} 내일의 운세 미리보기 ❆</span>
   </td></tr>
   <tr><td style="background:#fff;padding:28px 36px 32px;">
     <div style="background:#F8F4EC;border-left:4px solid #8B6B3A;padding:18px 20px;border-radius:0 6px 6px 0;margin-bottom:20px;">
@@ -234,7 +234,7 @@ def build_html(data: dict, today: datetime) -> str:
   <tr><td style="background:#F8F4EC;padding:28px 36px;border-radius:0 0 8px 8px;text-align:center;">
     <div style="font-size:13px;color:#7A5C30;line-height:1.8;margin-bottom:18px;">
       더 깊이 있는 나만의 사주 분석을 원하신다면?<br>
-      사주마루의 <strong>맞춤형 사주 리포트</strong>를 만나보세요.
+      사주마루의 <strong>맞온형 사주 리포트</strong>를 만나보세요.
     </div>
     <a href="https://shinmoney7-cyber.github.io/-/" style="display:inline-block;background:#2E4A4A;color:#F0EBE0;text-decoration:none;padding:12px 28px;border-radius:24px;font-size:13px;letter-spacing:.12em;">
       📋 사주 분석 신청하기
