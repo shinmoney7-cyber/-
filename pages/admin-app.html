@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>사주마루 관리자</title>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0A0120; --bg2: #130535; --bg3: #1A0845;
+  --gold: #D4A843; --gold2: #F5D888; --gold-dim: rgba(212,168,67,0.12);
+  --text: #F0E8D0; --muted: rgba(240,232,208,0.55);
+  --border: rgba(200,146,42,0.18); --border2: rgba(200,146,42,0.4);
+  --green: #5ab067; --red: #c0503a; --blue: #4a90d9;
+  --f: 'Nanum Myeongjo', serif; --r: 14px;
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: var(--f); font-size: 15px; line-height: 1.6;
+}
+button { font-family: var(--f); cursor: pointer; }
+input, select, textarea { font-family: var(--f); }
+
+/* ── LOGIN ── */
+#loginScreen {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+}
+.login-box {
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: 20px; padding: 36px 28px; width: 100%; max-width: 360px;
+  text-align: center;
+}
+.login-logo { font-size: 32px; font-weight: 800; color: var(--gold); letter-spacing: .08em; margin-bottom: 6px; }
+.login-sub { font-size: 13px; color: var(--muted); margin-bottom: 28px; }
+.login-box input {
+  width: 100%; padding: 13px 16px; border-radius: 10px;
+  border: 1px solid var(--border2); background: var(--bg);
+  color: var(--text); font-size: 16px; font-family: var(--f);
+  margin-bottom: 12px; text-align: center; letter-spacing: .1em;
+}
+.login-box input:focus { outline: none; border-color: var(--gold); }
+.login-err { font-size: 13px; color: var(--red); margin-bottom: 10px; min-height: 20px; }
+.btn-login {
+  width: 100%; padding: 14px; border-radius: 10px; border: none;
+  background: var(--gold); color: #0A0514; font-size: 16px; font-weight: 800;
+  font-family: var(--f); cursor: pointer; transition: opacity .15s;
+}
+.btn-login:hover { opacity: .85; }
+
+/* ── APP ── */
+#app { display: none; min-height: 100vh; }
+
+/* ── NAV ── */
+.nav {
+  position: sticky; top: 0; z-index: 99;
+  background: rgba(10,1,32,0.95); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px;
+  padding-top: calc(14px + env(safe-area-inset-top,0));
+}
+.nav__brand { font-size: 20px; font-weight: 800; color: var(--gold); }
+.nav__badge { font-size: 11px; background: var(--red); color: #fff; border-radius: 999px; padding: 2px 8px; margin-left: 6px; }
+.nav__logout { font-size: 13px; color: var(--muted); background: none; border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; }
+
+/* ── TABS ── */
+.tabs { display: flex; border-bottom: 1px solid var(--border); background: var(--bg2); overflow-x: auto; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { padding: 12px 18px; font-size: 14px; font-weight: 700; color: var(--muted); border-bottom: 3px solid transparent; white-space: nowrap; cursor: pointer; background: none; border-top: none; border-left: none; border-right: none; }
+.tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* ── PANELS ── */
+.panel { display: none; padding: 16px; max-width: 800px; margin: 0 auto; }
+.panel.active { display: block; }
+
+/* ── STATS ── */
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+@media(min-width:500px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } }
+.stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 14px; text-align: center; }
+.stat-card__val { font-size: 26px; font-weight: 800; color: var(--gold); }
+.stat-card__label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.stat-card--green .stat-card__val { color: var(--green); }
+.stat-card--red .stat-card__val { color: var(--red); }
+
+/* ── ORDER LIST ── */
+.filter-row { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+.filter-btn { padding: 7px 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--bg2); color: var(--muted); font-size: 13px; font-weight: 700; font-family: var(--f); cursor: pointer; transition: all .15s; }
+.filter-btn.active { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+
+.order-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--r); margin-bottom: 12px; overflow: hidden;
+}
+.order-card__head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px; cursor: pointer; gap: 10px;
+}
+.order-card__name { font-size: 16px; font-weight: 800; }
+.order-card__date { font-size: 12px; color: var(--muted); }
+.order-card__price { font-size: 16px; font-weight: 800; color: var(--gold); flex-shrink: 0; }
+.status-badge {
+  font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px;
+  flex-shrink: 0;
+}
+.status-pending { background: rgba(212,168,67,.15); color: var(--gold); border: 1px solid rgba(212,168,67,.35); }
+.status-progress { background: rgba(74,144,217,.15); color: var(--blue); border: 1px solid rgba(74,144,217,.35); }
+.status-done { background: rgba(90,176,103,.15); color: var(--green); border: 1px solid rgba(90,176,103,.35); }
+.status-cancel { background: rgba(192,80,58,.15); color: var(--red); border: 1px solid rgba(192,80,58,.35); }
+
+.order-card__body { display: none; padding: 0 16px 16px; border-top: 1px solid var(--border); }
+.order-card__body.open { display: block; }
+.info-row { display: flex; gap: 6px; margin-top: 10px; font-size: 13px; }
+.info-row__label { color: var(--muted); min-width: 70px; flex-shrink: 0; }
+.info-row__val { font-weight: 700; }
+.services-list { font-size: 13px; color: var(--muted); margin-top: 4px; line-height: 1.6; }
+.action-row { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+.act-btn {
+  padding: 7px 14px; border-radius: 8px; border: none; font-size: 12px; font-weight: 700;
+  font-family: var(--f); cursor: pointer; transition: opacity .15s;
+}
+.act-btn:hover { opacity: .8; }
+.act-btn--progress { background: rgba(74,144,217,.25); color: var(--blue); }
+.act-btn--done { background: rgba(90,176,103,.25); color: var(--green); }
+.act-btn--cancel { background: rgba(192,80,58,.2); color: var(--red); }
+.act-btn--pending { background: var(--gold-dim); color: var(--gold); }
+.act-btn--del { background: rgba(255,255,255,.05); color: var(--muted); }
+
+.empty-msg { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 14px; }
+
+/* ── ADD ORDER FORM ── */
+.form-box { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); padding: 18px; margin-bottom: 16px; }
+.form-box h3 { font-size: 16px; font-weight: 800; color: var(--gold); margin-bottom: 14px; }
+.field { margin-bottom: 14px; }
+.field:last-child { margin-bottom: 0; }
+.field label { display: block; font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 5px; }
+.field label span { color: var(--gold); }
+.field input, .field select, .field textarea {
+  width: 100%; padding: 11px 13px; border-radius: 9px;
+  border: 1px solid var(--border); background: var(--bg);
+  color: var(--text); font-size: 14px; font-family: var(--f);
+}
+.field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--gold); }
+.field select option { background: var(--bg2); }
+.field textarea { resize: vertical; min-height: 70px; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.service-checks { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+@media(min-width:480px) { .service-checks { grid-template-columns: repeat(3,1fr); } }
+.svc-check { display: flex; align-items: center; gap: 6px; font-size: 12px; cursor: pointer; }
+.svc-check input { accent-color: var(--gold); width: 14px; height: 14px; cursor: pointer; }
+
+.btn-submit {
+  width: 100%; padding: 13px; border-radius: 10px; border: none;
+  background: var(--gold); color: #0A0514; font-size: 15px; font-weight: 800;
+  font-family: var(--f); cursor: pointer; margin-top: 4px;
+}
+.btn-submit:hover { opacity: .88; }
+
+/* ── SETTINGS ── */
+.setting-box { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); padding: 18px; margin-bottom: 14px; }
+.setting-box h3 { font-size: 15px; font-weight: 800; margin-bottom: 12px; }
+.setting-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+.setting-row:last-child { border-bottom: none; }
+.setting-row__label { color: var(--muted); }
+.setting-row__val { font-weight: 700; }
+
+/* ── BTN ── */
+.btn-sm { padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border2); background: transparent; color: var(--gold); font-size: 13px; font-weight: 700; font-family: var(--f); cursor: pointer; }
+.btn-sm:hover { background: var(--gold-dim); }
+
+/* ── REVENUE CHART ── */
+.revenue-bar { display: flex; align-items: flex-end; gap: 6px; height: 80px; margin: 12px 0; }
+.rev-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.rev-bar-fill { background: linear-gradient(180deg, var(--gold2), var(--gold)); border-radius: 4px 4px 0 0; width: 100%; min-height: 2px; transition: height .3s; }
+.rev-label { font-size: 10px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">사주마루</div>
+    <div class="login-sub">관리자 로그인</div>
+    <input type="password" id="pwInput" placeholder="비밀번호" onkeydown="if(event.key==='Enter')tryLogin()">
+    <div class="login-err" id="loginErr"></div>
+    <button class="btn-login" onclick="tryLogin()">로그인</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="nav">
+    <div>
+      <span class="nav__brand">사주마루 관리자</span>
+      <span class="nav__badge" id="pendingBadge" style="display:none">0</span>
+    </div>
+    <button class="nav__logout" onclick="logout()">로그아웃</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showPanel('dash')">대시보드</button>
+    <button class="tab" onclick="showPanel('orders')">주문 목록</button>
+    <button class="tab" onclick="showPanel('add')">주문 추가</button>
+    <button class="tab" onclick="showPanel('settings')">설정</button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="panel active" id="panelDash">
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card"><div class="stat-card__val" id="statTotal">0</div><div class="stat-card__label">전체 주문</div></div>
+      <div class="stat-card stat-card--red"><div class="stat-card__val" id="statPending">0</div><div class="stat-card__label">대기 중</div></div>
+      <div class="stat-card" style="--gold:#4a90d9"><div class="stat-card__val" id="statProgress" style="color:var(--blue)">0</div><div class="stat-card__label">진행 중</div></div>
+      <div class="stat-card stat-card--green"><div class="stat-card__val" id="statDone">0</div><div class="stat-card__label">완료</div></div>
+    </div>
+
+    <div class="form-box" style="padding:18px;background:var(--bg2)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span style="font-size:14px;font-weight:700">이번 달 매출</span>
+        <span style="font-size:18px;font-weight:800;color:var(--gold)" id="monthRevenue">0원</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <span style="font-size:12px;color:var(--muted)">누적 매출</span>
+        <span style="font-size:14px;font-weight:800;color:var(--gold2)" id="totalRevenue">0원</span>
+      </div>
+      <div class="revenue-bar" id="revBar"></div>
+    </div>
+
+    <div style="margin-top:16px">
+      <div style="font-size:14px;font-weight:700;color:var(--muted);margin-bottom:10px">최근 주문 (대기 중)</div>
+      <div id="recentPending"></div>
+    </div>
+  </div>
+
+  <!-- ORDERS -->
+  <div class="panel" id="panelOrders">
+    <div class="filter-row">
+      <button class="filter-btn active" onclick="setFilter('all',this)">전체</button>
+      <button class="filter-btn" onclick="setFilter('pending',this)">대기</button>
+      <button class="filter-btn" onclick="setFilter('progress',this)">진행중</button>
+      <button class="filter-btn" onclick="setFilter('done',this)">완료</button>
+      <button class="filter-btn" onclick="setFilter('cancel',this)">취소</button>
+    </div>
+    <div id="orderList"></div>
+  </div>
+
+  <!-- ADD ORDER -->
+  <div class="panel" id="panelAdd">
+    <div class="form-box">
+      <h3>새 주문 추가</h3>
+      <div class="field-row">
+        <div class="field">
+          <label>이름 <span>*</span></label>
+          <input type="text" id="a-name" placeholder="홍길동">
+        </div>
+        <div class="field">
+          <label>성별</label>
+          <select id="a-gender">
+            <option>여성</option><option>남성</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>생년월일</label>
+          <input type="date" id="a-birth">
+        </div>
+        <div class="field">
+          <label>태어난 시간</label>
+          <select id="a-time">
+            <option value="">모름</option>
+            <option>자시</option><option>축시</option><option>인시</option><option>묘시</option>
+            <option>진시</option><option>사시</option><option>오시</option><option>미시</option>
+            <option>신시</option><option>유시</option><option>술시</option><option>해시</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>연락처</label>
+          <input type="text" id="a-contact" placeholder="카카오 ID / 전화">
+        </div>
+        <div class="field">
+          <label>이메일</label>
+          <input type="email" id="a-email" placeholder="@email.com">
+        </div>
+      </div>
+      <div class="field">
+        <label>선택 서비스 <span>*</span></label>
+        <div class="service-checks" id="svcChecks"></div>
+      </div>
+      <div class="field">
+        <label>패키지 (개별 선택 대신)</label>
+        <select id="a-pkg">
+          <option value="">개별 선택</option>
+          <option value="39000|베이직 패키지">베이직 패키지 39,000원</option>
+          <option value="79000|인생 패키지">인생 패키지 79,000원</option>
+          <option value="149000|프리미엄 올인원">프리미엄 올인원 149,000원</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>총 금액 (원)</label>
+          <input type="number" id="a-total" placeholder="22000">
+        </div>
+        <div class="field">
+          <label>주문 날짜</label>
+          <input type="date" id="a-date">
+        </div>
+      </div>
+      <div class="field">
+        <label>메모</label>
+        <textarea id="a-memo" placeholder="특이사항, 추가 요청 등"></textarea>
+      </div>
+      <button class="btn-submit" onclick="addOrder()">주문 추가</button>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="panel" id="panelSettings">
+    <div class="setting-box">
+      <h3>관리자 비밀번호 변경</h3>
+      <div class="field">
+        <label>현재 비밀번호</label>
+        <input type="password" id="s-cur" placeholder="현재 비밀번호">
+      </div>
+      <div class="field">
+        <label>새 비밀번호</label>
+        <input type="password" id="s-new" placeholder="새 비밀번호 (4자 이상)">
+      </div>
+      <div class="field">
+        <label>새 비밀번호 확인</label>
+        <input type="password" id="s-confirm" placeholder="새 비밀번호 재입력">
+      </div>
+      <button class="btn-sm" style="margin-top:8px;width:100%" onclick="changePw()">비밀번호 변경</button>
+    </div>
+
+    <div class="setting-box">
+      <h3>데이터 관리</h3>
+      <div class="setting-row">
+        <span class="setting-row__label">전체 주문 수</span>
+        <span class="setting-row__val" id="s-count">-</span>
+      </div>
+      <div class="setting-row">
+        <span class="setting-row__label">완료된 주문</span>
+        <span class="setting-row__val" id="s-done">-</span>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn-sm" onclick="exportData()">JSON 내보내기</button>
+        <button class="btn-sm" onclick="importTrigger()">JSON 가져오기</button>
+        <button class="btn-sm" style="color:var(--red);border-color:var(--red)" onclick="clearAll()">전체 삭제</button>
+      </div>
+      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+    </div>
+
+    <div class="setting-box" style="font-size:13px;color:var(--muted)">
+      <h3>사용법 안내</h3>
+      <p style="line-height:1.75">
+        • 이메일로 주문 접수 시 <strong style="color:var(--text)">주문 추가</strong> 탭에서 수동 입력<br>
+        • 주문 카드를 눌러 상태 변경 가능 (대기→진행→완료)<br>
+        • 데이터는 이 기기 브라우저에 저장됩니다<br>
+        • 다른 기기에서 쓰려면 JSON 내보내기 후 가져오기
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CRYPTO HASH ──
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+const DEFAULT_PW_HASH = 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3'; // '123'
+
+function getPwHash() { return localStorage.getItem('sm_pw') || DEFAULT_PW_HASH; }
+
+async function tryLogin() {
+  const pw = document.getElementById('pwInput').value;
+  if (!pw) { document.getElementById('loginErr').textContent = '비밀번호를 입력해 주세요.'; return; }
+  const h = await sha256(pw);
+  if (h === getPwHash()) {
+    sessionStorage.setItem('sm_auth', '1');
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    initApp();
+  } else {
+    document.getElementById('loginErr').textContent = '비밀번호가 올바르지 않습니다.';
+    document.getElementById('pwInput').value = '';
+  }
+}
+
+function logout() {
+  sessionStorage.removeItem('sm_auth');
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('pwInput').value = '';
+  document.getElementById('loginErr').textContent = '';
+}
+
+// Check session
+if (sessionStorage.getItem('sm_auth') === '1') {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+}
+
+// ── DATA ──
+const SERVICES = [
+  { id:'sg', name:'성향·기질 분석', price:0 },
+  { id:'ps', name:'평생운', price:39000 },
+  { id:'ya', name:'연애운', price:22000 },
+  { id:'bh', name:'배우자운·결혼운', price:28000 },
+  { id:'jm', name:'재물운', price:22000 },
+  { id:'gk', name:'건강운', price:18000 },
+  { id:'ds', name:'대운·세운', price:39000 },
+  { id:'jk', name:'직장운', price:18000 },
+  { id:'bm', name:'부모운', price:18000 },
+  { id:'zs', name:'자식운', price:18000 },
+  { id:'ur', name:'친구·우정운', price:18000 },
+  { id:'hy', name:'형제간운', price:13000 },
+  { id:'sh', name:'새해운세', price:28000 },
+  { id:'ml', name:'월별운세', price:33000 },
+  { id:'su', name:'수능·입시운', price:22000 },
+  { id:'rw', name:'재회운', price:22000 },
+  { id:'sb', name:'사업운', price:33000 },
+  { id:'dv', name:'이혼·결별운', price:28000 },
+  { id:'dh', name:'도화살 전문분석', price:22000 },
+  { id:'nr', name:'이런 사람 만나지 마라', price:13000 },
+];
+
+function getOrders() {
+  try { return JSON.parse(localStorage.getItem('sm_orders') || '[]'); } catch(e) { return []; }
+}
+function saveOrders(orders) { localStorage.setItem('sm_orders', JSON.stringify(orders)); }
+function fmt(n) { return Number(n).toLocaleString('ko-KR') + '원'; }
+
+const STATUS_MAP = {
+  pending: { text:'대기 중', cls:'status-pending' },
+  progress: { text:'진행 중', cls:'status-progress' },
+  done: { text:'완료', cls:'status-done' },
+  cancel: { text:'취소', cls:'status-cancel' },
+};
+
+let filterStatus = 'all';
+
+function initApp() {
+  buildSvcChecks();
+  setDefaultDate();
+  renderAll();
+}
+
+function renderAll() {
+  renderDash();
+  renderOrders();
+  renderSettings();
+}
+
+// ── SERVICE CHECKBOXES ──
+function buildSvcChecks() {
+  const c = document.getElementById('svcChecks');
+  c.innerHTML = '';
+  SERVICES.forEach(s => {
+    const lbl = document.createElement('label');
+    lbl.className = 'svc-check';
+    lbl.innerHTML = `<input type="checkbox" value="${s.id}"> ${s.name}`;
+    c.appendChild(lbl);
+  });
+}
+
+function setDefaultDate() {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('a-date').value = today;
+}
+
+// ── DASHBOARD ──
+function renderDash() {
+  const orders = getOrders();
+  const pending = orders.filter(o=>o.status==='pending');
+  const progress = orders.filter(o=>o.status==='progress');
+  const done = orders.filter(o=>o.status==='done');
+
+  document.getElementById('statTotal').textContent = orders.length;
+  document.getElementById('statPending').textContent = pending.length;
+  document.getElementById('statProgress').textContent = progress.length;
+  document.getElementById('statDone').textContent = done.length;
+
+  const badge = document.getElementById('pendingBadge');
+  if (pending.length > 0) { badge.style.display=''; badge.textContent = pending.length; }
+  else badge.style.display = 'none';
+
+  // Revenue
+  const now = new Date();
+  const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const monthOrders = orders.filter(o => o.date && o.date.startsWith(thisMonth) && o.status !== 'cancel');
+  const monthRev = monthOrders.reduce((s,o) => s + (o.total||0), 0);
+  const totalRev = orders.filter(o=>o.status==='done').reduce((s,o) => s + (o.total||0), 0);
+  document.getElementById('monthRevenue').textContent = fmt(monthRev);
+  document.getElementById('totalRevenue').textContent = fmt(totalRev);
+
+  // Mini bar chart (last 6 months)
+  const bar = document.getElementById('revBar');
+  bar.innerHTML = '';
+  const months = [];
+  for (let i=5; i>=0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    const rev = orders.filter(o => o.date && o.date.startsWith(key) && o.status==='done').reduce((s,o)=>s+(o.total||0),0);
+    months.push({ key, rev, label: `${d.getMonth()+1}월` });
+  }
+  const maxRev = Math.max(...months.map(m=>m.rev), 1);
+  months.forEach(m => {
+    const col = document.createElement('div');
+    col.className = 'rev-col';
+    const h = Math.max(4, Math.round((m.rev/maxRev)*72));
+    col.innerHTML = `<div class="rev-bar-fill" style="height:${h}px"></div><div class="rev-label">${m.label}</div>`;
+    bar.appendChild(col);
+  });
+
+  // Recent pending
+  const rp = document.getElementById('recentPending');
+  if (pending.length === 0) { rp.innerHTML = '<div class="empty-msg">대기 중인 주문이 없습니다</div>'; return; }
+  rp.innerHTML = pending.slice(0,3).map(o => orderCardHTML(o, true)).join('');
+  attachCardEvents(rp);
+}
+
+// ── ORDERS ──
+function setFilter(status, btn) {
+  filterStatus = status;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderOrders();
+}
+
+function renderOrders() {
+  let orders = getOrders();
+  if (filterStatus !== 'all') orders = orders.filter(o=>o.status===filterStatus);
+  orders = orders.slice().reverse();
+
+  const el = document.getElementById('orderList');
+  if (orders.length === 0) { el.innerHTML = '<div class="empty-msg">주문이 없습니다</div>'; return; }
+  el.innerHTML = orders.map(o => orderCardHTML(o)).join('');
+  attachCardEvents(el);
+}
+
+function orderCardHTML(o, compact=false) {
+  const st = STATUS_MAP[o.status] || STATUS_MAP.pending;
+  const services = Array.isArray(o.services) ? o.services : [];
+  return `
+  <div class="order-card" data-id="${o.id}">
+    <div class="order-card__head" onclick="toggleCard('${o.id}')">
+      <div>
+        <div class="order-card__name">${o.name||'(이름없음)'}</div>
+        <div class="order-card__date">${o.date||''} · ${o.contact||''}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+        <div class="order-card__price">${fmt(o.total||0)}</div>
+        <span class="status-badge ${st.cls}">${st.text}</span>
+      </div>
+    </div>
+    <div class="order-card__body" id="body-${o.id}">
+      <div class="info-row"><span class="info-row__label">생년월일</span><span class="info-row__val">${o.birth||'-'} ${o.time?'('+o.time+')':''}</span></div>
+      <div class="info-row"><span class="info-row__label">성별</span><span class="info-row__val">${o.gender||'-'}</span></div>
+      <div class="info-row"><span class="info-row__label">연락처</span><span class="info-row__val">${o.contact||'-'}</span></div>
+      <div class="info-row"><span class="info-row__label">이메일</span><span class="info-row__val">${o.email||'-'}</span></div>
+      ${o.memo ? `<div class="info-row"><span class="info-row__label">메모</span><span class="info-row__val">${o.memo}</span></div>` : ''}
+      <div class="services-list">📋 ${services.join(', ')||'(항목 없음)'}</div>
+      <div class="action-row">
+        <button class="act-btn act-btn--pending" onclick="setStatus('${o.id}','pending')">대기</button>
+        <button class="act-btn act-btn--progress" onclick="setStatus('${o.id}','progress')">진행중</button>
+        <button class="act-btn act-btn--done" onclick="setStatus('${o.id}','done')">완료</button>
+        <button class="act-btn act-btn--cancel" onclick="setStatus('${o.id}','cancel')">취소</button>
+        <button class="act-btn act-btn--del" onclick="deleteOrder('${o.id}')">삭제</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function attachCardEvents(el) {
+  // events are inline onclick, nothing extra needed
+}
+
+function toggleCard(id) {
+  const body = document.getElementById('body-'+id);
+  if (body) body.classList.toggle('open');
+}
+
+function setStatus(id, status) {
+  const orders = getOrders();
+  const idx = orders.findIndex(o=>o.id===id);
+  if (idx>=0) { orders[idx].status = status; saveOrders(orders); renderAll(); }
+}
+
+function deleteOrder(id) {
+  if (!confirm('이 주문을 삭제하시겠습니까?')) return;
+  const orders = getOrders().filter(o=>o.id!==id);
+  saveOrders(orders);
+  renderAll();
+}
+
+// ── ADD ORDER ──
+function addOrder() {
+  const name = document.getElementById('a-name').value.trim();
+  if (!name) { alert('이름을 입력해 주세요.'); return; }
+
+  const pkg = document.getElementById('a-pkg').value;
+  let total, services;
+
+  if (pkg) {
+    const [price, pkgName] = pkg.split('|');
+    total = parseInt(price);
+    services = [pkgName];
+  } else {
+    const checked = [...document.querySelectorAll('#svcChecks input:checked')];
+    services = checked.map(cb => { const s = SERVICES.find(x=>x.id===cb.value); return s?s.name:''; }).filter(Boolean);
+    const manualTotal = document.getElementById('a-total').value;
+    if (manualTotal) {
+      total = parseInt(manualTotal);
+    } else {
+      total = checked.reduce((s,cb) => { const sv=SERVICES.find(x=>x.id===cb.value); return s+(sv?sv.price:0); }, 0);
+    }
+  }
+
+  const order = {
+    id: Date.now().toString(),
+    date: document.getElementById('a-date').value || new Date().toISOString().split('T')[0],
+    name,
+    gender: document.getElementById('a-gender').value,
+    birth: document.getElementById('a-birth').value,
+    time: document.getElementById('a-time').value,
+    contact: document.getElementById('a-contact').value.trim(),
+    email: document.getElementById('a-email').value.trim(),
+    services,
+    total,
+    status: 'pending',
+    memo: document.getElementById('a-memo').value.trim(),
+  };
+
+  const orders = getOrders();
+  orders.push(order);
+  saveOrders(orders);
+
+  // Reset form
+  document.getElementById('a-name').value = '';
+  document.getElementById('a-birth').value = '';
+  document.getElementById('a-time').value = '';
+  document.getElementById('a-contact').value = '';
+  document.getElementById('a-email').value = '';
+  document.getElementById('a-memo').value = '';
+  document.getElementById('a-total').value = '';
+  document.getElementById('a-pkg').value = '';
+  document.querySelectorAll('#svcChecks input').forEach(cb=>cb.checked=false);
+  setDefaultDate();
+
+  alert(`주문 추가 완료: ${name} (${fmt(total)})`);
+  showPanel('orders');
+  renderAll();
+}
+
+// ── PANELS ──
+function showPanel(name) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  const panels = ['dash','orders','add','settings'];
+  const idx = panels.indexOf(name);
+  document.getElementById('panel'+name.charAt(0).toUpperCase()+name.slice(1)).classList.add('active');
+  document.querySelectorAll('.tab')[idx].classList.add('active');
+  if (name === 'dash') renderDash();
+  if (name === 'orders') renderOrders();
+  if (name === 'settings') renderSettings();
+}
+
+// ── SETTINGS ──
+function renderSettings() {
+  const orders = getOrders();
+  document.getElementById('s-count').textContent = orders.length + '건';
+  document.getElementById('s-done').textContent = orders.filter(o=>o.status==='done').length + '건';
+}
+
+async function changePw() {
+  const cur = document.getElementById('s-cur').value;
+  const nw = document.getElementById('s-new').value;
+  const cf = document.getElementById('s-confirm').value;
+  if (!cur||!nw||!cf) { alert('모두 입력해 주세요.'); return; }
+  if (nw.length < 4) { alert('새 비밀번호는 4자 이상이어야 합니다.'); return; }
+  if (nw !== cf) { alert('새 비밀번호가 일치하지 않습니다.'); return; }
+  const curH = await sha256(cur);
+  if (curH !== getPwHash()) { alert('현재 비밀번호가 틀립니다.'); return; }
+  const newH = await sha256(nw);
+  localStorage.setItem('sm_pw', newH);
+  document.getElementById('s-cur').value='';
+  document.getElementById('s-new').value='';
+  document.getElementById('s-confirm').value='';
+  alert('비밀번호가 변경되었습니다.');
+}
+
+function exportData() {
+  const orders = getOrders();
+  const blob = new Blob([JSON.stringify(orders, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `sajumaru_orders_${new Date().toISOString().split('T')[0]}.json`;
+  a.click(); URL.revokeObjectURL(url);
+}
+
+function importTrigger() { document.getElementById('importFile').click(); }
+function importData(e) {
+  const file = e.target.files[0]; if(!file) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (!Array.isArray(data)) { alert('올바른 형식이 아닙니다.'); return; }
+      if (confirm(`${data.length}개 주문을 불러오겠습니까? 기존 데이터는 덮어씁니다.`)) {
+        saveOrders(data); renderAll(); alert('가져오기 완료');
+      }
+    } catch(err) { alert('파일 읽기 오류: ' + err.message); }
+  };
+  r.readAsText(file);
+  e.target.value = '';
+}
+
+function clearAll() {
+  if (!confirm('모든 주문 데이터를 삭제합니다. 되돌릴 수 없습니다. 계속하시겠습니까?')) return;
+  saveOrders([]); renderAll(); alert('삭제 완료');
+}
+
+// ── INIT ──
+if (sessionStorage.getItem('sm_auth') === '1') initApp();
+</script>
+</body>
+</html>
