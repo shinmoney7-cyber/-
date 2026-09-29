@@ -228,6 +228,26 @@ fieldset{border:0;padding:0;margin:0;}
 .item-card__name{font-family:var(--f);font-size:20px;font-weight:800;padding-right:30px;margin-bottom:5px;}
 .item-card__price{font-family:var(--f);font-size:18px;font-weight:800;color:var(--brass);margin-bottom:8px;font-variant-numeric:tabular-nums;}
 .item-card__desc{font-family:var(--f);font-size:16px;color:var(--ink);line-height:1.65;font-weight:800;}
+/* === PACKAGES === */
+.pkg-eyebrow{font-family:var(--f);font-size:13px;font-weight:700;letter-spacing:.22em;color:var(--brass);text-transform:uppercase;margin-top:40px;margin-bottom:12px;}
+.pkg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+@media(max-width:700px){.pkg-grid{grid-template-columns:1fr;}}
+.pkg-card{position:relative;background:var(--paper-raised);border:2px solid var(--line);border-radius:18px;padding:22px 20px 20px;display:flex;flex-direction:column;gap:6px;transition:border-color .2s,box-shadow .2s;}
+.pkg-card--popular{border-color:var(--brass);box-shadow:0 8px 28px -8px rgba(200,168,64,.25);}
+.pkg-card--premium{border-color:rgba(180,140,200,.5);}
+.pkg-card__badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--brass);color:#0A0514;font-family:var(--f);font-size:12px;font-weight:800;padding:4px 14px;border-radius:20px;letter-spacing:.08em;white-space:nowrap;}
+.pkg-card__name{font-family:var(--f);font-size:19px;font-weight:800;color:var(--ink-heavy);margin-top:6px;}
+.pkg-card--popular .pkg-card__name{color:var(--brass);}
+.pkg-card__items{font-family:var(--f);font-size:13px;color:var(--ink);line-height:1.6;font-weight:700;}
+.pkg-card__original{font-family:var(--f);font-size:13px;color:var(--ink);text-decoration:line-through;opacity:.55;font-variant-numeric:tabular-nums;margin-top:4px;}
+.pkg-card__price{font-family:var(--f);font-size:26px;font-weight:800;color:var(--brass);font-variant-numeric:tabular-nums;}
+.pkg-card__save{font-family:var(--f);font-size:12px;font-weight:700;color:#5ab067;background:rgba(90,176,103,.12);border-radius:8px;padding:3px 10px;width:fit-content;}
+.pkg-card__btn{margin-top:10px;background:var(--frame);color:var(--brass-soft);border:none;border-radius:12px;padding:12px 0;font-family:var(--f);font-size:14px;font-weight:800;cursor:pointer;transition:background .18s;letter-spacing:.04em;}
+.pkg-card--popular .pkg-card__btn{background:var(--brass);color:#0A0514;}
+.pkg-card__btn:hover{opacity:.85;}
+.pkg-divider{text-align:center;font-family:var(--f);font-size:13px;color:var(--ink);opacity:.55;margin:32px 0 0;position:relative;}
+.pkg-divider::before,.pkg-divider::after{content:'';position:absolute;top:50%;width:calc(50% - 100px);height:1px;background:var(--line);}
+.pkg-divider::before{left:0;}.pkg-divider::after{right:0;}
 .sel-bar{position:sticky;bottom:16px;z-index:20;background:var(--frame);color:#fff;border-radius:14px;padding:13px 18px;margin-top:20px;display:none;align-items:center;justify-content:space-between;gap:16px;box-shadow:0 8px 32px -6px rgba(0,0,0,.5);flex-wrap:wrap;}
 .sel-bar.is-shown{display:flex;animation:fadein .2s ease;}
 .sel-bar__info{font-family:var(--f);min-width:0;}
@@ -816,113 +836,144 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
     <h2>무엇을 알고 싶으신가요?</h2>
 
 
+    <div class="pkg-eyebrow">패키지 상품 · 묶음 할인</div>
+    <div class="pkg-grid" id="pkgGrid">
+      <div class="pkg-card" data-ids="sg,ya,jm">
+        <div class="pkg-card__name">베이직 패키지</div>
+        <div class="pkg-card__items">성향·기질 분석 + 연애운 + 재물운</div>
+        <div class="pkg-card__original">개별 59,000원</div>
+        <div class="pkg-card__price">39,000원</div>
+        <div class="pkg-card__save">34% 절약</div>
+        <button type="button" class="pkg-card__btn">이 패키지 선택하기</button>
+      </div>
+      <div class="pkg-card pkg-card--popular" data-ids="ps,jm,ya,ds">
+        <div class="pkg-card__badge">인기</div>
+        <div class="pkg-card__name">인생 패키지</div>
+        <div class="pkg-card__items">평생운 + 대운·세운 + 연애운 + 재물운</div>
+        <div class="pkg-card__original">개별 122,000원</div>
+        <div class="pkg-card__price">79,000원</div>
+        <div class="pkg-card__save">35% 절약</div>
+        <button type="button" class="pkg-card__btn">이 패키지 선택하기</button>
+      </div>
+      <div class="pkg-card pkg-card--premium" data-ids="ps,ds,ya,bh,jm,gk,sb,sh">
+        <div class="pkg-card__name">프리미엄 올인원</div>
+        <div class="pkg-card__items">평생운 + 대운·세운 + 연애운 + 배우자운 + 재물운 + 건강운 + 사업운 + 새해운세</div>
+        <div class="pkg-card__original">개별 229,000원</div>
+        <div class="pkg-card__price">149,000원</div>
+        <div class="pkg-card__save">35% 절약</div>
+        <button type="button" class="pkg-card__btn">이 패키지 선택하기</button>
+      </div>
+    </div>
+
+    <div class="pkg-divider">또는 아래에서 원하는 항목만 선택하세요</div>
+
     <div class="item-grid" id="itemGrid">
-      <button type="button" class="item-card" data-price="9900">
+      <button type="button" class="item-card" data-price="15000">
         <span class="item-card__check">✓</span>
         <div class="item-card__name">성향 · 기질 분석</div>
-        <div class="item-card__price">9,900원</div>
+        <div class="item-card__price">15,000원</div>
         <div class="item-card__desc">타고난 성격과 숨겨진 강점, 대인관계 스타일을 짚어드립니다.</div>
       </button>
-      <button type="button" class="item-card" data-price="29000">
+      <button type="button" class="item-card" data-price="39000">
         <span class="item-card__check">✓</span>
         <div class="item-card__name">평생운</div>
-        <div class="item-card__price">29,000원</div>
+        <div class="item-card__price">39,000원</div>
         <div class="item-card__desc">인생의 큰 흐름과 주요 전환점, 황금기와 주의 시기를 알려드립니다.</div>
       </button>
-      <button type="button" class="item-card" data-price="14900">
+      <button type="button" class="item-card" data-price="22000">
         <span class="item-card__check">✓</span>
         <div class="item-card__name">연애운</div>
-        <div class="item-card__price">14,900원</div>
+        <div class="item-card__price">22,000원</div>
         <div class="item-card__desc">현재 연애 흐름과 좋은 인연이 올 시기를 짚어드립니다.</div>
       </button>
-      <button type="button" class="item-card" data-price="19900">
+      <button type="button" class="item-card" data-price="28000">
         <span class="item-card__check">✓</span>
         <div class="item-card__name">배우자운 · 결혼운</div>
-        <div class="item-card__price">19,900원</div>
+        <div class="item-card__price">28,000원</div>
         <div class="item-card__desc">결혼 적령기와 어떤 분이 잘 맞는지 알려드립니다.</div>
       </button>
-      <button type="button" class="item-card" data-price="14900">
+      <button type="button" class="item-card" data-price="22000">
         <span class="item-card__check">✓</span>
         <div class="item-card__name">재물운</div>
-        <div class="item-card__price">14,900원</div>
+        <div class="item-card__price">22,000원</div>
         <div class="item-card__desc">돈이 들어오는 시기와 재물복의 방향을 짚어드립니다.</div>
       </button>
-      <button type="button" class="item-card" data-price="12900">
+      <button type="button" class="item-card" data-price="18000">
         <span class="item-card__check">✓</span>
         <div class="item-card__name">건강운</div>
-        <div class="item-card__price">12,900원</div>
+        <div class="item-card__price">18,000원</div>
         <div class="item-card__desc">에너지 넘치는 시기와 쉬어가면 좋은 시기를 알려드립니다.</div>
       </button>
-      <button type="button" class="item-card" data-price="29000">
+      <button type="button" class="item-card" data-price="39000">
         <span class="item-card__check">✓</span>
         <div class="item-card__name">대운 · 세운</div>
-        <div class="item-card__price">29,000원</div>
+        <div class="item-card__price">39,000원</div>
         <div class="item-card__desc">10년 큰 사이클과 올 한 해 흐름을 한번에 짚어드립니다.</div>
       </button>
-      <button type="button" class="item-card" data-price="12900">
+      <button type="button" class="item-card" data-price="18000">
         <span class="item-card__check">✓</span>
         <div class="item-card__name">부모운</div>
-        <div class="item-card__price">12,900원</div>
+        <div class="item-card__price">18,000원</div>
         <div class="item-card__desc">부모님과의 인연과 서로 주고받는 기운을 알려드립니다.</div>
       </button>
-      <button type="button" class="item-card" data-price="12900">
+      <button type="button" class="item-card" data-price="18000">
         <span class="item-card__check">✓</span>
         <div class="item-card__name">자식운</div>
-        <div class="item-card__price">12,900원</div>
+        <div class="item-card__price">18,000원</div>
         <div class="item-card__desc">자녀와의 인연과 서로에게 힘이 되는 시기를 짚어드립니다.</div>
       </button>
-      <button type="button" class="item-card" data-price="9900">
+      <button type="button" class="item-card" data-price="13000">
         <span class="item-card__check">✓</span>
         <div class="item-card__name">형제간운</div>
-        <div class="item-card__price">9,900원</div>
+        <div class="item-card__price">13,000원</div>
         <div class="item-card__desc">형제자매와의 관계와 서로 도움이 되는 시기를 알려드립니다.</div>
       </button>
-      <button type="button" class="item-card" data-price="19900">
+      <button type="button" class="item-card" data-price="28000">
         <span class="item-card__check">✓</span>
         <div class="item-card__name">새해운세</div>
-        <div class="item-card__price">19,900원</div>
+        <div class="item-card__price">28,000원</div>
         <div class="item-card__desc">2026년 한 해의 흐름과 좋은 타이밍을 짚어드립니다.</div>
       </button>
-      <button type="button" class="item-card" data-price="24900">
+      <button type="button" class="item-card" data-price="33000">
         <span class="item-card__check">✓</span>
         <div class="item-card__name">월별운세</div>
-        <div class="item-card__price">24,900원</div>
+        <div class="item-card__price">33,000원</div>
         <div class="item-card__desc">달마다 바뀌는 기운을 촘촘하게 짚어드립니다.</div>
       </button>
-      <button type="button" class="item-card" data-price="14900">
+      <button type="button" class="item-card" data-price="22000">
         <span class="item-card__check">✓</span>
         <div class="item-card__name">수능 · 입시운</div>
-        <div class="item-card__price">14,900원</div>
+        <div class="item-card__price">22,000원</div>
         <div class="item-card__desc">중요한 시험 앞 기운과 집중 잘 되는 시기를 알려드립니다.</div>
       </button>
-      <button type="button" class="item-card" data-price="14900">
+      <button type="button" class="item-card" data-price="22000">
         <span class="item-card__check">✓</span>
         <div class="item-card__name">재회운</div>
-        <div class="item-card__price">14,900원</div>
+        <div class="item-card__price">22,000원</div>
         <div class="item-card__desc">헤어진 그 사람과의 인연이 다시 이어질지 짚어드립니다.</div>
       </button>
-      <button type="button" class="item-card" data-price="24900">
+      <button type="button" class="item-card" data-price="33000">
         <span class="item-card__check">✓</span>
         <div class="item-card__name">사업운</div>
-        <div class="item-card__price">24,900원</div>
+        <div class="item-card__price">33,000원</div>
         <div class="item-card__desc">시작과 확장하기 좋은 타이밍을 시원하게 알려드립니다.</div>
       </button>
-      <button type="button" class="item-card" data-price="19900">
+      <button type="button" class="item-card" data-price="28000">
         <span class="item-card__check">✓</span>
         <div class="item-card__name">이혼 · 결별운</div>
-        <div class="item-card__price">19,900원</div>
+        <div class="item-card__price">28,000원</div>
         <div class="item-card__desc">관계 정리와 새 시작의 흐름을 다정하게 짚어드립니다.</div>
       </button>
-      <button type="button" class="item-card" data-price="14900">
+      <button type="button" class="item-card" data-price="22000">
         <span class="item-card__check">✓</span>
         <div class="item-card__name">도화살 전문분석</div>
-        <div class="item-card__price">14,900원</div>
+        <div class="item-card__price">22,000원</div>
         <div class="item-card__desc">타고난 매력과 이성을 끄는 기운을 분석해드립니다.</div>
       </button>
-      <button type="button" class="item-card" data-price="9900">
+      <button type="button" class="item-card" data-price="13000">
         <span class="item-card__check">✓</span>
         <div class="item-card__name">이런 사람 만나지 마라</div>
-        <div class="item-card__price">9,900원</div>
+        <div class="item-card__price">13,000원</div>
         <div class="item-card__desc">나와 유독 안 맞는 인연의 특징을 알려드립니다.</div>
       </button>
     </div>
@@ -1081,7 +1132,7 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
 
       <div class="ledger" style="margin-top:26px;">
         <p style="font-family:var(--f);font-size:14px;color:var(--ink-soft);margin-bottom:4px;">복채 (상담료)</p>
-        <p style="font-family:var(--f);font-size:28px;font-weight:800;" id="priceLine">29,000원</p>
+        <p style="font-family:var(--f);font-size:28px;font-weight:800;" id="priceLine">39,000원</p>
 
         <fieldset style="margin:16px 0 0;">
           <legend style="font-family:var(--f);font-size:13px;color:var(--ink-soft);margin-bottom:8px;">입금하실 계좌를 선택해주세요</legend>
@@ -1495,6 +1546,20 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
     card.addEventListener('click',function(){
       card.classList.toggle('is-selected');
       updateSelBar();
+    });
+  });
+
+  document.querySelectorAll('.pkg-card__btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var card=btn.closest('.pkg-card');
+      var ids=(card.dataset.ids||'').split(',').map(function(s){return s.trim();}).filter(Boolean);
+      document.querySelectorAll('.item-card').forEach(function(c){c.classList.remove('is-selected');});
+      ids.forEach(function(id){
+        var c=document.querySelector('.item-card[data-id="'+id+'"]');
+        if(c)c.classList.add('is-selected');
+      });
+      updateSelBar();
+      document.getElementById('menu').scrollIntoView({behavior:'smooth',block:'start'});
     });
   });
 
