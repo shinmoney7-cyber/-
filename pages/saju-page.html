@@ -949,20 +949,12 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
         각 항목 A4 20페이지 내외 (평생운 30페이지) · 접수 순서에 따라 정성껏 보내드립니다
       </div>
       <div class="contact-select-box" id="contactSelectBox" style="margin-top:20px;background:var(--paper-raised);border:1px solid var(--line);border-radius:16px;padding:22px 22px 18px;">
-        <div style="font-family:var(--f);font-size:15px;font-weight:800;color:var(--brass);margin-bottom:14px;">✦ 사주 분석 자료 받을 방법 선택</div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
-          <label style="display:flex;align-items:center;gap:8px;background:var(--paper);border:1.5px solid var(--line);border-radius:10px;padding:10px 18px;cursor:pointer;font-family:var(--f);font-size:15px;font-weight:800;transition:border-color .2s;" id="cLabel0">
-            <input type="radio" name="contactMethod" value="이메일" id="cEmail" style="accent-color:var(--brass);width:16px;height:16px;" checked onchange="updateContactInput(this)"/> 이메일
-          </label>
-          <label style="display:flex;align-items:center;gap:8px;background:var(--paper);border:1.5px solid var(--line);border-radius:10px;padding:10px 18px;cursor:pointer;font-family:var(--f);font-size:15px;font-weight:800;transition:border-color .2s;" id="cLabel2">
-            <input type="radio" name="contactMethod" value="문자" id="cSms" style="accent-color:var(--brass);width:16px;height:16px;" onchange="updateContactInput(this)"/> 문자 (SMS)
-          </label>
-        </div>
+        <div style="font-family:var(--f);font-size:15px;font-weight:800;color:var(--brass);margin-bottom:14px;">✦ 결과 받을 이메일 주소</div>
         <div style="display:flex;align-items:center;gap:10px;">
-          <input type="text" id="contactValue" placeholder="이메일 주소를 입력해주세요" style="flex:1;padding:11px 14px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:15px;font-family:var(--f);" oninput="updateSubContact(this.value)"/>
+          <input type="email" id="contactValue" placeholder="이메일 주소를 입력해주세요" style="flex:1;padding:11px 14px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:15px;font-family:var(--f);" oninput="updateSubContact(this.value)"/>
           <button type="button" class="btn btn--primary" id="copyContactBtn" onclick="copyContact()" style="flex-shrink:0;white-space:nowrap;">복사</button>
         </div>
-        <p style="font-family:var(--f);font-size:16px;color:#0A0514;margin-top:9px;line-height:1.7;font-weight:800;">입금 후 선택하신 방법으로 신청 정보를 보내주시면 순서대로 풀이를 전달해드립니다.</p>
+        <p style="font-family:var(--f);font-size:16px;color:#0A0514;margin-top:9px;line-height:1.7;font-weight:800;">입금 후 이메일로 신청 정보를 보내주시면 순서대로 풀이를 전달해드립니다.</p>
       </div>
     </div>
   </div>
@@ -1063,17 +1055,8 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
 
         <div class="grid2">
           <div class="field">
-            <fieldset>
-              <legend>결과 받는 방법</legend>
-              <div class="radiorow">
-                <label><input type="radio" name="contactType" value="이메일" checked/> 이메일</label>
-                <label><input type="radio" name="contactType" value="문자"/> 문자(SMS)</label>
-              </div>
-            </fieldset>
-          </div>
-          <div class="field">
-            <label for="fContact">연락처 (이메일 / 전화번호)</label>
-            <input type="text" id="fContact" name="연락처" placeholder="예: example@mail.com 또는 010-0000-0000" required/>
+            <label for="fContact">결과 받을 이메일</label>
+            <input type="email" id="fContact" name="연락처" placeholder="예: example@mail.com" required/>
           </div>
         </div>
 
@@ -1220,16 +1203,8 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
           </select>
         </div>
         <div class="sub-field">
-          <label>결과 받는 방법 *</label>
-          <div class="sub-radio-row" style="margin-bottom:10px;gap:8px;">
-            <label style="display:flex;align-items:center;gap:6px;padding:8px 14px;border:1.5px solid var(--line);border-radius:9px;cursor:pointer;font-size:14px;font-weight:700;font-family:var(--f);background:var(--paper);transition:border-color .2s;" id="smDelLabel0">
-              <input type="radio" name="smDelivery" value="이메일" id="smDelEmail" checked onchange="updateSmDelivery(this.value)" style="accent-color:var(--brass);width:15px;height:15px;"/> 📧 이메일
-            </label>
-            <label style="display:flex;align-items:center;gap:6px;padding:8px 14px;border:1.5px solid var(--line);border-radius:9px;cursor:pointer;font-size:14px;font-weight:700;font-family:var(--f);background:var(--paper);transition:border-color .2s;" id="smDelLabel2">
-              <input type="radio" name="smDelivery" value="문자" id="smDelSms" onchange="updateSmDelivery(this.value)" style="accent-color:var(--brass);width:15px;height:15px;"/> 📱 문자(SMS)
-            </label>
-          </div>
-          <input type="text" id="smContact" placeholder="이메일 주소를 입력해주세요" required autocomplete="email"/>
+          <label>📧 결과 받을 이메일 *</label>
+          <input type="email" id="smContact" placeholder="이메일 주소를 입력해주세요" required autocomplete="email"/>
           <p id="smDeliveryNote" style="font-family:var(--f);font-size:12px;color:var(--ink-soft);margin-top:5px;line-height:1.5;">결과 파일을 이메일로 전송해드립니다</p>
         </div>
         <p id="subFormErr" style="display:none;font-family:var(--f);font-size:13px;color:var(--blossom-deep);margin-bottom:12px;">성함, 생년월일, 연락처를 입력해주세요.</p>
@@ -1240,7 +1215,6 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
     <div id="subConfirm" class="sub-confirm" hidden>
       <div class="sub-confirm__icon">✦</div>
       <p>신청이 접수되었습니다.<br><br>카카오뱅크 <strong>3333-28-9077788</strong><br>예금주 황홍식<br><br>입금 확인 후<br><span id="subDeliveryTime" style="font-weight:700;color:var(--brass);">5시간 내 전달</span></p>
-      <a id="subSmsBtn" href="#" class="btn btn--outline" style="display:block;margin-bottom:12px;text-decoration:none;" onclick="if(this.href==='#'){alert('전화번호 미설정');return false;}">📱 신청 내용 문자로 알리기</a>
       <button type="button" class="btn btn--primary" id="subDoneBtn">확인</button>
     </div>
   </div>
@@ -1614,7 +1588,7 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
       var birth=bY&&bM&&bD ? bY+'-'+bM+'-'+bD+smCalLabel : '';
       document.getElementById('smBirth').value=birth;
       var contact=document.getElementById('smContact').value.trim();
-      var deliveryMethod=(document.querySelector('input[name="smDelivery"]:checked')||{value:'이메일'}).value;
+      var deliveryMethod='이메일';
       var errEl=document.getElementById('subFormErr');
       if(!name||!birth||!contact){errEl.style.display='block';return;}
       errEl.style.display='none';
@@ -1666,13 +1640,6 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
       }
       var dtEl=document.getElementById('subDeliveryTime');
       if(dtEl) dtEl.textContent=deliveryMsg;
-      // 확인 화면에 문자 알림용 데이터 주입
-      var smsBtn=document.getElementById('subSmsBtn');
-      if(smsBtn){
-        var OWNER_PHONE='010-8386-3712';
-        var smsBody=encodeURIComponent('[사주마루 신청]\n성함: '+name+'\n생년월일: '+birth+'\n연락처: '+contact+'\n신청: '+lines.join(', ')+'\n합계: '+fmtWon(total));
-        smsBtn.href='sms:'+OWNER_PHONE+'?body='+smsBody;
-      }
       subFormWrap.hidden=true;
       subConfirm.hidden=false;
     });
@@ -1693,44 +1660,9 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
   });
 
 
-  // Contact method selector
-  function updateContactInput(radio) {
-    var input = document.getElementById('contactValue');
-    var placeholders = {
-      '이메일': '이메일 주소를 입력해주세요',
-      '문자': '전화번호를 입력해주세요'
-    };
-    if(input) input.placeholder = placeholders[radio.value] || '';
-    // Update label borders
-    document.querySelectorAll('[id^="cLabel"]').forEach(function(l){ l.style.borderColor = 'var(--line)'; });
-    if(radio && radio.closest('label')) radio.closest('label').style.borderColor = 'var(--brass)';
-  }
   function updateSubContact(val) {
     var subContact = document.getElementById('smContact');
     if(subContact) subContact.value = val;
-  }
-  function updateSmDelivery(method) {
-    var input = document.getElementById('smContact');
-    var note  = document.getElementById('smDeliveryNote');
-    var btn   = document.getElementById('smSubmitBtn');
-    var labels = [
-      document.getElementById('smDelLabel0'),
-      document.getElementById('smDelLabel2'),
-    ];
-    labels.forEach(function(l){if(l)l.style.borderColor='var(--line)';});
-    var checked = document.querySelector('input[name="smDelivery"]:checked');
-    if(checked && checked.closest('label')) checked.closest('label').style.borderColor='var(--brass)';
-    if(!input) return;
-    var map = {
-      '이메일': {ph:'이메일 주소를 입력해주세요',  note:'결과 파일을 이메일로 전송해드립니다',       type:'email'},
-      '문자':   {ph:'전화번호를 입력해주세요 (예: 010-0000-0000)', note:'문자(SMS)로 결과 안내를 드립니다', type:'tel'},
-    };
-    var cfg = map[method] || map['이메일'];
-    input.placeholder = cfg.ph;
-    input.type = cfg.type;
-    input.value = '';
-    if(note) note.textContent = cfg.note;
-    if(btn) btn.textContent = '신청서 보내기 ✉';
   }
   function copyContact() {
     var val = document.getElementById('contactValue').value.trim();
