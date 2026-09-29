@@ -11,257 +11,185 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  width: 794px;   /* A4 72dpi */
+  width: 794px;
   height: 1123px;
-  background: #F0EBE0;
+  background: #F4F0E8;
   font-family: 'Nanum Myeongjo', 'Noto Serif KR', serif;
   overflow: hidden;
   position: relative;
 }
 
-/* 종이 질감 오버레이 */
 body::before {
   content: '';
   position: absolute;
   inset: 0;
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.06'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");
   pointer-events: none;
   z-index: 10;
 }
 
-/* 상단 가는 선 장식 */
-.top-line {
+.frame-outer {
   position: absolute;
-  top: 52px;
-  left: 60px;
-  right: 60px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, #8B7355 20%, #8B7355 80%, transparent);
-  opacity: 0.4;
+  inset: 32px;
+  border: 1px solid rgba(60,40,20,.22);
+}
+.frame-outer::before {
+  content: '';
+  position: absolute;
+  inset: 10px;
+  border: 0.5px solid rgba(60,40,20,.11);
 }
 
-/* 부제목 */
-.sub-title {
+.corner {
   position: absolute;
-  top: 68px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  font-size: 17px;
-  font-weight: 700;
-  color: #5C4A30;
-  letter-spacing: 0.18em;
+  width: 22px;
+  height: 22px;
 }
-.sub-title::before { content: "✦ "; opacity: 0.6; }
-.sub-title::after  { content: " ✦"; opacity: 0.6; }
+.corner.tl { top: 31px; left: 31px; border-top: 2.5px solid #7A5530; border-left: 2.5px solid #7A5530; }
+.corner.tr { top: 31px; right: 31px; border-top: 2.5px solid #7A5530; border-right: 2.5px solid #7A5530; }
+.corner.bl { bottom: 31px; left: 31px; border-bottom: 2.5px solid #7A5530; border-left: 2.5px solid #7A5530; }
+.corner.br { bottom: 31px; right: 31px; border-bottom: 2.5px solid #7A5530; border-right: 2.5px solid #7A5530; }
 
-/* 메인 타이틀 */
-.main-title {
+.eyebrow {
   position: absolute;
-  top: 180px;
-  left: 0; right: 0;
-  text-align: center;
-  font-size: 160px;
-  font-weight: 800;
-  color: #2E4A4A;
-  line-height: 1.0;
-  letter-spacing: -0.02em;
-}
-
-/* 福 도장 */
-.seal {
-  position: absolute;
-  top: 492px;
-  right: 148px;
-  width: 68px;
-  height: 68px;
-  background: #8B2020;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 40px;
-  color: #F0EBE0;
-  font-weight: 800;
-  box-shadow: 2px 2px 6px rgba(0,0,0,0.25);
-}
-
-/* 까치와 소나무 SVG 영역 */
-.bird-area {
-  position: absolute;
-  top: 360px;
-  left: 30px;
-  width: 300px;
-  height: 220px;
-}
-
-/* 작은 새들 */
-.flying-birds {
-  position: absolute;
-  top: 100px;
-  right: 70px;
-}
-
-/* 하단 파도/산 모양 */
-.bottom-wave {
-  position: absolute;
-  bottom: 0;
-  left: 0; right: 0;
-  height: 260px;
-}
-
-/* 하단 원형 장식 */
-.circle-deco {
-  position: absolute;
-  border-radius: 50%;
-  opacity: 0.35;
-}
-.circle-1 {
-  width: 110px; height: 110px;
-  background: #C8B882;
-  top: 480px; right: 60px;
-}
-.circle-2 {
-  width: 70px; height: 70px;
-  background: #A8965E;
-  top: 540px; right: 100px;
-}
-
-/* 하단 나무 장식 */
-.tree-deco {
-  position: absolute;
-  bottom: 120px;
-  right: 60px;
-}
-
-/* 하단 선 */
-.bottom-line {
-  position: absolute;
-  bottom: 52px;
-  left: 60px; right: 60px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5) 20%, rgba(255,255,255,0.5) 80%, transparent);
-}
-
-/* 하단 브랜드 */
-.brand-footer {
-  position: absolute;
-  bottom: 28px;
+  top: 82px;
   left: 0; right: 0;
   text-align: center;
   font-size: 14px;
-  color: rgba(255,255,255,0.75);
-  letter-spacing: 0.2em;
-  font-weight: 700;
+  color: #7A5530;
+  letter-spacing: .22em;
+}
+
+.divider-top {
+  position: absolute;
+  top: 114px;
+  left: 130px; right: 130px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #9A7040, transparent);
+}
+
+.main-title {
+  position: absolute;
+  top: 152px;
+  left: 0; right: 0;
+  text-align: center;
+  font-size: 152px;
+  font-weight: 800;
+  color: #0E0A04;
+  line-height: 1.0;
+  letter-spacing: -.01em;
+}
+
+.seal {
+  position: absolute;
+  top: 172px;
+  right: 90px;
+  width: 60px;
+  height: 60px;
+  background: #6A1212;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  color: #F8EED0;
+  box-shadow: 2px 2px 8px rgba(0,0,0,.2);
+}
+
+.divider-mid {
+  position: absolute;
+  top: 528px;
+  left: 100px; right: 100px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(90,60,20,.28), transparent);
+}
+
+.ink-area {
+  position: absolute;
+  bottom: 80px;
+  left: 0; right: 0;
+}
+
+.brand-footer {
+  position: absolute;
+  bottom: 44px;
+  left: 0; right: 0;
+  text-align: center;
+  font-size: 12px;
+  color: rgba(100,75,40,.55);
+  letter-spacing: .3em;
 }
 </style>
 </head>
 <body>
 
-<!-- 종이 질감은 CSS::before -->
+<div class="frame-outer"></div>
+<div class="corner tl"></div>
+<div class="corner tr"></div>
+<div class="corner bl"></div>
+<div class="corner br"></div>
 
-<div class="top-line"></div>
-<div class="sub-title">쉽게 보는 사주풀이 '사주마루'</div>
+<div class="eyebrow">쉽게 보는 사주풀이 '사주마루'</div>
+<div class="divider-top"></div>
 
-<!-- 메인 타이틀 -->
 <div class="main-title">사주<br>마루</div>
 
-<!-- 福 도장 -->
 <div class="seal">福</div>
 
-<!-- 까치·소나무 SVG -->
-<div class="bird-area">
-<svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg" width="300" height="220">
-  <!-- 소나무 줄기 -->
-  <path d="M80,210 Q90,160 110,130 Q130,100 140,60" stroke="#7A6040" stroke-width="5" fill="none" stroke-linecap="round"/>
-  <!-- 소나무 가지들 -->
-  <path d="M110,130 Q80,120 50,115" stroke="#7A6040" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-  <path d="M120,110 Q150,95 170,88" stroke="#7A6040" stroke-width="3" fill="none" stroke-linecap="round"/>
-  <path d="M105,148 Q75,145 45,148" stroke="#7A6040" stroke-width="3" fill="none" stroke-linecap="round"/>
-  <!-- 솔잎 군집 (흰색/크림) -->
-  <g fill="none" stroke="#C8BFA5" stroke-width="1.2" opacity="0.85">
-    <!-- 왼쪽 큰 군집 -->
-    <line x1="50" y1="115" x2="28" y2="95"/><line x1="50" y1="115" x2="32" y2="108"/><line x1="50" y1="115" x2="25" y2="112"/>
-    <line x1="50" y1="115" x2="30" y2="120"/><line x1="50" y1="115" x2="22" y2="118"/>
-    <line x1="60" y1="118" x2="40" y2="100"/><line x1="60" y1="118" x2="38" y2="110"/>
-    <line x1="60" y1="118" x2="35" y2="125"/><line x1="60" y1="118" x2="42" y2="130"/>
-    <line x1="70" y1="120" x2="50" y2="105"/><line x1="70" y1="120" x2="48" y2="115"/>
-    <line x1="70" y1="120" x2="52" y2="130"/><line x1="70" y1="120" x2="46" y2="128"/>
-    <!-- 오른쪽 -->
-    <line x1="170" y1="88" x2="185" y2="72"/><line x1="170" y1="88" x2="188" y2="82"/>
-    <line x1="170" y1="88" x2="182" y2="96"/><line x1="170" y1="88" x2="175" y2="98"/>
-    <line x1="160" y1="92" x2="172" y2="78"/><line x1="160" y1="92" x2="175" y2="88"/>
-    <line x1="160" y1="92" x2="168" y2="102"/>
-    <!-- 하단 가지 -->
-    <line x1="45" y1="148" x2="25" y2="135"/><line x1="45" y1="148" x2="22" y2="145"/>
-    <line x1="45" y1="148" x2="28" y2="158"/><line x1="45" y1="148" x2="20" y2="154"/>
-    <line x1="60" y1="150" x2="42" y2="138"/><line x1="60" y1="150" x2="40" y2="150"/>
-    <line x1="60" y1="150" x2="44" y2="162"/>
+<div class="divider-mid"></div>
+
+<div class="ink-area">
+<svg viewBox="0 0 794 370" xmlns="http://www.w3.org/2000/svg" width="794" height="370">
+
+  <path d="M0,370 L0,255 Q80,160 180,205 Q280,250 380,185 Q480,118 580,172 Q680,228 794,182 L794,370Z"
+        fill="rgba(90,70,40,.07)"/>
+
+  <path d="M0,370 L0,295 Q110,228 230,260 Q365,298 468,245 Q568,195 690,235 L794,225 L794,370Z"
+        fill="rgba(60,45,25,.11)"/>
+
+  <path d="M0,370 L0,325 Q72,290 152,308 Q248,330 348,298 Q448,268 548,292 Q648,316 794,298 L794,370Z"
+        fill="rgba(40,28,14,.17)"/>
+
+  <g stroke="rgba(40,30,15,.42)" fill="none">
+    <line x1="82" y1="370" x2="82" y2="195" stroke-width="4"/>
+    <line x1="78" y1="282" x2="86" y2="282" stroke-width="6"/>
+    <line x1="78" y1="248" x2="86" y2="248" stroke-width="6"/>
+    <line x1="78" y1="214" x2="86" y2="214" stroke-width="6"/>
+    <path d="M82,280 Q57,268 44,250" stroke-width="2"/>
+    <path d="M82,280 Q107,265 120,248" stroke-width="2"/>
+    <path d="M82,246 Q58,236 46,218" stroke-width="2"/>
+    <path d="M82,246 Q104,234 116,218" stroke-width="2"/>
+    <path d="M82,212 Q60,202 48,186" stroke-width="1.8"/>
   </g>
-  <!-- 까치 몸통 -->
-  <ellipse cx="105" cy="130" rx="22" ry="12" fill="#2A2A2A" transform="rotate(-15,105,130)"/>
-  <!-- 까치 배 (흰색) -->
-  <ellipse cx="110" cy="132" rx="10" ry="7" fill="#F0EBE0" transform="rotate(-15,110,132)"/>
-  <!-- 까치 날개 -->
-  <path d="M88,126 Q78,118 72,120 Q80,128 88,130Z" fill="#1A1A1A"/>
-  <!-- 까치 꼬리 -->
-  <path d="M84,136 Q72,148 68,158 Q76,148 84,138Z" fill="#1A1A1A"/>
-  <path d="M88,138 Q78,150 76,160 Q82,150 88,140Z" fill="#2E2E2E"/>
-  <!-- 까치 부리 -->
-  <path d="M124,126 L132,124 L127,129Z" fill="#3A3A3A"/>
-  <!-- 까치 눈 -->
-  <circle cx="122" cy="125" r="2.5" fill="#111"/>
-  <circle cx="122.8" cy="124.5" r="0.8" fill="#fff"/>
-  <!-- 까치 발 -->
-  <line x1="105" y1="140" x2="100" y2="148" stroke="#6B5B3E" stroke-width="1.5"/>
-  <line x1="108" y1="141" x2="105" y2="149" stroke="#6B5B3E" stroke-width="1.5"/>
-  <line x1="100" y1="148" x2="96" y2="152" stroke="#6B5B3E" stroke-width="1.2"/>
-  <line x1="100" y1="148" x2="101" y2="153" stroke="#6B5B3E" stroke-width="1.2"/>
-  <line x1="100" y1="148" x2="104" y2="153" stroke="#6B5B3E" stroke-width="1.2"/>
+
+  <g stroke="rgba(40,30,15,.35)" fill="none">
+    <line x1="114" y1="370" x2="114" y2="218" stroke-width="3"/>
+    <line x1="111" y1="257" x2="117" y2="257" stroke-width="5"/>
+    <line x1="111" y1="228" x2="117" y2="228" stroke-width="5"/>
+    <path d="M114,255 Q93,246 80,229" stroke-width="1.6"/>
+    <path d="M114,255 Q133,244 146,228" stroke-width="1.6"/>
+  </g>
+
+  <g stroke="rgba(40,30,15,.28)" fill="none">
+    <line x1="680" y1="370" x2="680" y2="238" stroke-width="3"/>
+    <line x1="677" y1="270" x2="683" y2="270" stroke-width="5"/>
+    <path d="M680,268 Q660,258 648,242" stroke-width="1.5"/>
+    <path d="M680,268 Q698,256 710,240" stroke-width="1.5"/>
+  </g>
+
+  <path d="M0,345 Q100,338 200,343 Q300,348 400,340 Q500,332 600,338 Q700,344 794,336"
+        fill="none" stroke="rgba(90,70,40,.1)" stroke-width="1.2"/>
+
+  <path d="M400,75 Q408,68 416,75 Q408,72 400,75Z"
+        fill="none" stroke="rgba(60,40,15,.4)" stroke-width="1.5"/>
+  <path d="M435,60 Q441,55 447,60 Q441,57 435,60Z"
+        fill="none" stroke="rgba(60,40,15,.35)" stroke-width="1.3"/>
+  <path d="M468,73 Q473,69 478,73 Q473,71 468,73Z"
+        fill="none" stroke="rgba(60,40,15,.3)" stroke-width="1.2"/>
+
 </svg>
 </div>
 
-<!-- 날아가는 작은 새들 -->
-<div class="flying-birds">
-<svg viewBox="0 0 120 60" xmlns="http://www.w3.org/2000/svg" width="120" height="60">
-  <!-- 새 1 (큰) -->
-  <path d="M20,20 Q28,14 36,20 Q28,18 20,20Z" fill="none" stroke="#C8A87A" stroke-width="1.5"/>
-  <!-- 새 2 -->
-  <path d="M55,10 Q61,5 67,10 Q61,8 55,10Z" fill="none" stroke="#C8A87A" stroke-width="1.3"/>
-  <!-- 새 3 (작은) -->
-  <path d="M85,28 Q89,24 93,28 Q89,26 85,28Z" fill="none" stroke="#C8A87A" stroke-width="1.2"/>
-</svg>
-</div>
-
-<!-- 원형 장식 -->
-<div class="circle-1 circle-deco"></div>
-<div class="circle-2 circle-deco"></div>
-
-<!-- 하단 산/파도 -->
-<div class="bottom-wave">
-<svg viewBox="0 0 794 260" xmlns="http://www.w3.org/2000/svg" width="794" height="260" preserveAspectRatio="none">
-  <!-- 뒤 산 (연한 청록) -->
-  <path d="M0,260 L0,160 Q200,60 400,120 Q600,180 794,80 L794,260Z" fill="#2E5A5A" opacity="0.65"/>
-  <!-- 앞 산 (진한 청록) -->
-  <path d="M0,260 L0,200 Q150,130 300,160 Q450,195 600,145 Q700,118 794,150 L794,260Z" fill="#1F4040" opacity="0.9"/>
-  <!-- 소나무 실루엣 오른쪽 -->
-  <g fill="#14302E">
-    <rect x="700" y="185" width="6" height="55"/>
-    <path d="M703,185 Q685,160 680,145 Q700,158 720,145 Q715,160 703,185Z"/>
-    <path d="M703,165 Q690,148 686,138 Q703,150 720,138 Q716,148 703,165Z"/>
-  </g>
-  <!-- 소나무 실루엣 왼쪽 작은 -->
-  <g fill="#14302E">
-    <rect x="120" y="208" width="4" height="40"/>
-    <path d="M122,208 Q108,188 105,178 Q122,190 139,178 Q136,188 122,208Z"/>
-  </g>
-  <!-- 잔물결 -->
-  <path d="M0,230 Q100,222 200,228 Q300,234 400,226 Q500,218 600,224 Q700,230 794,222" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
-</svg>
-</div>
-
-<div class="bottom-line"></div>
 <div class="brand-footer">사주마루 · SAJU MARU</div>
 
 </body>
