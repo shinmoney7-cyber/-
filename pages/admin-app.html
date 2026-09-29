@@ -17,7 +17,7 @@
 *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; }
 body {
-  background: var(--bg); color: var(--text);
+  background: var(--bg); color: #F0E8D0;
   font-family: var(--f); font-size: 15px; line-height: 1.6;
 }
 button { font-family: var(--f); cursor: pointer; }
@@ -38,7 +38,7 @@ input, select, textarea { font-family: var(--f); }
 .login-box input {
   width: 100%; padding: 13px 16px; border-radius: 10px;
   border: 1px solid var(--border2); background: var(--bg);
-  color: var(--text); font-size: 16px; font-family: var(--f);
+  color: #F0E8D0; font-size: 16px; font-family: var(--f);
   margin-bottom: 12px; text-align: center; letter-spacing: .1em;
 }
 .login-box input:focus { outline: none; border-color: var(--gold); }
@@ -98,7 +98,7 @@ input, select, textarea { font-family: var(--f); }
   display: flex; align-items: center; justify-content: space-between;
   padding: 14px 16px; cursor: pointer; gap: 10px;
 }
-.order-card__name { font-size: 16px; font-weight: 800; }
+.order-card__name { font-size: 16px; font-weight: 800; color: #F0E8D0; }
 .order-card__date { font-size: 12px; color: var(--muted); }
 .order-card__price { font-size: 16px; font-weight: 800; color: var(--gold); flex-shrink: 0; }
 .status-badge {
@@ -114,7 +114,7 @@ input, select, textarea { font-family: var(--f); }
 .order-card__body.open { display: block; }
 .info-row { display: flex; gap: 6px; margin-top: 10px; font-size: 13px; }
 .info-row__label { color: var(--muted); min-width: 70px; flex-shrink: 0; }
-.info-row__val { font-weight: 700; }
+.info-row__val { font-weight: 700; color: #F0E8D0; }
 .services-list { font-size: 13px; color: var(--muted); margin-top: 4px; line-height: 1.6; }
 .action-row { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
 .act-btn {
@@ -140,7 +140,7 @@ input, select, textarea { font-family: var(--f); }
 .field input, .field select, .field textarea {
   width: 100%; padding: 11px 13px; border-radius: 9px;
   border: 1px solid var(--border); background: var(--bg);
-  color: var(--text); font-size: 14px; font-family: var(--f);
+  color: #F0E8D0; font-size: 14px; font-family: var(--f);
 }
 .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--gold); }
 .field select option { background: var(--bg2); }
@@ -149,7 +149,7 @@ input, select, textarea { font-family: var(--f); }
 
 .service-checks { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 @media(min-width:480px) { .service-checks { grid-template-columns: repeat(3,1fr); } }
-.svc-check { display: flex; align-items: center; gap: 6px; font-size: 12px; cursor: pointer; }
+.svc-check { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #F0E8D0; cursor: pointer; }
 .svc-check input { accent-color: var(--gold); width: 14px; height: 14px; cursor: pointer; }
 
 .btn-submit {
@@ -161,11 +161,11 @@ input, select, textarea { font-family: var(--f); }
 
 /* ── SETTINGS ── */
 .setting-box { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); padding: 18px; margin-bottom: 14px; }
-.setting-box h3 { font-size: 15px; font-weight: 800; margin-bottom: 12px; }
-.setting-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+.setting-box h3 { font-size: 15px; font-weight: 800; color: #F0E8D0; margin-bottom: 12px; }
+.setting-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; color: #F0E8D0; }
 .setting-row:last-child { border-bottom: none; }
-.setting-row__label { color: var(--muted); }
-.setting-row__val { font-weight: 700; }
+.setting-row__label { color: rgba(240,232,208,0.55); }
+.setting-row__val { font-weight: 700; color: #F0E8D0; }
 
 /* ── BTN ── */
 .btn-sm { padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border2); background: transparent; color: var(--gold); font-size: 13px; font-weight: 700; font-family: var(--f); cursor: pointer; }
