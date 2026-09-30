@@ -47,11 +47,6 @@ a{color:inherit;}
 .hero__bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 70% at 50% 40%,#2a1d42 0%,#141828 45%,#090e18 100%);}
 .hero__bg::after{content:"";position:absolute;inset:0;background:radial-gradient(circle 500px at 50% 42%,rgba(189,138,63,.08) 0%,transparent 70%);}
 .hero__scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.25) 0%,transparent 30%,transparent 65%,rgba(0,0,0,.72) 100%);}
-/* stars */
-.hero__stars{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
-.hero__stars span{position:absolute;border-radius:50%;background:#fff;animation:twinkle var(--d,3s) var(--delay,0s) ease-in-out infinite;}
-@keyframes twinkle{0%,100%{opacity:var(--lo,.15);}50%{opacity:var(--hi,.85);}}
-@media(prefers-reduced-motion:reduce){.hero__stars span{animation:none;opacity:.3;}}
 /* brand bar */
 .hero__brand{position:relative;z-index:3;display:flex;align-items:center;gap:12px;padding:22px 28px;}
 .hero__brand-name{font-family:var(--f);font-size:26px;font-weight:800;color:var(--brass-soft);letter-spacing:.06em;}
@@ -521,7 +516,6 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
 <section class="hero">
   <div class="hero__bg"></div>
   <div class="hero__scrim"></div>
-  <div class="hero__stars" id="heroStars"></div>
 
   <div class="hero__brand">
     <span class="hero__brand-name">사주마루</span>
@@ -1290,19 +1284,6 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
 
 <script>
 (function(){
-  /* === generate stars === */
-  (function(){
-    var container=document.getElementById('heroStars');
-    if(!container) return;
-    for(var i=0;i<80;i++){
-      var s=document.createElement('span');
-      var size=Math.random()*2.5+0.5;
-      s.style.cssText='width:'+size+'px;height:'+size+'px;left:'+Math.random()*100+'%;top:'+Math.random()*100+'%;'
-        +'--d:'+(Math.random()*3+2)+'s;--delay:'+Math.random()*4+'s;'
-        +'--lo:'+(Math.random()*0.1+0.05)+';--hi:'+(Math.random()*0.4+0.4)+';';
-      container.appendChild(s);
-    }
-  })();
 
   /* === free fortune calculator (actual saju facts) === */
   var STEMS=[
