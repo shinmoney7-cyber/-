@@ -62,8 +62,6 @@ a{color:inherit;}
 @keyframes spinR{to{transform:rotate(360deg);}}
 @keyframes spinL{to{transform:rotate(-360deg);}}
 @media(prefers-reduced-motion:reduce){.hero__mandala .ring{animation:none;}}
-.hero__mandala .glyph-ring{position:absolute;inset:0;animation:spinR 60s linear infinite;}
-@media(prefers-reduced-motion:reduce){.hero__mandala .glyph-ring{animation:none;}}
 .hero__mandala .core{position:absolute;inset:56px;border-radius:50%;background:radial-gradient(circle,rgba(189,138,63,.18) 0%,rgba(30,20,45,.9) 70%);border:1.5px solid rgba(237,217,174,.45);display:flex;align-items:center;justify-content:center;font-family:var(--f);font-size:52px;font-weight:800;color:var(--brass-soft);animation:glow2 3s ease-in-out infinite;}
 @keyframes glow2{0%,100%{text-shadow:0 0 20px rgba(237,217,174,.3);}50%{text-shadow:0 0 48px rgba(237,217,174,.7);}}
 /* hero text centered */
@@ -527,16 +525,6 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
       <div class="ring ring-1"></div>
       <div class="ring ring-2"></div>
       <div class="ring ring-3"></div>
-      <svg class="glyph-ring" viewBox="0 0 240 240" width="240" height="240" fill="none">
-        <text x="120" y="16" text-anchor="middle" fill="rgba(237,217,174,.5)" font-size="12" font-family="serif">乾</text>
-        <text x="204" y="52" text-anchor="middle" fill="rgba(237,217,174,.5)" font-size="12" font-family="serif">艮</text>
-        <text x="228" y="125" text-anchor="middle" fill="rgba(237,217,174,.5)" font-size="12" font-family="serif">坎</text>
-        <text x="204" y="196" text-anchor="middle" fill="rgba(237,217,174,.5)" font-size="12" font-family="serif">震</text>
-        <text x="120" y="234" text-anchor="middle" fill="rgba(237,217,174,.5)" font-size="12" font-family="serif">坤</text>
-        <text x="36" y="196" text-anchor="middle" fill="rgba(237,217,174,.5)" font-size="12" font-family="serif">巽</text>
-        <text x="12" y="125" text-anchor="middle" fill="rgba(237,217,174,.5)" font-size="12" font-family="serif">離</text>
-        <text x="36" y="52" text-anchor="middle" fill="rgba(237,217,174,.5)" font-size="12" font-family="serif">兌</text>
-      </svg>
       <div class="core">命</div>
     </div>
 
