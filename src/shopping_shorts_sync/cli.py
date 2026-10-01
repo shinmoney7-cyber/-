@@ -465,5 +465,58 @@ def state_reset(product_id):
     click.echo(f"removed: {removed}")
 
 
+@cli.group()
+def tiktok():
+    """TikTok 영상 분석 → Remotion 쇼핑 숏츠 설정(config.json) 생성."""
+
+
+@tiktok.command("analyze")
+@click.option("--url", required=True, help="분석할 TikTok 영상 URL.")
+@click.option("--dry-run/--live", "dry_run", default=True, help="--live는 실제 TikTok oembed API를 호출.")
+def tiktok_analyze(url, dry_run):
+    """TikTok 영상 메타데이터를 출력하고 Remotion config 초안을 제안."""
+    from .tiktok import extract_video_meta, generate_remotion_config
+
+    meta = extract_video_meta(url, dry_run=dry_run)
+    click.echo("── 영상 메타데이터 ──")
+    click.echo(f"  url:       {meta.url}")
+    click.echo(f"  title:     {meta.title}")
+    click.echo(f"  author:    {meta.author}")
+    click.echo(f"  thumbnail: {meta.thumbnail_url}")
+
+    cfg = generate_remotion_config(meta)
+    click.echo("")
+    click.echo("── Remotion config 초안 ──")
+    import json
+
+    click.echo(json.dumps(cfg.to_dict(), ensure_ascii=False, indent=2))
+
+
+@tiktok.command("to-config")
+@click.option("--url", required=True, help="분석할 TikTok 영상 URL.")
+@click.option("--output", required=True, type=click.Path(), help="저장할 config.json 경로.")
+@click.option("--price", "override_price", default="", help="가격을 직접 지정 (예: 67,900원).")
+@click.option("--dry-run/--live", "dry_run", default=True)
+def tiktok_to_config(url, output, override_price, dry_run):
+    """TikTok URL에서 Remotion config.json을 바로 생성."""
+    import json
+
+    from .tiktok import extract_video_meta, generate_remotion_config
+
+    meta = extract_video_meta(url, dry_run=dry_run)
+    cfg = generate_remotion_config(meta, override_price=override_price)
+
+    with open(output, "w", encoding="utf-8") as f:
+        json.dump(cfg.to_dict(), f, ensure_ascii=False, indent=2)
+
+    click.echo(f"config.json 저장됨: {output}")
+    click.echo(f"  상품명:   {cfg.product_name}")
+    click.echo(f"  가격:     {cfg.price}")
+    click.echo(f"  훅:       {cfg.hook_line1} / {cfg.hook_line2}")
+    if cfg.thumbnail_url:
+        click.echo(f"  썸네일:   {cfg.thumbnail_url}")
+        click.echo("  → 썸네일을 product.jpg로 다운받아 Remotion public/ 폴더에 복사하세요.")
+
+
 if __name__ == "__main__":
     cli()
