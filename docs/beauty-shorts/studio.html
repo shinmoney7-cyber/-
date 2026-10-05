@@ -267,7 +267,6 @@ function drawScene(ctx, v, idx, opts = {}) {
     ctx.drawImage(photo, (W - pw) / 2, (H - ph) / 2, pw, ph);
     const sh = ctx.createLinearGradient(0, 0, 0, H * .45); sh.addColorStop(0, "rgba(0,0,0,.35)"); sh.addColorStop(1, "rgba(0,0,0,0)");
     ctx.fillStyle = sh; ctx.fillRect(0, 0, W, H * .45);
-    if (s.kind === "cta") { ctx.fillStyle = "#ffffff"; ctx.textAlign = "center"; ctx.font = "56px 'Black Han Sans', sans-serif"; ctx.lineWidth = 12; ctx.strokeStyle = "rgba(0,0,0,.6)"; ctx.strokeText("프로필 링크 ↑", W / 2, H * .76); ctx.fillText("프로필 링크 ↑", W / 2, H * .76); }
   } else switch (s.kind) {
     case "face": face(ctx, false); break;
     case "glow": face(ctx, true); break;
