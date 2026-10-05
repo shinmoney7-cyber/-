@@ -54,3 +54,7 @@ job ID 목록은 `jobs.json` 참고.
 |---|---|---|
 | 웃는 얼굴 (메이크업) | [이미지](https://d8j0ntlcm91z4.cloudfront.net/user_3CZmrJBghvprxYgai44zpzRR7Pg/hf_20261005_202040_84ce4141-209b-41e0-9978-648c0f1ef3a4.png) | [이미지](https://d8j0ntlcm91z4.cloudfront.net/user_3CZmrJBghvprxYgai44zpzRR7Pg/hf_20261005_202039_9b6b984c-c4e9-440d-8b5c-67ca35007cfe.png) |
 | 생얼 | [이미지](https://d8j0ntlcm91z4.cloudfront.net/user_3CZmrJBghvprxYgai44zpzRR7Pg/hf_20261005_202039_8f3274e3-6845-4eca-8a14-2e33c889d3c5.png) | [이미지](https://d8j0ntlcm91z4.cloudfront.net/user_3CZmrJBghvprxYgai44zpzRR7Pg/hf_20261005_202040_c7d09289-3748-4fa1-8d76-936cb9dddcc6.png) |
+
+### 생얼 추가 (묶은 머리, 웃는 메이크업 사진과 같은 포즈)
+
+- [이미지](https://d8j0ntlcm91z4.cloudfront.net/user_3CZmrJBghvprxYgai44zpzRR7Pg/hf_20261005_203039_9e3b51a4-592e-4f86-8554-36375f67b388.png) — job `9e3b51a4`, 웃는 메이크업 사진(job `84ce4141`)을 참고 이미지로 넣어 얼굴만 생얼로 바꿈. 모델 v2 학습에 사용.
