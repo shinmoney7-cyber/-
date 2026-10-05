@@ -37,3 +37,12 @@ job ID 목록은 `jobs.json` 참고.
 적용: A안 4번(세안 후 세럼, 생얼)·5번(화장 밀착, 메이크업)·6번(마무리, 웃는 메이크업), C안 1번(DAY 1, 생얼)·4번(마무리, 웃는 메이크업). 합성 결과는 `examples/photo_*.jpg`, `examples/storyboard_A_photo.jpg`, `storyboard_C_photo.jpg`.
 
 주의: C안 DAY 7에 메이크업 사진을 쓰면 안 된다. DAY 1 생얼과 DAY 7 메이크업을 나란히 두면 화장 효과가 세럼 효과처럼 보여 표시광고법상 기만적 전후 비교가 될 수 있다. 전후 비교는 같은 조건(둘 다 생얼, 같은 조명·각도)으로만 한다.
+
+## 느슨하게 묶은 머리 — 생얼 / 웃는 얼굴 (2026-10-05 생성)
+
+고정 모델(Soul ID)로 생성. 흰 배경, 아이보리 블라우스, 체스트넛 웨이브 헤어를 느슨하게 묶음.
+
+| 버전 | 낮은 번(올림머리) | 낮은 포니테일 |
+|---|---|---|
+| 생얼 | [이미지](https://d8j0ntlcm91z4.cloudfront.net/user_3CZmrJBghvprxYgai44zpzRR7Pg/hf_20261005_201303_6467e8f1-d55d-449c-bf0c-67740719bae3.png) | [이미지](https://d8j0ntlcm91z4.cloudfront.net/user_3CZmrJBghvprxYgai44zpzRR7Pg/hf_20261005_201304_8fd85bb7-45ee-49b4-be7f-36b8ee79586e.png) |
+| 웃는 얼굴 (메이크업) | [이미지](https://d8j0ntlcm91z4.cloudfront.net/user_3CZmrJBghvprxYgai44zpzRR7Pg/hf_20261005_201303_ee14b1a9-72bd-400c-9a96-3ee7b74c96d5.png) | [이미지](https://d8j0ntlcm91z4.cloudfront.net/user_3CZmrJBghvprxYgai44zpzRR7Pg/hf_20261005_201304_8ca78f58-f9dd-4851-b141-a179189d62c5.png) |
