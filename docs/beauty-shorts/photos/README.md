@@ -32,7 +32,8 @@ job ID 목록은 `jobs.json` 참고.
 | `reference/ref_bare.webp` | 생얼 |
 | `reference/ref_makeup_1.webp` | 메이크업 1 |
 | `reference/ref_makeup_2.webp` | 메이크업 2 |
-| `reference/ref_makeup_smile.webp` | 메이크업, 웃는 얼굴 |
+| `reference/ref_makeup_smile.webp` | 메이크업, 웃는 얼굴 (풀어 내린 머리) |
+| `reference/ref_makeup_smile_tied.webp` | 메이크업, 웃는 얼굴 (묶은 머리) — A6·C4에 사용 |
 
 적용: A안 4번(세안 후 세럼, 생얼)·5번(화장 밀착, 메이크업)·6번(마무리, 웃는 메이크업), C안 1번(DAY 1, 생얼)·4번(마무리, 웃는 메이크업). 합성 결과는 `examples/photo_*.jpg`, `examples/storyboard_A_photo.jpg`, `storyboard_C_photo.jpg`.
 
