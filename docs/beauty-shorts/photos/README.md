@@ -33,4 +33,6 @@ job ID 목록은 `jobs.json` 참고.
 | `reference/ref_makeup_1.webp` | 메이크업 1 |
 | `reference/ref_makeup_2.webp` | 메이크업 2 |
 
-용도: C안 비교 장면(DAY 1 / DAY 7)이나 썸네일에 쓸 수 있다. 앱(`studio.html`)의 장면별 "사진 넣기"로 넣으면 자막이 합성된다.
+적용: A안 4번(세안 후 세럼, 생얼)·5번(화장 밀착, 메이크업), C안 1번(DAY 1, 생얼). 합성 결과는 `examples/photo_*.jpg`, `examples/storyboard_A_photo.jpg`, `storyboard_C_photo.jpg`.
+
+주의: C안 DAY 7에 메이크업 사진을 쓰면 안 된다. DAY 1 생얼과 DAY 7 메이크업을 나란히 두면 화장 효과가 세럼 효과처럼 보여 표시광고법상 기만적 전후 비교가 될 수 있다. 전후 비교는 같은 조건(둘 다 생얼, 같은 조명·각도)으로만 한다.

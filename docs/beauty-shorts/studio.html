@@ -298,7 +298,8 @@ function drawScene(ctx, v, idx, opts = {}) {
   // subtitle in upper third
   ctx.font = "92px 'Black Han Sans', sans-serif"; ctx.textAlign = "center";
   const lines = wrap(ctx, s.sub, W - 160);
-  const lh = 116, top = 520 + (lines.length === 1 ? 40 : 0);
+  // 실사 사진은 얼굴이 상단에 있어 자막을 얼굴 아래(하단 20% 가림 영역 위)로 내린다
+  const lh = 116, top = photo ? H * .8 - 60 - (lines.length - 1) * lh : 520 + (lines.length === 1 ? 40 : 0);
   lines.forEach((ln, k) => {
     const y = top + k * lh;
     ctx.lineJoin = "round"; ctx.lineWidth = 18; ctx.strokeStyle = "#111"; ctx.strokeText(ln, W / 2, y);
