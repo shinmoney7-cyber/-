@@ -22,3 +22,15 @@ Higgsfield Soul 2.0 + soul_id `50572930-5fd2-4ca7-a68a-196bf118aee3`, 9:16, 2026
 | C4 | [이미지](https://d8j0ntlcm91z4.cloudfront.net/user_3CZmrJBghvprxYgai44zpzRR7Pg/hf_20261005_155618_735228e9-7a34-448c-9566-aaf57372c30f.png) | [이미지](https://d8j0ntlcm91z4.cloudfront.net/user_3CZmrJBghvprxYgai44zpzRR7Pg/hf_20261005_155645_72f2fb27-a1e4-477b-a179-1d1fd50d93a4.png) |
 
 job ID 목록은 `jobs.json` 참고.
+
+## 사용자 제공 사진 (생얼 / 메이크업 비교)
+
+같은 포즈·구도에서 메이크업만 다른 사진. 흰 배경, 아이보리 블라우스, 체스트넛 웨이브 헤어.
+
+| 파일 | 내용 |
+|---|---|
+| `reference/ref_bare.webp` | 생얼 |
+| `reference/ref_makeup_1.webp` | 메이크업 1 |
+| `reference/ref_makeup_2.webp` | 메이크업 2 |
+
+용도: C안 비교 장면(DAY 1 / DAY 7)이나 썸네일에 쓸 수 있다. 앱(`studio.html`)의 장면별 "사진 넣기"로 넣으면 자막이 합성된다.
