@@ -67,6 +67,9 @@ header.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-cont
 .row { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 8px; font-size: 14px; }
 .row > span:first-child { color: var(--muted); font-size: 12px; padding-top: 2px; letter-spacing: .04em; }
 .row textarea { width: 100%; resize: vertical; min-height: 38px; font: 500 15px var(--body); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; }
+.photo { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.btn.small { padding: 4px 10px; font-size: 13px; border-radius: 8px; }
+.pname { font-size: 12px; color: var(--muted); }
 .flag { font-size: 12px; color: var(--warn); background: var(--warn-soft); border-radius: 6px; padding: 4px 8px; }
 .count { font-family: var(--mono); font-size: 11px; color: var(--muted); text-align: right; }
 .count.over { color: var(--warn); }
@@ -189,6 +192,7 @@ const VERSIONS = {
 const STAGE_COLOR = { "주의": "#e0457b", "흥미": "#2b8796", "욕망": "#c27a1a", "행동": "#6a3fb5" };
 const RISKY = ["치료", "재생", "염증", "여드름", "아토피", "부작용", "무자극", "최고", "1위", "유일", "완벽", "100%", "미백", "주름", "탄력", "피부과", "의사", "약사", "붉은기", "트러블", "사라"];
 const MAX_LINE = 14;
+const PHOTOS = {}; // key "A-0" -> HTMLImageElement (실사 사진 배경)
 
 let state = { v: "A", i: 0, safe: false };
 try {
@@ -257,7 +261,14 @@ function wrap(ctx, text, maxW) {
 function drawScene(ctx, v, idx, opts = {}) {
   const s = VERSIONS[v].scenes[idx];
   ctx.save(); ctx.clearRect(0, 0, W, H);
-  switch (s.kind) {
+  const photo = PHOTOS[v + "-" + idx];
+  if (photo) {
+    const r = Math.max(W / photo.naturalWidth, H / photo.naturalHeight), pw = photo.naturalWidth * r, ph = photo.naturalHeight * r;
+    ctx.drawImage(photo, (W - pw) / 2, (H - ph) / 2, pw, ph);
+    const sh = ctx.createLinearGradient(0, 0, 0, H * .45); sh.addColorStop(0, "rgba(0,0,0,.35)"); sh.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = sh; ctx.fillRect(0, 0, W, H * .45);
+    if (s.kind === "cta") { ctx.fillStyle = "#ffffff"; ctx.textAlign = "center"; ctx.font = "56px 'Black Han Sans', sans-serif"; ctx.lineWidth = 12; ctx.strokeStyle = "rgba(0,0,0,.6)"; ctx.strokeText("프로필 링크 ↑", W / 2, H * .76); ctx.fillText("프로필 링크 ↑", W / 2, H * .76); }
+  } else switch (s.kind) {
     case "face": face(ctx, false); break;
     case "glow": face(ctx, true); break;
     case "day1": face(ctx, false); break;
@@ -316,7 +327,7 @@ function boardCanvas(v) {
   x.fillStyle = "#251b20"; x.textAlign = "left"; x.font = "64px 'Black Han Sans', sans-serif";
   x.fillText(`수분 세럼 ABC — ${v}안 ${VERSIONS[v].name}`, pad, 104);
   x.fillStyle = "#74636b"; x.font = "500 28px 'IBM Plex Sans KR', sans-serif";
-  x.fillText("shinjh-serum-01 · 9:16 1080×1920 · 25초 · 납품 스토리보드 시안 (실제 촬영본 아님)", pad, 156);
+  x.fillText("shinjh-serum-01 · 9:16 1080×1920 · 25초 · 납품 스토리보드 시안 (AI 생성 이미지·일러스트 포함, 실제 촬영본 아님)", pad, 156);
   x.fillStyle = "#e6dbe0"; x.fillRect(pad, 186, BW - pad * 2, 3);
   sc.forEach((s, k) => {
     const cx = pad + (k % cols) * (cw + pad), cy = headH + Math.floor(k / cols) * (ch + textH + pad);
@@ -370,12 +381,24 @@ function renderScenes() {
         <div class="row"><span>대사</span><span></span></div>
         <div class="row"><span>자막</span><div><textarea id="sub-${state.v}-${idx}" rows="1" aria-label="자막"></textarea><div class="count"></div></div></div>
         <div class="row"><span>효과</span><span></span></div>
+        <div class="row"><span>사진</span><div class="photo"><label class="btn small" for="ph-${state.v}-${idx}">사진 넣기</label><input type="file" accept="image/*" id="ph-${state.v}-${idx}" hidden><button class="btn small" type="button" data-clear hidden>사진 빼기</button><span class="pname"></span></div></div>
         <div class="flag" hidden></div>
       </div>`;
     const spans = el.querySelectorAll(".row > span:nth-child(2)");
     spans[0].textContent = s.shot; spans[1].textContent = s.say; spans[2].textContent = s.fx;
     const ta = el.querySelector("textarea"), flag = el.querySelector(".flag"), cnt = el.querySelector(".count");
     ta.value = s.sub;
+    const key = state.v + "-" + idx, fileIn = el.querySelector('input[type="file"]'), clr = el.querySelector("[data-clear]"), pname = el.querySelector(".pname");
+    const syncPhoto = () => { clr.hidden = !PHOTOS[key]; pname.textContent = PHOTOS[key] ? "실사 사진 사용 중" : "없으면 일러스트 시안"; };
+    syncPhoto();
+    fileIn.addEventListener("change", () => {
+      const f = fileIn.files && fileIn.files[0]; if (!f) return;
+      const img = new Image();
+      img.onload = () => { PHOTOS[key] = img; syncPhoto(); select(idx, true); };
+      img.onerror = () => { pname.textContent = "이 파일은 열 수 없어요. JPG나 PNG로 다시 넣어주세요."; };
+      img.src = URL.createObjectURL(f); fileIn.value = "";
+    });
+    clr.addEventListener("click", e => { e.stopPropagation(); delete PHOTOS[key]; syncPhoto(); select(idx, true); });
     const check = () => {
       const hits = risky(ta.value);
       flag.hidden = !hits.length;
@@ -391,8 +414,8 @@ function renderScenes() {
     box.appendChild(el);
   });
 }
-function select(idx) {
-  if (state.i === idx) return;
+function select(idx, force) {
+  if (state.i === idx && !force) return;
   state.i = idx;
   document.querySelectorAll(".scene").forEach((n, k) => n.classList.toggle("active", k === idx));
   renderPreview();
