@@ -1,0 +1,419 @@
+<title>뷰티쇼츠 대본 스튜디오</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: script desk on the left, a phone-sized 9:16 monitor on the right that stays in view; stacks to monitor-then-list on phones. */
+:root {
+  --bg: #f8f4f6;
+  --panel: #ffffff;
+  --line: #e6dbe0;
+  --fg: #251b20;
+  --muted: #74636b;
+  --accent: #ae2f5a;
+  --accent-soft: #f6dfe7;
+  --serum: #2b8796;
+  --warn: #b25b00;
+  --warn-soft: #fff0dc;
+  --ok: #2e7d4f;
+  --display: "Black Han Sans", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #161115; --panel: #211a1f; --line: #3a2e35; --fg: #f1e8ed; --muted: #b19fa8;
+    --accent: #f07ba1; --accent-soft: #43222f; --serum: #6cc6d2; --warn: #ffb35c; --warn-soft: #3d2a12; --ok: #74d39a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #161115; --panel: #211a1f; --line: #3a2e35; --fg: #f1e8ed; --muted: #b19fa8;
+  --accent: #f07ba1; --accent-soft: #43222f; --serum: #6cc6d2; --warn: #ffb35c; --warn-soft: #3d2a12; --ok: #74d39a;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.55; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-inline: 16px; padding-block: 20px 48px; }
+
+header.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+.brand h1 { font-family: var(--display); font-weight: 400; font-size: clamp(26px, 5vw, 36px); line-height: 1.1; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+.brand p { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
+.spec { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-family: var(--mono); font-size: 12px; padding: 3px 8px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); background: var(--panel); }
+
+.tabs { display: flex; gap: 8px; margin: 18px 0 14px; overflow-x: auto; }
+.tab { flex: 0 0 auto; border: 1px solid var(--line); background: var(--panel); color: var(--fg); padding: 10px 14px; border-radius: 10px; font: 500 14px var(--body); cursor: pointer; text-align: left; }
+.tab b { font-family: var(--display); font-weight: 400; font-size: 18px; margin-right: 6px; color: var(--accent); }
+.tab[aria-selected="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.tab:focus-visible, button:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.vnote { color: var(--muted); font-size: 13px; margin: 0 0 14px; }
+
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 24px; align-items: start; }
+.monitor { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); display: grid; gap: 10px; }
+.screen { background: #000; border-radius: 22px; padding: 8px; box-shadow: 0 10px 30px rgba(40, 10, 25, .18); }
+.screen canvas { display: block; width: 100%; aspect-ratio: 9 / 16; border-radius: 15px; max-width: 100%; }
+.ctrl { display: flex; flex-wrap: wrap; gap: 8px; }
+.btn { border: 1px solid var(--line); background: var(--panel); color: var(--fg); border-radius: 10px; padding: 9px 12px; font: 500 14px var(--body); cursor: pointer; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.toggle { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
+
+.scenes { display: grid; gap: 10px; }
+.scene { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px; cursor: pointer; }
+.scene.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.when { font-family: var(--mono); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.stage { display: inline-block; margin-top: 6px; font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 6px; background: var(--accent-soft); color: var(--accent); letter-spacing: .02em; }
+.body { min-width: 0; display: grid; gap: 6px; }
+.row { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 8px; font-size: 14px; }
+.row > span:first-child { color: var(--muted); font-size: 12px; padding-top: 2px; letter-spacing: .04em; }
+.row textarea { width: 100%; resize: vertical; min-height: 38px; font: 500 15px var(--body); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; }
+.flag { font-size: 12px; color: var(--warn); background: var(--warn-soft); border-radius: 6px; padding: 4px 8px; }
+.count { font-family: var(--mono); font-size: 11px; color: var(--muted); text-align: right; }
+.count.over { color: var(--warn); }
+
+.output { margin-top: 28px; border-top: 1px solid var(--line); padding-top: 18px; }
+.output h2, .check h2 { font-family: var(--display); font-weight: 400; font-size: 22px; margin: 0 0 4px; }
+.output p.hint { margin: 0 0 12px; color: var(--muted); font-size: 13px; }
+.output .imgbox { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
+.output img { display: block; max-width: 100%; height: auto; margin: 0 auto; border-radius: 6px; }
+.output img.frame { max-width: min(100%, 360px); }
+
+.check { margin-top: 28px; }
+.check table { border-collapse: collapse; width: 100%; font-size: 14px; }
+.tablebox { overflow-x: auto; }
+.check th, .check td { text-align: left; border-bottom: 1px solid var(--line); padding: 8px 10px; vertical-align: top; }
+.check th { color: var(--muted); font-weight: 500; font-size: 12px; letter-spacing: .04em; }
+
+@media (max-width: 860px) {
+  .grid { grid-template-columns: minmax(0, 1fr); }
+  .monitor { position: static; justify-items: center; order: -1; }
+  .screen { width: min(100%, 220px); }
+  .ctrl { justify-content: center; }
+}
+@media (max-width: 480px) {
+  .scene { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .scene > div:first-child { display: flex; gap: 8px; align-items: center; }
+  .scene .stage { margin-top: 0; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1>뷰티쇼츠 대본 스튜디오</h1>
+      <p>수분 세럼 ABC · shinjh-serum-01 · 외주 납품용 장면 대본과 자막 시안</p>
+    </div>
+    <div class="spec">
+      <span class="chip">9:16 · 1080×1920</span>
+      <span class="chip">25초</span>
+      <span class="chip">AIDA</span>
+      <span class="chip">유료광고 표기</span>
+    </div>
+  </header>
+
+  <div class="tabs" role="tablist" id="tabs"></div>
+  <p class="vnote" id="vnote"></p>
+
+  <div class="grid">
+    <section class="scenes" id="scenes" aria-label="장면 목록"></section>
+
+    <aside class="monitor" aria-label="9:16 미리보기">
+      <div class="screen"><canvas id="preview" width="540" height="960"></canvas></div>
+      <label class="toggle"><input type="checkbox" id="safe"> 플랫폼 UI 가림 영역 표시</label>
+      <div class="ctrl">
+        <button class="btn primary" id="exportFrame">이 장면 이미지 만들기</button>
+        <button class="btn" id="exportBoard">스토리보드 한 장 만들기</button>
+      </div>
+    </aside>
+  </div>
+
+  <section class="output" id="output" hidden>
+    <h2 id="outTitle">이미지</h2>
+    <p class="hint">이미지를 길게 누르거나(모바일) 우클릭해서(PC) 저장하세요.</p>
+    <div class="imgbox"><img id="outImg" alt=""></div>
+  </section>
+
+  <section class="check">
+    <h2>표현 검수 기준</h2>
+    <p class="vnote">자막을 고치면 아래 단어가 들어갔는지 바로 표시됩니다. 납품 전 내레이션과 설명란도 같은 기준으로 확인하세요.</p>
+    <div class="tablebox">
+      <table>
+        <thead><tr><th>주의 표현</th><th>이유</th><th>대체 표현</th></tr></thead>
+        <tbody>
+          <tr><td>치료, 재생, 염증·여드름·아토피 개선</td><td>의약품 오인</td><td>피부를 촉촉하게, 피부결 정돈</td></tr>
+          <tr><td>붉은기·트러블이 사라짐</td><td>의약품 오인</td><td>진정되는 느낌 (실증 범위 안에서)</td></tr>
+          <tr><td>미백, 주름, 탄력</td><td>기능성 심사 받은 제품만 가능</td><td>확인 전에는 쓰지 않음</td></tr>
+          <tr><td>부작용 없음, 무자극</td><td>실증 자료 필요</td><td>순한 사용감 (개인 의견)</td></tr>
+          <tr><td>최고, 1위, 유일, 완벽, 100%</td><td>최상급 표현</td><td>제가 자주 손이 가는</td></tr>
+          <tr><td>피부과, 의사·약사 추천</td><td>전문가 추천 오인</td><td>쓰지 않음</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<script>
+const VERSIONS = {
+  A: {
+    name: "고민 공감형", note: "화장 들뜸 고민으로 시작해서 사용감과 화장 밀착으로 이어가는 내레이션 버전.",
+    scenes: [
+      { t: "0:00–0:03", stage: "주의", kind: "face",    shot: "거울 앞, 들뜬 볼을 손가락으로 톡톡 (근접)", say: "화장만 하면 각질 일어나는 분들, 잠깐만요.", sub: "화장 들뜸, 이거 저만 그래요?", fx: "띵 효과음" },
+      { t: "0:03–0:06", stage: "흥미", kind: "product", shot: "제품 언박싱 → 라벨 정면 1초", say: "요즘 아침 루틴에 이거 하나 추가했는데요,", sub: "아침 루틴에 딱 하나 추가", fx: "휙 전환" },
+      { t: "0:06–0:10", stage: "흥미", kind: "drop",    shot: "스포이드 토출 → 손등 도포 매크로", say: "묽은 제형이라 끈적임 없이 금방 스며들어요.", sub: "끈적임 없이 쏙", fx: "물방울 효과음" },
+      { t: "0:10–0:15", stage: "욕망", kind: "face",    shot: "세안 후 얼굴 도포 → 손바닥으로 지그시", say: "바르고 나면 피부 겉이 촉촉하게 정돈돼서", sub: "겉은 촉촉하게 정돈", fx: "—" },
+      { t: "0:15–0:20", stage: "욕망", kind: "glow",    shot: "같은 조명에서 파운데이션 재도포 → 볼 근접", say: "그 위에 화장하니까 훨씬 매끄럽게 올라가요.", sub: "화장이 매끈하게 착", fx: "반짝 효과" },
+      { t: "0:20–0:25", stage: "행동", kind: "cta",     shot: "제품 들고 정면 + 하단 화살표 그래픽", say: "제품 정보는 프로필 링크에 정리해뒀어요.", sub: "정보는 프로필 링크에 ↑", fx: "BGM 페이드아웃" }
+    ]
+  },
+  B: {
+    name: "텍스처 ASMR형", note: "말 없이 소리와 자막으로 끌고 가는 버전. 체류시간과 반복재생을 노린다.",
+    scenes: [
+      { t: "0:00–0:03", stage: "주의", kind: "drop",    shot: "스포이드에서 한 방울 떨어지는 슬로모션", say: "(내레이션 없음)", sub: "이 제형 보세요", fx: "방울 소리 (실제 녹음)" },
+      { t: "0:03–0:07", stage: "흥미", kind: "hand",    shot: "손등에 펴바르기 → 흡수되는 과정", say: "(내레이션 없음)", sub: "물처럼 가볍게 펴발리는 수분 세럼", fx: "문지르는 소리" },
+      { t: "0:07–0:12", stage: "흥미", kind: "hand",    shot: "손등을 기울여 흘러내리지 않는 모습", say: "(내레이션 없음)", sub: "흡수 후 끈적임 없음", fx: "톡톡 소리" },
+      { t: "0:12–0:20", stage: "욕망", kind: "glow",    shot: "얼굴 도포 → 볼 근접, 보정 없이", say: "(내레이션 없음)", sub: "바른 직후, 촉촉한 피부 표현", fx: "잔잔한 BGM 시작" },
+      { t: "0:20–0:25", stage: "행동", kind: "cta",     shot: "제품 라벨 정면 + 하단 화살표", say: "(내레이션 없음)", sub: "수분 세럼 ABC · 프로필 링크 ↑", fx: "BGM 페이드아웃" }
+    ]
+  },
+  C: {
+    name: "1주 루틴 기록형", note: "실제로 7일간 쓴 출연자만 촬영. 같은 장소·조명·각도로 DAY 1과 DAY 7을 맞춘다.",
+    scenes: [
+      { t: "0:00–0:03", stage: "주의", kind: "day1",    shot: "DAY 1 그래픽 + 민낯 클로즈업", say: "수분 세럼 하나만 일주일 써봤어요.", sub: "수분 세럼 1주일 써봄", fx: "—" },
+      { t: "0:03–0:10", stage: "흥미", kind: "drop",    shot: "아침·저녁 바르는 장면 빠른 컷 (DAY 2~5)", say: "아침저녁 세안 후에 두세 방울씩만 발랐고요,", sub: "아침·저녁 2~3방울", fx: "컷 전환음" },
+      { t: "0:10–0:20", stage: "욕망", kind: "day7",    shot: "DAY 7, 같은 조명·각도로 피부 근접", say: "세안 후 당김이 덜하게 느껴졌어요. 피부마다 다를 수 있어요.", sub: "세안 후 당김이 덜했어요 (개인 후기)", fx: "—" },
+      { t: "0:20–0:25", stage: "행동", kind: "cta",     shot: "제품 들고 정면 + 화살표", say: "써본 제품은 프로필 링크에 있어요.", sub: "제품 정보 → 프로필 링크 ↑", fx: "BGM 페이드아웃" }
+    ]
+  }
+};
+const STAGE_COLOR = { "주의": "#e0457b", "흥미": "#2b8796", "욕망": "#c27a1a", "행동": "#6a3fb5" };
+const RISKY = ["치료", "재생", "염증", "여드름", "아토피", "부작용", "무자극", "최고", "1위", "유일", "완벽", "100%", "미백", "주름", "탄력", "피부과", "의사", "약사", "붉은기", "트러블", "사라"];
+const MAX_LINE = 14;
+
+let state = { v: "A", i: 0, safe: false };
+try {
+  const saved = JSON.parse(localStorage.getItem("bs-studio") || "null");
+  if (saved && saved.subs) for (const k in saved.subs) saved.subs[k].forEach((s, j) => { if (VERSIONS[k] && VERSIONS[k].scenes[j]) VERSIONS[k].scenes[j].sub = s; });
+  if (saved && VERSIONS[saved.v]) state.v = saved.v;
+} catch (e) {}
+function persist() {
+  try {
+    const subs = {}; for (const k in VERSIONS) subs[k] = VERSIONS[k].scenes.map(s => s.sub);
+    localStorage.setItem("bs-studio", JSON.stringify({ v: state.v, subs }));
+  } catch (e) {}
+}
+const risky = text => RISKY.filter(w => text.includes(w));
+
+/* ---------- drawing ---------- */
+const W = 1080, H = 1920;
+function rr(ctx, x, y, w, h, r) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); }
+function bottle(ctx, cx, cy, s) {
+  ctx.save(); ctx.translate(cx, cy); ctx.scale(s, s);
+  // glass body
+  const g = ctx.createLinearGradient(-130, 0, 130, 0);
+  g.addColorStop(0, "rgba(255,255,255,.55)"); g.addColorStop(.5, "rgba(190,235,240,.85)"); g.addColorStop(1, "rgba(255,255,255,.45)");
+  rr(ctx, -130, -60, 260, 380, 46); ctx.fillStyle = g; ctx.fill();
+  ctx.lineWidth = 4; ctx.strokeStyle = "rgba(255,255,255,.9)"; ctx.stroke();
+  // serum level
+  rr(ctx, -118, 70, 236, 238, 36); ctx.fillStyle = "rgba(90,190,205,.55)"; ctx.fill();
+  // label
+  rr(ctx, -95, 110, 190, 120, 12); ctx.fillStyle = "rgba(255,255,255,.92)"; ctx.fill();
+  ctx.fillStyle = "#2a1e24"; ctx.textAlign = "center"; ctx.font = "34px 'Black Han Sans', sans-serif"; ctx.fillText("ABC", 0, 165);
+  ctx.font = "500 20px 'IBM Plex Sans KR', sans-serif"; ctx.fillText("수분 세럼", 0, 200);
+  // dropper
+  rr(ctx, -46, -140, 92, 84, 14); ctx.fillStyle = "#2a1e24"; ctx.fill();
+  rr(ctx, -36, -250, 72, 116, 36); ctx.fillStyle = "#3a2a32"; ctx.fill();
+  ctx.restore();
+}
+function drop(ctx, x, y, r, a) {
+  ctx.save(); ctx.globalAlpha = a;
+  ctx.beginPath(); ctx.moveTo(x, y - r * 1.9);
+  ctx.bezierCurveTo(x + r * 0.9, y - r * 0.6, x + r, y + r * 0.2, x, y + r);
+  ctx.bezierCurveTo(x - r, y + r * 0.2, x - r * 0.9, y - r * 0.6, x, y - r * 1.9);
+  const g = ctx.createRadialGradient(x - r * .3, y - r * .2, r * .1, x, y, r * 1.4);
+  g.addColorStop(0, "rgba(255,255,255,.95)"); g.addColorStop(1, "rgba(120,205,215,.75)");
+  ctx.fillStyle = g; ctx.fill(); ctx.restore();
+}
+function sparkle(ctx, x, y, r) {
+  ctx.save(); ctx.translate(x, y); ctx.fillStyle = "rgba(255,255,255,.9)";
+  ctx.beginPath(); for (let k = 0; k < 8; k++) { const a = k * Math.PI / 4, rad = k % 2 ? r * .25 : r; ctx.lineTo(Math.cos(a) * rad, Math.sin(a) * rad); }
+  ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function face(ctx, glow) {
+  // abstract cheek close-up: large soft skin form with highlight
+  const g = ctx.createRadialGradient(W * .55, H * .55, 80, W * .5, H * .6, 900);
+  g.addColorStop(0, "#f6d3c4"); g.addColorStop(.6, "#e9b7a4"); g.addColorStop(1, "#c98d7a");
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = "rgba(255,255,255,.18)"; ctx.beginPath(); ctx.ellipse(W * .62, H * .52, 260, 170, -.4, 0, Math.PI * 2); ctx.fill();
+  if (glow) { ctx.fillStyle = "rgba(255,255,255,.35)"; ctx.beginPath(); ctx.ellipse(W * .6, H * .5, 160, 90, -.4, 0, Math.PI * 2); ctx.fill(); [[.7,.44,34],[.48,.58,22],[.76,.6,18]].forEach(p => sparkle(ctx, W*p[0], H*p[1], p[2])); }
+  else { ctx.fillStyle = "rgba(255,255,255,.55)"; for (let k = 0; k < 26; k++) { const x = W * (.35 + ((k * 37) % 40) / 100), y = H * (.5 + ((k * 53) % 22) / 100); ctx.fillRect(x, y, 10 + (k % 3) * 4, 4); } }
+}
+function bg(ctx, a, b) { const g = ctx.createLinearGradient(0, 0, W, H); g.addColorStop(0, a); g.addColorStop(1, b); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); }
+function wrap(ctx, text, maxW) {
+  const lines = []; let cur = "";
+  for (const ch of text) { const t = cur + ch; if (ctx.measureText(t).width > maxW && cur) { lines.push(cur); cur = ch.trim() ? ch : ""; } else cur = t; }
+  if (cur) lines.push(cur); return lines.slice(0, 3);
+}
+function drawScene(ctx, v, idx, opts = {}) {
+  const s = VERSIONS[v].scenes[idx];
+  ctx.save(); ctx.clearRect(0, 0, W, H);
+  switch (s.kind) {
+    case "face": face(ctx, false); break;
+    case "glow": face(ctx, true); break;
+    case "day1": face(ctx, false); break;
+    case "day7": face(ctx, true); break;
+    case "drop": bg(ctx, "#cfeef1", "#7cc4cf"); bottle(ctx, W * .5, H * .48, 1.1); [[.5,.73,44,1],[.5,.81,32,.8],[.5,.87,22,.55]].forEach(p => drop(ctx, W*p[0], H*p[1], p[2], p[3])); break;
+    case "hand": {
+      bg(ctx, "#f3dccf", "#d9ab97");
+      ctx.fillStyle = "#e8bba6"; rr(ctx, -80, H * .48, W * .95, 300, 150); ctx.fill();
+      const g = ctx.createLinearGradient(W * .2, 0, W * .75, 0); g.addColorStop(0, "rgba(255,255,255,.65)"); g.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(W * .45, H * .56, 260, 70, 0, 0, Math.PI * 2); ctx.fill();
+      drop(ctx, W * .7, H * .4, 40, .9); break;
+    }
+    case "product": bg(ctx, "#f7e3ea", "#e6b6c6"); bottle(ctx, W * .5, H * .56, 1.4); break;
+    case "cta": {
+      bg(ctx, "#2b1d24", "#5a2f42"); bottle(ctx, W * .5, H * .52, 1.1);
+      ctx.fillStyle = "#ffffff"; ctx.textAlign = "center"; ctx.font = "56px 'Black Han Sans', sans-serif"; ctx.fillText("프로필 링크 ↑", W / 2, H * .76);
+      break;
+    }
+  }
+  if (s.kind === "day1" || s.kind === "day7") {
+    ctx.fillStyle = "rgba(20,10,15,.72)"; rr(ctx, 64, 300, 290, 120, 20); ctx.fill();
+    ctx.fillStyle = "#fff"; ctx.textAlign = "left"; ctx.font = "84px 'Black Han Sans', sans-serif"; ctx.fillText(s.kind === "day1" ? "DAY 1" : "DAY 7", 92, 392);
+  }
+  // ad disclosure (top-left)
+  ctx.fillStyle = "rgba(0,0,0,.55)"; rr(ctx, 48, 120, 236, 64, 14); ctx.fill();
+  ctx.fillStyle = "#fff"; ctx.textAlign = "left"; ctx.font = "700 32px 'IBM Plex Sans KR', sans-serif"; ctx.fillText("유료광고 포함", 70, 164);
+  // subtitle in upper third
+  ctx.font = "92px 'Black Han Sans', sans-serif"; ctx.textAlign = "center";
+  const lines = wrap(ctx, s.sub, W - 160);
+  const lh = 116, top = 520 + (lines.length === 1 ? 40 : 0);
+  lines.forEach((ln, k) => {
+    const y = top + k * lh;
+    ctx.lineJoin = "round"; ctx.lineWidth = 18; ctx.strokeStyle = "#111"; ctx.strokeText(ln, W / 2, y);
+    ctx.fillStyle = k === 0 ? "#ffffff" : "#ffe36e"; ctx.fillText(ln, W / 2, y);
+  });
+  // stage + timecode tag (storyboard marker)
+  if (!opts.clean) {
+    ctx.fillStyle = STAGE_COLOR[s.stage]; rr(ctx, W - 300, 120, 252, 64, 14); ctx.fill();
+    ctx.fillStyle = "#fff"; ctx.textAlign = "center"; ctx.font = "500 30px 'IBM Plex Mono', monospace"; ctx.fillText(s.stage + " " + s.t.split("–")[0], W - 174, 164);
+  }
+  if (opts.safe) {
+    ctx.fillStyle = "rgba(255,0,80,.18)"; ctx.fillRect(0, H * .8, W, H * .2);
+    ctx.setLineDash([18, 14]); ctx.lineWidth = 4; ctx.strokeStyle = "rgba(255,255,255,.9)"; ctx.beginPath(); ctx.moveTo(0, H * .8); ctx.lineTo(W, H * .8); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = "#fff"; ctx.textAlign = "center"; ctx.font = "500 34px 'IBM Plex Sans KR', sans-serif"; ctx.fillText("하단 20% — 플랫폼 UI에 가려짐, 자막 금지", W / 2, H * .8 + 70);
+  }
+  ctx.restore();
+}
+function sceneCanvas(v, idx, opts) { const c = document.createElement("canvas"); c.width = W; c.height = H; drawScene(c.getContext("2d"), v, idx, opts); return c; }
+
+function boardCanvas(v) {
+  const sc = VERSIONS[v].scenes, cols = Math.min(3, sc.length), rows = Math.ceil(sc.length / cols);
+  const cw = 540, ch = 960, pad = 48, textH = 330, headH = 220;
+  const BW = pad + cols * (cw + pad), BH = headH + rows * (ch + textH + pad) + 60;
+  const c = document.createElement("canvas"); c.width = BW; c.height = BH; const x = c.getContext("2d");
+  x.fillStyle = "#fbf8f9"; x.fillRect(0, 0, BW, BH);
+  x.fillStyle = "#251b20"; x.textAlign = "left"; x.font = "64px 'Black Han Sans', sans-serif";
+  x.fillText(`수분 세럼 ABC — ${v}안 ${VERSIONS[v].name}`, pad, 104);
+  x.fillStyle = "#74636b"; x.font = "500 28px 'IBM Plex Sans KR', sans-serif";
+  x.fillText("shinjh-serum-01 · 9:16 1080×1920 · 25초 · 납품 스토리보드 시안 (실제 촬영본 아님)", pad, 156);
+  x.fillStyle = "#e6dbe0"; x.fillRect(pad, 186, BW - pad * 2, 3);
+  sc.forEach((s, k) => {
+    const cx = pad + (k % cols) * (cw + pad), cy = headH + Math.floor(k / cols) * (ch + textH + pad);
+    x.save(); x.beginPath(); x.roundRect(cx, cy, cw, ch, 24); x.clip();
+    x.drawImage(sceneCanvas(v, k, { clean: true }), cx, cy, cw, ch); x.restore();
+    x.fillStyle = STAGE_COLOR[s.stage]; x.beginPath(); x.roundRect(cx, cy + ch + 22, 150, 46, 10); x.fill();
+    x.fillStyle = "#fff"; x.textAlign = "center"; x.font = "700 26px 'IBM Plex Sans KR', sans-serif"; x.fillText(s.stage, cx + 75, cy + ch + 54);
+    x.fillStyle = "#74636b"; x.textAlign = "left"; x.font = "500 26px 'IBM Plex Mono', monospace"; x.fillText(s.t, cx + 168, cy + ch + 54);
+    const block = [["화면", s.shot], ["대사", s.say], ["효과", s.fx]];
+    let ty = cy + ch + 108;
+    block.forEach(([lab, val]) => {
+      x.fillStyle = "#ae2f5a"; x.font = "700 24px 'IBM Plex Sans KR', sans-serif"; x.fillText(lab, cx, ty);
+      x.fillStyle = "#251b20"; x.font = "400 25px 'IBM Plex Sans KR', sans-serif";
+      const ls = wrap(x, val, cw - 70).slice(0, 2);
+      ls.forEach((ln, j) => x.fillText(ln, cx + 66, ty + j * 34));
+      ty += Math.max(1, ls.length) * 34 + 22;
+    });
+  });
+  x.fillStyle = "#74636b"; x.font = "500 24px 'IBM Plex Sans KR', sans-serif"; x.textAlign = "left";
+  x.fillText("필수: 첫 화면 '유료광고 포함' 표기 · 설명란 첫 줄 쿠팡 파트너스 고지 · 전후 비교 컷 보정 동일", pad, BH - 34);
+  return c;
+}
+
+/* ---------- UI ---------- */
+const $ = id => document.getElementById(id);
+const preview = $("preview"), pctx = preview.getContext("2d");
+pctx.scale(preview.width / W, preview.height / H);
+function renderPreview() { drawScene(pctx, state.v, state.i, { safe: state.safe }); }
+
+function renderTabs() {
+  $("tabs").innerHTML = "";
+  for (const k of Object.keys(VERSIONS)) {
+    const b = document.createElement("button");
+    b.className = "tab"; b.setAttribute("role", "tab"); b.id = "tab-" + k;
+    b.setAttribute("aria-selected", String(k === state.v));
+    b.innerHTML = `<b>${k}</b>${VERSIONS[k].name}`;
+    b.onclick = () => { state.v = k; state.i = 0; persist(); render(); };
+    $("tabs").appendChild(b);
+  }
+  $("vnote").textContent = VERSIONS[state.v].note;
+}
+function renderScenes() {
+  const box = $("scenes"); box.innerHTML = "";
+  VERSIONS[state.v].scenes.forEach((s, idx) => {
+    const el = document.createElement("article");
+    el.className = "scene" + (idx === state.i ? " active" : "");
+    el.innerHTML = `
+      <div><div class="when">${s.t}</div><span class="stage" style="background:${STAGE_COLOR[s.stage]}22;color:${STAGE_COLOR[s.stage]}">${s.stage}</span></div>
+      <div class="body">
+        <div class="row"><span>화면</span><span></span></div>
+        <div class="row"><span>대사</span><span></span></div>
+        <div class="row"><span>자막</span><div><textarea id="sub-${state.v}-${idx}" rows="1" aria-label="자막"></textarea><div class="count"></div></div></div>
+        <div class="row"><span>효과</span><span></span></div>
+        <div class="flag" hidden></div>
+      </div>`;
+    const spans = el.querySelectorAll(".row > span:nth-child(2)");
+    spans[0].textContent = s.shot; spans[1].textContent = s.say; spans[2].textContent = s.fx;
+    const ta = el.querySelector("textarea"), flag = el.querySelector(".flag"), cnt = el.querySelector(".count");
+    ta.value = s.sub;
+    const check = () => {
+      const hits = risky(ta.value);
+      flag.hidden = !hits.length;
+      flag.textContent = hits.length ? `검수 필요: "${hits.join('", "')}" — 아래 표현 검수 기준 확인` : "";
+      const n = [...ta.value.replace(/\s/g, "")].length;
+      cnt.textContent = `${n}자 · 한 줄 ${MAX_LINE}자 기준 ${Math.max(1, Math.ceil(n / MAX_LINE))}줄`;
+      cnt.classList.toggle("over", n > MAX_LINE * 2);
+    };
+    check();
+    ta.addEventListener("input", () => { s.sub = ta.value; check(); persist(); if (state.i === idx) renderPreview(); });
+    ta.addEventListener("focus", () => select(idx));
+    el.addEventListener("click", () => select(idx));
+    box.appendChild(el);
+  });
+}
+function select(idx) {
+  if (state.i === idx) return;
+  state.i = idx;
+  document.querySelectorAll(".scene").forEach((n, k) => n.classList.toggle("active", k === idx));
+  renderPreview();
+}
+function render() { renderTabs(); renderScenes(); renderPreview(); }
+function show(canvas, title, cls) {
+  const img = $("outImg"); img.src = canvas.toDataURL("image/png"); img.className = cls; img.alt = title;
+  $("outTitle").textContent = title; $("output").hidden = false;
+  $("output").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+}
+$("safe").addEventListener("change", e => { state.safe = e.target.checked; renderPreview(); });
+$("exportFrame").addEventListener("click", () => {
+  const s = VERSIONS[state.v].scenes[state.i];
+  show(sceneCanvas(state.v, state.i, { clean: true, safe: false }), `${state.v}안 ${state.i + 1}번 장면 (${s.t}) · 1080×1920`, "frame");
+});
+$("exportBoard").addEventListener("click", () => show(boardCanvas(state.v), `${state.v}안 스토리보드 · ${VERSIONS[state.v].name}`, "board"));
+
+window.BS = { VERSIONS, sceneCanvas, boardCanvas };
+render();
+(document.fonts ? Promise.all([
+  document.fonts.load("92px 'Black Han Sans'"), document.fonts.load("500 30px 'IBM Plex Mono'"),
+  document.fonts.load("700 32px 'IBM Plex Sans KR'"), document.fonts.load("400 25px 'IBM Plex Sans KR'")
+]).catch(() => {}) : Promise.resolve()).then(() => { window.BS.ready = true; renderPreview(); });
+</script>
