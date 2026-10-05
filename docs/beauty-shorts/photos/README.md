@@ -46,3 +46,10 @@ job ID 목록은 `jobs.json` 참고.
 |---|---|---|
 | 생얼 | [이미지](https://d8j0ntlcm91z4.cloudfront.net/user_3CZmrJBghvprxYgai44zpzRR7Pg/hf_20261005_201303_6467e8f1-d55d-449c-bf0c-67740719bae3.png) | [이미지](https://d8j0ntlcm91z4.cloudfront.net/user_3CZmrJBghvprxYgai44zpzRR7Pg/hf_20261005_201304_8fd85bb7-45ee-49b4-be7f-36b8ee79586e.png) |
 | 웃는 얼굴 (메이크업) | [이미지](https://d8j0ntlcm91z4.cloudfront.net/user_3CZmrJBghvprxYgai44zpzRR7Pg/hf_20261005_201303_ee14b1a9-72bd-400c-9a96-3ee7b74c96d5.png) | [이미지](https://d8j0ntlcm91z4.cloudfront.net/user_3CZmrJBghvprxYgai44zpzRR7Pg/hf_20261005_201304_8ca78f58-f9dd-4851-b141-a179189d62c5.png) |
+
+### 수정본 — 머리를 뒤 가운데로 묶음 (한쪽 어깨로 넘어가지 않게)
+
+| 버전 | 낮은 포니테일 (뒤로) | 낮은 번 (뒤로) |
+|---|---|---|
+| 웃는 얼굴 (메이크업) | [이미지](https://d8j0ntlcm91z4.cloudfront.net/user_3CZmrJBghvprxYgai44zpzRR7Pg/hf_20261005_202040_84ce4141-209b-41e0-9978-648c0f1ef3a4.png) | [이미지](https://d8j0ntlcm91z4.cloudfront.net/user_3CZmrJBghvprxYgai44zpzRR7Pg/hf_20261005_202039_9b6b984c-c4e9-440d-8b5c-67ca35007cfe.png) |
+| 생얼 | [이미지](https://d8j0ntlcm91z4.cloudfront.net/user_3CZmrJBghvprxYgai44zpzRR7Pg/hf_20261005_202039_8f3274e3-6845-4eca-8a14-2e33c889d3c5.png) | [이미지](https://d8j0ntlcm91z4.cloudfront.net/user_3CZmrJBghvprxYgai44zpzRR7Pg/hf_20261005_202040_c7d09289-3748-4fa1-8d76-936cb9dddcc6.png) |
