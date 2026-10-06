@@ -106,32 +106,32 @@ CSS = """
 @font-face { font-family: Head; src: url(%(fonts)s/bhs.ttf); }
 @page { size: A4 landscape; margin: 11mm 12mm 13mm; }
 * { box-sizing: border-box; }
-body { font-family: Doc, sans-serif; font-size: 9.6pt; line-height: 1.5; color: #231a1f; margin: 0; }
+body { font-family: Doc, sans-serif; font-size: 9.6pt; line-height: 1.5; color: #4a1236; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 .band { display: flex; justify-content: space-between; align-items: center; border-bottom: 2.5px solid #ae2f5a; padding-bottom: 6px; margin-bottom: 10px; }
 .band .tag { font-family: Head; font-size: 13pt; color: #fff; background: #ae2f5a; padding: 3px 12px; border-radius: 4px; }
-.band .meta { font-size: 8.5pt; color: #74636b; }
+.band .meta { font-size: 8.5pt; color: #7a2f5a; }
 h1 { font-family: Head; font-weight: 400; font-size: 20pt; color: #8e244d; margin: 4px 0 6px; }
 h2 { font-family: Head; font-weight: 400; font-size: 14pt; color: #8e244d; margin: 14px 0 6px; break-after: avoid; }
 p { margin: 3px 0; }
-blockquote { margin: 4px 0; padding: 4px 10px; border-left: 3px solid #d81b60; color: #555; font-style: italic; }
+blockquote { margin: 4px 0; padding: 4px 10px; border-left: 3px solid #d81b60; color: #6a2a4f; font-style: italic; }
 ul { margin: 3px 0 6px; padding-left: 18px; }
 li.sub { margin-left: 18px; list-style: circle; }
 ul.chk { list-style: none; padding-left: 4px; }
 ul.chk li::before { content: "☐  "; }
 code { font-family: Doc, sans-serif; color: #c2185b; font-size: 9pt; }
 pre { background: #f4f1f2; padding: 8px 10px; border-radius: 4px; font-family: Doc, sans-serif; white-space: pre-wrap; font-size: 9pt; }
-hr { border: 0; border-top: 1px solid #ddd; margin: 10px 0; }
+hr { border: 0; border-top: 1px solid #d6a9bf; margin: 10px 0; }
 table { width: 100%%; border-collapse: collapse; margin: 6px 0 8px; font-size: 9pt; }
 thead { display: table-header-group; }
 tr { break-inside: avoid; }
 th { background: #f8e1ea; text-align: left; font-weight: 700; }
-th, td { border: 1px solid #c9bcc2; padding: 4px 6px; vertical-align: top; }
+th, td { border: 1px solid #b3869e; padding: 4px 6px; vertical-align: top; }
 .strip { break-inside: avoid; margin: 6px 0 4px; }
 .strip .cap { font-weight: 700; color: #8e244d; font-size: 9pt; margin-bottom: 4px; }
 .frames { display: flex; gap: 8px; }
 .frames figure { margin: 0; width: 26mm; text-align: center; }
-.frames img { width: 26mm; height: 46.2mm; object-fit: cover; border-radius: 3px; border: 1px solid #ddd; }
-.frames figcaption { font-size: 7.5pt; color: #74636b; }
+.frames img { width: 26mm; height: 46.2mm; object-fit: cover; border-radius: 3px; border: 1px solid #d6a9bf; }
+.frames figcaption { font-size: 7.5pt; color: #7a2f5a; }
 """
 
 
@@ -157,7 +157,7 @@ const {{ chromium }} = require('playwright');
   await p.evaluate(() => document.fonts.ready);
   await p.pdf({{ path: {str(OUT)!r}, preferCSSPageSize: true, printBackground: true,
     displayHeaderFooter: true, headerTemplate: '<span></span>',
-    footerTemplate: '<div style="width:100%;font-size:8px;color:#888;text-align:center">뷰티쇼츠 납품 대본 1차 샘플 · <span class="pageNumber"></span> / <span class="totalPages"></span></div>' }});
+    footerTemplate: '<div style="width:100%;font-size:8px;color:#7a2f5a;text-align:center">뷰티쇼츠 납품 대본 1차 샘플 · <span class="pageNumber"></span> / <span class="totalPages"></span></div>' }});
   await b.close();
 }})();"""
         (Path(tmp) / "pdf.js").write_text(js, encoding="utf-8")
