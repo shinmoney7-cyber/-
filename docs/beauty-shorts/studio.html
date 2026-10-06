@@ -263,6 +263,7 @@ function drawScene(ctx, v, idx, opts = {}) {
   ctx.save(); ctx.clearRect(0, 0, W, H);
   const photo = PHOTOS[v + "-" + idx];
   if (photo) {
+    ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, W, H); // 배경이 투명한 사진 대비
     const r = Math.max(W / photo.naturalWidth, H / photo.naturalHeight), pw = photo.naturalWidth * r, ph = photo.naturalHeight * r;
     ctx.drawImage(photo, (W - pw) / 2, (H - ph) / 2, pw, ph);
     const sh = ctx.createLinearGradient(0, 0, 0, H * .45); sh.addColorStop(0, "rgba(0,0,0,.35)"); sh.addColorStop(1, "rgba(0,0,0,0)");

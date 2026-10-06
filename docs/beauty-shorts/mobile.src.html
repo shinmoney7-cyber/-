@@ -1,0 +1,381 @@
+<title>뷰티쇼츠 모바일</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: one-screen phone app — sticky top bar with A/B/C, a swipeable 9:16 scene carousel, details under the frame, a fixed bottom action bar. */
+:root {
+  --bg: #f6f1f3; --panel: #ffffff; --line: #e7dbe0; --fg: #241a1f; --muted: #76656d;
+  --accent: #ae2f5a; --accent-soft: #f7e0e8; --warn: #a85400; --warn-soft: #fff0dc; --scrim: rgba(20, 8, 14, .62);
+  --display: "Black Han Sans", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #140f12; --panel: #201920; --line: #3a2d35; --fg: #f2e8ed; --muted: #b3a0a9;
+    --accent: #f07ba1; --accent-soft: #45222f; --warn: #ffb35c; --warn-soft: #3d2a12; --scrim: rgba(0, 0, 0, .72);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #140f12; --panel: #201920; --line: #3a2d35; --fg: #f2e8ed; --muted: #b3a0a9;
+  --accent: #f07ba1; --accent-soft: #45222f; --warn: #ffb35c; --warn-soft: #3d2a12; --scrim: rgba(0, 0, 0, .72);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.5; -webkit-tap-highlight-color: transparent; }
+.app { max-width: 520px; margin: 0 auto; min-height: 100%; display: flex; flex-direction: column; padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-inline: 16px; padding-block: 12px 10px; display: grid; gap: 10px; border-bottom: 1px solid var(--line); }
+.title { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.title h1 { margin: 0; font-family: var(--display); font-weight: 400; font-size: 24px; letter-spacing: -.01em; }
+.title span { font-size: 12px; color: var(--muted); }
+.seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 4px; }
+.seg button { border: 0; background: transparent; color: var(--fg); border-radius: 9px; padding: 8px 4px; font: 500 13px var(--body); cursor: pointer; }
+.seg button b { font-family: var(--display); font-weight: 400; font-size: 16px; color: var(--accent); margin-right: 4px; }
+.seg button[aria-pressed="true"] { background: var(--accent-soft); }
+button:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+.track::-webkit-scrollbar { display: none; }
+.slide { flex: 0 0 100%; scroll-snap-align: center; padding-inline: 16px; padding-block: 14px 8px; display: grid; gap: 12px; min-width: 0; }
+.frame { justify-self: center; width: min(100%, calc(58vh * 9 / 16)); aspect-ratio: 9 / 16; max-width: 100%; background: #000; border-radius: 18px; overflow: hidden; box-shadow: 0 8px 26px rgba(40, 10, 25, .18); }
+.frame canvas { display: block; width: 100%; height: 100%; }
+.meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.stage { font-size: 12px; font-weight: 700; padding: 2px 9px; border-radius: 999px; color: #fff; }
+.when { font-family: var(--mono); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.tag { font-size: 11px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 12px; display: grid; gap: 8px; min-width: 0; }
+.row { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 8px; font-size: 14px; }
+.row > span:first-child { color: var(--muted); font-size: 12px; padding-top: 2px; }
+.card textarea { width: 100%; resize: none; font: 500 15px var(--body); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; }
+.flag { font-size: 12px; color: var(--warn); background: var(--warn-soft); border-radius: 8px; padding: 4px 8px; }
+
+.dots { display: flex; justify-content: center; gap: 6px; padding-block: 4px 0; }
+.dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--line); }
+.dots i.on { background: var(--accent); width: 18px; border-radius: 4px; }
+
+.bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; background: var(--panel); border-top: 1px solid var(--line); padding-inline: 16px; padding-block: 10px calc(10px + env(safe-area-inset-bottom, 0px)); }
+.bar .in { max-width: 520px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.btn { border: 1px solid var(--line); background: var(--panel); color: var(--fg); border-radius: 12px; padding: 12px 8px; font: 700 14px var(--body); cursor: pointer; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+
+.sheet[hidden] { display: none; }
+.sheet { position: fixed; inset: 0; z-index: 10; background: var(--scrim); display: grid; align-items: end; }
+.sheet .panel { background: var(--panel); border-radius: 18px 18px 0 0; max-height: 92%; overflow: auto; padding-inline: 16px; padding-block: 14px calc(16px + env(safe-area-inset-bottom, 0px)); display: grid; gap: 10px; max-width: 520px; width: 100%; margin: 0 auto; }
+.sheet h2 { margin: 0; font-family: var(--display); font-weight: 400; font-size: 20px; }
+.sheet p { margin: 0; color: var(--muted); font-size: 13px; }
+.sheet img { display: block; width: 100%; height: auto; border-radius: 10px; max-width: 100%; }
+.sheet img.frameimg { width: min(100%, 300px); margin: 0 auto; }
+.views { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+.views button { border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--muted); padding: 6px 4px; font: 700 14px var(--body); cursor: pointer; }
+.views button[aria-pressed="true"] { color: var(--fg); border-bottom-color: var(--accent); }
+.lib { padding-inline: 16px; padding-block: 14px 24px; display: grid; gap: 12px; }
+.chips { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+.chips button { flex: 0 0 auto; border: 1px solid var(--line); background: var(--panel); color: var(--fg); border-radius: 999px; padding: 6px 12px; font: 500 13px var(--body); cursor: pointer; }
+.chips button[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); }
+.cat { display: grid; gap: 8px; }
+.cat h2 { margin: 6px 0 0; font-size: 13px; color: var(--muted); font-weight: 700; letter-spacing: .04em; }
+.doc { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 12px; align-items: center; text-align: left; width: 100%; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 10px; color: var(--fg); font: inherit; cursor: pointer; }
+.doc img { width: 76px; aspect-ratio: 210 / 297; object-fit: cover; object-position: top; border-radius: 6px; border: 1px solid var(--line); background: #fff; max-width: 100%; }
+.doc b { display: block; font-size: 15px; }
+.doc small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+.lock { display: inline-block; margin-top: 6px; font-size: 11px; color: var(--warn); background: var(--warn-soft); border-radius: 999px; padding: 1px 8px; }
+.pages { display: grid; gap: 8px; }
+.pages img { width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); background: #fff; }
+.mgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.mcard { display: grid; gap: 6px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 8px; color: var(--fg); font: inherit; text-align: left; cursor: pointer; min-width: 0; }
+.mcard img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; object-position: top; border-radius: 9px; background: #fff; max-width: 100%; }
+.mcard.on { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+.mtags { display: flex; flex-wrap: wrap; gap: 4px; }
+.mtags span { font-size: 11px; border-radius: 999px; padding: 1px 7px; background: var(--bg); border: 1px solid var(--line); color: var(--muted); }
+.mtags span.pre { color: #fff; background: #5a7d8c; border-color: #5a7d8c; }
+.mtags span.post { color: #fff; background: var(--accent); border-color: var(--accent); }
+.swap { justify-self: start; border: 1px solid var(--line); background: var(--panel); color: var(--fg); border-radius: 999px; padding: 6px 12px; font: 500 13px var(--body); cursor: pointer; }
+.illu { border: 1px dashed var(--line); background: transparent; color: var(--muted); border-radius: 14px; padding: 12px; font: 500 13px var(--body); cursor: pointer; }
+.addrow { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.addrow .btn { text-align: center; font-size: 13px; padding: 10px 6px; }
+.hint { margin: 0; font-size: 12px; color: var(--muted); }
+.del { border: 1px solid var(--line); background: var(--panel); color: var(--warn); border-radius: 12px; padding: 10px; font: 700 13px var(--body); cursor: pointer; }
+@media (prefers-reduced-motion: reduce) { .track { scroll-behavior: auto; } }
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="title"><h1>뷰티쇼츠</h1><span>수분 세럼 ABC · 25초 · 9:16</span></div>
+    <div class="views" role="group" aria-label="화면"><button id="vScript" aria-pressed="true">대본</button><button id="vModel" aria-pressed="false">모델</button><button id="vLib" aria-pressed="false">자료</button></div>
+    <div class="seg" id="seg" role="group" aria-label="대본 버전"></div>
+  </header>
+  <main id="scriptView">
+    <div class="track" id="track" aria-label="장면 넘기기"></div>
+    <div class="dots" id="dots" aria-hidden="true"></div>
+  </main>
+  <section class="lib" id="modelView" hidden>
+    <div class="chips" id="mchips" role="group" aria-label="모델 사진 분류"></div>
+    <div class="addrow">
+      <label class="btn" for="addPre">+ 메이크업 전 사진</label><input type="file" accept="image/*" id="addPre" multiple hidden>
+      <label class="btn" for="addPost">+ 메이크업 후 사진</label><input type="file" accept="image/*" id="addPost" multiple hidden>
+    </div>
+    <p class="hint" id="addHint">힉스필드에서 저장한 사진을 추가하면 이 휴대폰에 보관되고, 장면의 "모델 사진 바꾸기"에서 고를 수 있어요.</p>
+    <div class="mgrid" id="mgrid"></div>
+  </section>
+  <section class="lib" id="libView" hidden>
+    <div class="chips" id="chips" role="group" aria-label="카테고리"></div>
+    <div id="docs"></div>
+  </section>
+</div>
+<nav class="bar" id="bar"><div class="in">
+  <button class="btn primary" id="saveFrame">이 장면 이미지</button>
+  <button class="btn" id="saveBoard">스토리보드 한 장</button>
+</div></nav>
+<div class="sheet" id="pickSheet" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="pickTitle">
+    <h2 id="pickTitle">모델 사진 고르기</h2>
+    <p id="pickNote"></p>
+    <div class="chips" id="pchips" role="group" aria-label="사진 분류"></div>
+    <div class="mgrid" id="pgrid"></div>
+    <button class="illu" id="pickIllu">사진 빼고 일러스트로</button>
+    <button class="btn" id="pickClose">닫기</button>
+  </div>
+</div>
+<div class="sheet" id="docSheet" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="docTitle">
+    <h2 id="docTitle">자료</h2>
+    <p id="docNote"></p>
+    <div class="pages" id="docPages"></div>
+    <button class="del" id="docDelete" hidden>이 사진 삭제</button>
+    <button class="btn" id="docClose">닫기</button>
+  </div>
+</div>
+<div class="sheet" id="sheet" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <h2 id="sheetTitle">이미지</h2>
+    <p>이미지를 길게 눌러 사진에 저장하세요.</p>
+    <img id="sheetImg" alt="">
+    <button class="btn" id="sheetClose">닫기</button>
+  </div>
+</div>
+
+<script>
+/*@DATA@*/
+const MODELS = /*@MODELS@*/;
+const SCENE_DEFAULT = /*@SCENES@*/;
+/*@DRAW@*/
+
+/* ---------- mobile UI ---------- */
+const $ = id => document.getElementById(id);
+const ui = { v: "A", i: 0 };
+const choice = { ...SCENE_DEFAULT }; // "A-0" -> model photo id, null = 일러스트
+const MODEL_IMG = {};
+try {
+  const saved = JSON.parse(localStorage.getItem("bs-mobile") || "null");
+  if (saved && saved.subs) for (const k in saved.subs) saved.subs[k].forEach((s, j) => { if (VERSIONS[k] && VERSIONS[k].scenes[j]) VERSIONS[k].scenes[j].sub = s; });
+  if (saved && VERSIONS[saved.v]) ui.v = saved.v;
+  if (saved && saved.choice) for (const k in saved.choice) if (saved.choice[k] === null || typeof saved.choice[k] === "string") choice[k] = saved.choice[k];
+} catch (e) {}
+function save() {
+  try { const subs = {}; for (const k in VERSIONS) subs[k] = VERSIONS[k].scenes.map(s => s.sub); localStorage.setItem("bs-mobile", JSON.stringify({ v: ui.v, subs, choice })); } catch (e) {}
+}
+function applyChoice(key) { const id = choice[key]; if (id && MODEL_IMG[id]) PHOTOS[key] = MODEL_IMG[id]; else delete PHOTOS[key]; }
+const modelOf = key => MODELS.find(m => m.id === choice[key]);
+const canvases = [];
+function paint(idx) {
+  const c = canvases[idx]; if (!c) return;
+  const ctx = c.getContext("2d"); ctx.setTransform(c.width / W, 0, 0, c.height / H, 0, 0);
+  drawScene(ctx, ui.v, idx, { clean: true });
+}
+function renderSeg() {
+  $("seg").innerHTML = "";
+  for (const k of Object.keys(VERSIONS)) {
+    const b = document.createElement("button");
+    b.setAttribute("aria-pressed", String(k === ui.v));
+    b.innerHTML = `<b>${k}</b>${VERSIONS[k].name}`;
+    b.onclick = () => { if (ui.v === k) return; ui.v = k; ui.i = 0; save(); render(); };
+    $("seg").appendChild(b);
+  }
+}
+function renderSlides() {
+  const track = $("track"); track.innerHTML = ""; canvases.length = 0;
+  VERSIONS[ui.v].scenes.forEach((s, idx) => {
+    const el = document.createElement("section");
+    el.className = "slide"; el.setAttribute("aria-label", `${idx + 1}번 장면`);
+    const key = ui.v + "-" + idx, m = modelOf(key);
+    el.innerHTML = `
+      <div class="frame"><canvas width="540" height="960"></canvas></div>
+      <div class="meta"><span class="stage" style="background:${STAGE_COLOR[s.stage]}">${s.stage}</span><span class="when">${idx + 1}/${VERSIONS[ui.v].scenes.length} · ${s.t}</span><span class="tag">${m ? "모델 · 메이크업 " + m.phase : "일러스트 시안"}</span></div>
+      <button class="swap" type="button">모델 사진 바꾸기</button>
+      <div class="card">
+        <div class="row"><span>자막</span><div><textarea rows="2" id="sub-${ui.v}-${idx}" aria-label="자막"></textarea></div></div>
+        <div class="flag" hidden></div>
+        <div class="row"><span>대사</span><span></span></div>
+        <div class="row"><span>화면</span><span></span></div>
+        <div class="row"><span>효과</span><span></span></div>
+      </div>`;
+    const spans = el.querySelectorAll(".row > span:nth-child(2)");
+    spans[0].textContent = s.say; spans[1].textContent = s.shot; spans[2].textContent = s.fx;
+    const ta = el.querySelector("textarea"), flag = el.querySelector(".flag");
+    ta.value = s.sub;
+    const check = () => { const hits = risky(ta.value); flag.hidden = !hits.length; flag.textContent = hits.length ? `검수 필요: "${hits.join('", "')}"` : ""; };
+    check();
+    ta.addEventListener("input", () => { s.sub = ta.value; check(); save(); paint(idx); });
+    el.querySelector(".swap").addEventListener("click", () => openPicker(idx));
+    canvases.push(el.querySelector("canvas"));
+    track.appendChild(el);
+  });
+  VERSIONS[ui.v].scenes.forEach((_, idx) => paint(idx));
+  $("dots").innerHTML = VERSIONS[ui.v].scenes.map((_, k) => `<i class="${k === 0 ? "on" : ""}"></i>`).join("");
+  track.scrollLeft = 0;
+}
+function render() { renderSeg(); renderSlides(); }
+$("track").addEventListener("scroll", () => {
+  const t = $("track"), i = Math.round(t.scrollLeft / t.clientWidth);
+  if (i !== ui.i) { ui.i = i; [...$("dots").children].forEach((d, k) => d.classList.toggle("on", k === i)); }
+}, { passive: true });
+function openSheet(canvas, title, cls) {
+  $("sheetImg").src = canvas.toDataURL("image/jpeg", 0.92); $("sheetImg").className = cls; $("sheetImg").alt = title;
+  $("sheetTitle").textContent = title; $("sheet").hidden = false;
+}
+$("saveFrame").addEventListener("click", () => {
+  const s = VERSIONS[ui.v].scenes[ui.i];
+  openSheet(sceneCanvas(ui.v, ui.i, { clean: true }), `${ui.v}안 ${ui.i + 1}번 장면 · ${s.t}`, "frameimg");
+});
+$("saveBoard").addEventListener("click", () => openSheet(boardCanvas(ui.v), `${ui.v}안 스토리보드`, ""));
+$("sheetClose").addEventListener("click", () => { $("sheet").hidden = true; });
+$("sheet").addEventListener("click", e => { if (e.target === $("sheet")) $("sheet").hidden = true; });
+
+/* ---------- 내 사진 (IndexedDB, 이 기기에만 보관) ---------- */
+const store = (() => {
+  let dbp = null;
+  const open = () => dbp || (dbp = new Promise((res, rej) => {
+    try { const r = indexedDB.open("bs-mobile", 1); r.onupgradeneeded = () => r.result.createObjectStore("photos", { keyPath: "id" }); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); } catch (e) { rej(e); }
+  }));
+  const tx = (mode, fn) => open().then(db => new Promise((res, rej) => { const t = db.transaction("photos", mode); const out = fn(t.objectStore("photos")); t.oncomplete = () => res(out && out.result); t.onerror = () => rej(t.error); }));
+  return { all: () => tx("readonly", st => st.getAll()).catch(() => []), put: rec => tx("readwrite", st => st.put(rec)), del: id => tx("readwrite", st => st.delete(id)) };
+})();
+function readAsDataURL(f) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(f); }); }
+function loadImg(src) { return new Promise(res => { const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = src; }); }
+async function addUserPhotos(files, phase) {
+  let n = 0;
+  for (const f of files) {
+    const src = await readAsDataURL(f).catch(() => null); if (!src) continue;
+    const img = await loadImg(src); if (!img) continue;
+    const m = { id: "user-" + Date.now() + "-" + n, phase, hair: "내 사진", look: "직접 추가", src, user: true };
+    try { await store.put(m); } catch (e) { $("addHint").textContent = "이 브라우저는 사진 보관을 막고 있어요. 지금 화면에서만 쓸 수 있어요."; }
+    MODELS.push(m); MODEL_IMG[m.id] = img; n++;
+  }
+  if (n) { mcat = "메이크업 " + phase; renderModels(); }
+}
+$("addPre").addEventListener("change", e => { addUserPhotos([...e.target.files], "전"); e.target.value = ""; });
+$("addPost").addEventListener("change", e => { addUserPhotos([...e.target.files], "후"); e.target.value = ""; });
+
+/* ---------- 모델 (model photos) ---------- */
+const MCATS = ["전체", "메이크업 전", "메이크업 후", "묶은 머리", "풀어 내린 머리"];
+const inCat = (m, c) => c === "전체" || c === "메이크업 " + m.phase || c === m.hair;
+function chipRow(box, cur, onPick) {
+  box.innerHTML = "";
+  for (const c of MCATS) { const b = document.createElement("button"); b.textContent = c; b.setAttribute("aria-pressed", String(c === cur)); b.onclick = () => onPick(c); box.appendChild(b); }
+}
+function modelCard(m, on, onClick) {
+  const b = document.createElement("button"); b.className = "mcard" + (on ? " on" : ""); b.type = "button";
+  b.innerHTML = `<img loading="lazy" alt="" src="${m.src}"><span class="mtags"><span class="${m.phase === "전" ? "pre" : "post"}">메이크업 ${m.phase}</span><span>${m.hair}</span><span>${m.look}</span></span>`;
+  b.onclick = onClick; return b;
+}
+let mcat = "전체";
+function renderModels() {
+  chipRow($("mchips"), mcat, c => { mcat = c; renderModels(); });
+  const g = $("mgrid"); g.innerHTML = "";
+  for (const m of MODELS.filter(x => inCat(x, mcat))) {
+    const used = Object.entries(choice).filter(([, id]) => id === m.id).map(([k]) => k.replace("-", "안 ").replace(/(\d+)$/, n => (+n + 1) + "번"));
+    const card = modelCard(m, false, () => { $("docTitle").textContent = "모델 · 메이크업 " + m.phase; $("docNote").textContent = used.length ? "사용 중인 장면: " + used.join(", ") : "아직 장면에 쓰지 않은 사진이에요. 대본 탭의 \"모델 사진 바꾸기\"로 넣을 수 있어요."; $("docPages").innerHTML = `<img alt="" src="${m.src}">`; $("docDelete").hidden = !m.user; $("docDelete").onclick = () => removeUserPhoto(m); $("docSheet").hidden = false; });
+    g.appendChild(card);
+  }
+}
+async function removeUserPhoto(m) {
+  try { await store.del(m.id); } catch (e) {}
+  const i = MODELS.indexOf(m); if (i >= 0) MODELS.splice(i, 1);
+  for (const k in choice) if (choice[k] === m.id) { choice[k] = SCENE_DEFAULT[k] || null; applyChoice(k); }
+  save(); $("docSheet").hidden = true; renderModels(); renderSlides();
+}
+let pick = { idx: 0, cat: "전체" };
+function openPicker(idx) { pick = { idx, cat: "전체" }; renderPicker(); $("pickSheet").hidden = false; $("pickSheet").querySelector(".panel").scrollTop = 0; }
+function renderPicker() {
+  const key = ui.v + "-" + pick.idx, s = VERSIONS[ui.v].scenes[pick.idx];
+  $("pickTitle").textContent = `${ui.v}안 ${pick.idx + 1}번 장면 사진`;
+  $("pickNote").textContent = s.shot;
+  chipRow($("pchips"), pick.cat, c => { pick.cat = c; renderPicker(); });
+  const g = $("pgrid"); g.innerHTML = "";
+  for (const m of MODELS.filter(x => inCat(x, pick.cat))) g.appendChild(modelCard(m, choice[key] === m.id, () => setChoice(key, m.id)));
+}
+function setChoice(key, id) {
+  choice[key] = id; applyChoice(key); save(); $("pickSheet").hidden = true;
+  const keepI = ui.i; renderSlides(); const t = $("track"); t.scrollLeft = t.clientWidth * keepI; ui.i = keepI;
+  [...$("dots").children].forEach((d, k) => d.classList.toggle("on", k === keepI));
+}
+$("pickIllu").addEventListener("click", () => setChoice(ui.v + "-" + pick.idx, null));
+$("pickClose").addEventListener("click", () => { $("pickSheet").hidden = true; });
+$("pickSheet").addEventListener("click", e => { if (e.target === $("pickSheet")) $("pickSheet").hidden = true; });
+
+/* ---------- 자료 (materials) ---------- */
+const CATS = ["클라이언트 응대", "견적·단가", "운영 가이드"];
+const DOCS = [
+  { cat: "클라이언트 응대", title: "클라이언트 응대 체크리스트", desc: "문의 접수부터 사후 관리까지 6단계 + 레드 플래그", file: "checklist", pages: 4 },
+  { cat: "견적·단가", title: "숏폼 제작 대행 견적서", desc: "STARTER·GROWTH·PREMIUM 3옵션, 상세 내역, 결제 조건", file: "quote", pages: 3 },
+  { cat: "견적·단가", title: "숏폼 대행 시장 단가표 2026", desc: "5단계 구간별 단가, 작업 항목별 단가", file: "rates", pages: 2, lock: true },
+  { cat: "운영 가이드", title: "1인 대행사 운영체제 2026", desc: "영업·소통·제작·데이터·정산 시스템, 90일 실행 플랜", file: "agency-os", pages: 16, pad: 2, lock: true },
+];
+const pageSrc = (d, n) => `materials/${d.file}-${String(n).padStart(d.pad || 1, "0")}.jpg`;
+let cat = "전체";
+function renderLib() {
+  $("chips").innerHTML = "";
+  for (const c of ["전체", ...CATS]) {
+    const b = document.createElement("button"); b.textContent = c; b.setAttribute("aria-pressed", String(c === cat));
+    b.onclick = () => { cat = c; renderLib(); }; $("chips").appendChild(b);
+  }
+  const box = $("docs"); box.innerHTML = "";
+  for (const c of CATS) {
+    if (cat !== "전체" && cat !== c) continue;
+    const sec = document.createElement("div"); sec.className = "cat";
+    sec.innerHTML = `<h2>${c}</h2>`;
+    for (const d of DOCS.filter(x => x.cat === c)) {
+      const b = document.createElement("button"); b.className = "doc";
+      b.innerHTML = `<img loading="lazy" alt="" src="${pageSrc(d, 1)}"><span><b></b><small></small><small>${d.pages}쪽</small>${d.lock ? '<span class="lock">강의 수강생 전용 · 외부 공유 금지</span>' : ""}</span>`;
+      b.querySelector("b").textContent = d.title; b.querySelector("small").textContent = d.desc;
+      b.onclick = () => openDoc(d); sec.appendChild(b);
+    }
+    box.appendChild(sec);
+  }
+}
+function openDoc(d) {
+  $("docTitle").textContent = d.title;
+  $("docNote").textContent = d.lock ? "강의 수강생 전용 자료예요. 외주처 등 다른 사람에게 공유하지 마세요." : "템플릿이에요. [ ] 자리를 채워서 쓰세요.";
+  $("docPages").innerHTML = Array.from({ length: d.pages }, (_, k) => `<img loading="lazy" alt="${k + 1}쪽" src="${pageSrc(d, k + 1)}">`).join("");
+  $("docDelete").hidden = true; $("docSheet").hidden = false; $("docSheet").querySelector(".panel").scrollTop = 0;
+}
+$("docClose").addEventListener("click", () => { $("docSheet").hidden = true; });
+$("docSheet").addEventListener("click", e => { if (e.target === $("docSheet")) $("docSheet").hidden = true; });
+function setView(v) {
+  for (const [id, name] of [["vScript", "script"], ["vModel", "model"], ["vLib", "lib"]]) $(id).setAttribute("aria-pressed", String(v === name));
+  const script = v === "script";
+  $("scriptView").hidden = !script; $("seg").hidden = !script; $("bar").hidden = !script;
+  $("modelView").hidden = v !== "model"; $("libView").hidden = v !== "lib";
+  if (v === "model") renderModels(); if (v === "lib") renderLib();
+  window.scrollTo(0, 0);
+}
+$("vScript").addEventListener("click", () => setView("script"));
+$("vModel").addEventListener("click", () => setView("model"));
+$("vLib").addEventListener("click", () => setView("lib"));
+
+render();
+const photoLoads = MODELS.map(m => new Promise(res => {
+  const img = new Image(); img.onload = () => { MODEL_IMG[m.id] = img; res(); }; img.onerror = res; img.src = m.src;
+}));
+const fontLoads = document.fonts ? Promise.all([
+  document.fonts.load("92px 'Black Han Sans'"), document.fonts.load("500 30px 'IBM Plex Mono'"),
+  document.fonts.load("700 32px 'IBM Plex Sans KR'"), document.fonts.load("400 25px 'IBM Plex Sans KR'")
+]).catch(() => {}) : Promise.resolve();
+const userLoads = store.all().then(async recs => { for (const m of recs || []) { const img = await loadImg(m.src); if (img) { MODELS.push(m); MODEL_IMG[m.id] = img; } } });
+Promise.all([fontLoads, userLoads, ...photoLoads]).then(() => { for (const k in choice) if (choice[k] && !MODEL_IMG[choice[k]]) choice[k] = SCENE_DEFAULT[k] || null; for (const k in choice) applyChoice(k); renderSlides(); VERSIONS[ui.v].scenes.forEach((_, idx) => paint(idx)); window.BSM = { ready: true, VERSIONS, sceneCanvas, boardCanvas }; });
+</script>
