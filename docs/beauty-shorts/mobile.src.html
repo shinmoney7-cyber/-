@@ -1,7 +1,7 @@
 <title>뷰티쇼츠 모바일</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Do+Hyeon&family=Jua&family=Gowun+Dodum&family=Nanum+Myeongjo:wght@800&family=Noto+Sans+KR:wght@900&family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap">
 <style>
 /* Layout: one-screen phone app — sticky top bar with A/B/C, a swipeable 9:16 scene carousel, details under the frame, a fixed bottom action bar. */
 :root {
@@ -27,7 +27,7 @@
 [hidden] { display: none !important; }
 html, body { height: 100%; }
 body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.5; -webkit-tap-highlight-color: transparent; }
-.app { max-width: 520px; margin: 0 auto; min-height: 100%; display: flex; flex-direction: column; padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+.app { max-width: 520px; margin: 0 auto; min-height: 100%; display: flex; flex-direction: column; padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
 
 .top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-inline: 16px; padding-block: 12px 10px; display: grid; gap: 10px; border-bottom: 1px solid var(--line); }
 .title { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
@@ -59,7 +59,11 @@ button:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent);
 .dots i.on { background: var(--accent); width: 18px; border-radius: 4px; }
 
 .bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; background: var(--panel); border-top: 1px solid var(--line); padding-inline: 16px; padding-block: 10px calc(10px + env(safe-area-inset-bottom, 0px)); }
-.bar .in { max-width: 520px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.bar .in { max-width: 520px; margin: 0 auto; display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.tool { border: 1px solid var(--line); background: var(--panel); color: var(--fg); border-radius: 12px; padding: 8px 2px; font: 700 12px var(--body); cursor: pointer; display: grid; justify-items: center; gap: 2px; }
+.tool svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.tool[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+.tool.play { background: var(--accent); border-color: var(--accent); color: var(--bg); }
 .btn { border: 1px solid var(--line); background: var(--panel); color: var(--fg); border-radius: 12px; padding: 12px 8px; font: 700 14px var(--body); cursor: pointer; }
 .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
 
@@ -100,12 +104,35 @@ button:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent);
 .addrow .btn { text-align: center; font-size: 13px; padding: 10px 6px; }
 .hint { margin: 0; font-size: 12px; color: var(--muted); }
 .del { border: 1px solid var(--line); background: var(--panel); color: var(--warn); border-radius: 12px; padding: 10px; font: 700 13px var(--body); cursor: pointer; }
+.ctl { position: fixed; left: 0; right: 0; bottom: calc(66px + env(safe-area-inset-bottom, 0px)); z-index: 7; }
+.ctl .box { max-width: 520px; margin: 0 auto; background: var(--panel); border: 1px solid var(--line); border-bottom: 0; border-radius: 18px 18px 0 0; box-shadow: 0 -8px 24px rgba(40, 10, 25, .14); max-height: 46vh; overflow: auto; padding-inline: 16px; padding-block: 12px 14px; display: grid; gap: 12px; }
+.ctl .head { display: flex; justify-content: space-between; align-items: center; }
+.ctl .head b { font-family: var(--display); font-weight: 400; font-size: 18px; }
+.x { border: 0; background: transparent; color: var(--muted); font: 700 14px var(--body); padding: 4px 8px; cursor: pointer; }
+.field { display: grid; gap: 6px; }
+.field > span { font-size: 12px; color: var(--muted); font-weight: 700; letter-spacing: .03em; }
+.field > span em { font-style: normal; font-weight: 500; color: var(--fg); font-family: var(--mono); }
+.opts { display: flex; flex-wrap: wrap; gap: 6px; }
+.opts button { border: 1px solid var(--line); background: var(--bg); color: var(--fg); border-radius: 999px; padding: 6px 11px; font: 500 13px var(--body); cursor: pointer; }
+.opts button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.sw { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--line); cursor: pointer; padding: 0; }
+.sw[aria-pressed="true"] { outline: 3px solid var(--accent); outline-offset: 2px; }
+.field input[type=range] { width: 100%; accent-color: var(--accent); }
+.field input[type=text], .field textarea { width: 100%; font: 500 14px var(--body); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.small { font-size: 12px; color: var(--muted); margin: 0; }
+.small a { color: var(--accent); }
+.prod { border: 1px solid var(--line); background: var(--panel); color: var(--muted); border-radius: 999px; padding: 4px 10px; font: 500 12px var(--body); cursor: pointer; max-width: 62%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.prod span { color: var(--fg); font-weight: 700; }
+.drop { border: 2px dashed var(--line); border-radius: 14px; padding: 14px; display: grid; justify-items: center; gap: 8px; text-align: center; color: var(--muted); font-size: 13px; cursor: pointer; background: var(--bg); }
+.drop.over { border-color: var(--accent); background: var(--accent-soft); }
+.drop img { max-height: 160px; max-width: 100%; border-radius: 8px; }
 @media (prefers-reduced-motion: reduce) { .track { scroll-behavior: auto; } }
 </style>
 
 <div class="app">
   <header class="top">
-    <div class="title"><h1>뷰티쇼츠</h1><span>수분 세럼 ABC · 25초 · 9:16</span></div>
+    <div class="title"><h1>뷰티쇼츠</h1><button class="prod" id="prodBtn" type="button"><span id="prodName">수분 세럼 ABC</span> · 제품 바꾸기</button></div>
     <div class="views" role="group" aria-label="화면"><button id="vScript" aria-pressed="true">대본</button><button id="vModel" aria-pressed="false">모델</button><button id="vLib" aria-pressed="false">자료</button></div>
     <div class="seg" id="seg" role="group" aria-label="대본 버전"></div>
   </header>
@@ -127,9 +154,13 @@ button:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent);
     <div id="docs"></div>
   </section>
 </div>
+<div class="ctl" id="ctl" hidden><div class="box" id="ctlBox"></div></div>
 <nav class="bar" id="bar"><div class="in">
-  <button class="btn primary" id="saveFrame">이 장면 이미지</button>
-  <button class="btn" id="saveBoard">스토리보드 한 장</button>
+  <button class="tool" data-panel="sub" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 6h16M9 6v12M15 12h5M17.5 12v6"/></svg>자막</button>
+  <button class="tool" data-panel="bgm" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg>BGM</button>
+  <button class="tool" data-panel="voice" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>음성</button>
+  <button class="tool play" id="playBtn"><svg viewBox="0 0 24 24" id="playIcon"><path d="M7 5l12 7-12 7z"/></svg><span id="playLabel">재생</span></button>
+  <button class="tool" data-panel="save" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>저장</button>
 </div></nav>
 <div class="sheet" id="pickSheet" hidden>
   <div class="panel" role="dialog" aria-modal="true" aria-labelledby="pickTitle">
@@ -168,16 +199,23 @@ const SCENE_DEFAULT = /*@SCENES@*/;
 /* ---------- mobile UI ---------- */
 const $ = id => document.getElementById(id);
 const ui = { v: "A", i: 0 };
+const BGM_SET = { preset: "lofi", vol: 0.35 };
+const PROD_SET = { name: "수분 세럼 ABC", url: "" };
+const VOICE_SET = { ref: "", speed: 1.0, emotion: "", vol: 1.0 };
 const choice = { ...SCENE_DEFAULT }; // "A-0" -> model photo id, null = 일러스트
 const MODEL_IMG = {};
 try {
   const saved = JSON.parse(localStorage.getItem("bs-mobile") || "null");
   if (saved && saved.subs) for (const k in saved.subs) saved.subs[k].forEach((s, j) => { if (VERSIONS[k] && VERSIONS[k].scenes[j]) VERSIONS[k].scenes[j].sub = s; });
   if (saved && VERSIONS[saved.v]) ui.v = saved.v;
+  if (saved && saved.style) Object.assign(SUB_STYLE, saved.style);
+  if (saved && saved.bgm) Object.assign(BGM_SET, saved.bgm);
+  if (saved && saved.voice) Object.assign(VOICE_SET, saved.voice);
+  if (saved && saved.product) Object.assign(PROD_SET, saved.product);
   if (saved && saved.choice) for (const k in saved.choice) if (saved.choice[k] === null || typeof saved.choice[k] === "string") choice[k] = saved.choice[k];
 } catch (e) {}
 function save() {
-  try { const subs = {}; for (const k in VERSIONS) subs[k] = VERSIONS[k].scenes.map(s => s.sub); localStorage.setItem("bs-mobile", JSON.stringify({ v: ui.v, subs, choice })); } catch (e) {}
+  try { const subs = {}; for (const k in VERSIONS) subs[k] = VERSIONS[k].scenes.map(s => s.sub); localStorage.setItem("bs-mobile", JSON.stringify({ v: ui.v, subs, choice, style: SUB_STYLE, bgm: BGM_SET, voice: VOICE_SET, product: PROD_SET })); } catch (e) {}
 }
 function applyChoice(key) { const id = choice[key]; if (id && MODEL_IMG[id]) PHOTOS[key] = MODEL_IMG[id]; else delete PHOTOS[key]; }
 const modelOf = key => MODELS.find(m => m.id === choice[key]);
@@ -187,13 +225,14 @@ function paint(idx) {
   const ctx = c.getContext("2d"); ctx.setTransform(c.width / W, 0, 0, c.height / H, 0, 0);
   drawScene(ctx, ui.v, idx, { clean: true });
 }
+function repaintAll() { VERSIONS[ui.v].scenes.forEach((_, idx) => paint(idx)); }
 function renderSeg() {
   $("seg").innerHTML = "";
   for (const k of Object.keys(VERSIONS)) {
     const b = document.createElement("button");
     b.setAttribute("aria-pressed", String(k === ui.v));
     b.innerHTML = `<b>${k}</b>${VERSIONS[k].name}`;
-    b.onclick = () => { if (ui.v === k) return; ui.v = k; ui.i = 0; save(); render(); };
+    b.onclick = () => { if (ui.v === k) return; stopPlay(); ui.v = k; ui.i = 0; save(); render(); if (panel) renderPanel(); };
     $("seg").appendChild(b);
   }
 }
@@ -212,10 +251,11 @@ function renderSlides() {
         <div class="flag" hidden></div>
         <div class="row"><span>대사</span><span></span></div>
         <div class="row"><span>화면</span><span></span></div>
+        <div class="row"><span>촬영</span><span></span></div>
         <div class="row"><span>효과</span><span></span></div>
       </div>`;
     const spans = el.querySelectorAll(".row > span:nth-child(2)");
-    spans[0].textContent = s.say; spans[1].textContent = s.shot; spans[2].textContent = s.fx;
+    spans[0].textContent = s.say; spans[1].textContent = s.shot; spans[2].textContent = s.cam; spans[3].textContent = s.fx;
     const ta = el.querySelector("textarea"), flag = el.querySelector(".flag");
     ta.value = s.sub;
     const check = () => { const hits = risky(ta.value); flag.hidden = !hits.length; flag.textContent = hits.length ? `검수 필요: "${hits.join('", "')}"` : ""; };
@@ -232,19 +272,271 @@ function renderSlides() {
 function render() { renderSeg(); renderSlides(); }
 $("track").addEventListener("scroll", () => {
   const t = $("track"), i = Math.round(t.scrollLeft / t.clientWidth);
-  if (i !== ui.i) { ui.i = i; [...$("dots").children].forEach((d, k) => d.classList.toggle("on", k === i)); }
+  if (i !== ui.i) { ui.i = i; [...$("dots").children].forEach((d, k) => d.classList.toggle("on", k === i)); if (panel === "sub" && !playing) renderPanel(); }
 }, { passive: true });
 function openSheet(canvas, title, cls) {
   $("sheetImg").src = canvas.toDataURL("image/jpeg", 0.92); $("sheetImg").className = cls; $("sheetImg").alt = title;
   $("sheetTitle").textContent = title; $("sheet").hidden = false;
 }
-$("saveFrame").addEventListener("click", () => {
-  const s = VERSIONS[ui.v].scenes[ui.i];
-  openSheet(sceneCanvas(ui.v, ui.i, { clean: true }), `${ui.v}안 ${ui.i + 1}번 장면 · ${s.t}`, "frameimg");
-});
-$("saveBoard").addEventListener("click", () => openSheet(boardCanvas(ui.v), `${ui.v}안 스토리보드`, ""));
+function saveFrame() { const s = VERSIONS[ui.v].scenes[ui.i]; openSheet(sceneCanvas(ui.v, ui.i, { clean: true }), `${ui.v}안 ${ui.i + 1}번 장면 · ${s.t}`, "frameimg"); }
+function saveBoard() { openSheet(boardCanvas(ui.v), `${ui.v}안 스토리보드`, ""); }
 $("sheetClose").addEventListener("click", () => { $("sheet").hidden = true; });
 $("sheet").addEventListener("click", e => { if (e.target === $("sheet")) $("sheet").hidden = true; });
+
+/* ---------- 컨트롤 바: 자막 · BGM · 음성 · 재생 · 저장 ---------- */
+const FONTS = [
+  { name: "블랙한산스", css: "'Black Han Sans', sans-serif", w: 400 },
+  { name: "도현", css: "'Do Hyeon', sans-serif", w: 400 },
+  { name: "주아", css: "'Jua', sans-serif", w: 400 },
+  { name: "고운돋움", css: "'Gowun Dodum', sans-serif", w: 400 },
+  { name: "노토 산스 굵게", css: "'Noto Sans KR', sans-serif", w: 900 },
+  { name: "나눔명조", css: "'Nanum Myeongjo', serif", w: 800 },
+];
+const SWATCH = ["#ffffff", "#ffe36e", "#ff8fb1", "#9fe3ff", "#c8f7a8", "#111111"];
+const STROKES = ["#111111", "#ffffff", "#ae2f5a", "#2b3a8f"];
+const POS = [["auto", "자동"], ["top", "상단"], ["middle", "중앙"], ["bottom", "하단"]];
+const BGMS = [["none", "없음"], ["lofi", "로파이 잔잔"], ["pop", "경쾌한 팝"], ["piano", "피아노 감성"], ["user", "내 BGM 파일"]];
+const EMOS = [["", "기본"], ["(calm)", "차분"], ["(happy)", "밝게"], ["(excited)", "신나게"], ["(confident)", "자신감"], ["(satisfied)", "만족"]];
+const AUDIO = { bgmFile: null, voice: {} }; // object URLs: user BGM, voice per version
+let panel = null;
+
+const secs = t => { const [m, s] = t.split(":").map(Number); return m * 60 + s; };
+const range = t => t.split("–").map(secs);
+function opts(items, cur, onPick) {
+  const d = document.createElement("div"); d.className = "opts";
+  for (const [val, label] of items) { const b = document.createElement("button"); b.type = "button"; b.textContent = label; b.setAttribute("aria-pressed", String(val === cur)); b.onclick = () => onPick(val); d.appendChild(b); }
+  return d;
+}
+function swatches(list, cur, onPick) {
+  const d = document.createElement("div"); d.className = "opts";
+  for (const c of list) { const b = document.createElement("button"); b.type = "button"; b.className = "sw"; b.style.background = c; b.setAttribute("aria-label", c); b.setAttribute("aria-pressed", String(c === cur)); b.onclick = () => onPick(c); d.appendChild(b); }
+  return d;
+}
+function field(label, ...nodes) { const f = document.createElement("div"); f.className = "field"; const sp = document.createElement("span"); sp.innerHTML = label; f.appendChild(sp); nodes.forEach(n => f.appendChild(n)); return f; }
+function slider(min, max, step, val, onInput) { const r = document.createElement("input"); r.type = "range"; r.min = min; r.max = max; r.step = step; r.value = val; r.oninput = () => onInput(+r.value); return r; }
+function btn(label, cls, onClick) { const b = document.createElement("button"); b.type = "button"; b.className = "btn" + (cls ? " " + cls : ""); b.textContent = label; b.onclick = onClick; return b; }
+function fileBtn(label, accept, onFile) {
+  const id = "f" + Math.random().toString(36).slice(2);
+  const wrap = document.createElement("span");
+  wrap.innerHTML = `<label class="btn" for="${id}" style="display:block;text-align:center"></label><input type="file" id="${id}" accept="${accept}" hidden>`;
+  wrap.querySelector("label").textContent = label;
+  wrap.querySelector("input").onchange = e => { const f = e.target.files[0]; if (f) onFile(f); e.target.value = ""; };
+  return wrap;
+}
+function styleChanged() { save(); (document.fonts ? document.fonts.load(`${SUB_STYLE.weight} 60px ${SUB_STYLE.font}`).catch(() => {}) : Promise.resolve()).then(repaintAll); repaintAll(); }
+
+function openPanel(name) { if (panel === name) return closePanel(); panel = name; renderPanel(); $("ctl").hidden = false; document.querySelectorAll(".tool[data-panel]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.panel === name))); }
+function closePanel() { panel = null; $("ctl").hidden = true; document.querySelectorAll(".tool[data-panel]").forEach(b => b.setAttribute("aria-pressed", "false")); }
+function renderPanel() {
+  const box = $("ctlBox"); box.innerHTML = "";
+  const head = document.createElement("div"); head.className = "head";
+  const titles = { sub: "자막", bgm: "BGM", voice: "음성 · 피쉬오디오", save: "저장", product: "제품" };
+  head.innerHTML = `<b>${titles[panel]}</b>`; head.appendChild(Object.assign(btn("닫기", "x", closePanel), { className: "x" }));
+  box.appendChild(head);
+  if (panel === "sub") panelSub(box); else if (panel === "bgm") panelBgm(box); else if (panel === "voice") panelVoice(box); else if (panel === "product") panelProduct(box); else panelSave(box);
+}
+function panelSub(box) {
+  const sc = VERSIONS[ui.v].scenes[ui.i];
+  const ta = document.createElement("textarea"); ta.rows = 2; ta.value = sc.sub; ta.setAttribute("aria-label", "자막 수정");
+  const warn = document.createElement("p"); warn.className = "small";
+  const chk = () => { const h = risky(ta.value); warn.textContent = h.length ? `검수 필요: "${h.join('", "')}"` : ""; warn.style.color = "var(--warn)"; };
+  ta.oninput = () => { sc.sub = ta.value; chk(); save(); paint(ui.i); const t = document.getElementById(`sub-${ui.v}-${ui.i}`); if (t) t.value = ta.value; };
+  chk();
+  box.appendChild(field(`자막 수정 · ${ui.v}안 ${ui.i + 1}번 장면`, ta, warn));
+  box.appendChild(field("폰트", opts(FONTS.map(f => [f.css, f.name]), SUB_STYLE.font, v => { const f = FONTS.find(x => x.css === v); SUB_STYLE.font = f.css; SUB_STYLE.weight = f.w; styleChanged(); renderPanel(); })));
+  box.appendChild(field(`크기 <em>${SUB_STYLE.size}px</em>`, slider(60, 130, 2, SUB_STYLE.size, v => { SUB_STYLE.size = v; box.querySelectorAll(".field em")[0].textContent = v + "px"; styleChanged(); })));
+  box.appendChild(field("위치", opts(POS, SUB_STYLE.pos, v => { SUB_STYLE.pos = v; styleChanged(); renderPanel(); })));
+  box.appendChild(field("첫 줄 색", swatches(SWATCH, SUB_STYLE.fill1, c => { SUB_STYLE.fill1 = c; styleChanged(); renderPanel(); })));
+  box.appendChild(field("둘째 줄 색", swatches(SWATCH, SUB_STYLE.fill2, c => { SUB_STYLE.fill2 = c; styleChanged(); renderPanel(); })));
+  box.appendChild(field("테두리 색", swatches(STROKES, SUB_STYLE.stroke, c => { SUB_STYLE.stroke = c; styleChanged(); renderPanel(); })));
+  const p = document.createElement("p"); p.className = "small"; p.textContent = "위치 '자동'은 일러스트 장면은 상단, 실사 장면은 얼굴 아래예요. 하단을 골라도 플랫폼 버튼이 가리는 아래 20%는 피해요.";
+  box.appendChild(p);
+}
+
+/* BGM: 저작권 걱정 없는 앱 내 합성 음악 (Web Audio) + 내 파일 */
+const synth = { ctx: null, gain: null, timer: null, el: null };
+const PRESETS = {
+  lofi: { bpm: 72, wave: "triangle", chords: [[60, 64, 67, 71], [57, 60, 64, 67], [53, 57, 60, 64], [55, 59, 62, 65]], cut: 1200, beat: true, arp: false },
+  pop: { bpm: 112, wave: "sawtooth", chords: [[60, 64, 67], [55, 59, 62], [57, 60, 64], [53, 57, 60]], cut: 2600, beat: true, arp: true },
+  piano: { bpm: 84, wave: "sine", chords: [[60, 64, 67, 72], [55, 59, 62, 67], [57, 60, 64, 69], [53, 57, 60, 65]], cut: 3000, beat: false, arp: true },
+};
+const hz = n => 440 * Math.pow(2, (n - 69) / 12);
+function bgmLevel() { return BGM_SET.vol * (AUDIO.voice[ui.v] && playing ? 0.5 : 1); }
+function startBgm() {
+  stopBgm();
+  if (BGM_SET.preset === "none") return;
+  if (BGM_SET.preset === "user") {
+    if (!AUDIO.bgmFile) return;
+    synth.el = new Audio(AUDIO.bgmFile); synth.el.loop = true; synth.el.volume = Math.min(1, bgmLevel()); synth.el.play().catch(() => {}); return;
+  }
+  const P = PRESETS[BGM_SET.preset]; if (!P) return;
+  const ctx = synth.ctx || (synth.ctx = new (window.AudioContext || window.webkitAudioContext)());
+  ctx.resume();
+  const master = ctx.createGain(); master.gain.value = bgmLevel() * 0.5;
+  const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = P.cut; lp.connect(master); master.connect(ctx.destination);
+  synth.gain = master;
+  const beat = 60 / P.bpm; let bar = 0, next = ctx.currentTime + 0.05;
+  const note = (f, t, dur, vol, type) => { const o = ctx.createOscillator(), g = ctx.createGain(); o.type = type; o.frequency.value = f; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + 0.03); g.gain.exponentialRampToValueAtTime(0.0008, t + dur); o.connect(g); g.connect(lp); o.start(t); o.stop(t + dur + 0.05); };
+  const kick = t => { const o = ctx.createOscillator(), g = ctx.createGain(); o.frequency.setValueAtTime(120, t); o.frequency.exponentialRampToValueAtTime(40, t + 0.15); g.gain.setValueAtTime(0.5, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.2); o.connect(g); g.connect(master); o.start(t); o.stop(t + 0.25); };
+  const sched = () => {
+    while (next < ctx.currentTime + 0.6) {
+      const ch = P.chords[bar % P.chords.length];
+      ch.forEach(n => note(hz(n), next, beat * 4, 0.05, P.wave));
+      note(hz(ch[0] - 12), next, beat * 4, 0.07, "sine");
+      if (P.arp) for (let k = 0; k < 8; k++) note(hz(ch[k % ch.length] + 12), next + k * beat / 2, beat / 2, 0.04, "triangle");
+      if (P.beat) for (let k = 0; k < 4; k++) if (k % 2 === 0) kick(next + k * beat);
+      next += beat * 4; bar++;
+    }
+  };
+  sched(); synth.timer = setInterval(sched, 200);
+}
+function stopBgm() {
+  if (synth.timer) clearInterval(synth.timer); synth.timer = null;
+  if (synth.gain) { try { synth.gain.gain.setTargetAtTime(0, synth.ctx.currentTime, 0.05); } catch (e) {} const g = synth.gain; setTimeout(() => { try { g.disconnect(); } catch (e) {} }, 300); synth.gain = null; }
+  if (synth.el) { synth.el.pause(); synth.el = null; }
+}
+let bgmPreview = false;
+function panelBgm(box) {
+  box.appendChild(field("배경음악", opts(BGMS, BGM_SET.preset, v => { BGM_SET.preset = v; save(); if (bgmPreview || playing) startBgm(); renderPanel(); })));
+  box.appendChild(field(`볼륨 <em>${Math.round(BGM_SET.vol * 100)}%</em>`, slider(0, 1, 0.05, BGM_SET.vol, v => { BGM_SET.vol = v; box.querySelectorAll(".field em")[0].textContent = Math.round(v * 100) + "%"; save(); if (synth.gain) synth.gain.gain.value = bgmLevel() * 0.5; if (synth.el) synth.el.volume = Math.min(1, bgmLevel()); })));
+  const row = document.createElement("div"); row.className = "two";
+  row.appendChild(btn(bgmPreview ? "미리듣기 멈춤" : "미리듣기", "", () => { bgmPreview = !bgmPreview; bgmPreview ? startBgm() : (!playing && stopBgm()); renderPanel(); }));
+  row.appendChild(fileBtn(AUDIO.bgmFile ? "내 BGM 바꾸기" : "내 BGM 파일 넣기", "audio/*", f => { AUDIO.bgmFile = URL.createObjectURL(f); store.put({ id: "audio-bgm", kind: "audio", blob: f }).catch(() => {}); BGM_SET.preset = "user"; save(); renderPanel(); }));
+  box.appendChild(row);
+  const p = document.createElement("p"); p.className = "small"; p.textContent = "로파이·팝·피아노는 앱이 직접 만드는 음악이라 저작권 걱정이 없어요. 음성이 있으면 재생 중 BGM을 자동으로 절반으로 낮춰요. 납품 영상에는 같은 분위기의 저작권 프리 음원을 쓰세요.";
+  box.appendChild(p);
+}
+function fishScript(v) {
+  const lines = VERSIONS[v].scenes.filter(x => !x.say.startsWith("(")).map(x => (VOICE_SET.emotion ? VOICE_SET.emotion + " " : "") + x.say);
+  return lines.join("\n");
+}
+function copyText(text, fallbackBox) {
+  const done = ok => { const p = fallbackBox.querySelector(".copied"); p.textContent = ok ? "복사했어요. fish.audio에 붙여 넣으세요." : "복사가 막혀 있어요. 아래 글을 길게 눌러 복사하세요."; if (!ok) { const t = fallbackBox.querySelector("textarea.fb"); t.hidden = false; t.select(); } };
+  try { navigator.clipboard.writeText(text).then(() => done(true), () => done(false)); } catch (e) { done(false); }
+}
+function panelVoice(box) {
+  const ref = document.createElement("input"); ref.type = "text"; ref.placeholder = "예: 7f92f8af…  (fish.audio 보이스 페이지의 ID)"; ref.value = VOICE_SET.ref; ref.oninput = () => { VOICE_SET.ref = ref.value.trim(); save(); };
+  box.appendChild(field("피쉬오디오 보이스 ID", ref));
+  box.appendChild(field("감정 태그", opts(EMOS, VOICE_SET.emotion, v => { VOICE_SET.emotion = v; save(); renderPanel(); })));
+  box.appendChild(field(`말하기 속도 <em>${VOICE_SET.speed.toFixed(2)}x</em>`, slider(0.8, 1.3, 0.05, VOICE_SET.speed, v => { VOICE_SET.speed = v; box.querySelectorAll(".field em")[0].textContent = v.toFixed(2) + "x"; save(); if (voiceEl) voiceEl.playbackRate = v; })));
+  const scenes = VERSIONS[ui.v].scenes.filter(x => !x.say.startsWith("("));
+  const text = fishScript(ui.v);
+  const out = document.createElement("div"); out.className = "field";
+  out.innerHTML = `<span>${ui.v}안 내레이션 (${scenes.length}줄)</span><p class="small copied"></p><textarea class="fb" rows="4" readonly hidden></textarea>`;
+  out.querySelector("textarea").value = text;
+  if (!scenes.length) out.querySelector(".copied").textContent = "이 버전은 내레이션 없이 소리·자막으로 가는 버전이에요. 음성 대신 BGM과 효과음을 쓰세요.";
+  const row = document.createElement("div"); row.className = "two";
+  const cbtn = btn("피쉬오디오용 대본 복사", "primary", () => copyText(text, out)); if (!scenes.length) cbtn.disabled = true;
+  row.appendChild(cbtn);
+  row.appendChild(fileBtn(AUDIO.voice[ui.v] ? `${ui.v}안 음성 바꾸기` : `${ui.v}안 음성 파일 넣기`, "audio/*", f => { AUDIO.voice[ui.v] = URL.createObjectURL(f); store.put({ id: "audio-voice-" + ui.v, kind: "audio", blob: f }).catch(() => {}); renderPanel(); }));
+  out.appendChild(row);
+  box.appendChild(out);
+  box.appendChild(field(`음성 볼륨 <em>${Math.round(VOICE_SET.vol * 100)}%</em>`, slider(0, 1, 0.05, VOICE_SET.vol, v => { VOICE_SET.vol = v; box.querySelectorAll(".field em")[1].textContent = Math.round(v * 100) + "%"; save(); if (voiceEl) voiceEl.volume = v; })));
+  const timing = VERSIONS[ui.v].scenes.map((x, k) => `${k + 1}. ${x.t}  ${x.say}`).join("\n");
+  const how = document.createElement("p"); how.className = "small";
+  how.innerHTML = `만드는 순서: ① 대본 복사 → ② <a href="https://fish.audio" target="_blank" rel="noopener">fish.audio</a>에서 위 보이스 ID로 음성 생성(속도 ${VOICE_SET.speed.toFixed(2)}x) → ③ MP3를 받아 '음성 파일 넣기' → ④ 재생으로 장면과 맞춰 보기. 앱은 fish.audio에 직접 접속하지 못해서 이 순서로 가져와요.`;
+  box.appendChild(how);
+  const tm = document.createElement("details"); tm.innerHTML = "<summary class='small'>장면별 타이밍 보기</summary>"; const pre = document.createElement("pre"); pre.className = "small"; pre.style.whiteSpace = "pre-wrap"; pre.textContent = timing; tm.appendChild(pre); box.appendChild(tm);
+}
+function panelSave(box) {
+  const row = document.createElement("div"); row.className = "two";
+  row.appendChild(btn("이 장면 이미지", "primary", () => { closePanel(); saveFrame(); }));
+  row.appendChild(btn("스토리보드 한 장", "", () => { closePanel(); saveBoard(); }));
+  box.appendChild(row);
+  const spec = () => {
+    const f = FONTS.find(x => x.css === SUB_STYLE.font) || FONTS[0];
+    const bg = (BGMS.find(b => b[0] === BGM_SET.preset) || ["", ""])[1];
+    const emo = (EMOS.find(e => e[0] === VOICE_SET.emotion) || ["", "기본"])[1];
+    return [`[편집 지시서] ${PRODUCT.name} · ${ui.v}안 ${VERSIONS[ui.v].name}`, ...(PRODUCT.url ? [`상품 URL: ${PRODUCT.url}`] : []),
+      `자막 폰트: ${f.name} / 크기: ${SUB_STYLE.size}px(1080×1920 기준) / 위치: ${(POS.find(p => p[0] === SUB_STYLE.pos) || [])[1]}`,
+      `자막 색: 첫 줄 ${SUB_STYLE.fill1} · 둘째 줄 ${SUB_STYLE.fill2} · 테두리 ${SUB_STYLE.stroke}`,
+      `BGM: ${bg} · 볼륨 ${Math.round(BGM_SET.vol * 100)}% (내레이션 구간 50%로 낮춤)`,
+      `음성: 피쉬오디오 ${VOICE_SET.ref || "(보이스 ID 미정)"} · 속도 ${VOICE_SET.speed.toFixed(2)}x · 감정 ${emo}`,
+      "", ...VERSIONS[ui.v].scenes.map((x, k) => `${k + 1}. ${x.t} [${x.stage}] 자막 "${x.sub}"\n   촬영: ${x.cam}`)].join("\n");
+  };
+  const out = document.createElement("div"); out.className = "field";
+  out.innerHTML = `<span>외주 편집자에게 보낼 설정</span><p class="small copied">자막·BGM·음성 설정과 장면별 촬영 기법을 한 번에 복사해요.</p><textarea class="fb" rows="5" readonly hidden></textarea>`;
+  out.querySelector("textarea").value = spec();
+  out.appendChild(btn("편집 지시서 복사", "", () => copyText(spec(), out)));
+  box.appendChild(out);
+}
+document.querySelectorAll(".tool[data-panel]").forEach(b => b.addEventListener("click", () => openPanel(b.dataset.panel)));
+
+/* 제품: 이름 · URL · 이미지 (파일 선택 / 끌어다 놓기 / 붙여넣기) */
+let prodSrc = null; // object URL for the product image
+function prodChanged() { PRODUCT.name = PROD_SET.name || "제품"; $("prodName").textContent = PRODUCT.name; save(); repaintAll(); }
+async function setProductImage(blob) {
+  if (!blob || !/^image\//.test(blob.type)) return false;
+  const u = URL.createObjectURL(blob), img = await loadImg(u);
+  if (!img) return false;
+  prodSrc = u; PRODUCT.img = img; store.put({ id: "product-img", kind: "product", blob }).catch(() => {});
+  repaintAll(); if (panel === "product") renderPanel(); return true;
+}
+function imageFrom(dt) {
+  if (!dt) return null;
+  for (const it of dt.items || []) if (it.kind === "file" && /^image\//.test(it.type)) return it.getAsFile();
+  for (const f of dt.files || []) if (/^image\//.test(f.type)) return f;
+  return null;
+}
+function panelProduct(box) {
+  const name = document.createElement("input"); name.type = "text"; name.value = PROD_SET.name; name.placeholder = "예: 수분 세럼 ABC 50ml";
+  name.oninput = () => { PROD_SET.name = name.value.trim(); prodChanged(); };
+  box.appendChild(field("제품명", name));
+  const url = document.createElement("input"); url.type = "text"; url.inputMode = "url"; url.value = PROD_SET.url; url.placeholder = "쿠팡 등 상품 페이지 주소를 붙여 넣으세요";
+  url.oninput = () => { PROD_SET.url = url.value.trim(); PRODUCT.url = PROD_SET.url; save(); renderLink(); };
+  const link = document.createElement("p"); link.className = "small";
+  const renderLink = () => { link.innerHTML = ""; if (/^https?:\/\//.test(PROD_SET.url)) { const a = document.createElement("a"); a.href = PROD_SET.url; a.target = "_blank"; a.rel = "noopener"; a.textContent = "상품 페이지 열기 ↗"; link.appendChild(a); link.append(" — 페이지에서 제품 사진을 길게 눌러 저장하거나 복사한 뒤 아래에 넣으세요."); } };
+  renderLink();
+  box.appendChild(field("상품 URL", url, link));
+  const drop = document.createElement("div"); drop.className = "drop"; drop.tabIndex = 0; drop.setAttribute("role", "button");
+  drop.innerHTML = prodSrc ? `<img alt="제품 사진" src="${prodSrc}"><span>눌러서 바꾸기 · 끌어다 놓기 · 붙여넣기</span>` : `<b>제품 사진 넣기</b><span>눌러서 사진 고르기 · 여기로 끌어다 놓기<br>복사한 이미지는 여기를 누르고 붙여넣기(Ctrl+V / 길게 눌러 붙여넣기)</span>`;
+  const inp = document.createElement("input"); inp.type = "file"; inp.accept = "image/*"; inp.hidden = true;
+  inp.onchange = e => { const f = e.target.files[0]; if (f) setProductImage(f); e.target.value = ""; };
+  drop.onclick = () => inp.click();
+  drop.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); inp.click(); } };
+  drop.ondragover = e => { e.preventDefault(); drop.classList.add("over"); };
+  drop.ondragleave = () => drop.classList.remove("over");
+  drop.ondrop = e => { e.preventDefault(); drop.classList.remove("over"); const f = imageFrom(e.dataTransfer); if (f) setProductImage(f); else msg.textContent = "이미지 파일만 넣을 수 있어요. 웹 페이지의 이미지는 먼저 저장하거나 복사해 주세요."; };
+  const msg = document.createElement("p"); msg.className = "small";
+  box.appendChild(field("제품 사진 (일러스트 병 대신 들어가요)", drop, inp, msg));
+  if (prodSrc) box.appendChild(btn("제품 사진 빼고 일러스트로", "", () => { prodSrc = null; PRODUCT.img = null; store.del("product-img").catch(() => {}); repaintAll(); renderPanel(); }));
+}
+// 붙여넣기: 제품 패널이 열려 있으면 어디서 붙여 넣어도 제품 사진으로
+document.addEventListener("paste", e => {
+  if (panel !== "product") return;
+  const f = imageFrom(e.clipboardData);
+  if (f) { e.preventDefault(); setProductImage(f); }
+});
+$("prodBtn").addEventListener("click", () => { if ($("scriptView").hidden) setView("script"); openPanel("product"); });
+
+/* 재생: 장면 타이밍대로 넘기며 BGM + 음성 */
+let playing = false, playStart = 0, raf = 0, voiceEl = null;
+function setPlayUi() {
+  $("playLabel").textContent = playing ? "정지" : "재생";
+  $("playIcon").innerHTML = playing ? '<rect x="7" y="6" width="10" height="12" rx="1"/>' : '<path d="M7 5l12 7-12 7z"/>';
+}
+function goto(i) { const t = $("track"); t.scrollTo({ left: t.clientWidth * i, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); }
+function startPlay() {
+  const sc = VERSIONS[ui.v].scenes, end = range(sc[sc.length - 1].t)[1];
+  playing = true; setPlayUi(); playStart = performance.now(); goto(0);
+  startBgm();
+  if (AUDIO.voice[ui.v]) { voiceEl = new Audio(AUDIO.voice[ui.v]); voiceEl.volume = VOICE_SET.vol; voiceEl.playbackRate = VOICE_SET.speed; voiceEl.play().catch(() => {}); }
+  let last = 0;
+  const tick = () => {
+    if (!playing) return;
+    const t = (performance.now() - playStart) / 1000;
+    if (t >= end) return stopPlay();
+    const idx = sc.findIndex(x => { const [a, b] = range(x.t); return t >= a && t < b; });
+    if (idx >= 0 && idx !== last) { last = idx; goto(idx); }
+    raf = requestAnimationFrame(tick);
+  };
+  raf = requestAnimationFrame(tick);
+}
+function stopPlay() {
+  if (!playing) return; playing = false; cancelAnimationFrame(raf); setPlayUi();
+  if (!bgmPreview) stopBgm(); if (voiceEl) { voiceEl.pause(); voiceEl = null; }
+}
+$("playBtn").addEventListener("click", () => playing ? stopPlay() : startPlay());
 
 /* ---------- 내 사진 (IndexedDB, 이 기기에만 보관) ---------- */
 const store = (() => {
@@ -359,7 +651,7 @@ $("docSheet").addEventListener("click", e => { if (e.target === $("docSheet")) $
 function setView(v) {
   for (const [id, name] of [["vScript", "script"], ["vModel", "model"], ["vLib", "lib"]]) $(id).setAttribute("aria-pressed", String(v === name));
   const script = v === "script";
-  $("scriptView").hidden = !script; $("seg").hidden = !script; $("bar").hidden = !script;
+  $("scriptView").hidden = !script; $("seg").hidden = !script; $("bar").hidden = !script; if (!script) { closePanel(); stopPlay(); }
   $("modelView").hidden = v !== "model"; $("libView").hidden = v !== "lib";
   if (v === "model") renderModels(); if (v === "lib") renderLib();
   window.scrollTo(0, 0);
@@ -374,8 +666,10 @@ const photoLoads = MODELS.map(m => new Promise(res => {
 }));
 const fontLoads = document.fonts ? Promise.all([
   document.fonts.load("92px 'Black Han Sans'"), document.fonts.load("500 30px 'IBM Plex Mono'"),
-  document.fonts.load("700 32px 'IBM Plex Sans KR'"), document.fonts.load("400 25px 'IBM Plex Sans KR'")
+  document.fonts.load("700 32px 'IBM Plex Sans KR'"), document.fonts.load("400 25px 'IBM Plex Sans KR'"),
+  document.fonts.load(`${SUB_STYLE.weight} 60px ${SUB_STYLE.font}`)
 ]).catch(() => {}) : Promise.resolve();
-const userLoads = store.all().then(async recs => { for (const m of recs || []) { const img = await loadImg(m.src); if (img) { MODELS.push(m); MODEL_IMG[m.id] = img; } } });
+const userLoads = store.all().then(async recs => { for (const m of recs || []) { if (m.kind === "product") { const u = URL.createObjectURL(m.blob), im = await loadImg(u); if (im) { prodSrc = u; PRODUCT.img = im; } continue; } if (m.kind === "audio") { const u = URL.createObjectURL(m.blob); if (m.id === "audio-bgm") AUDIO.bgmFile = u; else AUDIO.voice[m.id.replace("audio-voice-", "")] = u; continue; } const img = await loadImg(m.src); if (img) { MODELS.push(m); MODEL_IMG[m.id] = img; } } });
+PRODUCT.name = PROD_SET.name || "제품"; PRODUCT.url = PROD_SET.url; $("prodName").textContent = PRODUCT.name;
 Promise.all([fontLoads, userLoads, ...photoLoads]).then(() => { for (const k in choice) if (choice[k] && !MODEL_IMG[choice[k]]) choice[k] = SCENE_DEFAULT[k] || null; for (const k in choice) applyChoice(k); renderSlides(); VERSIONS[ui.v].scenes.forEach((_, idx) => paint(idx)); window.BSM = { ready: true, VERSIONS, sceneCanvas, boardCanvas }; });
 </script>

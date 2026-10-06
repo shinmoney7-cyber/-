@@ -161,31 +161,31 @@ const VERSIONS = {
   A: {
     name: "고민 공감형", note: "화장 들뜸 고민으로 시작해서 사용감과 화장 밀착으로 이어가는 내레이션 버전.",
     scenes: [
-      { t: "0:00–0:03", stage: "주의", kind: "face",    shot: "거울 앞, 들뜬 볼을 손가락으로 톡톡 (근접)", say: "화장만 하면 각질 일어나는 분들, 잠깐만요.", sub: "화장 들뜸, 이거 저만 그래요?", fx: "띵 효과음" },
-      { t: "0:03–0:06", stage: "흥미", kind: "product", shot: "제품 언박싱 → 라벨 정면 1초", say: "요즘 아침 루틴에 이거 하나 추가했는데요,", sub: "아침 루틴에 딱 하나 추가", fx: "휙 전환" },
-      { t: "0:06–0:10", stage: "흥미", kind: "drop",    shot: "스포이드 토출 → 손등 도포 매크로", say: "묽은 제형이라 끈적임 없이 금방 스며들어요.", sub: "끈적임 없이 쏙", fx: "물방울 효과음" },
-      { t: "0:10–0:15", stage: "욕망", kind: "face",    shot: "세안 후 얼굴 도포 → 손바닥으로 지그시", say: "바르고 나면 피부 겉이 촉촉하게 정돈돼서", sub: "겉은 촉촉하게 정돈", fx: "—" },
-      { t: "0:15–0:20", stage: "욕망", kind: "glow",    shot: "같은 조명에서 파운데이션 재도포 → 볼 근접", say: "그 위에 화장하니까 훨씬 매끄럽게 올라가요.", sub: "화장이 매끈하게 착", fx: "반짝 효과" },
-      { t: "0:20–0:25", stage: "행동", kind: "cta",     shot: "제품 들고 정면 + 하단 화살표 그래픽", say: "제품 정보는 프로필 링크에 정리해뒀어요.", sub: "정보는 프로필 링크에 ↑", fx: "BGM 페이드아웃" }
+      { t: "0:00–0:03", stage: "주의", kind: "face",    shot: "거울 앞, 들뜬 볼을 손가락으로 톡톡 (근접)", say: "화장만 하면 각질 일어나는 분들, 잠깐만요.", sub: "화장 들뜸, 이거 저만 그래요?", cam: "얼굴 클로즈업 · 눈높이 · 폰 2x(약 50mm) · 거울에 카메라 안 비치게 45° 측면 · 핸드헬드(미세 흔들림 허용) · 창가 자연광 측면 + 반대편 반사판 · 30fps · 노출/초점 고정(AE/AF 락)", fx: "띵 효과음" },
+      { t: "0:03–0:06", stage: "흥미", kind: "product", shot: "제품 언박싱 → 라벨 정면 1초", say: "요즘 아침 루틴에 이거 하나 추가했는데요,", sub: "아침 루틴에 딱 하나 추가", cam: "탑뷰 테이블샷 → 정면 미디엄 · 1x · 폰을 천천히 앞으로 밀기(푸시인, 줌 금지) · 소프트박스 45° 정면 · 라벨 반사 없게 조명 각도 조절 · 30fps", fx: "휙 전환" },
+      { t: "0:06–0:10", stage: "흥미", kind: "drop",    shot: "스포이드 토출 → 손등 도포 매크로", say: "묽은 제형이라 끈적임 없이 금방 스며들어요.", sub: "끈적임 없이 쏙", cam: "매크로(접사 렌즈 또는 3x 근접) · 삼각대 고정 · 수동 초점 손등에 고정 · 역광(백라이트)으로 제형 투명감 · 배경 어둡게 · 60fps 촬영 → 50% 슬로", fx: "물방울 효과음" },
+      { t: "0:10–0:15", stage: "욕망", kind: "face",    shot: "세안 후 얼굴 도포 → 손바닥으로 지그시", say: "바르고 나면 피부 겉이 촉촉하게 정돈돼서", sub: "겉은 촉촉하게 정돈", cam: "정면 얼굴 클로즈업 · 2x · 삼각대 눈높이 · 링라이트 정면 + 창 측광 · 화이트밸런스 5000K 수동 고정 · 30fps", fx: "—" },
+      { t: "0:15–0:20", stage: "욕망", kind: "glow",    shot: "같은 조명에서 파운데이션 재도포 → 볼 근접", say: "그 위에 화장하니까 훨씬 매끄럽게 올라가요.", sub: "화장이 매끈하게 착", cam: "A1과 같은 위치·조명·각도(전후 비교 조건 동일) · 볼 클로즈업 3x · 45° 측광으로 피부결 표현 · 보정·필터 금지 · 30fps", fx: "반짝 효과" },
+      { t: "0:20–0:25", stage: "행동", kind: "cta",     shot: "제품 들고 정면 + 하단 화살표 그래픽", say: "제품 정보는 프로필 링크에 정리해뒀어요.", sub: "정보는 프로필 링크에 ↑", cam: "바스트샷 · 1x · 정면 눈높이 · 천천히 푸시인 · 링라이트 · 마지막 1.5초 정지 화면 · 30fps", fx: "BGM 페이드아웃" }
     ]
   },
   B: {
     name: "텍스처 ASMR형", note: "말 없이 소리와 자막으로 끌고 가는 버전. 체류시간과 반복재생을 노린다.",
     scenes: [
-      { t: "0:00–0:03", stage: "주의", kind: "drop",    shot: "스포이드에서 한 방울 떨어지는 슬로모션", say: "(내레이션 없음)", sub: "이 제형 보세요", fx: "방울 소리 (실제 녹음)" },
-      { t: "0:03–0:07", stage: "흥미", kind: "hand",    shot: "손등에 펴바르기 → 흡수되는 과정", say: "(내레이션 없음)", sub: "물처럼 가볍게 펴발리는 수분 세럼", fx: "문지르는 소리" },
-      { t: "0:07–0:12", stage: "흥미", kind: "hand",    shot: "손등을 기울여 흘러내리지 않는 모습", say: "(내레이션 없음)", sub: "흡수 후 끈적임 없음", fx: "톡톡 소리" },
-      { t: "0:12–0:20", stage: "욕망", kind: "glow",    shot: "얼굴 도포 → 볼 근접, 보정 없이", say: "(내레이션 없음)", sub: "바른 직후, 촉촉한 피부 표현", fx: "잔잔한 BGM 시작" },
-      { t: "0:20–0:25", stage: "행동", kind: "cta",     shot: "제품 라벨 정면 + 하단 화살표", say: "(내레이션 없음)", sub: "수분 세럼 ABC · 프로필 링크 ↑", fx: "BGM 페이드아웃" }
+      { t: "0:00–0:03", stage: "주의", kind: "drop",    shot: "스포이드에서 한 방울 떨어지는 슬로모션", say: "(내레이션 없음)", sub: "이 제형 보세요", cam: "극접사 매크로 · 삼각대 고정 · 수동 초점을 방울 떨어지는 지점에 · 검은 배경 + 백라이트 · 120~240fps 슬로모션 · 같은 동작 5테이크 이상", fx: "방울 소리 (실제 녹음)" },
+      { t: "0:03–0:07", stage: "흥미", kind: "hand",    shot: "손등에 펴바르기 → 흡수되는 과정", say: "(내레이션 없음)", sub: "물처럼 가볍게 펴발리는 수분 세럼", cam: "손등 탑다운 매크로 · 오버헤드 암 고정 · 사이드 라이트로 제형 결 강조 · 60fps · 문지르는 소리는 근접 마이크로 별도 녹음", fx: "문지르는 소리" },
+      { t: "0:07–0:12", stage: "흥미", kind: "hand",    shot: "손등을 기울여 흘러내리지 않는 모습", say: "(내레이션 없음)", sub: "흡수 후 끈적임 없음", cam: "손등 측면 눈높이 매크로 · 손을 천천히 기울이는 동작 · 백라이트 하이라이트 · 톡톡 소리 근접 녹음(ASMR) · 60fps", fx: "톡톡 소리" },
+      { t: "0:12–0:20", stage: "욕망", kind: "glow",    shot: "얼굴 도포 → 볼 근접, 보정 없이", say: "(내레이션 없음)", sub: "바른 직후, 촉촉한 피부 표현", cam: "볼 익스트림 클로즈업 · 창가 소프트 측광으로 윤광 하이라이트 · 수평으로 천천히 패닝 · 보정 금지 · 30fps", fx: "잔잔한 BGM 시작" },
+      { t: "0:20–0:25", stage: "행동", kind: "cta",     shot: "제품 라벨 정면 + 하단 화살표", say: "(내레이션 없음)", sub: "수분 세럼 ABC · 프로필 링크 ↑", cam: "제품 + 얼굴 미디엄 · 정면 눈높이 · 키라이트 + 필라이트 2등 · 라벨에 초점 → 얼굴로 초점 이동(랙 포커스) · 30fps", fx: "BGM 페이드아웃" }
     ]
   },
   C: {
     name: "1주 루틴 기록형", note: "실제로 7일간 쓴 출연자만 촬영. 같은 장소·조명·각도로 DAY 1과 DAY 7을 맞춘다.",
     scenes: [
-      { t: "0:00–0:03", stage: "주의", kind: "day1",    shot: "DAY 1 그래픽 + 민낯 클로즈업", say: "수분 세럼 하나만 일주일 써봤어요.", sub: "수분 세럼 1주일 써봄", fx: "—" },
-      { t: "0:03–0:10", stage: "흥미", kind: "drop",    shot: "아침·저녁 바르는 장면 빠른 컷 (DAY 2~5)", say: "아침저녁 세안 후에 두세 방울씩만 발랐고요,", sub: "아침·저녁 2~3방울", fx: "컷 전환음" },
-      { t: "0:10–0:20", stage: "욕망", kind: "day7",    shot: "DAY 7, 같은 조명·각도로 피부 근접", say: "세안 후 당김이 덜하게 느껴졌어요. 피부마다 다를 수 있어요.", sub: "세안 후 당김이 덜했어요 (개인 후기)", fx: "—" },
-      { t: "0:20–0:25", stage: "행동", kind: "cta",     shot: "제품 들고 정면 + 화살표", say: "써본 제품은 프로필 링크에 있어요.", sub: "제품 정보 → 프로필 링크 ↑", fx: "BGM 페이드아웃" }
+      { t: "0:00–0:03", stage: "주의", kind: "day1",    shot: "DAY 1 그래픽 + 민낯 클로즈업", say: "수분 세럼 하나만 일주일 써봤어요.", sub: "수분 세럼 1주일 써봄", cam: "정면 고정(증명사진 구도) · 삼각대 위치를 바닥 테이프로 표시 · 같은 시간대·같은 창 자연광 · 화이트밸런스·노출 수동 고정 · DAY 7과 완전히 같은 조건", fx: "—" },
+      { t: "0:03–0:10", stage: "흥미", kind: "drop",    shot: "아침·저녁 바르는 장면 빠른 컷 (DAY 2~5)", say: "아침저녁 세안 후에 두세 방울씩만 발랐고요,", sub: "아침·저녁 2~3방울", cam: "거울 앞 핸드헬드 시점샷 · 0.5~1초 빠른 컷 · 손바닥 클로즈업 2x · 아침(자연광)/저녁(실내등) 조명 차이를 그대로 · 30fps", fx: "컷 전환음" },
+      { t: "0:10–0:20", stage: "욕망", kind: "day7",    shot: "DAY 7, 같은 조명·각도로 피부 근접", say: "세안 후 당김이 덜하게 느껴졌어요. 피부마다 다를 수 있어요.", sub: "세안 후 당김이 덜했어요 (개인 후기)", cam: "C1과 같은 표시 위치·시간대·노출·화이트밸런스 · 정면 고정 · 보정·필터 금지 · 30fps", fx: "—" },
+      { t: "0:20–0:25", stage: "행동", kind: "cta",     shot: "제품 들고 정면 + 화살표", say: "써본 제품은 프로필 링크에 있어요.", sub: "제품 정보 → 프로필 링크 ↑", cam: "바스트샷 · 정면 · 제품 들고 웃는 얼굴 · 링라이트 · 마지막 1.5초 정지 화면 · 30fps", fx: "BGM 페이드아웃" }
     ]
   }
 };
@@ -210,8 +210,18 @@ const risky = text => RISKY.filter(w => text.includes(w));
 
 /* ---------- drawing ---------- */
 const W = 1080, H = 1920;
+// 자막 스타일 (모바일 앱의 컨트롤 바가 바꾼다)
+const SUB_STYLE = { font: "'Black Han Sans', sans-serif", weight: 400, size: 92, fill1: "#ffffff", fill2: "#ffe36e", stroke: "#111111", pos: "auto" };
 function rr(ctx, x, y, w, h, r) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); }
+// 제품 정보 (모바일 앱의 제품 패널이 바꾼다). img가 있으면 일러스트 병 대신 제품 사진을 그린다
+const PRODUCT = { name: "수분 세럼 ABC", url: "", img: null };
 function bottle(ctx, cx, cy, s) {
+  if (PRODUCT.img) {
+    const im = PRODUCT.img, bw = 340 * s, bh = 600 * s, r = Math.min(bw / im.naturalWidth, bh / im.naturalHeight);
+    const w = im.naturalWidth * r, h = im.naturalHeight * r;
+    ctx.save(); ctx.shadowColor = "rgba(0,0,0,.18)"; ctx.shadowBlur = 40; ctx.shadowOffsetY = 18;
+    ctx.drawImage(im, cx - w / 2, cy - 250 * s + (bh - h) / 2, w, h); ctx.restore(); return;
+  }
   ctx.save(); ctx.translate(cx, cy); ctx.scale(s, s);
   // glass body
   const g = ctx.createLinearGradient(-130, 0, 130, 0);
@@ -295,15 +305,20 @@ function drawScene(ctx, v, idx, opts = {}) {
   // ad disclosure (top-left)
   ctx.fillStyle = "rgba(0,0,0,.55)"; rr(ctx, 48, 120, 236, 64, 14); ctx.fill();
   ctx.fillStyle = "#fff"; ctx.textAlign = "left"; ctx.font = "700 32px 'IBM Plex Sans KR', sans-serif"; ctx.fillText("유료광고 포함", 70, 164);
-  // subtitle in upper third
-  ctx.font = "92px 'Black Han Sans', sans-serif"; ctx.textAlign = "center";
+  // subtitle — style comes from SUB_STYLE (font, colors, size, position)
+  const st = SUB_STYLE, fs = st.size;
+  ctx.font = `${st.weight} ${fs}px ${st.font}`; ctx.textAlign = "center";
   const lines = wrap(ctx, s.sub, W - 160);
-  // 실사 사진은 얼굴이 상단에 있어 자막을 얼굴 아래(하단 20% 가림 영역 위)로 내린다
-  const lh = 116, top = photo ? H * .8 - 60 - (lines.length - 1) * lh : 520 + (lines.length === 1 ? 40 : 0);
+  const lh = Math.round(fs * 1.26);
+  // 자동: 일러스트는 상단 1/3, 실사 사진은 얼굴을 피해 얼굴 아래(하단 20% 가림 영역 위)
+  const pos = st.pos === "auto" ? (photo ? "bottom" : "top") : st.pos;
+  const top = pos === "top" ? 480 + fs * .45 + (lines.length === 1 ? 40 : 0)
+    : pos === "middle" ? H / 2 - ((lines.length - 1) * lh) / 2 + fs * .35
+    : H * .8 - 60 - (lines.length - 1) * lh;
   lines.forEach((ln, k) => {
     const y = top + k * lh;
-    ctx.lineJoin = "round"; ctx.lineWidth = 18; ctx.strokeStyle = "#111"; ctx.strokeText(ln, W / 2, y);
-    ctx.fillStyle = k === 0 ? "#ffffff" : "#ffe36e"; ctx.fillText(ln, W / 2, y);
+    ctx.lineJoin = "round"; ctx.lineWidth = Math.max(6, fs * .2); ctx.strokeStyle = st.stroke; ctx.strokeText(ln, W / 2, y);
+    ctx.fillStyle = k === 0 ? st.fill1 : st.fill2; ctx.fillText(ln, W / 2, y);
   });
   // stage + timecode tag (storyboard marker)
   if (!opts.clean) {
@@ -321,12 +336,12 @@ function sceneCanvas(v, idx, opts) { const c = document.createElement("canvas");
 
 function boardCanvas(v) {
   const sc = VERSIONS[v].scenes, cols = Math.min(3, sc.length), rows = Math.ceil(sc.length / cols);
-  const cw = 540, ch = 960, pad = 48, textH = 330, headH = 220;
+  const cw = 540, ch = 960, pad = 48, textH = 570, headH = 220;
   const BW = pad + cols * (cw + pad), BH = headH + rows * (ch + textH + pad) + 60;
   const c = document.createElement("canvas"); c.width = BW; c.height = BH; const x = c.getContext("2d");
   x.fillStyle = "#fbf8f9"; x.fillRect(0, 0, BW, BH);
   x.fillStyle = "#251b20"; x.textAlign = "left"; x.font = "64px 'Black Han Sans', sans-serif";
-  x.fillText(`수분 세럼 ABC — ${v}안 ${VERSIONS[v].name}`, pad, 104);
+  x.fillText(`${PRODUCT.name} — ${v}안 ${VERSIONS[v].name}`, pad, 104);
   x.fillStyle = "#74636b"; x.font = "500 28px 'IBM Plex Sans KR', sans-serif";
   x.fillText("shinjh-serum-01 · 9:16 1080×1920 · 25초 · 납품 스토리보드 시안 (AI 생성 이미지·일러스트 포함, 실제 촬영본 아님)", pad, 156);
   x.fillStyle = "#e6dbe0"; x.fillRect(pad, 186, BW - pad * 2, 3);
@@ -337,12 +352,12 @@ function boardCanvas(v) {
     x.fillStyle = STAGE_COLOR[s.stage]; x.beginPath(); x.roundRect(cx, cy + ch + 22, 150, 46, 10); x.fill();
     x.fillStyle = "#fff"; x.textAlign = "center"; x.font = "700 26px 'IBM Plex Sans KR', sans-serif"; x.fillText(s.stage, cx + 75, cy + ch + 54);
     x.fillStyle = "#74636b"; x.textAlign = "left"; x.font = "500 26px 'IBM Plex Mono', monospace"; x.fillText(s.t, cx + 168, cy + ch + 54);
-    const block = [["화면", s.shot], ["대사", s.say], ["효과", s.fx]];
+    const block = [["화면", s.shot], ["촬영", s.cam], ["대사", s.say], ["효과", s.fx]];
     let ty = cy + ch + 108;
     block.forEach(([lab, val]) => {
       x.fillStyle = "#ae2f5a"; x.font = "700 24px 'IBM Plex Sans KR', sans-serif"; x.fillText(lab, cx, ty);
       x.fillStyle = "#251b20"; x.font = "400 25px 'IBM Plex Sans KR', sans-serif";
-      const ls = wrap(x, val, cw - 70).slice(0, 2);
+      const ls = wrap(x, val, cw - 70).slice(0, lab === "촬영" ? 6 : 2);
       ls.forEach((ln, j) => x.fillText(ln, cx + 66, ty + j * 34));
       ty += Math.max(1, ls.length) * 34 + 22;
     });
@@ -379,6 +394,7 @@ function renderScenes() {
       <div><div class="when">${s.t}</div><span class="stage" style="background:${STAGE_COLOR[s.stage]}22;color:${STAGE_COLOR[s.stage]}">${s.stage}</span></div>
       <div class="body">
         <div class="row"><span>화면</span><span></span></div>
+        <div class="row"><span>촬영</span><span></span></div>
         <div class="row"><span>대사</span><span></span></div>
         <div class="row"><span>자막</span><div><textarea id="sub-${state.v}-${idx}" rows="1" aria-label="자막"></textarea><div class="count"></div></div></div>
         <div class="row"><span>효과</span><span></span></div>
@@ -386,7 +402,7 @@ function renderScenes() {
         <div class="flag" hidden></div>
       </div>`;
     const spans = el.querySelectorAll(".row > span:nth-child(2)");
-    spans[0].textContent = s.shot; spans[1].textContent = s.say; spans[2].textContent = s.fx;
+    spans[0].textContent = s.shot; spans[1].textContent = s.cam; spans[2].textContent = s.say; spans[3].textContent = s.fx;
     const ta = el.querySelector("textarea"), flag = el.querySelector(".flag"), cnt = el.querySelector(".count");
     ta.value = s.sub;
     const key = state.v + "-" + idx, fileIn = el.querySelector('input[type="file"]'), clr = el.querySelector("[data-clear]"), pname = el.querySelector(".pname");
