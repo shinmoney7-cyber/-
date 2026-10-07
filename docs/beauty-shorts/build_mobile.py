@@ -13,8 +13,13 @@ from pathlib import Path
 HERE = Path(__file__).parent
 REF = HERE / "photos" / "reference"
 
-# model photos the app offers (phase: 메이크업 전/후)
+# model photos the app offers (phase: 메이크업 전/후); 가디건 세트 = 현재 뷰티 모델, 맨 앞
 MODELS = [
+    ("cardigan_bare_loose", "ref_cardigan_bare_loose.webp", "전", "풀어 내린 머리", "하늘색 가디건 · 미소"),
+    ("cardigan_bare_tied", "ref_cardigan_bare_tied.webp", "전", "묶은 머리", "라벤더 가디건 · 정면"),
+    ("cardigan_makeup_smile", "ref_cardigan_makeup_smile.webp", "후", "풀어 내린 머리", "하늘색 가디건 · 웃음"),
+    ("cardigan_makeup_tied", "ref_cardigan_makeup_tied.webp", "후", "묶은 머리", "라벤더 가디건 · 미소"),
+    ("cardigan_makeup_blonde", "ref_cardigan_makeup_blonde.webp", "후", "풀어 내린 머리", "금발 · 하늘색 가디건 · 웃음"),
     ("bare_loose", "ref_bare_loose.webp", "전", "풀어 내린 머리", "블라우스 · 정면"),
     ("bare", "ref_bare.webp", "전", "풀어 내린 머리", "블라우스 · 미소"),
     ("bare_tshirt_tied", "ref_bare_tshirt_tied.webp", "전", "묶은 머리", "티셔츠 · 볼에 손"),
@@ -26,15 +31,15 @@ MODELS = [
 
 # default photo per scene key ("A-0" = A안 1번); the user can change it in the app
 SCENE_PHOTOS = {
-    "A-0": "ref_bare_loose.webp",
-    "A-3": "ref_bare_tshirt_tied.webp",
-    "A-4": "ref_makeup_1.webp",
-    "A-5": "ref_makeup_smile_tied.webp",
-    "B-3": "ref_bare.webp",
-    "B-4": "ref_makeup_smile.webp",
+    "A-0": "ref_cardigan_bare_loose.webp",
+    "A-3": "ref_cardigan_bare_tied.webp",
+    "A-4": "ref_cardigan_makeup_smile.webp",
+    "A-5": "ref_cardigan_makeup_tied.webp",
+    "B-3": "ref_cardigan_bare_loose.webp",
+    "B-4": "ref_cardigan_makeup_smile.webp",
     "C-0": "ref_bare_loose.webp",
     "C-2": "ref_bare.webp",
-    "C-3": "ref_makeup_smile_tied.webp",
+    "C-3": "ref_cardigan_makeup_tied.webp",
 }
 
 

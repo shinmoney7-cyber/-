@@ -61,20 +61,32 @@ job ID 목록은 `jobs.json` 참고.
 
 - [이미지](https://d8j0ntlcm91z4.cloudfront.net/user_3CZmrJBghvprxYgai44zpzRR7Pg/hf_20261005_203039_9e3b51a4-592e-4f86-8554-36375f67b388.png) — job `9e3b51a4`, 웃는 메이크업 사진(job `84ce4141`)을 참고 이미지로 넣어 얼굴만 생얼로 바꿈. 모델 v2 학습에 사용.
 
+## 뷰티 모델 — 가디건 세트 (2026-10-07, 사용자 제공)
+
+흰 배경, 흰 민소매 + 파스텔 가디건, 애쉬 브라운 롱 웨이브. 현재 뷰티 모델(`MODEL.md`).
+
+| 파일 | 내용 |
+|---|---|
+| `reference/ref_cardigan_bare_loose.webp` | 생얼, 풀어 내린 머리, 하늘색 가디건 |
+| `reference/ref_cardigan_bare_tied.webp` | 생얼, 묶은 머리, 라벤더 가디건 |
+| `reference/ref_cardigan_makeup_smile.webp` | 메이크업, 웃는 얼굴, 하늘색 가디건 |
+| `reference/ref_cardigan_makeup_tied.webp` | 메이크업, 묶은 머리, 라벤더 가디건 |
+| `reference/ref_cardigan_makeup_blonde.webp` | 메이크업, 금발 변형 (선택용) |
+
 ## 장면별 실사 사진 배치 (현재)
 
 얼굴이 나오는 장면은 모두 이 모델 사진. 제품·손 클로즈업 장면(A2·A3·B1~B3·C2)은 일러스트 유지.
 
 | 장면 | 사진 | 메이크업 |
 |---|---|---|
-| A1 화장 들뜸 고민 | `ref_bare_loose` | 전 (생얼) |
-| A4 세안 후 세럼 | `ref_bare_tshirt_tied` | 전 (생얼) |
-| A5 화장 밀착 | `ref_makeup_1` | 후 |
-| A6 마무리 | `ref_makeup_smile_tied` | 후 |
-| B4 바른 직후 피부 | `ref_bare` | 전 (생얼) |
-| B5 마무리 | `ref_makeup_smile` | 후 |
+| A1 화장 들뜸 고민 | `ref_cardigan_bare_loose` | 전 (생얼) |
+| A4 세안 후 세럼 | `ref_cardigan_bare_tied` | 전 (생얼) |
+| A5 화장 밀착 | `ref_cardigan_makeup_smile` | 후 |
+| A6 마무리 | `ref_cardigan_makeup_tied` | 후 |
+| B4 바른 직후 피부 | `ref_cardigan_bare_loose` | 전 (생얼) |
+| B5 마무리 | `ref_cardigan_makeup_smile` | 후 |
 | C1 DAY 1 | `ref_bare_loose` | 전 (생얼) |
-| C3 DAY 7 | `ref_bare` | 전 (생얼) — DAY 1과 같은 조건(생얼·흰 배경·블라우스) |
-| C4 마무리 | `ref_makeup_smile_tied` | 후 |
+| C3 DAY 7 | `ref_bare` | 전 (생얼) — DAY 1과 같은 조건(생얼·흰 배경·블라우스). 가디건 생얼 풀어 내린 머리가 한 장뿐이라 블라우스 쌍 유지 |
+| C4 마무리 | `ref_cardigan_makeup_tied` | 후 |
 
 합성 결과: `examples/photo_<장면>.jpg`, `examples/storyboard_{A,B,C}_photo.jpg`.

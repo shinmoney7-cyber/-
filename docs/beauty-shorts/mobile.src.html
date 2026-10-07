@@ -212,10 +212,11 @@ try {
   if (saved && saved.bgm) Object.assign(BGM_SET, saved.bgm);
   if (saved && saved.voice) Object.assign(VOICE_SET, saved.voice);
   if (saved && saved.product) Object.assign(PROD_SET, saved.product);
-  if (saved && saved.choice) for (const k in saved.choice) if (saved.choice[k] === null || typeof saved.choice[k] === "string") choice[k] = saved.choice[k];
+  // keep only scenes the user picked themselves; untouched ones follow the current default model
+  if (saved && saved.choice && saved.defs) for (const k in saved.choice) if ((saved.choice[k] === null || typeof saved.choice[k] === "string") && saved.choice[k] !== (saved.defs[k] ?? null)) choice[k] = saved.choice[k];
 } catch (e) {}
 function save() {
-  try { const subs = {}; for (const k in VERSIONS) subs[k] = VERSIONS[k].scenes.map(s => s.sub); localStorage.setItem("bs-mobile", JSON.stringify({ v: ui.v, subs, choice, style: SUB_STYLE, bgm: BGM_SET, voice: VOICE_SET, product: PROD_SET })); } catch (e) {}
+  try { const subs = {}; for (const k in VERSIONS) subs[k] = VERSIONS[k].scenes.map(s => s.sub); localStorage.setItem("bs-mobile", JSON.stringify({ v: ui.v, subs, choice, defs: SCENE_DEFAULT, style: SUB_STYLE, bgm: BGM_SET, voice: VOICE_SET, product: PROD_SET })); } catch (e) {}
 }
 function applyChoice(key) { const id = choice[key]; if (id && MODEL_IMG[id]) PHOTOS[key] = MODEL_IMG[id]; else delete PHOTOS[key]; }
 const modelOf = key => MODELS.find(m => m.id === choice[key]);
