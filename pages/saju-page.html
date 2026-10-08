@@ -1005,12 +1005,8 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
     <div class="account-section">
       <div class="eyebrow" style="margin-top:0;">입금 계좌</div>
       <div class="account-row">
-        <div class="num">카카오뱅크 3333-28-9077788 · 예금주 황홍식</div>
+        <div class="num">신한은행 133-000-695010 · 예금주 신정희</div>
         <button type="button" class="btn btn--ghost" id="copyKakao">복사</button>
-      </div>
-      <div class="account-row">
-        <div class="num">하나은행 679-910416-32607 · 예금주 황선화</div>
-        <button type="button" class="btn btn--ghost" id="copyHana">복사</button>
       </div>
       <div style="margin-top:14px;background:rgba(217,167,90,.1);border:1px solid rgba(217,167,90,.25);border-radius:12px;padding:14px 18px;font-family:var(--f);font-size:17px;color:#0A0514;line-height:1.75;text-align:center;font-weight:800;">
         각 항목 접수 순서에 따라 정성껏 보내드립니다
@@ -1150,18 +1146,10 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
         <p style="font-family:var(--f);font-size:14px;color:var(--ink-soft);margin-bottom:4px;">복채 (상담료)</p>
         <p style="font-family:var(--f);font-size:28px;font-weight:800;" id="priceLine">39,000원</p>
 
-        <fieldset style="margin:16px 0 0;">
-          <legend style="font-family:var(--f);font-size:13px;color:var(--ink-soft);margin-bottom:8px;">입금하실 계좌를 선택해주세요</legend>
-          <div class="radiorow" id="bankChoice">
-            <label><input type="radio" name="bankChoice" value="kakao" checked/> 카카오뱅크 (황홍식)</label>
-            <label><input type="radio" name="bankChoice" value="hana"/> 하나은행 (황선화)</label>
-          </div>
-        </fieldset>
-
         <div class="accountbox">
           <div>
             <div style="font-family:var(--f);font-size:12px;color:var(--ink-soft);margin-bottom:3px;">입금 계좌</div>
-            <div class="num" id="accountNum">카카오뱅크 3333-28-9077788 · 예금주 황홍식</div>
+            <div class="num" id="accountNum">신한은행 133-000-695010 · 예금주 신정희</div>
           </div>
           <button type="button" class="btn btn--ghost" id="copyAccountBtn">계좌번호 복사</button>
         </div>
@@ -1281,7 +1269,7 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
 
     <div id="subConfirm" class="sub-confirm" hidden>
       <div class="sub-confirm__icon">✦</div>
-      <p>신청이 접수되었습니다.<br><br>카카오뱅크 <strong>3333-28-9077788</strong><br>예금주 황홍식<br><br>입금 확인 후<br><span id="subDeliveryTime" style="font-weight:700;color:var(--brass);">5시간 내 전달</span></p>
+      <p>신청이 접수되었습니다.<br><br>신한은행 <strong>133-000-695010</strong><br>예금주 신정희<br><br>입금 확인 후<br><span id="subDeliveryTime" style="font-weight:700;color:var(--brass);">5시간 내 전달</span></p>
       <button type="button" class="btn btn--primary" id="subDoneBtn">확인</button>
     </div>
   </div>
@@ -1688,7 +1676,7 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
         '📋 신청 항목\n'+lines.join('\n')+'\n합계: '+fmtWon(total)+'\n\n'+
         '👤 고객 정보\n성함: '+name+'\n생년월일: '+birth+'\n성별: '+gender+'\n태어난 시간: '+time+'\n\n'+
         '📬 결과 전달 방법\n전달 방법: '+deliveryMethod+'\n전달 받을 곳: '+contact+'\n\n'+
-        '📌 사주마루 사이트에서 작성된 신청입니다.\n입금 확인 후 순서대로 풀이를 보내드립니다.\n카카오뱅크 3333-28-9077788 예금주 황홍식'
+        '📌 사주마루 사이트에서 작성된 신청입니다.\n입금 확인 후 순서대로 풀이를 보내드립니다.\n신한은행 133-000-695010 예금주 신정희'
       );
       // 사업주 알림 이메일 발송 (Formspree)
       var nfBody=document.getElementById('__nf_body');
@@ -1732,12 +1720,8 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
     setTimeout(function(){btn.textContent=orig;},1800);
   }
   var kk=document.getElementById('copyKakao');
-  var ha=document.getElementById('copyHana');
   if(kk) kk.addEventListener('click',function(){
-    navigator.clipboard&&navigator.clipboard.writeText('카카오뱅크 3333-28-9077788 예금주 황홍식').then(function(){flashBtn(kk);});
-  });
-  if(ha) ha.addEventListener('click',function(){
-    navigator.clipboard&&navigator.clipboard.writeText('하나은행 679-910416-32607 예금주 황선화').then(function(){flashBtn(ha);});
+    navigator.clipboard&&navigator.clipboard.writeText('신한은행 133-000-695010 예금주 신정희').then(function(){flashBtn(kk);});
   });
 
 
