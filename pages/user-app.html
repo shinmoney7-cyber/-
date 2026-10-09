@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>사주마루 주문</title>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0A0120; --bg2: #130535; --bg3: #1A0845;
+  --gold: #D4A843; --gold2: #F5D888; --gold-dim: rgba(212,168,67,0.15);
+  --text: #F0E8D0; --muted: rgba(240,232,208,0.55);
+  --border: rgba(200,146,42,0.2); --border2: rgba(200,146,42,0.45);
+  --green: #5ab067; --red: #c0503a;
+  --f: 'Nanum Myeongjo', serif;
+  --r: 14px;
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; }
+body {
+  min-height: 100%; background: var(--bg); color: var(--text);
+  font-family: var(--f); font-size: 16px; line-height: 1.6;
+  padding: 0 0 env(safe-area-inset-bottom,0) 0;
+}
+a { color: inherit; }
+button { font-family: var(--f); cursor: pointer; }
+input, select, textarea { font-family: var(--f); }
+
+/* ── TOP BAR ── */
+.topbar {
+  position: sticky; top: 0; z-index: 99;
+  background: rgba(10,1,32,0.92); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px;
+  padding-top: calc(14px + env(safe-area-inset-top,0));
+}
+.topbar__logo { font-size: 22px; font-weight: 800; color: var(--gold); letter-spacing: .06em; }
+.topbar__sub { font-size: 12px; color: var(--muted); }
+
+/* ── STEP BAR ── */
+.stepbar {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg2);
+}
+.step {
+  flex: 1; text-align: center; padding: 12px 4px; font-size: 13px; font-weight: 700;
+  color: var(--muted); border-bottom: 3px solid transparent;
+  transition: all .2s;
+}
+.step.active { color: var(--gold); border-bottom-color: var(--gold); }
+.step.done { color: var(--green); }
+
+/* ── SCREENS ── */
+.screen { display: none; padding: 20px; max-width: 640px; margin: 0 auto; }
+.screen.active { display: block; }
+
+/* ── SECTION TITLE ── */
+.sec-title { font-size: 18px; font-weight: 800; color: var(--gold); margin-bottom: 6px; }
+.sec-sub { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
+
+/* ── PACKAGE CARDS ── */
+.pkg-row { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 24px; }
+.pkg-card {
+  background: var(--bg2); border: 2px solid var(--border);
+  border-radius: var(--r); padding: 16px 18px;
+  cursor: pointer; transition: border-color .2s, box-shadow .2s;
+  position: relative;
+}
+.pkg-card.selected { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold-dim); }
+.pkg-card__badge {
+  position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+  background: var(--gold); color: #0A0514; font-size: 11px; font-weight: 800;
+  padding: 3px 12px; border-radius: 20px; white-space: nowrap;
+}
+.pkg-card__name { font-size: 17px; font-weight: 800; color: #F0E8D0; margin-bottom: 4px; }
+.pkg-card.selected .pkg-card__name { color: var(--gold); }
+.pkg-card__items { font-size: 13px; color: rgba(240,232,208,0.7); margin-bottom: 8px; line-height: 1.55; }
+.pkg-row2 { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.pkg-card__orig { font-size: 12px; color: var(--muted); text-decoration: line-through; }
+.pkg-card__price { font-size: 22px; font-weight: 800; color: var(--gold); }
+.pkg-card__save { font-size: 12px; font-weight: 700; color: var(--green); background: rgba(90,176,103,.12); border-radius: 8px; padding: 2px 8px; }
+
+/* ── DIVIDER ── */
+.divider { text-align: center; font-size: 13px; color: var(--muted); margin: 16px 0; position: relative; }
+.divider::before,.divider::after { content:''; position:absolute; top:50%; width:42%; height:1px; background:var(--border); }
+.divider::before { left:0; } .divider::after { right:0; }
+
+/* ── ITEM GRID ── */
+.item-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px; }
+@media(max-width:360px) { .item-grid { grid-template-columns: 1fr; } }
+.item-card {
+  background: var(--bg2); border: 2px solid var(--border);
+  border-radius: 12px; padding: 13px 13px 11px;
+  cursor: pointer; text-align: left; width: 100%;
+  transition: border-color .2s, background .2s;
+  position: relative;
+}
+.item-card:hover { border-color: var(--border2); }
+.item-card.selected { border-color: var(--gold); background: var(--gold-dim); }
+.item-card__check {
+  position: absolute; top: 10px; right: 10px; width: 20px; height: 20px;
+  border-radius: 50%; border: 2px solid var(--border);
+  background: var(--bg); display: flex; align-items: center; justify-content: center;
+  font-size: 11px; color: transparent; transition: all .15s;
+}
+.item-card.selected .item-card__check { background: var(--gold); border-color: var(--gold); color: #fff; }
+.item-card__name { font-size: 15px; font-weight: 800; color: #F0E8D0; padding-right: 26px; margin-bottom: 4px; }
+.item-card__price { font-size: 14px; font-weight: 800; color: #D4A843; }
+.item-card.free .item-card__price { color: var(--green); }
+
+/* ── SELECTION SUMMARY ── */
+.sel-bar {
+  position: sticky; bottom: 0;
+  background: rgba(10,1,32,0.96); backdrop-filter: blur(10px);
+  border-top: 1px solid var(--border);
+  padding: 14px 20px;
+  padding-bottom: calc(14px + env(safe-area-inset-bottom,0));
+  display: none;
+}
+.sel-bar.show { display: block; }
+.sel-bar__row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.sel-bar__total { font-size: 18px; font-weight: 800; color: var(--gold); }
+.sel-bar__count { font-size: 13px; color: var(--muted); }
+
+/* ── BTN ── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 6px; padding: 13px 22px; border-radius: 10px; border: none;
+  font-size: 15px; font-weight: 800; letter-spacing: .04em;
+  transition: opacity .15s, transform .1s; cursor: pointer;
+}
+.btn:active { transform: scale(.97); }
+.btn--gold { background: var(--gold); color: #0A0514; }
+.btn--gold:disabled { opacity: .45; cursor: not-allowed; }
+.btn--outline { background: transparent; border: 2px solid var(--border2); color: var(--gold); }
+.btn--block { width: 100%; }
+.btn--ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+
+/* ── CHIPS ── */
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: 999px; padding: 5px 8px 5px 12px;
+  font-size: 12px; color: var(--text);
+}
+.chip__rm {
+  width: 18px; height: 18px; border-radius: 50%; border: none;
+  background: rgba(200,146,42,0.2); color: var(--gold); font-size: 12px;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+}
+
+/* ── FORM ── */
+.form-box { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); padding: 20px; margin-bottom: 20px; }
+.field { margin-bottom: 16px; }
+.field:last-child { margin-bottom: 0; }
+.field label { display: block; font-size: 13px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+.field label span { color: var(--gold); }
+.field input, .field select, .field textarea {
+  width: 100%; padding: 12px 14px; border-radius: 10px;
+  border: 1px solid var(--border); background: var(--bg);
+  color: var(--text); font-size: 15px; font-family: var(--f);
+  transition: border-color .2s;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  outline: none; border-color: var(--gold);
+}
+.field input::placeholder { color: var(--muted); }
+.field select option { background: var(--bg2); }
+.field textarea { resize: vertical; min-height: 80px; }
+.radio-row { display: flex; gap: 10px; }
+.radio-btn {
+  flex: 1; padding: 11px 8px; border-radius: 10px; border: 2px solid var(--border);
+  background: var(--bg); color: var(--text); font-size: 15px; font-weight: 700;
+  text-align: center; cursor: pointer; transition: all .2s;
+}
+.radio-btn.active { border-color: var(--gold); background: var(--gold-dim); color: var(--gold); }
+
+/* ── REVIEW TABLE ── */
+.review-box { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; margin-bottom: 20px; }
+.review-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 14px;
+}
+.review-row:last-child { border-bottom: none; }
+.review-row__label { color: var(--muted); font-size: 13px; }
+.review-row__val { font-weight: 700; text-align: right; }
+.review-total { padding: 16px; border-top: 1px solid var(--border2); }
+.review-total__row { display: flex; justify-content: space-between; align-items: center; }
+.review-total__label { font-size: 14px; color: var(--muted); }
+.review-total__price { font-size: 24px; font-weight: 800; color: var(--gold); }
+
+/* ── SUCCESS ── */
+.success-box { text-align: center; padding: 48px 24px; }
+.success-icon { font-size: 64px; margin-bottom: 16px; }
+.success-title { font-size: 24px; font-weight: 800; color: var(--gold); margin-bottom: 8px; }
+.success-sub { font-size: 15px; color: var(--muted); line-height: 1.7; margin-bottom: 24px; }
+.notice-box {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r);
+  padding: 16px; font-size: 13px; color: var(--muted); line-height: 1.7;
+  text-align: left; margin-bottom: 20px;
+}
+.notice-box strong { color: var(--gold); }
+
+.mt8 { margin-top: 8px; }
+.mt12 { margin-top: 12px; }
+.mt20 { margin-top: 20px; }
+.gap12 { display:flex; gap:12px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <div class="topbar__logo">사주마루</div>
+    <div class="topbar__sub">정통 사주명리 분석</div>
+  </div>
+</div>
+
+<div class="stepbar">
+  <div class="step active" id="step1-tab">1. 서비스 선택</div>
+  <div class="step" id="step2-tab">2. 정보 입력</div>
+  <div class="step" id="step3-tab">3. 주문 확인</div>
+</div>
+
+<!-- STEP 1: 서비스 선택 -->
+<div class="screen active" id="screen1">
+  <div style="padding-bottom:100px">
+    <div class="sec-title" style="margin-top:20px">패키지 선택</div>
+    <div class="sec-sub">묶음 할인으로 더 저렴하게</div>
+
+    <div class="pkg-row" id="pkgList">
+      <div class="pkg-card" data-pkg="basic" data-ids="sg,ya,jm" data-price="39000">
+        <div class="pkg-card__name">베이직 패키지</div>
+        <div class="pkg-card__items">성향·기질 분석 + 연애운 + 재물운</div>
+        <div class="pkg-row2">
+          <div class="pkg-card__orig">개별 59,000원</div>
+          <div class="pkg-card__price">39,000원</div>
+          <div class="pkg-card__save">34% 절약</div>
+        </div>
+      </div>
+      <div class="pkg-card" data-pkg="life" data-ids="ps,jm,ya,ds" data-price="79000" style="position:relative;padding-top:24px">
+        <div class="pkg-card__badge">인기</div>
+        <div class="pkg-card__name">인생 패키지</div>
+        <div class="pkg-card__items">평생운 + 대운·세운 + 연애운 + 재물운</div>
+        <div class="pkg-row2">
+          <div class="pkg-card__orig">개별 122,000원</div>
+          <div class="pkg-card__price">79,000원</div>
+          <div class="pkg-card__save">35% 절약</div>
+        </div>
+      </div>
+      <div class="pkg-card" data-pkg="premium" data-ids="ps,ds,ya,bh,jm,gk,sb,sh" data-price="149000">
+        <div class="pkg-card__name">프리미엄 올인원</div>
+        <div class="pkg-card__items">평생운 + 대운·세운 + 연애운 + 배우자운 + 재물운 + 건강운 + 사업운 + 새해운세</div>
+        <div class="pkg-row2">
+          <div class="pkg-card__orig">개별 229,000원</div>
+          <div class="pkg-card__price">149,000원</div>
+          <div class="pkg-card__save">35% 절약</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider">또는 항목별로 선택</div>
+
+    <div class="sec-title" style="margin-top:16px;margin-bottom:4px">개별 항목 선택</div>
+    <div class="sec-sub">원하는 항목을 직접 골라보세요</div>
+
+    <div class="item-grid" id="itemGrid"></div>
+  </div>
+</div>
+
+<!-- STEP 2: 정보 입력 -->
+<div class="screen" id="screen2">
+  <div class="sec-title" style="margin-top:20px">사주 정보 입력</div>
+  <div class="sec-sub">정확한 분석을 위해 꼼꼼히 입력해 주세요</div>
+
+  <div class="form-box">
+    <div class="field">
+      <label>이름 <span>*</span></label>
+      <input type="text" id="f-name" placeholder="홍길동" autocomplete="name">
+    </div>
+    <div class="field">
+      <label>성별 <span>*</span></label>
+      <div class="radio-row">
+        <button class="radio-btn active" data-gender="여성">여성</button>
+        <button class="radio-btn" data-gender="남성">남성</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>생년월일 <span>*</span></label>
+      <input type="date" id="f-birth" max="2010-12-31">
+    </div>
+    <div class="field">
+      <label>태어난 시간</label>
+      <select id="f-time">
+        <option value="">모름 / 해당없음</option>
+        <option>자시 (23:00–01:00)</option>
+        <option>축시 (01:00–03:00)</option>
+        <option>인시 (03:00–05:00)</option>
+        <option>묘시 (05:00–07:00)</option>
+        <option>진시 (07:00–09:00)</option>
+        <option>사시 (09:00–11:00)</option>
+        <option>오시 (11:00–13:00)</option>
+        <option>미시 (13:00–15:00)</option>
+        <option>신시 (15:00–17:00)</option>
+        <option>유시 (17:00–19:00)</option>
+        <option>술시 (19:00–21:00)</option>
+        <option>해시 (21:00–23:00)</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>양력 / 음력</label>
+      <div class="radio-row">
+        <button class="radio-btn active" data-cal="양력">양력</button>
+        <button class="radio-btn" data-cal="음력">음력</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-box">
+    <div class="field">
+      <label>연락처 (카카오톡 ID 또는 전화번호) <span>*</span></label>
+      <input type="text" id="f-contact" placeholder="카카오 ID 또는 010-0000-0000">
+    </div>
+    <div class="field">
+      <label>이메일 (결과 수신용)</label>
+      <input type="email" id="f-email" placeholder="example@email.com" autocomplete="email">
+    </div>
+    <div class="field">
+      <label>추가 요청사항</label>
+      <textarea id="f-memo" placeholder="특별히 여쭤보고 싶은 내용이 있다면 적어주세요"></textarea>
+    </div>
+  </div>
+
+  <div class="gap12 mt12">
+    <button class="btn btn--ghost" onclick="goStep(1)" style="flex:0 0 auto">← 이전</button>
+    <button class="btn btn--gold btn--block" id="btn-step2" onclick="goStep(3)">다음 단계 →</button>
+  </div>
+</div>
+
+<!-- STEP 3: 주문 확인 -->
+<div class="screen" id="screen3">
+  <div class="sec-title" style="margin-top:20px">주문 내용 확인</div>
+  <div class="sec-sub">아래 내용을 확인 후 주문해 주세요</div>
+
+  <div class="review-box" id="reviewInfo"></div>
+
+  <div class="review-box" id="reviewItems"></div>
+
+  <div class="notice-box">
+    <strong>입금 계좌:</strong> 신한은행 <strong>133-000-695010</strong> 예금주 신정희<br>
+    입금 확인 후 접수 순서에 따라 정성껏 보내드립니다.
+  </div>
+
+  <div class="gap12">
+    <button class="btn btn--ghost" onclick="goStep(2)" style="flex:0 0 auto">← 이전</button>
+    <button class="btn btn--gold btn--block" id="btn-order" onclick="submitOrder()">주문 신청하기 ✦</button>
+  </div>
+</div>
+
+<!-- STEP 4: 완료 -->
+<div class="screen" id="screen4">
+  <div class="success-box">
+    <div class="success-icon">✦</div>
+    <div class="success-title">주문이 접수되었습니다</div>
+    <div class="success-sub">
+      신한은행 <strong>133-000-695010</strong> 예금주 신정희<br>
+      입금 확인 후 접수 순서에 따라 정성껏 보내드립니다.
+    </div>
+    <div class="notice-box">
+      <strong>선택하신 서비스:</strong><br>
+      <span id="confirm-items"></span><br><br>
+      <strong>총 금액:</strong> <span id="confirm-total" style="color:var(--gold)"></span>
+    </div>
+    <button class="btn btn--gold btn--block" onclick="resetApp()">새 주문하기</button>
+    <div style="margin-top:12px">
+      <a href="saju-page.html" class="btn btn--ghost btn--block">메인 페이지로 →</a>
+    </div>
+  </div>
+</div>
+
+<!-- STICKY BOTTOM BAR -->
+<div class="sel-bar" id="selBar">
+  <div class="chips" id="selChips"></div>
+  <div class="sel-bar__row">
+    <div>
+      <div class="sel-bar__count" id="selCount">0개 선택</div>
+      <div class="sel-bar__total" id="selTotal">0원</div>
+    </div>
+    <button class="btn btn--gold" id="btnNext1" onclick="goStep(2)" disabled>다음 →</button>
+  </div>
+</div>
+
+<script>
+const SERVICES = [
+  { id:'sg', name:'성향·기질 분석', price:0 },
+  { id:'ps', name:'평생운', price:39000 },
+  { id:'ya', name:'연애운', price:22000 },
+  { id:'bh', name:'배우자운·결혼운', price:28000 },
+  { id:'jm', name:'재물운', price:22000 },
+  { id:'gk', name:'건강운', price:18000 },
+  { id:'ds', name:'대운·세운', price:39000 },
+  { id:'jk', name:'직장운', price:18000 },
+  { id:'bm', name:'부모운', price:18000 },
+  { id:'zs', name:'자식운', price:18000 },
+  { id:'ur', name:'친구·우정운', price:18000 },
+  { id:'hy', name:'형제간운', price:13000 },
+  { id:'sh', name:'새해운세', price:28000 },
+  { id:'ml', name:'월별운세', price:33000 },
+  { id:'su', name:'수능·입시운', price:22000 },
+  { id:'rw', name:'재회운', price:22000 },
+  { id:'sb', name:'사업운', price:33000 },
+  { id:'dv', name:'이혼·결별운', price:28000 },
+  { id:'dh', name:'도화살 전문분석', price:22000 },
+  { id:'nr', name:'이런 사람 만나지 마라', price:13000 },
+];
+
+let selectedIds = new Set();
+let selectedPkg = null;
+let gender = '여성', calType = '양력';
+let currentStep = 1;
+
+function fmt(n) { return n.toLocaleString('ko-KR') + '원'; }
+
+// ─ Build item grid
+const grid = document.getElementById('itemGrid');
+SERVICES.forEach(s => {
+  const btn = document.createElement('button');
+  btn.className = 'item-card' + (s.price === 0 ? ' free' : '');
+  btn.dataset.id = s.id;
+  btn.innerHTML = `
+    <span class="item-card__check">✓</span>
+    <div class="item-card__name">${s.name}</div>
+    <div class="item-card__price">${s.price === 0 ? '무료' : fmt(s.price)}</div>
+  `;
+  btn.onclick = () => toggleItem(s.id);
+  grid.appendChild(btn);
+});
+
+function toggleItem(id) {
+  clearPkg();
+  if (selectedIds.has(id)) selectedIds.delete(id);
+  else selectedIds.add(id);
+  syncItemUI();
+  updateBar();
+}
+
+function clearPkg() {
+  selectedPkg = null;
+  document.querySelectorAll('.pkg-card').forEach(c => c.classList.remove('selected'));
+}
+
+function syncItemUI() {
+  document.querySelectorAll('.item-card').forEach(c => {
+    if (selectedIds.has(c.dataset.id)) c.classList.add('selected');
+    else c.classList.remove('selected');
+  });
+}
+
+// ─ Package selection
+document.querySelectorAll('.pkg-card').forEach(card => {
+  card.onclick = () => {
+    document.querySelectorAll('.pkg-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    selectedPkg = { name: card.querySelector('.pkg-card__name').textContent, price: parseInt(card.dataset.price), ids: card.dataset.ids.split(',') };
+    selectedIds = new Set(selectedPkg.ids);
+    syncItemUI();
+    updateBar();
+  };
+});
+
+function calcTotal() {
+  if (selectedPkg) return selectedPkg.price;
+  let t = 0;
+  selectedIds.forEach(id => { const s = SERVICES.find(x=>x.id===id); if(s) t += s.price; });
+  return t;
+}
+
+function updateBar() {
+  const bar = document.getElementById('selBar');
+  const total = calcTotal();
+  const count = selectedIds.size;
+  if (count === 0) { bar.classList.remove('show'); return; }
+  bar.classList.add('show');
+  document.getElementById('selCount').textContent = count + '개 선택';
+  document.getElementById('selTotal').textContent = fmt(total);
+  document.getElementById('btnNext1').disabled = false;
+
+  const chips = document.getElementById('selChips');
+  chips.innerHTML = '';
+  if (selectedPkg) {
+    const chip = document.createElement('div');
+    chip.className = 'chip';
+    chip.innerHTML = `${selectedPkg.name} · ${fmt(selectedPkg.price)} <button class="chip__rm" onclick="clearAll()">×</button>`;
+    chips.appendChild(chip);
+  } else {
+    selectedIds.forEach(id => {
+      const s = SERVICES.find(x=>x.id===id); if(!s) return;
+      const chip = document.createElement('div');
+      chip.className = 'chip';
+      chip.innerHTML = `${s.name} <button class="chip__rm" onclick="removeItem('${id}')">×</button>`;
+      chips.appendChild(chip);
+    });
+  }
+}
+
+function removeItem(id) { selectedIds.delete(id); syncItemUI(); updateBar(); }
+function clearAll() { selectedIds.clear(); selectedPkg=null; syncItemUI(); updateBar(); document.querySelectorAll('.pkg-card').forEach(c=>c.classList.remove('selected')); }
+
+// ─ Gender / calendar
+document.querySelectorAll('[data-gender]').forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll('[data-gender]').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active'); gender = b.dataset.gender;
+  };
+});
+document.querySelectorAll('[data-cal]').forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll('[data-cal]').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active'); calType = b.dataset.cal;
+  };
+});
+
+// ─ Step navigation
+function goStep(n) {
+  if (n === 2) {
+    if (selectedIds.size === 0) { alert('서비스를 하나 이상 선택해 주세요.'); return; }
+  }
+  if (n === 3) {
+    if (!document.getElementById('f-name').value.trim()) { alert('이름을 입력해 주세요.'); return; }
+    if (!document.getElementById('f-birth').value) { alert('생년월일을 입력해 주세요.'); return; }
+    if (!document.getElementById('f-contact').value.trim()) { alert('연락처를 입력해 주세요.'); return; }
+    buildReview();
+  }
+  currentStep = n;
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen'+n).classList.add('active');
+  document.querySelectorAll('.step').forEach((s,i)=>{
+    s.classList.remove('active','done');
+    if(i+1===n) s.classList.add('active');
+    else if(i+1<n) s.classList.add('done');
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function buildReview() {
+  const name = document.getElementById('f-name').value.trim();
+  const birth = document.getElementById('f-birth').value;
+  const time = document.getElementById('f-time').value || '모름';
+  const contact = document.getElementById('f-contact').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+
+  document.getElementById('reviewInfo').innerHTML = `
+    <div class="review-row"><span class="review-row__label">이름</span><span class="review-row__val">${name}</span></div>
+    <div class="review-row"><span class="review-row__label">성별</span><span class="review-row__val">${gender}</span></div>
+    <div class="review-row"><span class="review-row__label">생년월일</span><span class="review-row__val">${birth} (${calType})</span></div>
+    <div class="review-row"><span class="review-row__label">태어난 시간</span><span class="review-row__val">${time}</span></div>
+    <div class="review-row"><span class="review-row__label">연락처</span><span class="review-row__val">${contact}</span></div>
+    ${email ? `<div class="review-row"><span class="review-row__label">이메일</span><span class="review-row__val">${email}</span></div>` : ''}
+  `;
+
+  let itemsHtml = '';
+  const serviceList = [];
+  selectedIds.forEach(id => {
+    const s = SERVICES.find(x=>x.id===id); if(!s) return;
+    serviceList.push(s.name);
+    itemsHtml += `<div class="review-row"><span class="review-row__label">${s.name}</span><span class="review-row__val">${s.price===0?'무료':fmt(s.price)}</span></div>`;
+  });
+
+  const total = calcTotal();
+  document.getElementById('reviewItems').innerHTML = `
+    ${selectedPkg ? `<div class="review-row" style="background:var(--gold-dim)"><span class="review-row__label">📦 ${selectedPkg.name}</span><span class="review-row__val" style="color:var(--gold)">${fmt(selectedPkg.price)}</span></div>` : itemsHtml}
+    <div class="review-total">
+      <div class="review-total__row">
+        <span class="review-total__label">총 결제 금액</span>
+        <span class="review-total__price">${fmt(total)}</span>
+      </div>
+    </div>
+  `;
+}
+
+async function submitOrder() {
+  const btn = document.getElementById('btn-order');
+  btn.disabled = true; btn.textContent = '처리 중...';
+
+  const name = document.getElementById('f-name').value.trim();
+  const birth = document.getElementById('f-birth').value;
+  const time = document.getElementById('f-time').value || '모름';
+  const contact = document.getElementById('f-contact').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+  const memo = document.getElementById('f-memo').value.trim();
+  const total = calcTotal();
+
+  const serviceList = [];
+  selectedIds.forEach(id => { const s=SERVICES.find(x=>x.id===id); if(s) serviceList.push(s.name); });
+
+  const body = `이름: ${name}\n성별: ${gender}\n생년월일: ${birth} (${calType})\n태어난시간: ${time}\n연락처: ${contact}\n이메일: ${email||'없음'}\n\n선택 서비스: ${serviceList.join(', ')}\n총 금액: ${fmt(total)}\n\n요청사항: ${memo||'없음'}`;
+
+  try {
+    const formData = new FormData();
+    formData.append('_subject', `[사주마루] 주문 - ${name} ${fmt(total)}`);
+    formData.append('message', body);
+    formData.append('name', name);
+    formData.append('email', email||'noreply@sajumaru.com');
+    formData.append('_captcha', 'false');
+    formData.append('_template', 'table');
+    const resp = await fetch('https://formsubmit.co/shinmoney7@gmail.com', {
+      method: 'POST',
+      body: formData
+    });
+
+    document.getElementById('confirm-items').textContent = serviceList.join(', ');
+    document.getElementById('confirm-total').textContent = fmt(total);
+    goStep(4);
+    document.getElementById('selBar').classList.remove('show');
+  } catch(e) {
+    alert('주문 전송 중 오류가 발생했습니다. 카카오 채널 "사주마루"로 직접 문의해 주세요.');
+    btn.disabled = false; btn.textContent = '주문 신청하기 ✦';
+  }
+}
+
+function resetApp() {
+  selectedIds.clear(); selectedPkg=null; gender='여성'; calType='양력';
+  document.getElementById('f-name').value='';
+  document.getElementById('f-birth').value='';
+  document.getElementById('f-time').value='';
+  document.getElementById('f-contact').value='';
+  document.getElementById('f-email').value='';
+  document.getElementById('f-memo').value='';
+  document.querySelectorAll('[data-gender]').forEach((b,i)=>b.classList.toggle('active',i===0));
+  document.querySelectorAll('[data-cal]').forEach((b,i)=>b.classList.toggle('active',i===0));
+  syncItemUI(); updateBar();
+  goStep(1);
+}
+</script>
+</body>
+</html>

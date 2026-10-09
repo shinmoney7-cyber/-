@@ -1,0 +1,73 @@
+<!doctype html>
+<!-- 사주마루 허브 -->
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>사주마루</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  min-height: 100vh;
+  background: #0d1020;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 32px 20px;
+  font-family: -apple-system, sans-serif;
+}
+.label {
+  font-size: 12px;
+  letter-spacing: .12em;
+  color: rgba(255,255,255,.35);
+  margin-bottom: 6px;
+  text-align: center;
+}
+a.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 280px;
+  padding: 28px 20px;
+  border-radius: 16px;
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: 700;
+  transition: transform .15s;
+}
+a.card:active { transform: scale(.97); }
+.card--user {
+  background: #1e1540;
+  border: 1.5px solid rgba(212,168,67,.35);
+  color: #D4A843;
+}
+.card--admin {
+  background: #0f1e12;
+  border: 1.5px solid rgba(80,180,100,.3);
+  color: #5eb870;
+}
+.card sub {
+  font-size: 13px;
+  font-weight: 400;
+  opacity: .6;
+}
+</style>
+</head>
+<body>
+  <div class="label">사주마루 관리</div>
+
+  <a class="card card--user" href="saju-page.html">
+    ✦ 메인 신청자 서식
+    <sub>고객용 주문 앱</sub>
+  </a>
+
+  <a class="card card--admin" href="admin-app.html">
+    ⚙ 관리자 서식
+    <sub>주문 확인 · 관리</sub>
+  </a>
+</body>
+</html>

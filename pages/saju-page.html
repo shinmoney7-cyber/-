@@ -229,23 +229,23 @@ fieldset{border:0;padding:0;margin:0;}
 .item-card__price{font-family:var(--f);font-size:18px;font-weight:800;color:var(--brass);margin-bottom:8px;font-variant-numeric:tabular-nums;}
 .item-card__desc{font-family:var(--f);font-size:16px;color:var(--ink);line-height:1.65;font-weight:800;}
 /* === PACKAGES === */
-.pkg-eyebrow{font-family:var(--f);font-size:13px;font-weight:700;letter-spacing:.22em;color:var(--brass);text-transform:uppercase;margin-top:40px;margin-bottom:12px;}
+.pkg-eyebrow{font-family:var(--f);font-size:16px;font-weight:700;letter-spacing:.22em;color:var(--brass);text-transform:uppercase;margin-top:40px;margin-bottom:12px;}
 .pkg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
 @media(max-width:700px){.pkg-grid{grid-template-columns:1fr;}}
 .pkg-card{position:relative;background:var(--paper-raised);border:2px solid var(--line);border-radius:18px;padding:22px 20px 20px;display:flex;flex-direction:column;gap:6px;transition:border-color .2s,box-shadow .2s;}
 .pkg-card--popular{border-color:var(--brass);box-shadow:0 8px 28px -8px rgba(200,168,64,.25);}
 .pkg-card--premium{border-color:rgba(180,140,200,.5);}
 .pkg-card__badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--brass);color:#0A0514;font-family:var(--f);font-size:12px;font-weight:800;padding:4px 14px;border-radius:20px;letter-spacing:.08em;white-space:nowrap;}
-.pkg-card__name{font-family:var(--f);font-size:19px;font-weight:800;color:var(--ink-heavy);margin-top:6px;}
+.pkg-card__name{font-family:var(--f);font-size:20px;font-weight:800;color:var(--ink-heavy);margin-top:6px;}
 .pkg-card--popular .pkg-card__name{color:var(--brass);}
-.pkg-card__items{font-family:var(--f);font-size:13px;color:var(--ink);line-height:1.6;font-weight:700;}
-.pkg-card__original{font-family:var(--f);font-size:13px;color:var(--ink);text-decoration:line-through;opacity:.55;font-variant-numeric:tabular-nums;margin-top:4px;}
-.pkg-card__price{font-family:var(--f);font-size:26px;font-weight:800;color:var(--brass);font-variant-numeric:tabular-nums;}
-.pkg-card__save{font-family:var(--f);font-size:12px;font-weight:700;color:#5ab067;background:rgba(90,176,103,.12);border-radius:8px;padding:3px 10px;width:fit-content;}
-.pkg-card__btn{margin-top:10px;background:var(--frame);color:var(--brass-soft);border:none;border-radius:12px;padding:12px 0;font-family:var(--f);font-size:14px;font-weight:800;cursor:pointer;transition:background .18s;letter-spacing:.04em;}
+.pkg-card__items{font-family:var(--f);font-size:16px;color:var(--ink);line-height:1.65;font-weight:800;}
+.pkg-card__original{font-family:var(--f);font-size:16px;color:var(--ink);text-decoration:line-through;opacity:.55;font-variant-numeric:tabular-nums;margin-top:4px;}
+.pkg-card__price{font-family:var(--f);font-size:18px;font-weight:800;color:var(--brass);font-variant-numeric:tabular-nums;}
+.pkg-card__save{font-family:var(--f);font-size:14px;font-weight:700;color:#5ab067;background:rgba(90,176,103,.12);border-radius:8px;padding:3px 10px;width:fit-content;}
+.pkg-card__btn{margin-top:10px;background:var(--frame);color:var(--brass-soft);border:none;border-radius:12px;padding:12px 0;font-family:var(--f);font-size:16px;font-weight:800;cursor:pointer;transition:background .18s;letter-spacing:.04em;}
 .pkg-card--popular .pkg-card__btn{background:var(--brass);color:#0A0514;}
 .pkg-card__btn:hover{opacity:.85;}
-.pkg-divider{text-align:center;font-family:var(--f);font-size:13px;color:var(--ink);opacity:.55;margin:32px 0 0;position:relative;}
+.pkg-divider{text-align:center;font-family:var(--f);font-size:16px;font-weight:800;color:var(--ink);opacity:.9;margin:32px 0 0;position:relative;}
 .pkg-divider::before,.pkg-divider::after{content:'';position:absolute;top:50%;width:calc(50% - 100px);height:1px;background:var(--line);}
 .pkg-divider::before{left:0;}.pkg-divider::after{right:0;}
 .sel-bar{position:sticky;bottom:16px;z-index:20;background:var(--frame);color:#fff;border-radius:14px;padding:13px 18px;margin-top:20px;display:none;align-items:center;justify-content:space-between;gap:16px;box-shadow:0 8px 32px -6px rgba(0,0,0,.5);flex-wrap:wrap;}
@@ -549,11 +549,15 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
     <div class="hero__text">
       <span class="hero__eyebrow">만세력 기반 정통 사주 분석</span>
       <h1>생년월일시로 보는<br><span style="color:var(--brass-soft);">평생의 흐름</span></h1>
-      <p class="lede">마음 가는 항목 하나만 골라보세요.<br>나머지는 정성껏 풀어 보내드릴게요!</p>
-      <a href="https://pf.kakao.com/_WekxcC/chat" target="_blank" rel="noopener" class="btn--kakao" style="margin-top:18px;align-self:flex-start;">
-        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 5.92 2 10.72c0 3.04 1.8 5.72 4.52 7.28l-1.08 3.92c-.08.28.22.52.48.36L10.6 19.6c.46.06.92.1 1.4.1 5.52 0 10-3.92 10-8.72S17.52 2 12 2z"/></svg>
-        카카오 채널 상담
-      </a>
+      <p class="lede">각 항목 접수 순서에 따라 정성껏 보내드립니다</p>
+      <p style="font-family:var(--f);font-size:clamp(15px,1.6vw,18px);color:#D4A843;text-align:center;margin-top:10px;font-weight:700;opacity:0;animation:rise .9s .6s ease forwards;">과장 없이 있는 그대로, 정성을 담아 분석해 드립니다.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:18px;justify-content:center;">
+        <a href="user-app.html" class="btn btn--primary" style="font-size:17px;padding:16px 32px;border-radius:12px;text-decoration:none;letter-spacing:.04em;">✦ 지금 바로 신청하기</a>
+        <a href="https://pf.kakao.com/_WekxcC/chat" target="_blank" rel="noopener" class="btn--kakao" style="align-self:center;">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 5.92 2 10.72c0 3.04 1.8 5.72 4.52 7.28l-1.08 3.92c-.08.28.22.52.48.36L10.6 19.6c.46.06.92.1 1.4.1 5.52 0 10-3.92 10-8.72S17.52 2 12 2z"/></svg>
+          카카오 채널 상담
+        </a>
+      </div>
     </div>
 
     <div class="hero__elements">
@@ -912,6 +916,12 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
       </button>
       <button type="button" class="item-card" data-price="18000">
         <span class="item-card__check">✓</span>
+        <div class="item-card__name">직장운</div>
+        <div class="item-card__price">18,000원</div>
+        <div class="item-card__desc">직장 내 인간관계와 승진·이직 타이밍을 짚어드립니다.</div>
+      </button>
+      <button type="button" class="item-card" data-price="18000">
+        <span class="item-card__check">✓</span>
         <div class="item-card__name">부모운</div>
         <div class="item-card__price">18,000원</div>
         <div class="item-card__desc">부모님과의 인연과 서로 주고받는 기운을 알려드립니다.</div>
@@ -921,6 +931,12 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
         <div class="item-card__name">자식운</div>
         <div class="item-card__price">18,000원</div>
         <div class="item-card__desc">자녀와의 인연과 서로에게 힘이 되는 시기를 짚어드립니다.</div>
+      </button>
+      <button type="button" class="item-card" data-price="18000">
+        <span class="item-card__check">✓</span>
+        <div class="item-card__name">친구 · 우정운</div>
+        <div class="item-card__price">18,000원</div>
+        <div class="item-card__desc">나에게 힘이 되는 친구 인연과 좋은 우정의 시기를 알려드립니다.</div>
       </button>
       <button type="button" class="item-card" data-price="13000">
         <span class="item-card__check">✓</span>
@@ -989,15 +1005,11 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
     <div class="account-section">
       <div class="eyebrow" style="margin-top:0;">입금 계좌</div>
       <div class="account-row">
-        <div class="num">카카오뱅크 3333-28-9077788 · 예금주 황홍식</div>
+        <div class="num">신한은행 133-000-695010 · 예금주 신정희</div>
         <button type="button" class="btn btn--ghost" id="copyKakao">복사</button>
       </div>
-      <div class="account-row">
-        <div class="num">하나은행 679-910416-32607 · 예금주 황선화</div>
-        <button type="button" class="btn btn--ghost" id="copyHana">복사</button>
-      </div>
       <div style="margin-top:14px;background:rgba(217,167,90,.1);border:1px solid rgba(217,167,90,.25);border-radius:12px;padding:14px 18px;font-family:var(--f);font-size:17px;color:#0A0514;line-height:1.75;text-align:center;font-weight:800;">
-        각 항목 A4 20페이지 내외 (평생운 30페이지) · 접수 순서에 따라 정성껏 보내드립니다
+        각 항목 접수 순서에 따라 정성껏 보내드립니다
       </div>
       <div class="contact-select-box" id="contactSelectBox" style="margin-top:20px;background:var(--paper-raised);border:1px solid var(--line);border-radius:16px;padding:22px 22px 18px;">
         <div style="font-family:var(--f);font-size:15px;font-weight:800;color:var(--brass);margin-bottom:14px;">✦ 결과 받을 이메일 주소</div>
@@ -1134,18 +1146,10 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
         <p style="font-family:var(--f);font-size:14px;color:var(--ink-soft);margin-bottom:4px;">복채 (상담료)</p>
         <p style="font-family:var(--f);font-size:28px;font-weight:800;" id="priceLine">39,000원</p>
 
-        <fieldset style="margin:16px 0 0;">
-          <legend style="font-family:var(--f);font-size:13px;color:var(--ink-soft);margin-bottom:8px;">입금하실 계좌를 선택해주세요</legend>
-          <div class="radiorow" id="bankChoice">
-            <label><input type="radio" name="bankChoice" value="kakao" checked/> 카카오뱅크 (황홍식)</label>
-            <label><input type="radio" name="bankChoice" value="hana"/> 하나은행 (황선화)</label>
-          </div>
-        </fieldset>
-
         <div class="accountbox">
           <div>
             <div style="font-family:var(--f);font-size:12px;color:var(--ink-soft);margin-bottom:3px;">입금 계좌</div>
-            <div class="num" id="accountNum">카카오뱅크 3333-28-9077788 · 예금주 황홍식</div>
+            <div class="num" id="accountNum">신한은행 133-000-695010 · 예금주 신정희</div>
           </div>
           <button type="button" class="btn btn--ghost" id="copyAccountBtn">계좌번호 복사</button>
         </div>
@@ -1195,7 +1199,7 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
   <div class="sub-modal" role="dialog" aria-modal="true" aria-labelledby="subModalTitle">
     <button type="button" class="sub-modal__close" id="subModalClose" aria-label="닫기">✕</button>
     <h3 id="subModalTitle">신청 정보 입력</h3>
-    <p class="sub-modal__desc">아래 정보를 입력해주세요.<br>입금 후 선택하신 방법으로 결과를 보내드립니다.</p>
+    <p class="sub-modal__desc">아래 정보를 입력해주세요.<br>신한은행 <strong>133-000-695010</strong> 예금주 신정희<br>입금 후 선택하신 방법으로 결과를 보내드립니다.</p>
 
     <div id="subFormWrap">
       <div class="sub-selected-box" id="subSelectedBox"></div>
@@ -1265,7 +1269,7 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
 
     <div id="subConfirm" class="sub-confirm" hidden>
       <div class="sub-confirm__icon">✦</div>
-      <p>신청이 접수되었습니다.<br><br>카카오뱅크 <strong>3333-28-9077788</strong><br>예금주 황홍식<br><br>입금 확인 후<br><span id="subDeliveryTime" style="font-weight:700;color:var(--brass);">5시간 내 전달</span></p>
+      <p>신청이 접수되었습니다.<br><br>신한은행 <strong>133-000-695010</strong><br>예금주 신정희<br><br>입금 확인 후<br><span id="subDeliveryTime" style="font-weight:700;color:var(--brass);">5시간 내 전달</span></p>
       <button type="button" class="btn btn--primary" id="subDoneBtn">확인</button>
     </div>
   </div>
@@ -1672,7 +1676,7 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
         '📋 신청 항목\n'+lines.join('\n')+'\n합계: '+fmtWon(total)+'\n\n'+
         '👤 고객 정보\n성함: '+name+'\n생년월일: '+birth+'\n성별: '+gender+'\n태어난 시간: '+time+'\n\n'+
         '📬 결과 전달 방법\n전달 방법: '+deliveryMethod+'\n전달 받을 곳: '+contact+'\n\n'+
-        '📌 사주마루 사이트에서 작성된 신청입니다.\n입금 확인 후 순서대로 풀이를 보내드립니다.\n카카오뱅크 3333-28-9077788 예금주 황홍식'
+        '📌 사주마루 사이트에서 작성된 신청입니다.\n입금 확인 후 순서대로 풀이를 보내드립니다.\n신한은행 133-000-695010 예금주 신정희'
       );
       // 사업주 알림 이메일 발송 (Formspree)
       var nfBody=document.getElementById('__nf_body');
@@ -1716,12 +1720,8 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
     setTimeout(function(){btn.textContent=orig;},1800);
   }
   var kk=document.getElementById('copyKakao');
-  var ha=document.getElementById('copyHana');
   if(kk) kk.addEventListener('click',function(){
-    navigator.clipboard&&navigator.clipboard.writeText('카카오뱅크 3333-28-9077788 예금주 황홍식').then(function(){flashBtn(kk);});
-  });
-  if(ha) ha.addEventListener('click',function(){
-    navigator.clipboard&&navigator.clipboard.writeText('하나은행 679-910416-32607 예금주 황선화').then(function(){flashBtn(ha);});
+    navigator.clipboard&&navigator.clipboard.writeText('신한은행 133-000-695010 예금주 신정희').then(function(){flashBtn(kk);});
   });
 
 
@@ -1804,8 +1804,10 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
         <label style="display:flex;align-items:center;gap:7px;font-family:var(--f);font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;"><input type="checkbox" name="aiItem" value="재물운"> 재물운</label>
         <label style="display:flex;align-items:center;gap:7px;font-family:var(--f);font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;"><input type="checkbox" name="aiItem" value="건강운"> 건강운</label>
         <label style="display:flex;align-items:center;gap:7px;font-family:var(--f);font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;"><input type="checkbox" name="aiItem" value="대운·세운"> 대운·세운</label>
+        <label style="display:flex;align-items:center;gap:7px;font-family:var(--f);font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;"><input type="checkbox" name="aiItem" value="직장운"> 직장운</label>
         <label style="display:flex;align-items:center;gap:7px;font-family:var(--f);font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;"><input type="checkbox" name="aiItem" value="부모운"> 부모운</label>
         <label style="display:flex;align-items:center;gap:7px;font-family:var(--f);font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;"><input type="checkbox" name="aiItem" value="자식운"> 자식운</label>
+        <label style="display:flex;align-items:center;gap:7px;font-family:var(--f);font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;"><input type="checkbox" name="aiItem" value="친구·우정운"> 친구·우정운</label>
         <label style="display:flex;align-items:center;gap:7px;font-family:var(--f);font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;"><input type="checkbox" name="aiItem" value="형제간운"> 형제간운</label>
         <label style="display:flex;align-items:center;gap:7px;font-family:var(--f);font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;"><input type="checkbox" name="aiItem" value="새해운세"> 새해운세</label>
         <label style="display:flex;align-items:center;gap:7px;font-family:var(--f);font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;"><input type="checkbox" name="aiItem" value="월별운세"> 월별운세</label>
@@ -2294,12 +2296,12 @@ footer .mark{font-family:var(--f);font-size:20px;color:var(--ink);margin-bottom:
       <svg viewBox="0 0 24 24" fill="#FEE500" style="width:20px;height:20px;" aria-hidden="true"><path d="M12 2C6.48 2 2 5.92 2 10.72c0 3.04 1.8 5.72 4.52 7.28l-1.08 3.92c-.08.28.22.52.48.36L10.6 19.6c.46.06.92.1 1.4.1 5.52 0 10-3.92 10-8.72S17.52 2 12 2z"/></svg>
       카카오
     </a>
-    <button class="mob-nav__btn mob-nav__btn--cta" onclick="document.getElementById('flow')&&document.getElementById('flow').scrollIntoView({behavior:'smooth'})" aria-label="신청하기">
+    <a class="mob-nav__btn mob-nav__btn--cta" href="user-app.html" style="text-decoration:none;" aria-label="신청하기">
       신청하기 ✦
-    </button>
+    </a>
     <button class="mob-nav__btn mob-nav__btn--admin" id="mobAdminBtn" onclick="window.openAdmin&&window.openAdmin()" aria-label="관리자">
       <span class="mob-nav__icon">🔧</span>관리자
     </button>
   </div>
 </nav>
-</body></html>
+</body></html><!-- deploy 20260929111211 -->
