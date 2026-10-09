@@ -1,0 +1,2127 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>소싱 평가기</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;900&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg:#f4f6fb;--card:#ffffff;--card2:#f0f2f8;--border:#e2e6f0;
+  --txt:#1a1f3a;--sub:#7b82a0;--accent:#4f46e5;--accent2:#818cf8;
+  --green:#10b981;--yellow:#f59e0b;--red:#ef4444;
+  --shadow:0 2px 12px rgba(79,70,229,.1);
+  color-scheme:light;
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1117;--card:#1a1d2e;--card2:#252840;--border:#2d3054;
+  --txt:#e4e7f8;--sub:#7b82a0;--accent:#6366f1;--accent2:#a5b4fc;
+  --green:#34d399;--yellow:#fbbf24;--red:#f87171;
+  --shadow:0 2px 12px rgba(0,0,0,.4);color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0f1117;--card:#1a1d2e;--card2:#252840;--border:#2d3054;
+  --txt:#e4e7f8;--sub:#7b82a0;--accent:#6366f1;--accent2:#a5b4fc;
+  --green:#34d399;--yellow:#fbbf24;--red:#f87171;
+  --shadow:0 2px 12px rgba(0,0,0,.4);color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh}
+
+/* topbar */
+.topbar{position:sticky;top:0;z-index:100;background:var(--accent);color:#fff;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{font-size:17px;font-weight:900;letter-spacing:-.3px;white-space:nowrap}
+.logo span{opacity:.7;font-weight:500;font-size:12px;margin-left:6px}
+.topbar-right{display:flex;gap:8px;align-items:center}
+.btn-add{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:10px;padding:6px 14px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;transition:.15s}
+.btn-add:hover{background:rgba(255,255,255,.35)}
+.theme-btn{background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:15px;font-family:inherit}
+
+/* main tabs */
+.main-tabs{display:flex;background:var(--card);border-bottom:1px solid var(--border);padding:0 16px;gap:4px;overflow-x:auto}
+.main-tab{padding:11px 18px;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer;border-bottom:2.5px solid transparent;white-space:nowrap;transition:.15s;font-family:inherit;background:none;border-top:none;border-left:none;border-right:none}
+.main-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.main-tab:hover:not(.active){color:var(--txt)}
+
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* layout */
+.main{max-width:1100px;margin:0 auto;padding:20px 16px 48px}
+
+/* product tabs */
+.prod-tabs{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px}
+.prod-tab{padding:7px 16px;border-radius:10px;border:1.5px solid var(--border);background:var(--card);color:var(--sub);font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;transition:.15s;position:relative}
+.prod-tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.prod-tab .del{position:absolute;top:-6px;right:-6px;background:var(--red);color:#fff;border-radius:50%;width:16px;height:16px;display:none;align-items:center;justify-content:center;font-size:10px;cursor:pointer;border:none}
+.prod-tab:hover .del{display:flex}
+
+/* grid */
+.grid{display:grid;grid-template-columns:360px 1fr;gap:16px;align-items:start}
+@media(max-width:780px){.grid{grid-template-columns:1fr}}
+
+/* card */
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;box-shadow:var(--shadow)}
+.card-title{font-size:14px;font-weight:800;color:var(--txt);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+
+/* form */
+label.lbl{display:block;font-size:11px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;margin-top:12px}
+input[type=text],input[type=number],textarea,select{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:9px 12px;color:var(--txt);font-size:13px;font-family:inherit;outline:none;transition:.15s}
+input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,70,229,.12)}
+textarea{resize:vertical;min-height:56px}
+
+/* criteria sliders */
+.crit-list{display:flex;flex-direction:column;gap:10px;margin-top:4px}
+.crit-item{background:var(--card2);border-radius:12px;padding:10px 12px}
+.crit-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px}
+.crit-name{font-size:12px;font-weight:700;color:var(--txt)}
+.crit-badge{font-size:13px;font-weight:900;color:#fff;background:var(--accent);border-radius:8px;padding:2px 9px;min-width:36px;text-align:center;transition:background .15s}
+input[type=range]{-webkit-appearance:none;width:100%;height:5px;border-radius:3px;outline:none;cursor:pointer;background:var(--border)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.2);cursor:pointer}
+.crit-desc{font-size:10px;color:var(--sub);margin-top:3px;line-height:1.5}
+
+/* right panel */
+.result-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+
+/* score ring */
+.score-row{display:flex;align-items:center;gap:20px;margin-bottom:16px;flex-wrap:wrap}
+.score-ring-wrap{flex-shrink:0}
+canvas.ring{width:100px;height:100px}
+.score-info{flex:1;min-width:120px}
+.score-big{font-size:42px;font-weight:900;line-height:1;color:var(--accent)}
+.score-label{font-size:12px;color:var(--sub);margin-bottom:6px}
+.verdict{display:inline-block;padding:5px 14px;border-radius:20px;font-size:13px;font-weight:800}
+.verdict.go{background:rgba(16,185,129,.15);color:var(--green);border:1.5px solid rgba(16,185,129,.3)}
+.verdict.hold{background:rgba(245,158,11,.13);color:var(--yellow);border:1.5px solid rgba(245,158,11,.3)}
+.verdict.pass{background:rgba(239,68,68,.12);color:var(--red);border:1.5px solid rgba(239,68,68,.3)}
+
+/* level badge */
+.level-banner{border-radius:14px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:14px}
+.level-banner.chosoo{background:rgba(16,185,129,.1);border:1.5px solid rgba(16,185,129,.3)}
+.level-banner.jungsoo{background:rgba(245,158,11,.1);border:1.5px solid rgba(245,158,11,.3)}
+.level-banner.gosoo{background:rgba(239,68,68,.1);border:1.5px solid rgba(239,68,68,.3)}
+.level-icon{font-size:28px;flex-shrink:0}
+.level-info{flex:1}
+.level-name{font-size:16px;font-weight:900;margin-bottom:3px}
+.level-banner.chosoo .level-name{color:var(--green)}
+.level-banner.jungsoo .level-name{color:var(--yellow)}
+.level-banner.gosoo .level-name{color:var(--red)}
+.level-desc{font-size:11px;color:var(--sub);line-height:1.6}
+.level-threshold{font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap}
+.level-banner.chosoo .level-threshold{background:rgba(16,185,129,.2);color:var(--green)}
+.level-banner.jungsoo .level-threshold{background:rgba(245,158,11,.2);color:var(--yellow)}
+.level-banner.gosoo .level-threshold{background:rgba(239,68,68,.2);color:var(--red)}
+
+/* breakdown bars */
+.breakdown{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.bk-row{display:grid;grid-template-columns:140px 1fr 36px;gap:8px;align-items:center}
+.bk-label{font-size:11px;color:var(--sub);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bk-bar-wrap{background:var(--card2);border-radius:3px;height:5px;overflow:hidden}
+.bk-bar{height:100%;border-radius:3px;transition:width .4s}
+.bk-val{font-size:11px;font-weight:800;color:var(--txt);text-align:right;font-variant-numeric:tabular-nums}
+
+/* radar */
+.radar-wrap{position:relative;max-width:320px;margin:0 auto}
+
+/* compare table */
+.cmp-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+th{font-weight:700;color:var(--sub);text-transform:uppercase;font-size:10px;letter-spacing:.4px;background:var(--card2)}
+td.num{font-weight:800;font-variant-numeric:tabular-nums;text-align:right}
+tr:last-child td{border-bottom:none}
+td.best{color:var(--green);font-weight:900}
+td.worst{color:var(--red)}
+
+/* tips */
+.tips{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.tip{background:var(--card2);border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.6;color:var(--txt);border-left:3px solid var(--accent2)}
+.tip strong{color:var(--accent);font-weight:800}
+
+/* misc */
+.sep{height:1px;background:var(--border);margin:14px 0}
+.btn-eval{width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--accent),#7c3aed);color:#fff;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit;margin-top:14px;transition:.15s;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-eval:hover{opacity:.88}
+.sec-title{font-size:13px;font-weight:800;color:var(--sub);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.chip{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;background:var(--card2);color:var(--sub);cursor:pointer;border:1.5px solid transparent;transition:.15s}
+.chip.sel{background:rgba(79,70,229,.12);color:var(--accent);border-color:rgba(79,70,229,.3)}
+
+/* ── Tab 2: Level Guide ──────────────────────────────── */
+.lvl-filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.lvl-btn{padding:7px 18px;border-radius:20px;border:2px solid transparent;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;transition:.15s}
+.lvl-btn.all{background:var(--card2);color:var(--sub);border-color:var(--border)}
+.lvl-btn.all.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.lvl-btn.chosoo{background:rgba(16,185,129,.1);color:var(--green);border-color:rgba(16,185,129,.3)}
+.lvl-btn.chosoo.active{background:var(--green);color:#fff}
+.lvl-btn.jungsoo{background:rgba(245,158,11,.1);color:var(--yellow);border-color:rgba(245,158,11,.3)}
+.lvl-btn.jungsoo.active{background:var(--yellow);color:#fff}
+.lvl-btn.gosoo{background:rgba(239,68,68,.1);color:var(--red);border-color:rgba(239,68,68,.3)}
+.lvl-btn.gosoo.active{background:var(--red);color:#fff}
+
+.cat-section{margin-bottom:28px}
+.cat-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--border)}
+.cat-header h3{font-size:15px;font-weight:900;color:var(--txt)}
+.cat-header span{font-size:11px;color:var(--sub)}
+
+.level-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:680px){.level-cards{grid-template-columns:1fr}}
+
+.lvl-card{border-radius:14px;padding:14px;border:1.5px solid transparent}
+.lvl-card.chosoo{background:rgba(16,185,129,.07);border-color:rgba(16,185,129,.2)}
+.lvl-card.jungsoo{background:rgba(245,158,11,.07);border-color:rgba(245,158,11,.2)}
+.lvl-card.gosoo{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.2)}
+.lvl-card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.lvl-card-title{font-size:13px;font-weight:900}
+.lvl-card.chosoo .lvl-card-title{color:var(--green)}
+.lvl-card.jungsoo .lvl-card-title{color:var(--yellow)}
+.lvl-card.gosoo .lvl-card-title{color:var(--red)}
+.lvl-threshold-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px}
+.lvl-card.chosoo .lvl-threshold-badge{background:rgba(16,185,129,.2);color:var(--green)}
+.lvl-card.jungsoo .lvl-threshold-badge{background:rgba(245,158,11,.2);color:var(--yellow)}
+.lvl-card.gosoo .lvl-threshold-badge{background:rgba(239,68,68,.2);color:var(--red)}
+.prod-items{display:flex;flex-direction:column;gap:5px}
+.prod-item{background:var(--card);border-radius:8px;padding:7px 10px;font-size:12px;color:var(--txt);display:flex;align-items:flex-start;gap:6px;line-height:1.5;border:1px solid var(--border)}
+.prod-item-dot{flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:5px}
+.lvl-card.chosoo .prod-item-dot{background:var(--green)}
+.lvl-card.jungsoo .prod-item-dot{background:var(--yellow)}
+.lvl-card.gosoo .prod-item-dot{background:var(--red)}
+.lvl-card-tip{font-size:11px;color:var(--sub);margin-top:9px;line-height:1.6;padding-top:9px;border-top:1px solid var(--border)}
+
+/* ── Tab 3: Anderson Theory ─────────────────────────── */
+.theory-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+@media(max-width:680px){.theory-grid{grid-template-columns:1fr}}
+.theory-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;box-shadow:var(--shadow)}
+.theory-card h3{font-size:14px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.theory-card p{font-size:12px;color:var(--sub);line-height:1.7}
+.theory-card ul{font-size:12px;color:var(--sub);line-height:1.8;padding-left:18px}
+.theory-card ul li{margin-bottom:4px}
+.theory-card strong{color:var(--txt);font-weight:700}
+.theory-card .highlight{background:rgba(79,70,229,.1);border-left:3px solid var(--accent);padding:8px 12px;border-radius:0 8px 8px 0;margin:10px 0;font-size:12px;color:var(--txt);line-height:1.6}
+
+.anderson-quote{background:linear-gradient(135deg,rgba(79,70,229,.1),rgba(124,58,237,.08));border:1px solid rgba(79,70,229,.2);border-radius:16px;padding:20px 24px;margin-bottom:24px;text-align:center}
+.anderson-quote p{font-size:16px;font-weight:700;color:var(--txt);line-height:1.6;font-style:italic}
+.anderson-quote cite{display:block;margin-top:8px;font-size:12px;color:var(--sub);font-style:normal}
+
+.sourcing-method-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
+@media(max-width:700px){.sourcing-method-grid{grid-template-columns:1fr}}
+.sm-card{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px}
+.sm-card.domakgook{border-color:rgba(16,185,129,.4)}
+.sm-card.proxy{border-color:rgba(79,70,229,.4)}
+.sm-card.oem{border-color:rgba(239,68,68,.4)}
+.sm-card-badge{display:inline-block;font-size:10px;font-weight:800;padding:3px 9px;border-radius:20px;margin-bottom:4px}
+.sm-card.domakgook .sm-card-badge{background:rgba(16,185,129,.15);color:var(--green)}
+.sm-card.proxy .sm-card-badge{background:rgba(79,70,229,.15);color:var(--accent)}
+.sm-card.oem .sm-card-badge{background:rgba(239,68,68,.15);color:var(--red)}
+.sm-card-title{font-size:15px;font-weight:800;color:var(--txt)}
+.sm-card-revenue{font-size:20px;font-weight:900;margin:4px 0}
+.sm-card.domakgook .sm-card-revenue{color:var(--green)}
+.sm-card.proxy .sm-card-revenue{color:var(--accent)}
+.sm-card.oem .sm-card-revenue{color:var(--red)}
+.sm-card-rev-label{font-size:10px;color:var(--sub);margin-top:-6px;margin-bottom:6px}
+.sm-card-rows{display:flex;flex-direction:column;gap:4px;margin-top:4px}
+.sm-card-row{display:flex;justify-content:space-between;font-size:11px;padding:4px 0;border-bottom:1px solid var(--border)}
+.sm-card-row:last-child{border-bottom:none}
+.sm-card-row .lbl{color:var(--sub)}
+.sm-card-row .val{font-weight:700;color:var(--txt)}
+.sm-pro-tip{background:rgba(79,70,229,.07);border:1px solid rgba(79,70,229,.2);border-radius:12px;padding:14px 18px;margin-bottom:24px}
+.sm-pro-tip h4{font-size:13px;font-weight:800;color:var(--accent);margin-bottom:10px}
+.sm-secret-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+@media(max-width:600px){.sm-secret-grid{grid-template-columns:1fr}}
+.sm-secret-item{background:var(--card);border-radius:10px;padding:12px;text-align:center;border:1px solid var(--border)}
+.sm-secret-icon{font-size:24px;margin-bottom:6px}
+.sm-secret-title{font-size:12px;font-weight:800;color:var(--txt);margin-bottom:4px}
+.sm-secret-desc{font-size:11px;color:var(--sub);line-height:1.5}
+.anderson-roadmap{display:flex;flex-direction:column;gap:0;margin:12px 0}
+.ar-step{display:flex;gap:14px;align-items:flex-start}
+.ar-line{display:flex;flex-direction:column;align-items:center;gap:0}
+.ar-num{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font-weight:900;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ar-connector{width:2px;background:var(--border);flex-grow:1;min-height:20px;margin:2px 0}
+.ar-body{padding-bottom:18px;flex:1}
+.ar-body strong{font-size:12px;font-weight:800;color:var(--txt);display:block;margin-bottom:3px}
+.ar-body span{font-size:11px;color:var(--sub);line-height:1.6}
+.pareto-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:12px}
+.pareto-table th{background:var(--card2);font-weight:700;color:var(--sub);padding:8px 12px;text-align:center;border:1px solid var(--border);font-size:11px}
+.pareto-table td{padding:8px 12px;border:1px solid var(--border);text-align:center}
+.pareto-table .head-col{text-align:left;font-weight:700;color:var(--txt)}
+.pareto-table .good{background:rgba(16,185,129,.08);color:var(--green);font-weight:700}
+.pareto-table .warn{background:rgba(245,158,11,.08);color:var(--yellow);font-weight:700}
+.pareto-table .bad{background:rgba(239,68,68,.08);color:var(--red);font-weight:700}
+
+.step-list{display:flex;flex-direction:column;gap:12px;margin-top:8px}
+.step{display:flex;gap:12px;align-items:flex-start}
+.step-num{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center}
+.step-body{flex:1;padding-top:4px}
+.step-body strong{display:block;font-size:13px;font-weight:800;color:var(--txt);margin-bottom:2px}
+.step-body span{font-size:11px;color:var(--sub);line-height:1.6}
+
+.formula-box{background:var(--card2);border-radius:12px;padding:14px;margin:10px 0;font-size:13px;font-variant-numeric:tabular-nums;line-height:2}
+.formula-box .row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px}
+.formula-box .label{font-size:11px;color:var(--sub);font-weight:600}
+.formula-box .val{font-size:13px;font-weight:900;color:var(--txt)}
+.formula-box .val.green{color:var(--green)}
+.formula-box .val.red{color:var(--red)}
+.formula-box .sep-line{height:1px;background:var(--border);margin:6px 0;width:100%}
+
+.tools-list{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+@media(max-width:480px){.tools-list{grid-template-columns:1fr}}
+.tool-item{background:var(--card2);border-radius:10px;padding:10px 12px;border-left:3px solid var(--accent2)}
+.tool-name{font-size:12px;font-weight:800;color:var(--txt);margin-bottom:2px}
+.tool-desc{font-size:11px;color:var(--sub);line-height:1.5}
+
+/* ── Tab 4: Video Analysis ──────────────────────────── */
+.video-grid{display:grid;grid-template-columns:380px 1fr;gap:16px;align-items:start}
+@media(max-width:780px){.video-grid{grid-template-columns:1fr}}
+
+.strategy-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.sc{padding:6px 12px;border-radius:20px;font-size:12px;font-weight:700;background:var(--card2);color:var(--sub);cursor:pointer;border:1.5px solid transparent;transition:.15s;font-family:inherit}
+.sc.sel{border-color:var(--accent);color:var(--accent);background:rgba(79,70,229,.1)}
+
+.hook-meter{background:var(--card2);border-radius:14px;padding:16px;margin-bottom:14px}
+.hook-score-big{font-size:48px;font-weight:900;text-align:center;line-height:1.1;margin-bottom:4px}
+.hook-label{font-size:12px;color:var(--sub);text-align:center;margin-bottom:12px}
+.hook-bar-wrap{background:var(--border);border-radius:4px;height:8px;overflow:hidden;margin-bottom:4px}
+.hook-bar{height:100%;border-radius:4px;transition:width .5s}
+
+.metric-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)}
+.metric-row:last-child{border-bottom:none}
+.metric-name{font-size:12px;color:var(--sub);font-weight:600}
+.metric-val{font-size:14px;font-weight:900;color:var(--txt);font-variant-numeric:tabular-nums}
+.metric-score{font-size:12px;font-weight:700;padding:2px 8px;border-radius:10px}
+.ms-green{background:rgba(16,185,129,.15);color:var(--green)}
+.ms-yellow{background:rgba(245,158,11,.15);color:var(--yellow)}
+.ms-red{background:rgba(239,68,68,.15);color:var(--red)}
+
+.strategy-result{border-radius:12px;padding:14px;margin-top:12px;border:2px solid transparent}
+.strategy-result.twist{background:rgba(124,58,237,.08);border-color:rgba(124,58,237,.25)}
+.strategy-result.number{background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.25)}
+.strategy-result.desire{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.25)}
+.strategy-result.problem{background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.25)}
+.strategy-title{font-size:14px;font-weight:900;margin-bottom:6px}
+.strategy-desc{font-size:12px;color:var(--sub);line-height:1.6}
+
+.anderson-seg{margin-top:16px}
+.seg-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.seg-bar-outer{flex:1;height:10px;border-radius:5px;background:var(--border);overflow:hidden;position:relative}
+.seg-bar-fill{height:100%;border-radius:5px;position:absolute;left:0;top:0}
+.seg-label{font-size:11px;font-weight:700;white-space:nowrap;min-width:56px}
+.seg-range{font-size:10px;color:var(--sub);white-space:nowrap;min-width:80px;text-align:right;font-variant-numeric:tabular-nums}
+
+.vid-add-row{display:flex;gap:8px;margin-bottom:16px;align-items:flex-end;flex-wrap:wrap}
+.vid-card-list{display:flex;flex-direction:column;gap:10px}
+.vid-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;position:relative}
+.vid-card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.vid-card-title{font-size:13px;font-weight:800}
+.vid-del-btn{background:none;border:none;color:var(--sub);cursor:pointer;font-size:14px;padding:2px 6px;border-radius:6px;font-family:inherit}
+.vid-del-btn:hover{background:var(--card2)}
+
+/* anderson segment category table */
+.seg-table{width:100%;border-collapse:collapse;font-size:11px;margin-top:10px}
+.seg-table th{background:var(--card2);padding:7px 10px;font-weight:700;color:var(--sub);border:1px solid var(--border);text-align:center;font-size:10px;letter-spacing:.3px}
+.seg-table td{padding:7px 10px;border:1px solid var(--border);font-variant-numeric:tabular-nums}
+.seg-cat-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.seg-cat-tab{padding:5px 11px;border-radius:20px;font-size:11px;font-weight:700;background:var(--card2);color:var(--sub);cursor:pointer;border:1.5px solid transparent;transition:.15s;font-family:inherit}
+.seg-cat-tab.active{border-color:var(--accent);color:var(--accent);background:rgba(79,70,229,.1)}
+.seg-overview-table{width:100%;border-collapse:collapse;font-size:11px;margin-top:10px}
+.seg-overview-table th{background:var(--card2);padding:6px 10px;font-weight:700;color:var(--sub);border:1px solid var(--border);font-size:10px;text-align:center}
+.seg-overview-table td{padding:6px 10px;border:1px solid var(--border);text-align:center;font-variant-numeric:tabular-nums}
+
+/* metric mini bars in Tab 4 */
+.metric-mini-bar-wrap{flex:1;height:6px;border-radius:3px;background:var(--border);margin:0 8px;overflow:hidden;min-width:40px}
+.metric-mini-bar{height:100%;border-radius:3px;transition:width .5s}
+
+/* video comparison table */
+.vid-cmp-table{width:100%;border-collapse:collapse;font-size:11px;margin-top:10px}
+.vid-cmp-table th{background:var(--card2);padding:7px 8px;font-weight:700;color:var(--sub);border:1px solid var(--border);text-align:center;font-size:10px;letter-spacing:.3px}
+.vid-cmp-table td{padding:7px 8px;border:1px solid var(--border);text-align:center;font-variant-numeric:tabular-nums;font-size:11px}
+.vid-cmp-table tr:hover td{background:var(--card2)}
+.vid-cmp-best{color:var(--green);font-weight:900}
+.vid-cmp-worst{color:var(--red)}
+
+/* keyword sourcing tab */
+.kw-grid{display:grid;grid-template-columns:360px 1fr;gap:16px;align-items:start}
+@media(max-width:780px){.kw-grid{grid-template-columns:1fr}}
+.kw-score-wrap{background:var(--card2);border-radius:14px;padding:16px;margin-bottom:14px;text-align:center}
+.kw-score-big{font-size:46px;font-weight:900;line-height:1.1;margin-bottom:4px}
+.kw-score-label{font-size:12px;color:var(--sub);margin-bottom:12px}
+.kw-score-bar-wrap{background:var(--border);border-radius:4px;height:8px;overflow:hidden}
+.kw-score-bar{height:100%;border-radius:4px;transition:width .5s}
+.kw-sub-list{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.kw-sub-item{display:flex;align-items:center;gap:10px;background:var(--card2);border-radius:10px;padding:8px 12px}
+.kw-sub-chip{font-size:12px;font-weight:700;color:var(--accent);flex:1}
+.kw-sub-difficulty{font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;white-space:nowrap}
+.kw-sub-diff-low{background:rgba(16,185,129,.15);color:var(--green)}
+.kw-sub-diff-mid{background:rgba(245,158,11,.15);color:var(--yellow)}
+.kw-sub-diff-high{background:rgba(239,68,68,.15);color:var(--red)}
+.kw-saved-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.kw-saved-row{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.kw-saved-name{font-size:13px;font-weight:800;color:var(--txt)}
+.kw-profit-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.kw-profit-box{background:var(--card2);border-radius:10px;padding:12px;text-align:center}
+.kw-profit-val{font-size:18px;font-weight:900;color:var(--accent);margin-bottom:2px}
+.kw-profit-lbl{font-size:10px;color:var(--sub)}
+
+/* strategy effectiveness */
+.strat-eff-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.strat-eff-lbl{font-size:11px;font-weight:700;color:var(--txt);min-width:88px;white-space:nowrap}
+.strat-eff-bar-wrap{flex:1;height:7px;border-radius:4px;background:var(--border);overflow:hidden}
+.strat-eff-bar{height:100%;border-radius:4px;transition:width .6s}
+.strat-eff-score{font-size:11px;font-weight:900;color:var(--txt);min-width:30px;text-align:right}
+
+/* ── AI HERO (Tab 5) ─────────────────────────────────── */
+.ai-hero{background:#060c14;border:1px solid rgba(52,211,153,.2);border-radius:20px;padding:28px 24px 24px;margin-bottom:20px;position:relative;overflow:hidden}
+.ai-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% -10%,rgba(52,211,153,.12) 0%,transparent 70%);pointer-events:none}
+.ai-hero-eyebrow{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(52,211,153,.7);margin-bottom:10px;font-family:'Courier New',monospace}
+.ai-hero-title{font-size:22px;font-weight:900;line-height:1.25;margin-bottom:6px;color:#e8f5f1}
+.ai-hero-title span{background:linear-gradient(90deg,#34d399,#6ee7b7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ai-hero-sub{font-size:12px;color:rgba(255,255,255,.45);line-height:1.6;margin-bottom:20px}
+.ai-stat-row{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:20px;padding:12px 16px;background:rgba(52,211,153,.06);border-radius:12px;border:1px solid rgba(52,211,153,.12)}
+.ai-stat{text-align:center;flex:1;min-width:80px}
+.ai-stat-num{font-size:20px;font-weight:900;color:#34d399;font-variant-numeric:tabular-nums}
+.ai-stat-lbl{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:2px}
+.module-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:680px){.module-grid{grid-template-columns:1fr}}
+.module-card{background:rgba(255,255,255,.04);border:1px solid rgba(52,211,153,.15);border-radius:14px;padding:14px 16px;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
+.module-card:hover{background:rgba(52,211,153,.08);border-color:rgba(52,211,153,.35);transform:translateY(-1px)}
+.module-card.active{background:rgba(52,211,153,.12);border-color:rgba(52,211,153,.5)}
+.module-tag{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#34d399;font-family:'Courier New',monospace;margin-bottom:6px}
+.module-icon{font-size:20px;margin-bottom:6px}
+.module-name{font-size:12px;font-weight:800;color:#e8f5f1;margin-bottom:3px}
+.module-desc{font-size:10px;color:rgba(255,255,255,.4);line-height:1.5}
+.module-active-dot{position:absolute;top:10px;right:10px;width:6px;height:6px;border-radius:50%;background:#34d399;display:none;box-shadow:0 0 6px #34d399}
+.module-card.active .module-active-dot{display:block}
+
+/* grade badge */
+.grade-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:22px;font-size:15px;font-weight:900;letter-spacing:.5px;margin-top:6px}
+.grade-S{background:rgba(52,211,153,.18);color:#34d399;border:2px solid #34d399;box-shadow:0 0 12px rgba(52,211,153,.25)}
+.grade-A{background:rgba(99,102,241,.15);color:#818cf8;border:2px solid #6366f1}
+.grade-B{background:rgba(245,158,11,.13);color:var(--yellow);border:2px solid rgba(245,158,11,.6)}
+.grade-C{background:rgba(239,68,68,.1);color:var(--red);border:2px solid rgba(239,68,68,.4)}
+.grade-D{background:rgba(100,116,139,.12);color:#94a3b8;border:2px solid rgba(100,116,139,.4)}
+
+/* auto discover */
+.btn-discover{width:100%;margin-top:10px;padding:10px 14px;background:linear-gradient(135deg,rgba(52,211,153,.15),rgba(16,185,129,.1));border:1.5px solid rgba(52,211,153,.4);color:#34d399;border-radius:12px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-discover:hover{background:linear-gradient(135deg,rgba(52,211,153,.25),rgba(16,185,129,.18));border-color:rgba(52,211,153,.7)}
+.disc-grid{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.disc-item{display:flex;align-items:center;gap:10px;background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.15);border-radius:10px;padding:8px 12px;cursor:pointer;transition:.15s}
+.disc-item:hover{background:rgba(52,211,153,.12);border-color:rgba(52,211,153,.3)}
+.disc-rank{font-size:10px;font-weight:700;color:rgba(52,211,153,.5);min-width:20px;font-family:'Courier New',monospace}
+.disc-kw{font-size:12px;font-weight:800;color:#e8f5f1;flex:1}
+.disc-score-bar{height:4px;border-radius:2px;background:rgba(52,211,153,.25);flex:0 0 60px;position:relative;overflow:hidden}
+.disc-score-fill{height:100%;border-radius:2px;background:#34d399}
+.disc-est{font-size:10px;font-weight:700;color:rgba(52,211,153,.7);white-space:nowrap}
+
+/* item match */
+.item-match-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+@media(max-width:500px){.item-match-grid{grid-template-columns:1fr}}
+.item-match-card{background:var(--card2);border-radius:10px;padding:10px 12px;border-left:3px solid var(--accent)}
+.item-match-card.chosoo{border-left-color:var(--green)}
+.item-match-card.jungsoo{border-left-color:var(--yellow)}
+.item-match-card.gosoo{border-left-color:var(--red)}
+.item-match-level{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.item-match-name{font-size:11px;font-weight:700;color:var(--txt);line-height:1.4}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">📦 소싱 평가기 <span>앤더슨 소싱 방법론</span></div>
+  <div class="topbar-right">
+    <button class="btn-add" onclick="addProduct()">+ 상품 추가</button>
+    <button class="theme-btn" onclick="toggleTheme()">🌙</button>
+  </div>
+</div>
+
+<!-- main tabs -->
+<div class="main-tabs">
+  <button class="main-tab active" onclick="showMainTab('eval',this)">⚡ 소싱 평가</button>
+  <button class="main-tab" onclick="showMainTab('guide',this)">🏆 초수·중수·고수 가이드</button>
+  <button class="main-tab" onclick="showMainTab('theory',this)">📚 앤더슨 이론</button>
+  <button class="main-tab" onclick="showMainTab('video',this)">🎬 경쟁 영상 분석</button>
+  <button class="main-tab" onclick="showMainTab('keyword',this)">🔍 키워드 소싱기</button>
+</div>
+
+<!-- ═══════════════ TAB 1: EVALUATION ═══════════════ -->
+<div class="tab-panel active" id="panel-eval">
+  <div class="main">
+    <div class="prod-tabs" id="prodTabs"></div>
+
+    <div class="grid">
+      <!-- LEFT: input -->
+      <div>
+        <div class="card" id="inputCard">
+          <div class="card-title">🔍 상품 정보 입력</div>
+
+          <label class="lbl">상품명</label>
+          <input type="text" id="prodName" placeholder="예: 강아지 반자동 급수기">
+
+          <label class="lbl">카테고리</label>
+          <select id="prodCat" onchange="onCatChange()">
+            <option value="">선택...</option>
+            <option value="pet">🐾 반려동물</option>
+            <option value="kitchen">🍳 주방/조리</option>
+            <option value="home">🏠 생활/인테리어</option>
+            <option value="baby">👶 유아/육아</option>
+            <option value="beauty">🌿 건강/뷰티</option>
+            <option value="electronics">📱 전자/가젯</option>
+            <option value="fashion">👗 패션/의류</option>
+            <option value="sports">🏋️ 스포츠/레저</option>
+            <option value="book">📚 도서/문구</option>
+            <option value="food">🍃 식품/음료</option>
+          </select>
+
+          <label class="lbl">예상 판매가 (원)</label>
+          <input type="number" id="prodPrice" placeholder="예: 18900" min="0">
+
+          <label class="lbl">예상 원가 (원)</label>
+          <input type="number" id="prodCost" placeholder="예: 6000" min="0">
+
+          <label class="lbl">쿠팡 상위 판매자 리뷰 수</label>
+          <input type="number" id="topReviews" placeholder="예: 1200" min="0" oninput="previewLevel()">
+          <div id="levelPreview" style="margin-top:8px;font-size:12px;color:var(--sub);min-height:20px"></div>
+
+          <div class="sep"></div>
+          <div class="sec-title">소싱 유형 (앤더슨 3대 방법)</div>
+          <div class="chips">
+            <div class="chip sel" data-type="domakgook" onclick="selType(this)">도매꾹</div>
+            <div class="chip" data-type="proxy" onclick="selType(this)">구매대행</div>
+            <div class="chip" data-type="oem" onclick="selType(this)">OEM 제조</div>
+            <div class="chip" data-type="trend" onclick="selType(this)">트렌드 선점</div>
+          </div>
+
+          <div class="sep"></div>
+          <div class="card-title">📊 10가지 평가 기준</div>
+          <div class="crit-list" id="critList"></div>
+
+          <button class="btn-eval" onclick="evaluate()">⚡ 소싱 점수 계산</button>
+        </div>
+      </div>
+
+      <!-- RIGHT: results -->
+      <div>
+        <div class="result-card" id="resultCard" style="display:none">
+          <div class="card-title">✅ 소싱 평가 결과</div>
+
+          <!-- level banner -->
+          <div id="levelBanner"></div>
+
+          <div class="score-row">
+            <div class="score-ring-wrap">
+              <canvas class="ring" id="ringChart"></canvas>
+            </div>
+            <div class="score-info">
+              <div class="score-label">종합 소싱 점수</div>
+              <div class="score-big" id="scoreBig">—</div>
+              <div style="margin-top:6px" id="verdictWrap"></div>
+              <div style="font-size:11px;color:var(--sub);margin-top:6px" id="verdictMsg"></div>
+            </div>
+          </div>
+
+          <div class="sep"></div>
+          <div class="sec-title">항목별 점수</div>
+          <div class="breakdown" id="breakdown"></div>
+
+          <div class="sep"></div>
+          <div class="tips" id="tips"></div>
+        </div>
+
+        <div class="result-card" id="radarCard" style="display:none">
+          <div class="card-title">🕸 레이더 분석</div>
+          <div class="radar-wrap">
+            <canvas id="radarChart"></canvas>
+          </div>
+        </div>
+
+        <div class="result-card" id="compareCard" style="display:none">
+          <div class="card-title">📋 상품 비교표</div>
+          <div class="cmp-wrap">
+            <table id="compareTable"></table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ TAB 2: LEVEL GUIDE ═══════════════ -->
+<div class="tab-panel" id="panel-guide">
+  <div class="main">
+
+    <!-- level summary -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px">
+      <div class="lvl-card chosoo" style="text-align:center;padding:20px">
+        <div style="font-size:32px;margin-bottom:8px">🌱</div>
+        <div style="font-size:18px;font-weight:900;color:var(--green);margin-bottom:4px">초수</div>
+        <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:8px">입문자 아이템</div>
+        <div style="font-size:11px;color:var(--sub);line-height:1.6">상위 판매자 리뷰<br><strong style="color:var(--green)">300개 미만</strong> 카테고리<br>바로 도전 가능!</div>
+      </div>
+      <div class="lvl-card jungsoo" style="text-align:center;padding:20px">
+        <div style="font-size:32px;margin-bottom:8px">⚔️</div>
+        <div style="font-size:18px;font-weight:900;color:var(--yellow);margin-bottom:4px">중수</div>
+        <div style="font-size:13px;font-weight:700;color:var(--yellow);margin-bottom:8px">경험자 아이템</div>
+        <div style="font-size:11px;color:var(--sub);line-height:1.6">상위 판매자 리뷰<br><strong style="color:var(--yellow)">300~3,000개</strong> 카테고리<br>최적화 실력 필요</div>
+      </div>
+      <div class="lvl-card gosoo" style="text-align:center;padding:20px">
+        <div style="font-size:32px;margin-bottom:8px">🏆</div>
+        <div style="font-size:18px;font-weight:900;color:var(--red);margin-bottom:4px">고수</div>
+        <div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:8px">전문가 아이템</div>
+        <div style="font-size:11px;color:var(--sub);line-height:1.6">상위 판매자 리뷰<br><strong style="color:var(--red)">3,000개 초과</strong> 카테고리<br>자본·경험 필수</div>
+      </div>
+    </div>
+
+    <!-- filter -->
+    <div class="lvl-filter">
+      <button class="lvl-btn all active" onclick="filterLevel('all',this)">전체 보기</button>
+      <button class="lvl-btn chosoo" onclick="filterLevel('chosoo',this)">🌱 초수</button>
+      <button class="lvl-btn jungsoo" onclick="filterLevel('jungsoo',this)">⚔️ 중수</button>
+      <button class="lvl-btn gosoo" onclick="filterLevel('gosoo',this)">🏆 고수</button>
+    </div>
+
+    <div id="catSections"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ TAB 3: ANDERSON (Korean YouTuber) THEORY ═══════════════ -->
+<div class="tab-panel" id="panel-theory">
+  <div class="main">
+
+    <div class="anderson-quote">
+      <p>"상품력보다 <strong style="color:var(--accent)">판매실력</strong>이 훨씬 중요하다.<br>썸네일·상세페이지·키워드 — 이 세 가지가 매출을 만든다."</p>
+      <cite>— 앤더슨, 쿠팡 셀러 소싱 방법론</cite>
+    </div>
+
+    <!-- 3가지 소싱 방법 비교 -->
+    <div style="font-size:13px;font-weight:800;color:var(--txt);margin-bottom:12px">📦 3가지 소싱 방법 비교</div>
+    <div class="sourcing-method-grid">
+      <div class="sm-card domakgook">
+        <div class="sm-card-badge">입문 추천</div>
+        <div class="sm-card-title">🏬 도매꾹</div>
+        <div class="sm-card-revenue">월 매출 5,000만</div>
+        <div class="sm-card-rev-label">TOP100 기준 월 1억 4,753만 / 하루 6시간</div>
+        <div class="sm-card-rows">
+          <div class="sm-card-row"><span class="lbl">초기 자본</span><span class="val">100~500만원</span></div>
+          <div class="sm-card-row"><span class="lbl">재고 부담</span><span class="val" style="color:var(--yellow)">있음 (소량 가능)</span></div>
+          <div class="sm-card-row"><span class="lbl">마진율</span><span class="val">15~30%</span></div>
+          <div class="sm-card-row"><span class="lbl">배송 속도</span><span class="val" style="color:var(--green)">빠름</span></div>
+          <div class="sm-card-row"><span class="lbl">핵심 스킬</span><span class="val">상품 선별력</span></div>
+        </div>
+      </div>
+      <div class="sm-card proxy">
+        <div class="sm-card-badge">수익률 최고</div>
+        <div class="sm-card-title">🌐 구매대행</div>
+        <div class="sm-card-revenue">월 순익 5,800만</div>
+        <div class="sm-card-rev-label">키워드 전략 / 하루 4시간 기준 1,400만</div>
+        <div class="sm-card-rows">
+          <div class="sm-card-row"><span class="lbl">초기 자본</span><span class="val" style="color:var(--green)">거의 없음</span></div>
+          <div class="sm-card-row"><span class="lbl">재고 부담</span><span class="val" style="color:var(--green)">없음</span></div>
+          <div class="sm-card-row"><span class="lbl">마진율</span><span class="val">30~60%</span></div>
+          <div class="sm-card-row"><span class="lbl">배송 속도</span><span class="val" style="color:var(--red)">느림 (7~20일)</span></div>
+          <div class="sm-card-row"><span class="lbl">핵심 스킬</span><span class="val">썸네일·키워드</span></div>
+        </div>
+      </div>
+      <div class="sm-card oem">
+        <div class="sm-card-badge">장기 브랜드</div>
+        <div class="sm-card-title">🏭 OEM 제조</div>
+        <div class="sm-card-revenue">월 순익 2,200만</div>
+        <div class="sm-card-rev-label">브랜드 구축 후 / 하루 2시간 유지</div>
+        <div class="sm-card-rows">
+          <div class="sm-card-row"><span class="lbl">초기 자본</span><span class="val" style="color:var(--red)">2,000만원+</span></div>
+          <div class="sm-card-row"><span class="lbl">재고 부담</span><span class="val" style="color:var(--red)">대량 필수</span></div>
+          <div class="sm-card-row"><span class="lbl">마진율</span><span class="val">40~70%</span></div>
+          <div class="sm-card-row"><span class="lbl">배송 속도</span><span class="val" style="color:var(--green)">빠름 (로켓)</span></div>
+          <div class="sm-card-row"><span class="lbl">핵심 스킬</span><span class="val">제조·품질관리</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 구매대행 비밀 3요소 -->
+    <div class="sm-pro-tip">
+      <h4>🔑 구매대행 월 순익 5,800만원의 비밀</h4>
+      <p style="font-size:12px;color:var(--sub);line-height:1.7">사입 셀러도 반드시 익혀야 할 3가지 핵심 스킬. <strong style="color:var(--txt)">썸네일이 클릭을 만들고, 상세페이지가 결제를 만들고, 키워드가 노출을 만든다.</strong></p>
+      <div class="sm-secret-grid">
+        <div class="sm-secret-item">
+          <div class="sm-secret-icon">🖼️</div>
+          <div class="sm-secret-title">썸네일</div>
+          <div class="sm-secret-desc">클릭률(CTR) 결정.<br>배경 제거 + 텍스트 한 줄.<br>경쟁자 썸네일 분석 필수</div>
+        </div>
+        <div class="sm-secret-item">
+          <div class="sm-secret-icon">📄</div>
+          <div class="sm-secret-title">상세페이지</div>
+          <div class="sm-secret-desc">구매 전환율 결정.<br>문제 → 해결 → 증거 구조.<br>동영상 1개 추가로 +30%</div>
+        </div>
+        <div class="sm-secret-item">
+          <div class="sm-secret-icon">🔍</div>
+          <div class="sm-secret-title">키워드</div>
+          <div class="sm-secret-desc">노출량 결정.<br>틈새 키워드 발굴이 핵심.<br>자동완성 + 연관 검색어 활용</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 단계별 성장 로드맵 -->
+    <div class="theory-card" style="margin-bottom:16px">
+      <h3>🗺 앤더슨 단계별 매출 성장 로드맵 (25년 기준)</h3>
+      <div class="anderson-roadmap" style="margin-top:14px">
+        <div class="ar-step">
+          <div class="ar-line"><div class="ar-num">1</div><div class="ar-connector"></div></div>
+          <div class="ar-body">
+            <strong>입문 — 도매꾹 + 판매실력 연습</strong>
+            <span>도매꾹 TOP100에서 상품 선택 후 썸네일·상세페이지·키워드를 3번 이상 수정. 월 매출 500만원 달성이 목표. 상품력보다 판매실력을 먼저 키운다.</span>
+          </div>
+        </div>
+        <div class="ar-step">
+          <div class="ar-line"><div class="ar-num">2</div><div class="ar-connector"></div></div>
+          <div class="ar-body">
+            <strong>성장 — 구매대행 키워드 전략 집중</strong>
+            <span>알리익스프레스 틈새 상품 + 쿠팡 키워드 공략으로 재고 없이 월 순익 1,400만원 달성 가능. 썸네일 A/B 테스트, 키워드 ROI 추적이 핵심.</span>
+          </div>
+        </div>
+        <div class="ar-step">
+          <div class="ar-line"><div class="ar-num">3</div><div class="ar-connector"></div></div>
+          <div class="ar-body">
+            <strong>확장 — 구매대행 고급 키워드 (5,800만원 구간)</strong>
+            <span>경쟁자가 모르는 롱테일 키워드 묶음 전략. 단일 키워드 1위보다 중위 키워드 50개가 더 안정적. 리뷰 수집 속도가 관건.</span>
+          </div>
+        </div>
+        <div class="ar-step">
+          <div class="ar-line"><div class="ar-num">4</div><div class="ar-connector"></div></div>
+          <div class="ar-body">
+            <strong>브랜드화 — OEM 제조 전환</strong>
+            <span>구매대행으로 검증된 상품을 OEM으로 전환. 판매 데이터(키워드·리뷰·반품률)가 있어야 제조 리스크가 줄어든다. 월 순익 2,200만원, 하루 2시간 유지 가능.</span>
+          </div>
+        </div>
+        <div class="ar-step">
+          <div class="ar-line"><div class="ar-num">5</div></div>
+          <div class="ar-body" style="padding-bottom:0">
+            <strong>쿠팡은 끝물이 아니다</strong>
+            <span>25년 기준 쿠팡은 여전히 성장 중. 판매실력(썸네일·상세페이지·키워드)만 갖추면 누구든 진입 가능. 상품력·자본력보다 실력이 먼저다.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 핵심 비교 + 체크리스트 -->
+    <div class="theory-grid">
+      <div class="theory-card">
+        <h3>📊 도매꾹 TOP100 매출 분석</h3>
+        <p style="margin-bottom:10px">앤더슨이 실제 검증한 도매꾹 TOP100 데이터</p>
+        <div class="formula-box">
+          <div class="row"><span class="label">TOP100 합산 월 매출</span><span class="val green">₩147,530,050</span></div>
+          <div class="sep-line"></div>
+          <div class="row"><span class="label">상품 1개 평균 월 매출</span><span class="val">₩1,475,301</span></div>
+          <div class="row"><span class="label">마진율 30% 적용 시</span><span class="val green">순익 ₩442,590/개</span></div>
+          <div class="sep-line"></div>
+          <div class="row"><span class="label">상위 10개만 취급해도</span><span class="val green">월 매출 1,000만+</span></div>
+        </div>
+        <div class="highlight">💡 도매꾹 TOP100은 이미 검증된 시장. 판매실력만 있으면 순위 올리기 가능.</div>
+      </div>
+
+      <div class="theory-card">
+        <h3>✅ 소싱 유형별 추천 조건</h3>
+        <table class="pareto-table">
+          <thead><tr><th>조건</th><th>도매꾹</th><th>구매대행</th><th>OEM</th></tr></thead>
+          <tbody>
+            <tr><td class="head-col">초기 자본</td><td class="warn">100만+</td><td class="good">0원</td><td class="bad">2,000만+</td></tr>
+            <tr><td class="head-col">판매실력</td><td class="warn">중간</td><td class="bad">최고 필요</td><td class="good">상품으로 커버</td></tr>
+            <tr><td class="head-col">수익 속도</td><td class="good">빠름</td><td class="good">빠름</td><td class="bad">느림</td></tr>
+            <tr><td class="head-col">안정성</td><td class="warn">보통</td><td class="warn">보통</td><td class="good">높음</td></tr>
+            <tr><td class="head-col">권장 단계</td><td class="good">입문</td><td class="good">중급</td><td class="warn">고급</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="theory-card">
+        <h3>⚔️ 레드오션 vs 블루오션 판별</h3>
+        <table class="pareto-table">
+          <thead><tr><th>기준</th><th class="bad">레드오션 🔴</th><th class="good">블루오션 🟢</th></tr></thead>
+          <tbody>
+            <tr><td class="head-col">1위 리뷰</td><td class="bad">3,000+</td><td class="good">300 미만</td></tr>
+            <tr><td class="head-col">2~10위 리뷰</td><td class="bad">1,000+</td><td class="good">200 미만</td></tr>
+            <tr><td class="head-col">마진율</td><td class="bad">15% 미만</td><td class="good">30% 이상</td></tr>
+            <tr><td class="head-col">차별화</td><td class="bad">복사품 가득</td><td class="good">썸네일 개선 여지</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="theory-card">
+        <h3>🛠 소싱 리서치 도구</h3>
+        <div class="tools-list">
+          <div class="tool-item">
+            <div class="tool-name">도매꾹 TOP100</div>
+            <div class="tool-desc">검증된 상품 목록. 월 매출 1.47억 기준 데이터</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">쿠팡 카테고리 랭킹</div>
+            <div class="tool-desc">1위 리뷰 수로 초수/중수/고수 레벨 판별</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">알리익스프레스</div>
+            <div class="tool-desc">구매대행 원가 조사. 배송기간·MOQ 확인</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">쿠팡 자동완성</div>
+            <div class="tool-desc">틈새 키워드 발굴. 경쟁 낮은 연관 검색어</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">네이버 광고관리자</div>
+            <div class="tool-desc">월 검색량 확인. 1,000~30,000이 적정 틈새</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">경쟁자 상세페이지</div>
+            <div class="tool-desc">Q&A·리뷰 불만 분석 → 내 상세페이지 개선 포인트</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 구간별 수치표 -->
+    <div class="theory-card" style="margin-bottom:16px">
+      <h3>📊 카테고리별 앤더슨 구간 수치표</h3>
+      <p style="margin-bottom:14px">카테고리를 선택하면 해당 시장의 정확한 구간 수치를 확인할 수 있습니다.</p>
+      <div class="seg-cat-tabs" id="segCatTabs">
+        <button class="seg-cat-tab active" data-cat="default" onclick="showSegCat(this,'default')">📦 기본</button>
+        <button class="seg-cat-tab" data-cat="pet" onclick="showSegCat(this,'pet')">🐾 반려동물</button>
+        <button class="seg-cat-tab" data-cat="kitchen" onclick="showSegCat(this,'kitchen')">🍳 주방</button>
+        <button class="seg-cat-tab" data-cat="home" onclick="showSegCat(this,'home')">🏠 생활</button>
+        <button class="seg-cat-tab" data-cat="baby" onclick="showSegCat(this,'baby')">👶 유아</button>
+        <button class="seg-cat-tab" data-cat="beauty" onclick="showSegCat(this,'beauty')">🌿 뷰티</button>
+        <button class="seg-cat-tab" data-cat="electronics" onclick="showSegCat(this,'electronics')">📱 전자</button>
+        <button class="seg-cat-tab" data-cat="fashion" onclick="showSegCat(this,'fashion')">👗 패션</button>
+        <button class="seg-cat-tab" data-cat="sports" onclick="showSegCat(this,'sports')">🏋️ 스포츠</button>
+        <button class="seg-cat-tab" data-cat="food" onclick="showSegCat(this,'food')">🍃 식품</button>
+      </div>
+      <div id="segCatDisplay"></div>
+      <div style="margin-top:18px;font-size:12px;font-weight:800;color:var(--sub);margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px">전체 카테고리 경쟁 기준 요약</div>
+      <table class="seg-overview-table">
+        <thead><tr>
+          <th style="text-align:left">카테고리</th>
+          <th style="color:var(--green)">🌱 초수 이하</th>
+          <th style="color:var(--yellow)">⚔️ 중수 이하</th>
+          <th style="color:var(--red)">🏆 고수+</th>
+          <th>레전드</th>
+        </tr></thead>
+        <tbody id="segOverviewBody"></tbody>
+      </table>
+    </div>
+
+    <!-- 최종 체크리스트 -->
+    <div class="theory-card">
+      <h3>✅ 앤더슨식 소싱 전 최종 체크리스트</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
+        <div style="background:var(--card2);border-radius:10px;padding:12px">
+          <div style="font-size:12px;font-weight:800;color:var(--green);margin-bottom:8px">✅ 판매실력 체크</div>
+          <div style="font-size:11px;color:var(--sub);line-height:2">
+            ☐ 경쟁자 썸네일 3개 이상 분석<br>
+            ☐ 내 썸네일이 클릭 유도 가능한가<br>
+            ☐ 상세페이지 문제→해결→증거 구조 완성<br>
+            ☐ 메인 키워드 + 틈새 키워드 10개 확보<br>
+            ☐ 마진율 25% 이상 확인<br>
+            ☐ 소량 테스트 발주 가능 (10~30개)
+          </div>
+        </div>
+        <div style="background:var(--card2);border-radius:10px;padding:12px">
+          <div style="font-size:12px;font-weight:800;color:var(--red);margin-bottom:8px">❌ 피해야 할 함정</div>
+          <div style="font-size:11px;color:var(--sub);line-height:2">
+            ☐ 1위 리뷰 5,000개 초과 상품<br>
+            ☐ 상품력만 믿고 썸네일 대충 만들기<br>
+            ☐ 키워드 분석 없이 상품 등록<br>
+            ☐ 구매대행 배송 기간 미고지<br>
+            ☐ 최소주문량 500개 이상<br>
+            ☐ 특허·인증 필수 카테고리 무지입
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ─── Data ────────────────────────────────────────────────
+const CRITERIA = [
+  { id:'demand',      label:'시장 수요',       icon:'📈', desc:'실제 구매 수요가 검증된 시장인가? (네이버/쿠팡 검색량)' },
+  { id:'competition', label:'경쟁 강도 (역산)', icon:'⚔️', desc:'상위 판매자가 적거나 약한가? 10이면 경쟁 없음' },
+  { id:'margin',      label:'수익 마진',        icon:'💰', desc:'판매가 대비 원가·수수료 제외 후 실질 마진' },
+  { id:'logistics',   label:'물류 용이성',      icon:'📦', desc:'가볍고, 깨지지 않고, 보관이 쉬운가?' },
+  { id:'longtail',    label:'틈새 적합도',      icon:'📊', desc:'경쟁자가 없는 틈새 영역인가? 판매실력으로 1위 가능한가? (앤더슨 핵심)' },
+  { id:'trend',       label:'트렌드 방향',      icon:'🚀', desc:'시장이 성장 중인가? (Google Trends 기준)' },
+  { id:'differen',    label:'차별화 가능성',    icon:'✨', desc:'경쟁자와 다른 포지션으로 진입 가능한가?' },
+  { id:'repeat',      label:'재구매율',         icon:'🔄', desc:'소모품 또는 반복 구매 품목인가?' },
+  { id:'review_gap',  label:'리뷰 격차',        icon:'⭐', desc:'1위 판매자 리뷰가 적어 진입 가능한가?' },
+  { id:'entry',       label:'진입 장벽',        icon:'🚪', desc:'허가·특허·최소주문량 등 진입 장벽이 낮은가?' },
+];
+const WEIGHTS = { demand:.12, competition:.14, margin:.16, logistics:.08, longtail:.14, trend:.08, differen:.10, repeat:.06, review_gap:.06, entry:.06 };
+
+// Level thresholds by category (top seller review count)
+const LEVEL_THRESHOLDS = {
+  pet:         { chosoo: 300,  jungsoo: 2000 },
+  kitchen:     { chosoo: 400,  jungsoo: 2500 },
+  home:        { chosoo: 400,  jungsoo: 2500 },
+  baby:        { chosoo: 200,  jungsoo: 1200 },
+  beauty:      { chosoo: 500,  jungsoo: 3000 },
+  electronics: { chosoo: 250,  jungsoo: 2000 },
+  fashion:     { chosoo: 400,  jungsoo: 3000 },
+  sports:      { chosoo: 300,  jungsoo: 2000 },
+  book:        { chosoo: 150,  jungsoo:  800 },
+  food:        { chosoo: 500,  jungsoo: 3000 },
+  default:     { chosoo: 300,  jungsoo: 2000 },
+};
+
+// Category product ideas by level
+const CAT_IDEAS = [
+  { key:'pet', label:'🐾 반려동물', items: {
+    chosoo: ['강아지 구름 빗살 슬리커 브러쉬','고양이 목욕용 실리콘 스크럽 장갑','반려묘 물 분사 식기 세트','강아지 외출용 실리콘 물통','고양이 창문 해먹 침대','반려동물 탈취 스프레이','강아지 발 닦개 휴대용 컵'],
+    jungsoo:['자동 급수기 반자동 정수형','반려견 훈련용 클리커 + 간식 파우치','고양이 스크래쳐 판지 교체형','반려동물 이동용 메쉬 배낭','강아지 지능개발 노즈워크 매트'],
+    gosoo:  ['스마트 자동 급식기 앱 연동','공기청정 기능 반려동물 화장실','로봇 레이저 고양이 놀이기구'],
+  }},
+  { key:'kitchen', label:'🍳 주방/조리', items: {
+    chosoo: ['실리콘 누름 뚜껑 냄비 뚜껑 홀더','스테인리스 에그 커터기','접이식 다회용 스트로','냉장고 채소 신선도 보존 케이스','양배추 채칼 안전 커버 포함','생선 내장 제거기 스틱','간편 마늘 슬라이서'],
+    jungsoo:['에어프라이어 전용 유산지 라이너','전자레인지용 스팀 찜기 세트','주방 정리용 스택형 수납 선반','접이식 실리콘 에그팬'],
+    gosoo:  ['블렌더 진공 보온 일체형','스마트 주방 저울 앱 연동','인덕션 전용 세라믹 코팅 냄비 세트'],
+  }},
+  { key:'home', label:'🏠 생활/인테리어', items: {
+    chosoo: ['벽면 흡착 무타공 선반 미니','실리콘 도어 스토퍼 투명','창문 단열 버블 필름','케이블 정리 클립 다색','화장대 서랍 내부 분리대','욕실 비누 홀더 자석식','아크릴 전선 수납 박스'],
+    jungsoo:['공기청정식물 수경재배 화분 세트','LED 타이머 창문 블라인드','무타공 커튼봉 텐션 방식','욕실 대용량 거울 수납장'],
+    gosoo:  ['스마트홈 IoT 전등 스위치','에어컨 청소 커버 세트 대형','무선 진공 청소기 침대 전용'],
+  }},
+  { key:'baby', label:'👶 유아/육아', items: {
+    chosoo: ['실리콘 이유식 스푼 세트','유아 치발기 냉장 보관형','아기 목욕 온도계 오리','휴대용 기저귀 교환대 방수 매트','아기 손발 키트 기념 세트'],
+    jungsoo:['신생아 전동 스윙 의자','유아 안전문 압력식 확장형','수유 중 손 자유 쿠션 필로우'],
+    gosoo:  ['전동 유축기 더블 휴대용','CCTV 아기 모니터 360도','아기 자동 바운서 스마트'],
+  }},
+  { key:'beauty', label:'🌿 건강/뷰티', items: {
+    chosoo: ['코 세정기 전동 미니','귀 청소 카메라 LED','눈가 마사지 온열 안대','셀프 제모기 스프링식','손발 각질제거 전동 파일','목 주름 방지 실리콘 패치','얼굴 냉장 롤러 스틸'],
+    jungsoo:['LED 광자 피부 관리기 7컬러','고주파 EMS 눈 마사지기','공기압 팔 다리 마사지기 무선'],
+    gosoo:  ['HIFU 가정용 초음파 리프팅','LED 마스크 의료기기 등급','IPL 제모기 무선 프리미엄'],
+  }},
+  { key:'electronics', label:'📱 전자/가젯', items: {
+    chosoo: ['자석 스마트폰 거치대 차량용','케이블 단자 보호 캡 세트','키보드 청소 솔 세트','카메라 렌즈 클리닝 키트','스마트폰 열방출 냉각 팬','전선 정리함 멀티탭용'],
+    jungsoo:['무선 귀걸이형 이어폰 오픈형','맥세이프 호환 보조배터리','전자기기 무선 충전 패드 3in1'],
+    gosoo:  ['소형 빔프로젝터 FHD 미니','TWS 노이즈캔슬링 이어폰','태블릿 전용 스마트 키보드 케이스'],
+  }},
+  { key:'fashion', label:'👗 패션/의류', items: {
+    chosoo: ['가방 정리 내부 분류 파우치','옷걸이 공간절약 연결 후크','신발 탈취 건조기 미니','가방 방수 커버 22~32L','자외선 차단 쿨링 토시 2색'],
+    jungsoo:['옷걸이 전동 진공 수납 세트','명품 가방 모양 유지 내부 쿠션','우산 자외선 차단 UV 99%'],
+    gosoo:  ['스마트워치 밴드 고급 스틸','핸드백 정품 인증 스마트 태그','전동 신발 브러쉬 무선'],
+  }},
+  { key:'sports', label:'🏋️ 스포츠/레저', items: {
+    chosoo: ['요가매트 스트랩 캐리어','운동 자세 교정 허리 지지대','운동 그립감 손목 보호대','미니 마사지볼 페셜 3종','캠핑 수저 티타늄 경량'],
+    jungsoo:['저주파 근육 EMS 패드 무선','실내 턱걸이 철봉 도어 압착식','캠핑 전동 에어 펌프 휴대용'],
+    gosoo:  ['전동 폼롤러 진동 4단계','스마트 줄넘기 카운트 앱 연동','휴대용 전동 자전거 미니 3단'],
+  }},
+  { key:'book', label:'📚 도서/문구', items: {
+    chosoo: ['형광펜 파스텔 10색 세트','클리어파일 30매 A4 컬러','마스킹 테이프 5롤 패턴','노트 라벨 스티커 다이어리용','독서대 접이식 알루미늄'],
+    jungsoo:['목재 독서대 각도 조절형','디지털 전자 메모패드 LCD','저소음 기계식 키캡 세트'],
+    gosoo:  ['아이패드 전용 페이퍼라이크 필름','스마트 전자 달력 대형','태블릿 드로잉 글러브 2L'],
+  }},
+  { key:'food', label:'🍃 식품/음료', items: {
+    chosoo: ['냉동식품 보관용 지퍼 실링백','밀폐 진공 뚜껑 실리콘 세트','냉장 보관 김치 용기 3종','에코 실리콘 랩 라운드 3size'],
+    jungsoo:['전동 진공 포장기 가정용','유리 밀폐 식품 보관 세트 8pc','스틱형 콜드브루 커피 100입'],
+    gosoo:  ['스마트 냉장고 신선도 관리기','가정용 발효기 요거트 메이커','진공 와인 보존 전동 펌프'],
+  }},
+];
+
+let products = [{ name:'상품 1', scores:{}, meta:{}, result:null }];
+let curIdx = 0;
+let ringInst=null, radarInst=null;
+function $(id){ return document.getElementById(id); }
+
+// ─── Main tabs ────────────────────────────────────────────
+function showMainTab(tab, btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.main-tab').forEach(b=>b.classList.remove('active'));
+  $('panel-'+tab).classList.add('active');
+  btn.classList.add('active');
+  if(tab==='guide') renderGuide();
+}
+
+// ─── Evaluation tab ───────────────────────────────────────
+function initCritList(){
+  const list=$('critList'); if(!list) return;
+  list.innerHTML='';
+  CRITERIA.forEach(c=>{
+    const val=(products[curIdx].scores[c.id]||5);
+    list.innerHTML+=`
+    <div class="crit-item">
+      <div class="crit-row">
+        <span class="crit-name">${c.icon} ${c.label}</span>
+        <span class="crit-badge" id="badge-${c.id}">${val}</span>
+      </div>
+      <input type="range" min="1" max="10" value="${val}" id="range-${c.id}" oninput="onRange('${c.id}',this.value)">
+      <div class="crit-desc">${c.desc}</div>
+    </div>`;
+  });
+  updateRangeColors();
+}
+
+function onRange(id,val){
+  const b=$('badge-'+id); if(b) b.textContent=val;
+  const n=parseInt(val);
+  const color=n<=3?'var(--red)':n<=6?'var(--yellow)':'var(--green)';
+  if(b) b.style.background=color;
+  products[curIdx].scores[id]=n;
+}
+
+function updateRangeColors(){
+  CRITERIA.forEach(c=>{
+    const v=products[curIdx].scores[c.id]||5;
+    const b=$('badge-'+c.id); if(!b) return;
+    b.style.background=v<=3?'var(--red)':v<=6?'var(--yellow)':'var(--green)';
+  });
+}
+
+function getLevel(cat, reviews){
+  if(!reviews) return null;
+  const th = LEVEL_THRESHOLDS[cat] || LEVEL_THRESHOLDS.default;
+  if(reviews < th.chosoo) return 'chosoo';
+  if(reviews <= th.jungsoo) return 'jungsoo';
+  return 'gosoo';
+}
+
+function previewLevel(){
+  const rv=parseInt($('topReviews').value)||0;
+  const cat=$('prodCat').value;
+  if(!rv){ $('levelPreview').textContent=''; return; }
+  const lv=getLevel(cat||'default', rv);
+  const info={ chosoo:['🌱','초수 아이템','var(--green)'], jungsoo:['⚔️','중수 아이템','var(--yellow)'], gosoo:['🏆','고수 아이템','var(--red)'] };
+  if(!lv) return;
+  const [ic,nm,cl]=info[lv];
+  $('levelPreview').innerHTML=`<span style="font-weight:800;color:${cl}">${ic} ${nm}</span> — 이 카테고리에서 리뷰 ${rv.toLocaleString()}개는 <strong style="color:${cl}">${nm}</strong> 진입 난이도입니다.`;
+}
+
+function onCatChange(){ previewLevel(); }
+
+function renderTabs(){
+  const tabs=$('prodTabs'); if(!tabs) return;
+  tabs.innerHTML=products.map((p,i)=>`
+    <div class="prod-tab${i===curIdx?' active':''}" onclick="switchProduct(${i})">
+      ${p.name||'상품 '+(i+1)}
+      ${products.length>1?`<button class="del" onclick="deleteProduct(${i},event)">✕</button>`:''}
+    </div>`).join('');
+}
+
+function switchProduct(idx){
+  saveCurrentMeta();
+  curIdx=idx;
+  loadCurrentMeta();
+  renderTabs();
+  if(products[curIdx].result) showResult(products[curIdx].result);
+  else { $('resultCard').style.display='none'; $('radarCard').style.display='none'; }
+  updateCompare();
+}
+
+function addProduct(){
+  saveCurrentMeta();
+  products.push({name:'상품 '+(products.length+1), scores:{}, meta:{}, result:null});
+  curIdx=products.length-1;
+  loadCurrentMeta();
+  renderTabs();
+  $('resultCard').style.display='none'; $('radarCard').style.display='none';
+}
+
+function deleteProduct(idx,e){
+  e.stopPropagation();
+  if(products.length===1) return;
+  products.splice(idx,1);
+  if(curIdx>=products.length) curIdx=products.length-1;
+  loadCurrentMeta();
+  renderTabs();
+  updateCompare();
+}
+
+function saveCurrentMeta(){
+  const p=products[curIdx];
+  p.meta.name=$('prodName').value;
+  p.meta.cat=$('prodCat').value;
+  p.meta.price=parseFloat($('prodPrice').value)||0;
+  p.meta.cost=parseFloat($('prodCost').value)||0;
+  p.meta.topReviews=parseInt($('topReviews').value)||0;
+  p.meta.type=document.querySelector('.chip.sel')?.dataset.type||'domakgook';
+  p.name=p.meta.name||'상품 '+(curIdx+1);
+  CRITERIA.forEach(c=>{ const r=$('range-'+c.id); if(r) p.scores[c.id]=parseInt(r.value)||5; });
+}
+
+function loadCurrentMeta(){
+  const p=products[curIdx];
+  $('prodName').value=p.meta.name||'';
+  $('prodCat').value=p.meta.cat||'';
+  $('prodPrice').value=p.meta.price||'';
+  $('prodCost').value=p.meta.cost||'';
+  $('topReviews').value=p.meta.topReviews||'';
+  document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('sel',c.dataset.type===(p.meta.type||'domakgook')));
+  initCritList();
+  previewLevel();
+}
+
+function selType(el){
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function evaluate(){
+  saveCurrentMeta();
+  const p=products[curIdx];
+  const meta=p.meta;
+
+  if(meta.topReviews>0){
+    const rv=meta.topReviews;
+    let rs=rv<50?10:rv<200?8:rv<500?6:rv<2000?4:rv<10000?2:1;
+    p.scores.review_gap=rs;
+    const r=$('range-review_gap'); if(r){r.value=rs; const b=$('badge-review_gap');if(b)b.textContent=rs;}
+  }
+
+  if(meta.price>0 && meta.cost>0){
+    const fee=meta.price*0.12;
+    const net=meta.price-meta.cost-fee;
+    const pct=net/meta.price;
+    let ms=pct>=0.45?10:pct>=0.35?8:pct>=0.25?6:pct>=0.15?4:pct>=0.05?2:1;
+    p.scores.margin=ms;
+    const r=$('range-margin'); if(r){r.value=ms;const b=$('badge-margin');if(b)b.textContent=ms;}
+  }
+
+  let total=0;
+  CRITERIA.forEach(c=>{ total+=(p.scores[c.id]||5)*(WEIGHTS[c.id]||0.1); });
+  total=Math.round(total*10);
+
+  const result={total, scores:{...p.scores}, meta:{...meta}};
+  p.result=result;
+  showResult(result);
+  updateCompare();
+}
+
+function showResult(result){
+  $('resultCard').style.display='block';
+  $('radarCard').style.display='block';
+
+  const t=result.total;
+  $('scoreBig').textContent=t;
+  const col=t>=70?'var(--green)':t>=50?'var(--yellow)':'var(--red)';
+  $('scoreBig').style.color=col;
+
+  // level banner
+  const lv=getLevel(result.meta.cat||'default', result.meta.topReviews);
+  const lvBanner=$('levelBanner');
+  if(lv && result.meta.topReviews>0){
+    const lvInfo={
+      chosoo:{ cls:'chosoo', icon:'🌱', name:'초수 아이템', desc:'1위 판매자 리뷰가 적습니다. 지금 당장 진입해도 충분히 경쟁할 수 있는 난이도입니다. 소량 테스트 발주로 바로 시작하세요!', badge:`리뷰 ${result.meta.topReviews.toLocaleString()}개` },
+      jungsoo:{ cls:'jungsoo', icon:'⚔️', name:'중수 아이템', desc:'어느 정도 경쟁이 있습니다. 상품 사진·키워드 최적화와 초기 리뷰 확보 전략이 필요합니다. 경험자에게 적합합니다.', badge:`리뷰 ${result.meta.topReviews.toLocaleString()}개` },
+      gosoo:{ cls:'gosoo', icon:'🏆', name:'고수 아이템', desc:'1위 판매자가 강합니다. 차별화 전략, 충분한 자본, 마케팅 경험 없이는 진입이 어렵습니다. 다른 틈새를 먼저 찾아보세요.', badge:`리뷰 ${result.meta.topReviews.toLocaleString()}개` },
+    };
+    const info=lvInfo[lv];
+    lvBanner.innerHTML=`<div class="level-banner ${info.cls}">
+      <div class="level-icon">${info.icon}</div>
+      <div class="level-info">
+        <div class="level-name">${info.name}</div>
+        <div class="level-desc">${info.desc}</div>
+      </div>
+      <div class="level-threshold">${info.badge}</div>
+    </div>`;
+  } else {
+    lvBanner.innerHTML='';
+  }
+
+  let vclass, vtxt, vmsg;
+  if(t>=75){vclass='go';vtxt='✅ 소싱 가능!';vmsg='롱테일 틈새 진입 적합. 바로 소싱 시작을 권장합니다.';}
+  else if(t>=55){vclass='hold';vtxt='⚠️ 조건부 보류';vmsg='일부 지표 보완 후 재검토하세요.';}
+  else{vclass='pass';vtxt='❌ 소싱 패스';vmsg='경쟁이 너무 치열하거나 마진이 부족합니다.';}
+  $('verdictWrap').innerHTML=`<span class="verdict ${vclass}">${vtxt}</span>`;
+  $('verdictMsg').textContent=vmsg;
+
+  if(ringInst) ringInst.destroy();
+  const rctx=$('ringChart').getContext('2d');
+  ringInst=new Chart(rctx,{type:'doughnut',data:{datasets:[{data:[t,100-t],backgroundColor:[col,'rgba(128,128,128,.1)'],borderWidth:0,cutout:'78%'}]},options:{plugins:{legend:{display:false},tooltip:{enabled:false}},animation:{duration:600}}});
+
+  const bk=$('breakdown');
+  const sorted=[...CRITERIA].sort((a,b)=>(result.scores[b.id]||5)-(result.scores[a.id]||5));
+  bk.innerHTML=sorted.map(c=>{
+    const v=result.scores[c.id]||5;
+    const bc=v<=3?'var(--red)':v<=6?'var(--yellow)':'var(--green)';
+    return `<div class="bk-row"><div class="bk-label">${c.icon} ${c.label}</div><div class="bk-bar-wrap"><div class="bk-bar" style="width:${v*10}%;background:${bc}"></div></div><div class="bk-val" style="color:${bc}">${v}</div></div>`;
+  }).join('');
+
+  if(radarInst) radarInst.destroy();
+  const radarCtx=$('radarChart').getContext('2d');
+  radarInst=new Chart(radarCtx,{type:'radar',data:{labels:CRITERIA.map(c=>c.icon+' '+c.label.substring(0,5)),datasets:[{label:'소싱 점수',data:CRITERIA.map(c=>result.scores[c.id]||5),backgroundColor:'rgba(79,70,229,.18)',borderColor:'rgba(79,70,229,.8)',borderWidth:2,pointBackgroundColor:'rgba(79,70,229,.9)',pointRadius:4}]},options:{scales:{r:{min:0,max:10,ticks:{display:false,stepSize:2},grid:{color:'rgba(128,128,128,.15)'},pointLabels:{font:{size:10,family:'Noto Sans KR'},color:'var(--sub)'}}},plugins:{legend:{display:false}},animation:{duration:500}}});
+
+  buildTips(result);
+}
+
+function buildTips(result){
+  const s=result.scores, meta=result.meta;
+  const tipList=[];
+  const lv=getLevel(meta.cat||'default', meta.topReviews);
+
+  if(lv==='chosoo') tipList.push({type:'good',text:'<strong>🌱 초수 아이템!</strong> 1위 판매자 리뷰가 적어 바로 진입 가능한 블루오션입니다. 소량 테스트 발주 후 로켓배송 입고를 목표로 하세요.'});
+  if(lv==='jungsoo') tipList.push({type:'warn',text:'<strong>⚔️ 중수 아이템.</strong> 어느 정도 경쟁이 존재합니다. 상세페이지 퀄리티와 초기 리뷰 수집 전략을 꼼꼼히 준비하세요.'});
+  if(lv==='gosoo') tipList.push({type:'warn',text:'<strong>🏆 고수 아이템.</strong> 1위 판매자가 강한 포지션을 잡고 있습니다. 틈새 키워드 공략 또는 완전한 차별화 없이는 성공하기 어렵습니다.'});
+
+  if(s.competition<=4) tipList.push({type:'warn',text:'<strong>경쟁 강도 주의.</strong> 상위 판매자가 강합니다. 틈새 키워드 공략 또는 차별화 전략이 필수입니다.'});
+  if(s.margin<=4){
+    const fee=(meta.price||0)*0.12, net=(meta.price||0)-(meta.cost||0)-fee;
+    tipList.push({type:'warn',text:`<strong>마진 부족.</strong> 예상 순수익 ₩${Math.round(net).toLocaleString()} (${meta.price?Math.round(net/meta.price*100):0}%). 원가 협상 또는 판매가 인상이 필요합니다.`});
+  }
+  if(s.longtail>=7) tipList.push({type:'good',text:'<strong>틈새 적합!</strong> 앤더슨 기준 경쟁자가 적은 시장입니다. 썸네일·키워드 집중으로 빠른 상위 진입이 가능합니다.'});
+  if(s.trend>=7) tipList.push({type:'good',text:'<strong>트렌드 상승 중.</strong> 지금 진입하면 성장 파도를 탈 수 있습니다.'});
+  if(s.repeat>=7) tipList.push({type:'good',text:'<strong>소모품 구조.</strong> 재구매로 고객 LTV가 높아집니다. 첫 구매 마진을 낮춰도 LTV로 수익 가능.'});
+  if(s.review_gap<=4) tipList.push({type:'warn',text:'<strong>리뷰 격차 주의.</strong> 1위 판매자 리뷰가 매우 많습니다. 프리미엄 포지셔닝이나 다른 키워드로 우회 필요.'});
+  if(s.logistics<=4) tipList.push({type:'warn',text:'<strong>물류 주의.</strong> 무겁거나 파손 위험이 있는 상품입니다. 포장 비용과 반품률을 반드시 계산하세요.'});
+  if(tipList.length===0) tipList.push({type:'good',text:'<strong>균형 잡힌 소싱 아이템입니다.</strong> 소량 테스트 발주로 시장 반응을 먼저 확인하세요.'});
+  if(meta.type==='domakgook') tipList.push({type:'info',text:'<strong>도매꾹 전략:</strong> 도매꾹 TOP100 기준 월 매출 1.47억 검증 완료. 상품 선별보다 썸네일·상세페이지 개선에 집중하세요.'});
+  if(meta.type==='proxy') tipList.push({type:'info',text:'<strong>구매대행 전략:</strong> 재고 없이 월 순익 5,800만원 가능. 키워드 전략과 썸네일이 전부입니다. 배송기간을 반드시 고지하세요.'});
+  if(meta.type==='oem') tipList.push({type:'info',text:'<strong>OEM 제조 전략:</strong> 구매대행으로 검증된 상품을 OEM으로 전환하면 리스크 최소화. 초기 자본 2,000만원 이상 필요.'});
+  if(meta.type==='trend') tipList.push({type:'info',text:'<strong>트렌드 선점 전략:</strong> 피크 2~3달 전 소싱 완료가 핵심. 썸네일에 시즌 키워드를 크게 노출하고 키워드 집중 공략하세요.'});
+
+  const colors={good:'var(--green)',warn:'var(--yellow)',info:'var(--accent)'};
+  $('tips').innerHTML=tipList.map(t=>`<div class="tip" style="border-left-color:${colors[t.type]||'var(--accent2)'}">${t.text}</div>`).join('');
+}
+
+function updateCompare(){
+  const done=products.filter(p=>p.result);
+  $('compareCard').style.display=done.length>=2?'block':'none';
+  if(done.length<2) return;
+  const scores=done.map(p=>p.result.total);
+  const maxS=Math.max(...scores), minS=Math.min(...scores);
+  let html=`<thead><tr><th>항목</th>${done.map(p=>`<th>${p.name||'상품'}</th>`).join('')}</tr></thead><tbody>`;
+  html+=`<tr><td>종합 점수</td>${done.map(p=>{const s=p.result.total;return `<td class="num ${s===maxS?'best':s===minS?'worst':''}">${s}점</td>`;}).join('')}</tr>`;
+  CRITERIA.forEach(c=>{
+    const vals=done.map(p=>p.result.scores[c.id]||5);
+    const mx=Math.max(...vals), mn=Math.min(...vals);
+    html+=`<tr><td>${c.icon} ${c.label}</td>${done.map((p,i)=>{const v=vals[i];return `<td class="num${v===mx?' best':v===mn?' worst':''}">${v}</td>`;}).join('')}</tr>`;
+  });
+  html+=`<tr><td>💰 예상 마진율</td>${done.map(p=>{const m=p.meta,fee=(m.price||0)*0.12,net=(m.price||0)-(m.cost||0)-fee,pct=m.price?Math.round(net/m.price*100):0;return `<td class="num">${pct}%</td>`;}).join('')}</tr>`;
+  html+='</tbody>';
+  $('compareTable').innerHTML=html;
+}
+
+// ─── Guide tab ────────────────────────────────────────────
+let activeFilter='all';
+
+function filterLevel(lv, btn){
+  activeFilter=lv;
+  document.querySelectorAll('.lvl-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGuide();
+}
+
+function renderGuide(){
+  const wrap=$('catSections'); if(!wrap) return;
+  wrap.innerHTML='';
+  CAT_IDEAS.forEach(cat=>{
+    if(activeFilter!=='all'){
+      const hasItems=cat.items[activeFilter]?.length>0;
+      if(!hasItems) return;
+    }
+    const th=LEVEL_THRESHOLDS[cat.key]||LEVEL_THRESHOLDS.default;
+    const sec=document.createElement('div');
+    sec.className='cat-section';
+
+    const lvls=['chosoo','jungsoo','gosoo'];
+    const lvNames={ chosoo:'🌱 초수', jungsoo:'⚔️ 중수', gosoo:'🏆 고수' };
+    const lvBadge={ chosoo:`리뷰 ${th.chosoo.toLocaleString()}개 미만`, jungsoo:`${th.chosoo.toLocaleString()}~${th.jungsoo.toLocaleString()}개`, gosoo:`${th.jungsoo.toLocaleString()}개 초과` };
+    const lvTip={ chosoo:'소량 테스트 발주로 바로 시작 가능! 리뷰 50개만 모아도 상위 노출 가능.', jungsoo:'상세페이지 퀄리티와 초기 리뷰 수집 전략 필요. 차별화 포인트 1개 이상 필수.', gosoo:'강력한 자본과 마케팅 전략 없이는 진입 어려움. 프리미엄 포지셔닝 또는 틈새 키워드 필수.' };
+
+    let cardsHtml='';
+    lvls.forEach(lv=>{
+      if(activeFilter!=='all' && activeFilter!==lv) return;
+      const items=cat.items[lv]||[];
+      if(!items.length) return;
+      cardsHtml+=`<div class="lvl-card ${lv}">
+        <div class="lvl-card-head">
+          <div class="lvl-card-title">${lvNames[lv]}</div>
+          <div class="lvl-threshold-badge">${lvBadge[lv]}</div>
+        </div>
+        <div class="prod-items">
+          ${items.map(item=>`<div class="prod-item"><div class="prod-item-dot"></div><span>${item}</span></div>`).join('')}
+        </div>
+        <div class="lvl-card-tip">${lvTip[lv]}</div>
+      </div>`;
+    });
+
+    sec.innerHTML=`
+      <div class="cat-header">
+        <h3>${cat.label}</h3>
+        <span>초수 &lt; ${th.chosoo.toLocaleString()} · 중수 ~${th.jungsoo.toLocaleString()} · 고수 ${th.jungsoo.toLocaleString()}+</span>
+      </div>
+      <div class="level-cards">${cardsHtml}</div>`;
+    wrap.appendChild(sec);
+  });
+}
+
+// ─── theme ────────────────────────────────────────────────
+function toggleTheme(){
+  const r=document.documentElement;
+  const cur=r.getAttribute('data-theme');
+  r.setAttribute('data-theme', cur==='dark'?'light':'dark');
+  document.querySelector('.theme-btn').textContent=cur==='dark'?'🌙':'☀️';
+}
+
+// ─── Anderson Segment Table (Theory Tab) ──────────────────
+function showSegCat(btn, cat){
+  document.querySelectorAll('.seg-cat-tab').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  const th=LEVEL_THRESHOLDS[cat]||LEVEL_THRESHOLDS.default;
+  const segs=[
+    { tier:'🔵 틈새 블루오션', range:'0 ~ 50', col:'#10b981', desc:'검증 수요 부족 가능. 즉시 소량 테스트 발주', barPct:8 },
+    { tier:'🌱 초수 구간',      range:`51 ~ ${th.chosoo.toLocaleString()}`, col:'#34d399', desc:'썸네일·키워드 집중만으로 충분. 도매꾹·구매대행 진입 적합', barPct:22 },
+    { tier:'⚔️ 중수 구간',     range:`${(th.chosoo+1).toLocaleString()} ~ ${th.jungsoo.toLocaleString()}`, col:'#f59e0b', desc:'상세페이지 퀄리티·리뷰 전략 필수. 차별화 포인트 확보 후 진입', barPct:45 },
+    { tier:'🏆 고수 구간',      range:`${(th.jungsoo+1).toLocaleString()} ~ 10,000`, col:'#ef4444', desc:'강한 브랜드 존재. OEM 또는 서브키워드 우회 공략', barPct:75 },
+    { tier:'🔴 레전드 레드오션', range:'10,000+', col:'#b91c1c', desc:'사실상 진입 불가. 서브카테고리로 완전 우회', barPct:100 },
+  ];
+  const el=document.getElementById('segCatDisplay');
+  if(!el) return;
+  el.innerHTML=`<table class="seg-table">
+    <thead><tr><th style="text-align:left">구간</th><th>경쟁 강도</th><th style="text-align:left">1위 리뷰 수 범위</th><th style="text-align:left">권장 전략</th></tr></thead>
+    <tbody>${segs.map(s=>`<tr>
+      <td style="color:${s.col};font-weight:800;white-space:nowrap">${s.tier}</td>
+      <td style="padding:7px 10px">
+        <div style="height:7px;background:var(--border);border-radius:4px;overflow:hidden;min-width:80px">
+          <div style="height:100%;width:${s.barPct}%;background:${s.col};border-radius:4px"></div>
+        </div>
+      </td>
+      <td style="font-weight:700;color:var(--txt)">${s.range}</td>
+      <td style="color:var(--sub)">${s.desc}</td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+function initSegOverview(){
+  const cats=[
+    {key:'pet',label:'🐾 반려동물'},{key:'kitchen',label:'🍳 주방'},
+    {key:'home',label:'🏠 생활'},{key:'baby',label:'👶 유아'},
+    {key:'beauty',label:'🌿 뷰티'},{key:'electronics',label:'📱 전자'},
+    {key:'fashion',label:'👗 패션'},{key:'sports',label:'🏋️ 스포츠'},
+    {key:'food',label:'🍃 식품'},{key:'book',label:'📚 도서'},
+  ];
+  const body=document.getElementById('segOverviewBody');
+  if(!body) return;
+  body.innerHTML=cats.map(c=>{
+    const th=LEVEL_THRESHOLDS[c.key]||LEVEL_THRESHOLDS.default;
+    return `<tr>
+      <td style="font-weight:700;color:var(--txt);text-align:left">${c.label}</td>
+      <td style="color:var(--green);font-weight:800">~ ${th.chosoo.toLocaleString()}</td>
+      <td style="color:var(--yellow);font-weight:800">~ ${th.jungsoo.toLocaleString()}</td>
+      <td style="color:var(--red);font-weight:800">${(th.jungsoo+1).toLocaleString()}+</td>
+      <td style="color:#b91c1c;font-weight:800">10,000+</td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── init ─────────────────────────────────────────────────
+renderTabs();
+loadCurrentMeta();
+renderGuide();
+showSegCat(null,'default');
+initSegOverview();
+</script>
+
+<!-- ═══════════════ TAB 4: VIDEO ANALYSIS ═══════════════ -->
+<div class="tab-panel" id="panel-video">
+  <div class="main">
+
+    <!-- intro banner -->
+    <div style="background:linear-gradient(135deg,rgba(79,70,229,.1),rgba(124,58,237,.08));border:1px solid rgba(79,70,229,.2);border-radius:16px;padding:16px 20px;margin-bottom:20px;display:flex;gap:14px;align-items:center">
+      <div style="font-size:28px">🎬</div>
+      <div>
+        <div style="font-size:14px;font-weight:900;color:var(--txt);margin-bottom:3px">경쟁 영상 분석기</div>
+        <div style="font-size:12px;color:var(--sub);line-height:1.6">경쟁 상품의 쇼츠·릴스 지표를 입력하면 <strong>후킹 점수</strong>와 <strong>전략 유형</strong>을 분석합니다.<br>앤더슨 구간별 기준으로 초수·중수·고수 난이도를 함께 판별합니다.</div>
+      </div>
+    </div>
+
+    <div class="video-grid">
+      <!-- LEFT: input form -->
+      <div>
+        <div class="card">
+          <div class="card-title">📥 영상 정보 입력</div>
+
+          <label class="lbl">영상 제목 / 상품명</label>
+          <input type="text" id="vidTitle" placeholder="예: 강아지 자동급수기 리뷰">
+
+          <label class="lbl">조회수</label>
+          <input type="number" id="vidViews" placeholder="예: 450000" min="0">
+
+          <label class="lbl">좋아요 수</label>
+          <input type="number" id="vidLikes" placeholder="예: 12000" min="0">
+
+          <label class="lbl">댓글 수</label>
+          <input type="number" id="vidComments" placeholder="예: 340" min="0">
+
+          <label class="lbl">업로드 날짜 (최신성)</label>
+          <input type="date" id="vidDate">
+
+          <label class="lbl">영상 길이 (초)</label>
+          <input type="number" id="vidDuration" placeholder="예: 58" min="1" max="600">
+
+          <div class="sep" style="margin:14px 0 10px"></div>
+          <div class="card-title" style="margin-bottom:8px">🎯 콘텐츠 전략 유형</div>
+          <div style="font-size:11px;color:var(--sub);margin-bottom:8px">이 영상이 주로 사용하는 후킹 전략을 선택하세요 (복수 선택 가능)</div>
+          <div class="strategy-chips" id="strategyChips">
+            <button class="sc" data-strat="twist" onclick="toggleStrat(this)">🔀 반전</button>
+            <button class="sc" data-strat="number" onclick="toggleStrat(this)">🔢 숫자 활용</button>
+            <button class="sc" data-strat="desire" onclick="toggleStrat(this)">🔥 욕망 자극</button>
+            <button class="sc" data-strat="problem" onclick="toggleStrat(this)">💡 문제 해결</button>
+            <button class="sc" data-strat="compare" onclick="toggleStrat(this)">⚖️ 비교</button>
+            <button class="sc" data-strat="ugc" onclick="toggleStrat(this)">🙋 UGC 후기</button>
+          </div>
+
+          <div class="sep" style="margin:14px 0 10px"></div>
+          <div class="card-title" style="margin-bottom:8px">🏆 상품 난이도 판별</div>
+          <label class="lbl">카테고리</label>
+          <select id="vidCat">
+            <option value="">선택...</option>
+            <option value="pet">🐾 반려동물</option>
+            <option value="kitchen">🍳 주방/조리</option>
+            <option value="home">🏠 생활/인테리어</option>
+            <option value="baby">👶 유아/육아</option>
+            <option value="beauty">🌿 건강/뷰티</option>
+            <option value="electronics">📱 전자/가젯</option>
+            <option value="fashion">👗 패션/의류</option>
+            <option value="sports">🏋️ 스포츠/레저</option>
+            <option value="food">🍃 식품/음료</option>
+          </select>
+          <label class="lbl">이 상품 카테고리 1위 리뷰 수</label>
+          <input type="number" id="vidTopReviews" placeholder="예: 850" min="0">
+
+          <button class="btn-eval" onclick="analyzeVideo()" style="margin-top:16px">🔍 후킹 점수 분석</button>
+        </div>
+      </div>
+
+      <!-- RIGHT: results -->
+      <div id="vidResults" style="display:none">
+
+        <!-- hook score -->
+        <div class="result-card">
+          <div class="card-title">⚡ 후킹 점수</div>
+          <div class="hook-meter">
+            <div class="hook-score-big" id="hookScoreBig">—</div>
+            <div class="hook-label" id="hookScoreLabel">점 / 100점</div>
+            <div class="hook-bar-wrap"><div class="hook-bar" id="hookBar" style="width:0%"></div></div>
+          </div>
+
+          <div id="metricRows"></div>
+        </div>
+
+        <!-- strategy result -->
+        <div class="result-card" id="strategyResult"></div>
+
+        <!-- anderson segment -->
+        <div class="result-card">
+          <div class="card-title">📊 앤더슨 구간별 분석</div>
+          <div id="andersonLevelResult"></div>
+
+          <div class="sep"></div>
+          <div style="font-size:12px;font-weight:800;color:var(--sub);margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px">전체 구간 기준표</div>
+          <div class="anderson-seg" id="andersonSegChart"></div>
+        </div>
+
+        <!-- saved video cards -->
+        <div class="result-card" id="savedVidsCard" style="display:none">
+          <div class="card-title">📋 분석한 영상 비교</div>
+          <div class="vid-card-list" id="vidCardList"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ TAB 5: KEYWORD SOURCING ═══════════════ -->
+<div class="tab-panel" id="panel-keyword">
+  <div class="main">
+
+    <!-- AI Hero -->
+    <div class="ai-hero">
+      <div class="ai-hero-eyebrow">// ANDERSON KEYWORD ENGINE v2.0</div>
+      <div class="ai-hero-title">AI가 대신 분석하고<br><span>검증된 답을 드립니다</span></div>
+      <div class="ai-hero-sub">앤더슨 방법론 핵심 — 키워드가 구매대행 월 순익 5,800만원을 만든다.<br>꼴통키워드 자동 발굴 · 효자상품 매칭 · S급 키워드 필터링</div>
+      <div class="ai-stat-row">
+        <div class="ai-stat"><div class="ai-stat-num">87%</div><div class="ai-stat-lbl">TIME SAVED</div></div>
+        <div class="ai-stat"><div class="ai-stat-num">72%</div><div class="ai-stat-lbl">SUCCESS RATE</div></div>
+        <div class="ai-stat"><div class="ai-stat-num">3.2×</div><div class="ai-stat-lbl">ACCURACY</div></div>
+      </div>
+      <div class="module-grid">
+        <div class="module-card active" id="module-discover" onclick="setModule('discover',this)">
+          <div class="module-active-dot"></div>
+          <div class="module-tag">AUTO_DISCOVERY</div>
+          <div class="module-icon">🤖</div>
+          <div class="module-name">꼴통키워드 자동 발굴</div>
+          <div class="module-desc">경쟁 낮은 틈새 키워드를 AI가 자동으로 15개 발굴합니다</div>
+        </div>
+        <div class="module-card" id="module-match" onclick="setModule('match',this)">
+          <div class="module-active-dot"></div>
+          <div class="module-tag">ITEM_MATCHING</div>
+          <div class="module-icon">🛒</div>
+          <div class="module-name">효자상품 매칭</div>
+          <div class="module-desc">발굴된 키워드에 맞는 소싱 가능 상품을 자동 매칭합니다</div>
+        </div>
+        <div class="module-card" id="module-filter" onclick="setModule('filter',this)">
+          <div class="module-active-dot"></div>
+          <div class="module-tag">RANK_FILTER</div>
+          <div class="module-icon">🏆</div>
+          <div class="module-name">S급 키워드 필터링</div>
+          <div class="module-desc">상위 셀러 알고리즘 기반 A~S등급으로 키워드를 분류합니다</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="kw-grid">
+      <!-- LEFT: input -->
+      <div>
+        <div class="card">
+          <div class="card-title">🔑 키워드 분석 입력</div>
+
+          <label class="lbl">메인 키워드</label>
+          <input type="text" id="kwMain" placeholder="예: 강아지 자동급수기">
+
+          <label class="lbl">카테고리</label>
+          <select id="kwCat">
+            <option value="">선택...</option>
+            <option value="pet">🐾 반려동물</option>
+            <option value="kitchen">🍳 주방/조리</option>
+            <option value="home">🏠 생활/인테리어</option>
+            <option value="baby">👶 유아/육아</option>
+            <option value="beauty">🌿 건강/뷰티</option>
+            <option value="electronics">📱 전자/가젯</option>
+            <option value="fashion">👗 패션/의류</option>
+            <option value="sports">🏋️ 스포츠/레저</option>
+            <option value="food">🍃 식품/음료</option>
+          </select>
+
+          <label class="lbl">월 검색량 (네이버 광고관리자)</label>
+          <input type="number" id="kwVolume" placeholder="예: 18000" min="0">
+          <div style="font-size:10px;color:var(--sub);margin-top:3px">1,000~30,000이 적정 틈새 (앤더슨 기준)</div>
+
+          <label class="lbl">이 키워드 1위 상품 리뷰 수</label>
+          <input type="number" id="kwTopReviews" placeholder="예: 420" min="0">
+
+          <label class="lbl">이 키워드 2~5위 평균 리뷰 수</label>
+          <input type="number" id="kwAvgReviews" placeholder="예: 180" min="0">
+
+          <div class="sep" style="margin:14px 0 10px"></div>
+          <div class="card-title" style="margin-bottom:8px">💰 수익 예측 (선택)</div>
+
+          <label class="lbl">예상 판매가 (원)</label>
+          <input type="number" id="kwPrice" placeholder="예: 29000" min="0">
+
+          <label class="lbl">예상 원가 (원)</label>
+          <input type="number" id="kwCost" placeholder="예: 8000" min="0">
+
+          <label class="lbl">예상 일 판매 목표 (개)</label>
+          <input type="number" id="kwDailySales" placeholder="예: 5" min="1">
+
+          <button class="btn-eval" onclick="analyzeKeyword()" style="margin-top:16px">🔍 키워드 분석 시작</button>
+          <button class="btn-discover" onclick="autoDiscover()">🤖 꼴통키워드 자동 발굴 (15개)</button>
+        </div>
+
+        <!-- Auto Discovery Results -->
+        <div class="result-card" id="discoverCard" style="display:none;margin-top:16px">
+          <div class="card-title">🤖 꼴통키워드 자동 발굴 결과</div>
+          <div style="font-size:11px;color:var(--sub);margin-bottom:8px">카테고리 + 시드 키워드 기반으로 경쟁 낮은 틈새 키워드 15개를 생성했습니다. 클릭하면 분석 입력창에 자동 입력됩니다.</div>
+          <div class="disc-grid" id="discGrid"></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: results -->
+      <div id="kwResults" style="display:none">
+
+        <!-- keyword score + grade -->
+        <div class="result-card">
+          <div class="card-title">⚡ 키워드 진입 점수</div>
+          <div class="kw-score-wrap">
+            <div style="display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin-bottom:6px">
+              <div>
+                <div class="kw-score-big" id="kwScoreBig">—</div>
+                <div class="kw-score-label" id="kwScoreLabel">점 / 100점</div>
+              </div>
+              <div id="kwGradeBadge"></div>
+            </div>
+            <div class="kw-score-bar-wrap"><div class="kw-score-bar" id="kwScoreBar" style="width:0%"></div></div>
+          </div>
+          <div id="kwMetricRows"></div>
+        </div>
+
+        <!-- item matching -->
+        <div class="result-card" id="kwMatchCard" style="display:none">
+          <div class="card-title">🛒 효자상품 매칭 결과</div>
+          <div style="font-size:11px;color:var(--sub);margin-bottom:8px">이 키워드/카테고리에서 소싱 가능한 추천 상품입니다.</div>
+          <div class="item-match-grid" id="kwMatchGrid"></div>
+        </div>
+
+        <!-- anderson level -->
+        <div class="result-card">
+          <div class="card-title">📊 앤더슨 구간 판정</div>
+          <div id="kwLevelResult"></div>
+        </div>
+
+        <!-- profit estimate -->
+        <div class="result-card" id="kwProfitCard" style="display:none">
+          <div class="card-title">💰 수익 예측</div>
+          <div class="kw-profit-row" id="kwProfitRows"></div>
+          <div class="highlight" id="kwProfitTip" style="margin-top:10px"></div>
+        </div>
+
+        <!-- sub-keyword suggestions -->
+        <div class="result-card">
+          <div class="card-title">🗝 서브키워드 전략 (앤더슨 핵심)</div>
+          <div style="font-size:11px;color:var(--sub);margin-bottom:10px;line-height:1.6">메인 키워드보다 경쟁이 낮은 롱테일 서브키워드 조합입니다. 각 키워드별로 별도 상품 등록을 검토하세요.</div>
+          <div class="kw-sub-list" id="kwSubList"></div>
+          <div class="highlight" style="margin-top:12px">💡 <strong>앤더슨의 키워드 전략:</strong> 메인 키워드 1위보다 중위 서브키워드 10~20개 합산이 더 안정적인 매출을 만든다. 각 서브키워드는 경쟁이 낮아 썸네일만 잘 만들어도 상위 노출 가능.</div>
+        </div>
+
+        <!-- coupang autocomplete guide -->
+        <div class="result-card">
+          <div class="card-title">🛒 쿠팡 자동완성 키워드 활용법</div>
+          <div id="kwAutoGuide"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- saved keywords comparison -->
+    <div class="result-card" id="kwSavedCard" style="display:none;margin-top:16px">
+      <div class="card-title">📋 분석 키워드 비교</div>
+      <div id="kwSavedList"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ─── Video Analysis ───────────────────────────────────────
+let savedVids=[];
+
+function toggleStrat(btn){
+  btn.classList.toggle('sel');
+}
+
+function getSelectedStrats(){
+  return [...document.querySelectorAll('.sc.sel')].map(b=>b.dataset.strat);
+}
+
+const STRATEGY_INFO = {
+  twist:   { icon:'🔀', name:'반전형',    cls:'twist',   color:'#7c3aed',
+    desc:'예상과 다른 결말이나 놀라운 사실로 끝까지 시청을 유도합니다. "이거 사면 안 되는 이유"처럼 부정형 훅이 대표적.',
+    tips:['첫 3초에 기대를 설정하고, 마지막에 반전을 배치하세요','부정형 제목(~하면 안 되는 이유)이 클릭률 높음','반전 후 구매 연결: "그래서 이걸 대신 샀다"'] },
+  number:  { icon:'🔢', name:'숫자 활용형', cls:'number', color:'#10b981',
+    desc:'"3가지 이유", "72시간 사용 후기", "₩12,000짜리"처럼 구체적 숫자가 신뢰도와 클릭률을 높입니다.',
+    tips:['숫자는 홀수가 심리적으로 더 신뢰됨 (3, 5, 7)','가격·시간·용량 숫자를 제목 앞에 배치','퍼센트(%) 숫자가 주목도 높음'] },
+  desire:  { icon:'🔥', name:'욕망 자극형', cls:'desire', color:'#ef4444',
+    desc:'갖고 싶다, 부럽다, 나도 해보고 싶다는 감정을 자극합니다. 라이프스타일 보여주기, 비포애프터가 핵심.',
+    tips:['비포애프터(Before/After)를 명확하게 보여주세요','타깃의 꿈이나 이상적인 삶을 먼저 보여주고 상품 연결','댓글에 "어디서 샀어요?" 유도: 구매 욕구 지표'] },
+  problem: { icon:'💡', name:'문제 해결형', cls:'problem', color:'#f59e0b',
+    desc:'"이런 불편함 있으셨죠?" 공감에서 시작해 해결책으로 자연스럽게 유도합니다.',
+    tips:['불편함 묘사는 구체적일수록 공감↑','해결 전 고통을 충분히 보여주고 상품 등장','댓글에 "나도 그랬어"가 많으면 공감 성공'] },
+  compare: { icon:'⚖️', name:'비교형', cls:'problem', color:'#f59e0b',
+    desc:'기존 제품·방법과 비교해 이 상품의 우월함을 증명합니다.',
+    tips:['공정한 비교처럼 보여야 신뢰도↑','가격 대비 성능 비교가 가장 설득력 있음','직접 경쟁사 언급보다 "기존 방법" vs 이 상품 형식이 안전'] },
+  ugc:     { icon:'🙋', name:'UGC 후기형', cls:'problem', color:'#6366f1',
+    desc:'실제 사용자처럼 찍은 자연스러운 리뷰 영상. 광고처럼 보이지 않아 신뢰도가 높습니다.',
+    tips:['과도한 편집 없이 생생한 첫 반응을 담으세요','제품 박스 개봉 장면이 효과적','약점 하나를 인정하면 신뢰도가 오히려 상승'] },
+};
+
+function analyzeVideo(){
+  const views=parseInt(document.getElementById('vidViews').value)||0;
+  const likes=parseInt(document.getElementById('vidLikes').value)||0;
+  const comments=parseInt(document.getElementById('vidComments').value)||0;
+  const dateStr=document.getElementById('vidDate').value;
+  const duration=parseInt(document.getElementById('vidDuration').value)||60;
+  const title=document.getElementById('vidTitle').value||'분석 영상';
+  const cat=document.getElementById('vidCat').value;
+  const topReviews=parseInt(document.getElementById('vidTopReviews').value)||0;
+  const strats=getSelectedStrats();
+
+  if(!views){ alert('조회수를 입력해주세요.'); return; }
+
+  // Score each metric 0~25
+  // 1. Views score (max 25)
+  let vScore = views>=1000000?25:views>=500000?22:views>=100000?17:views>=50000?12:views>=10000?7:views>=1000?4:1;
+
+  // 2. Engagement rate (likes+comments*5 / views) score (max 25)
+  const engRate = views>0 ? (likes + comments*5)/views : 0;
+  let eScore = engRate>=0.15?25:engRate>=0.08?20:engRate>=0.04?15:engRate>=0.02?10:engRate>=0.005?5:2;
+
+  // 3. Recency score (max 25)
+  let rScore=15; // default mid
+  if(dateStr){
+    const daysDiff=Math.floor((Date.now()-new Date(dateStr).getTime())/86400000);
+    rScore=daysDiff<=7?25:daysDiff<=30?22:daysDiff<=90?18:daysDiff<=180?13:daysDiff<=365?8:3;
+  }
+
+  // 4. Comments quality score (max 25) - high comment/view ratio = high engagement
+  const cRate=views>0?comments/views:0;
+  let cScore=cRate>=0.005?25:cRate>=0.002?20:cRate>=0.001?15:cRate>=0.0005?10:cRate>=0.0001?5:2;
+
+  const totalHook=vScore+eScore+rScore+cScore;
+  const hookPct=totalHook;
+
+  const hookCol=totalHook>=70?'var(--green)':totalHook>=45?'var(--yellow)':'var(--red)';
+  document.getElementById('vidResults').style.display='block';
+  document.getElementById('hookScoreBig').textContent=totalHook;
+  document.getElementById('hookScoreBig').style.color=hookCol;
+  document.getElementById('hookScoreLabel').textContent=`점 / 100점 — ${totalHook>=70?'🔥 바이럴 가능성 높음':totalHook>=45?'⚡ 양호한 성과':' 낮은 반응'}`;
+  document.getElementById('hookBar').style.width=hookPct+'%';
+  document.getElementById('hookBar').style.background=hookCol;
+
+  // metric rows
+  const metrics=[
+    { name:'📺 조회수', val:views>=10000?(views/10000).toFixed(1)+'만':views.toLocaleString(), score:vScore, pct:vScore/25 },
+    { name:'❤️ 참여율', val:(engRate*100).toFixed(2)+'%', score:eScore, pct:eScore/25 },
+    { name:'💬 댓글 비율', val:((cRate*1000).toFixed(2))+'‰', score:cScore, pct:cScore/25 },
+    { name:'🕐 최신성', val:rScore>=20?'최신 영상':rScore>=13?'1~6개월':'오래된 영상', score:rScore, pct:rScore/25 },
+  ];
+  document.getElementById('metricRows').innerHTML=metrics.map(m=>{
+    const cls=m.score>=18?'ms-green':m.score>=10?'ms-yellow':'ms-red';
+    const barCol=m.score>=18?'var(--green)':m.score>=10?'var(--yellow)':'var(--red)';
+    return `<div class="metric-row"><span class="metric-name">${m.name}</span><div class="metric-mini-bar-wrap"><div class="metric-mini-bar" style="width:${Math.round(m.pct*100)}%;background:${barCol}"></div></div><span class="metric-val">${m.val}</span><span class="metric-score ${cls}">${m.score}점</span></div>`;
+  }).join('');
+
+  // strategy result
+  const sresDiv=document.getElementById('strategyResult');
+  if(strats.length>0){
+    const primary=strats[0];
+    const si=STRATEGY_INFO[primary];
+    sresDiv.style.display='block';
+    sresDiv.innerHTML=`<div class="card-title">🎯 전략 분석</div>
+    <div class="strategy-result ${si.cls}">
+      <div class="strategy-title" style="color:${si.color}">${si.icon} ${si.name}</div>
+      <div class="strategy-desc">${si.desc}</div>
+    </div>
+    <div style="margin-top:12px;font-size:12px;font-weight:800;color:var(--sub);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">이 전략 활용 팁</div>
+    <div class="tips">${si.tips.map(t=>`<div class="tip">${t}</div>`).join('')}</div>
+    ${strats.length>1?`<div style="margin-top:10px;font-size:11px;color:var(--sub)">추가 전략: ${strats.slice(1).map(s=>STRATEGY_INFO[s]?.icon+' '+STRATEGY_INFO[s]?.name).join(', ')}</div>`:''}`;
+  } else {
+    sresDiv.style.display='none';
+  }
+
+  // anderson segment
+  renderAndersonSeg(cat, topReviews);
+
+  // save
+  savedVids.push({ title, views, likes, comments, hookScore:totalHook, strats, cat, topReviews });
+  renderSavedVids();
+}
+
+function renderAndersonSeg(cat, topReviews){
+  const th=LEVEL_THRESHOLDS[cat]||LEVEL_THRESHOLDS.default;
+  const wrap=document.getElementById('andersonLevelResult');
+  const segWrap=document.getElementById('andersonSegChart');
+
+  // Level badge if topReviews given
+  if(topReviews>0){
+    const lv=getLevel(cat||'default',topReviews);
+    const lvInfo={
+      chosoo:{ col:'var(--green)', icon:'🌱', name:'초수 구간', desc:`리뷰 ${topReviews.toLocaleString()}개 → ${th.chosoo.toLocaleString()}개 미만 구간. 진입 장벽이 낮아 소량 테스트로 바로 시작 가능합니다.` },
+      jungsoo:{ col:'var(--yellow)', icon:'⚔️', name:'중수 구간', desc:`리뷰 ${topReviews.toLocaleString()}개 → ${th.chosoo.toLocaleString()}~${th.jungsoo.toLocaleString()}개 구간. 최적화 전략이 필요합니다.` },
+      gosoo:{ col:'var(--red)', icon:'🏆', name:'고수 구간', desc:`리뷰 ${topReviews.toLocaleString()}개 → ${th.jungsoo.toLocaleString()}개 초과 구간. 강력한 차별화 없이는 진입이 매우 어렵습니다.` },
+    };
+    if(lv){
+      const i=lvInfo[lv];
+      wrap.innerHTML=`<div style="background:var(--card2);border-radius:12px;padding:14px;display:flex;gap:12px;align-items:flex-start;margin-bottom:4px">
+        <div style="font-size:24px">${i.icon}</div>
+        <div><div style="font-size:14px;font-weight:900;color:${i.col};margin-bottom:4px">${i.name}</div><div style="font-size:12px;color:var(--sub);line-height:1.6">${i.desc}</div></div>
+      </div>`;
+    }
+  } else {
+    wrap.innerHTML='';
+  }
+
+  // Segment bar chart (Anderson's intervals)
+  const segments=[
+    { name:'틈새 블루오션', range:'0 ~ 50', pct:8, col:'#10b981', desc:'진입 즉시 가능' },
+    { name:'초수 구간', range:'51 ~ '+th.chosoo.toLocaleString(), pct:18, col:'#34d399', desc:'소량 테스트 가능' },
+    { name:'중수 구간', range:(th.chosoo+1).toLocaleString()+' ~ '+th.jungsoo.toLocaleString(), pct:32, col:'#f59e0b', desc:'최적화 필수' },
+    { name:'고수 구간', range:(th.jungsoo+1).toLocaleString()+' ~ 10,000', pct:55, col:'#ef4444', desc:'자본·경험 필요' },
+    { name:'레전드 레드오션', range:'10,000+', pct:100, col:'#b91c1c', desc:'진입 사실상 불가' },
+  ];
+  segWrap.innerHTML=segments.map(s=>{
+    const highlight=topReviews>0 && isInSeg(topReviews, s.name, th)?'font-weight:800;':'';
+    return `<div class="seg-row">
+      <div class="seg-label" style="color:${s.col};${highlight}">${s.name}</div>
+      <div class="seg-bar-outer"><div class="seg-bar-fill" style="width:${s.pct}%;background:${s.col}"></div></div>
+      <div class="seg-range" style="${highlight}">${s.range}</div>
+    </div>
+    <div style="font-size:10px;color:var(--sub);margin-bottom:6px;margin-left:66px">${s.desc}</div>`;
+  }).join('');
+}
+
+function isInSeg(rv, segName, th){
+  if(segName==='틈새 블루오션') return rv<=50;
+  if(segName==='초수 구간') return rv>50 && rv<=th.chosoo;
+  if(segName==='중수 구간') return rv>th.chosoo && rv<=th.jungsoo;
+  if(segName==='고수 구간') return rv>th.jungsoo && rv<=10000;
+  if(segName==='레전드 레드오션') return rv>10000;
+  return false;
+}
+
+// ─── Keyword Sourcing ─────────────────────────────────────
+let savedKeywords=[];
+
+const KW_MODIFIERS = {
+  pet:       ['소형','대형견','고양이','강아지','자동','접이식','미니','휴대용','실내','방수'],
+  kitchen:   ['1인용','대용량','무선','스마트','접이식','다기능','미니','정수','전기','주방용'],
+  home:      ['인테리어','북유럽','모던','수납','접이식','무타공','셀프','대형','소형','다용도'],
+  baby:      ['신생아','돌아기','유아','안전','무독성','국내산','유기농','소프트','교육용','방수'],
+  beauty:    ['여성','남성','천연','비건','수분','자외선','진정','화이트닝','주름개선','보습'],
+  electronics:['무선','블루투스','충전식','방수','고화질','미니','소음저감','USB-C','스마트','휴대용'],
+  fashion:   ['여름','겨울','캐주얼','오피스','빅사이즈','슬림핏','스트레치','방수','방풍','데일리'],
+  sports:    ['홈트','초보자','접이식','야외','실내','가정용','무릎보호','다이어트','유산소','스트레칭'],
+  food:      ['국내산','유기농','무설탕','저칼로리','고단백','다이어트','아침식사','간편식','비건','프리미엄'],
+  default:   ['고급','저렴','소형','대형','무선','접이식','휴대용','다기능','프리미엄','국내산'],
+};
+
+function analyzeKeyword(){
+  const mainKw=document.getElementById('kwMain').value.trim();
+  const cat=document.getElementById('kwCat').value;
+  const volume=parseInt(document.getElementById('kwVolume').value)||0;
+  const topReviews=parseInt(document.getElementById('kwTopReviews').value)||0;
+  const avgReviews=parseInt(document.getElementById('kwAvgReviews').value)||0;
+  const price=parseInt(document.getElementById('kwPrice').value)||0;
+  const cost=parseInt(document.getElementById('kwCost').value)||0;
+  const dailySales=parseInt(document.getElementById('kwDailySales').value)||5;
+
+  if(!mainKw){ alert('메인 키워드를 입력해주세요.'); return; }
+
+  const th=LEVEL_THRESHOLDS[cat||'default']||LEVEL_THRESHOLDS.default;
+
+  // Score 1: Search volume (0-25)
+  let vScore=0;
+  if(volume>=1000 && volume<=5000) vScore=25;
+  else if(volume>5000 && volume<=30000) vScore=20;
+  else if(volume>300 && volume<1000) vScore=15;
+  else if(volume>30000 && volume<=100000) vScore=10;
+  else if(volume>100000) vScore=5;
+  else if(volume>0) vScore=8;
+
+  // Score 2: Competition (based on top review = level) (0-25)
+  let cScore=0;
+  if(topReviews>0){
+    const lv=getLevel(cat||'default', topReviews);
+    cScore=lv==='chosoo'?25:lv==='jungsoo'?14:6;
+  } else { cScore=12; }
+
+  // Score 3: Review gap (top vs avg, if avg given) (0-25)
+  let gScore=12;
+  if(topReviews>0 && avgReviews>0){
+    const gap=topReviews-avgReviews;
+    const gapRatio=avgReviews/topReviews;
+    // High avg relative to top = healthy competition = easier to rank
+    if(gapRatio>=0.6) gScore=25;
+    else if(gapRatio>=0.4) gScore=20;
+    else if(gapRatio>=0.2) gScore=14;
+    else if(gapRatio>=0.1) gScore=8;
+    else gScore=4;
+  }
+
+  // Score 4: Volume ideal range bonus (0-25)
+  let iScore=0;
+  if(volume>=3000 && volume<=15000) iScore=25;
+  else if(volume>=1000 && volume<=30000) iScore=18;
+  else if(volume>=500 && volume<=50000) iScore=12;
+  else if(volume>0) iScore=6;
+
+  const totalScore=vScore+cScore+gScore+iScore;
+  const scoreCol=totalScore>=70?'var(--green)':totalScore>=45?'var(--yellow)':'var(--red)';
+  const scoreMsg=totalScore>=70?'🔥 진입 강력 추천':totalScore>=55?'✅ 진입 가능':totalScore>=40?'⚠️ 신중하게 검토':'❌ 경쟁 과열 — 서브키워드로 우회';
+
+  document.getElementById('kwResults').style.display='block';
+  document.getElementById('kwScoreBig').textContent=totalScore;
+  document.getElementById('kwScoreBig').style.color=scoreCol;
+  document.getElementById('kwScoreLabel').textContent=`점 / 100점 — ${scoreMsg}`;
+  document.getElementById('kwScoreBar').style.width=totalScore+'%';
+  document.getElementById('kwScoreBar').style.background=scoreCol;
+
+  // Metric rows
+  const metrics=[
+    { name:'🔍 검색량 적합도', val:volume>0?volume.toLocaleString()+'회/월':'미입력', score:vScore, pct:vScore/25 },
+    { name:'⚔️ 경쟁 강도 (역산)', val:topReviews>0?`1위 ${topReviews.toLocaleString()}개`:'미입력', score:cScore, pct:cScore/25 },
+    { name:'📊 리뷰 격차', val:avgReviews>0?`2~5위 평균 ${avgReviews.toLocaleString()}개`:'미입력', score:gScore, pct:gScore/25 },
+    { name:'🎯 볼륨 적정 구간', val:vScore>=20?'최적':'보통', score:iScore, pct:iScore/25 },
+  ];
+  document.getElementById('kwMetricRows').innerHTML=metrics.map(m=>{
+    const cls=m.score>=18?'ms-green':m.score>=10?'ms-yellow':'ms-red';
+    const barCol=m.score>=18?'var(--green)':m.score>=10?'var(--yellow)':'var(--red)';
+    return `<div class="metric-row"><span class="metric-name">${m.name}</span><div class="metric-mini-bar-wrap"><div class="metric-mini-bar" style="width:${Math.round(m.pct*100)}%;background:${barCol}"></div></div><span class="metric-val">${m.val}</span><span class="metric-score ${cls}">${m.score}점</span></div>`;
+  }).join('');
+
+  // Anderson level
+  if(topReviews>0){
+    const lv=getLevel(cat||'default', topReviews);
+    const lvConf={
+      chosoo:{ col:'var(--green)', icon:'🌱', name:'초수 구간', action:'바로 진입. 소량 테스트 발주 후 썸네일·키워드 최적화 집중.' },
+      jungsoo:{ col:'var(--yellow)', icon:'⚔️', name:'중수 구간', action:'차별화 필수. 상세페이지 강화 + 서브키워드 공략 병행.' },
+      gosoo:{ col:'var(--red)', icon:'🏆', name:'고수 구간', action:'메인 키워드 포기. 아래 서브키워드 조합으로 우회 공략.' },
+    };
+    if(lv && lvConf[lv]){
+      const i=lvConf[lv];
+      document.getElementById('kwLevelResult').innerHTML=`<div style="background:var(--card2);border-radius:12px;padding:14px;display:flex;gap:12px;align-items:flex-start">
+        <div style="font-size:24px">${i.icon}</div>
+        <div><div style="font-size:14px;font-weight:900;color:${i.col};margin-bottom:4px">${i.name}</div>
+        <div style="font-size:12px;color:var(--sub);line-height:1.6">${i.action}</div></div></div>`;
+    }
+  } else {
+    document.getElementById('kwLevelResult').innerHTML='<div style="font-size:12px;color:var(--sub)">1위 리뷰 수를 입력하면 구간을 판별합니다.</div>';
+  }
+
+  // Profit estimate
+  if(price>0 && cost>0){
+    const fee=Math.round(price*0.12);
+    const netPerUnit=price-cost-fee;
+    const marginPct=Math.round(netPerUnit/price*100);
+    const monthlyUnits=dailySales*30;
+    const monthlyNet=netPerUnit*monthlyUnits;
+    document.getElementById('kwProfitCard').style.display='block';
+    document.getElementById('kwProfitRows').innerHTML=`
+      <div class="kw-profit-box"><div class="kw-profit-val">₩${netPerUnit.toLocaleString()}</div><div class="kw-profit-lbl">개당 순수익</div></div>
+      <div class="kw-profit-box"><div class="kw-profit-val">${marginPct}%</div><div class="kw-profit-lbl">마진율</div></div>
+      <div class="kw-profit-box"><div class="kw-profit-val">${monthlyUnits}개</div><div class="kw-profit-lbl">월 판매 목표</div></div>
+      <div class="kw-profit-box" style="border:2px solid var(--accent)"><div class="kw-profit-val" style="color:var(--green)">₩${monthlyNet.toLocaleString()}</div><div class="kw-profit-lbl">월 순이익 예상</div></div>`;
+    document.getElementById('kwProfitTip').innerHTML=`💡 이 키워드 하루 <strong>${dailySales}개</strong> 판매 시 월 순이익 <strong style="color:var(--green)">₩${monthlyNet.toLocaleString()}</strong>. 앤더슨 기준 이런 키워드를 <strong>10~20개</strong> 쌓으면 안정적인 수익 구조 완성.`;
+  } else {
+    document.getElementById('kwProfitCard').style.display='none';
+  }
+
+  // Sub-keyword suggestions
+  const mods=KW_MODIFIERS[cat||'default']||KW_MODIFIERS.default;
+  const subKws=mods.slice(0,8).map((mod,i)=>{
+    // Estimate difficulty based on modifier position (earlier = more common)
+    const diff=i<3?'high':i<6?'mid':'low';
+    const diffLabel=diff==='low'?'낮음':diff==='mid'?'보통':'높음';
+    const diffCls=diff==='low'?'kw-sub-diff-low':diff==='mid'?'kw-sub-diff-mid':'kw-sub-diff-high';
+    return `<div class="kw-sub-item">
+      <div class="kw-sub-chip">${mod} ${mainKw}</div>
+      <div style="font-size:10px;color:var(--sub);flex:1">${diff==='low'?'블루오션 가능':diff==='mid'?'중간 경쟁':'경쟁 존재'}</div>
+      <span class="kw-sub-difficulty ${diffCls}">경쟁 ${diffLabel}</span>
+    </div>`;
+  }).join('');
+  document.getElementById('kwSubList').innerHTML=subKws;
+
+  // Coupang autocomplete guide
+  document.getElementById('kwAutoGuide').innerHTML=`
+    <div class="step-list">
+      <div class="step"><div class="step-num">1</div><div class="step-body">
+        <strong>쿠팡 검색창에 "${mainKw}" 입력</strong>
+        <span>자동완성 목록 10개를 모두 캡처합니다. 이 키워드들이 실제 구매자들이 찾는 검색어입니다.</span>
+      </div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-body">
+        <strong>각 자동완성 키워드 클릭 → 1위 리뷰 수 확인</strong>
+        <span>리뷰 수가 <strong style="color:var(--green)">${th.chosoo.toLocaleString()}개 미만</strong>이면 이 도구 기준 초수 영역. 즉시 진입 검토.</span>
+      </div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-body">
+        <strong>네이버 광고관리자에서 검색량 확인</strong>
+        <span>월 1,000~30,000회가 적정 틈새입니다. 이 범위의 서브키워드를 5~10개 확보하는 게 앤더슨 전략의 핵심.</span>
+      </div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-body">
+        <strong>선택 키워드를 상품명·태그에 전부 삽입</strong>
+        <span>쿠팡 상품명에 서브키워드를 최대한 포함하세요. 키워드 1개당 노출 기회가 하나씩 생깁니다.</span>
+      </div></div>
+    </div>`;
+
+  // Save keyword
+  savedKeywords.push({ keyword:mainKw, cat, volume, topReviews, score:totalScore, price, cost, dailySales });
+  renderSavedKeywords();
+}
+
+function renderSavedKeywords(){
+  if(savedKeywords.length<2){ document.getElementById('kwSavedCard').style.display='none'; return; }
+  document.getElementById('kwSavedCard').style.display='block';
+  const sorted=[...savedKeywords].sort((a,b)=>b.score-a.score);
+  const maxScore=Math.max(...sorted.map(k=>k.score));
+  document.getElementById('kwSavedList').innerHTML=`
+    <table class="vid-cmp-table">
+      <thead><tr><th style="text-align:left">키워드</th><th>진입점수</th><th>검색량</th><th>1위 리뷰</th><th>마진율</th></tr></thead>
+      <tbody>${sorted.map(k=>{
+        const sCls=k.score===maxScore?'vid-cmp-best':'';
+        const sCol=k.score>=70?'var(--green)':k.score>=45?'var(--yellow)':'var(--red)';
+        const marginPct=k.price>0&&k.cost>0?Math.round((k.price-k.cost-k.price*0.12)/k.price*100):null;
+        return `<tr>
+          <td style="text-align:left;font-weight:700;color:var(--txt)">${k.keyword}</td>
+          <td class="${sCls}" style="color:${sCol};font-weight:900">${k.score}점</td>
+          <td>${k.volume>0?k.volume.toLocaleString():'—'}</td>
+          <td>${k.topReviews>0?k.topReviews.toLocaleString():'—'}</td>
+          <td>${marginPct!==null?marginPct+'%':'—'}</td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>`;
+}
+
+function renderSavedVids(){
+  if(savedVids.length<2){ document.getElementById('savedVidsCard').style.display='none'; return; }
+  document.getElementById('savedVidsCard').style.display='block';
+  const sorted=[...savedVids].sort((a,b)=>b.hookScore-a.hookScore);
+  const maxHook=Math.max(...savedVids.map(v=>v.hookScore));
+  const minHook=Math.min(...savedVids.map(v=>v.hookScore));
+  const maxViews=Math.max(...savedVids.map(v=>v.views));
+  const maxLikes=Math.max(...savedVids.map(v=>v.likes));
+  const maxComments=Math.max(...savedVids.map(v=>v.comments));
+
+  // Comparison table
+  const tableHtml=`<table class="vid-cmp-table">
+    <thead><tr>
+      <th style="text-align:left">영상</th>
+      <th>후킹점수</th>
+      <th>조회수</th>
+      <th>좋아요</th>
+      <th>댓글</th>
+      <th>전략</th>
+    </tr></thead>
+    <tbody>${sorted.map((v,i)=>{
+      const hcls=v.hookScore===maxHook?'vid-cmp-best':v.hookScore===minHook?'vid-cmp-worst':'';
+      const vcls=v.views===maxViews?'vid-cmp-best':'';
+      const lcls=v.likes===maxLikes?'vid-cmp-best':'';
+      const ccls=v.comments===maxComments?'vid-cmp-best':'';
+      const hCol=v.hookScore>=70?'var(--green)':v.hookScore>=45?'var(--yellow)':'var(--red)';
+      return `<tr>
+        <td style="text-align:left;font-weight:700;color:var(--txt);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${v.title||'영상 '+(i+1)}</td>
+        <td class="${hcls}" style="color:${hCol};font-weight:900">${v.hookScore}점</td>
+        <td class="${vcls}">${v.views>=10000?(v.views/10000).toFixed(1)+'만':v.views.toLocaleString()}</td>
+        <td class="${lcls}">${v.likes>=1000?(v.likes/1000).toFixed(1)+'K':v.likes.toLocaleString()}</td>
+        <td class="${ccls}">${v.comments.toLocaleString()}</td>
+        <td>${v.strats.map(s=>STRATEGY_INFO[s]?.icon||'').join('')||'—'}</td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table>`;
+
+  // Strategy effectiveness
+  const stratScores={};
+  const stratCount={};
+  savedVids.forEach(v=>{
+    v.strats.forEach(s=>{
+      stratScores[s]=(stratScores[s]||0)+v.hookScore;
+      stratCount[s]=(stratCount[s]||0)+1;
+    });
+  });
+  const stratAvg=Object.keys(stratScores).map(k=>({ key:k, avg:Math.round(stratScores[k]/stratCount[k]), count:stratCount[k] })).sort((a,b)=>b.avg-a.avg);
+  const maxAvg=stratAvg.length>0?Math.max(...stratAvg.map(s=>s.avg)):100;
+  const stratHtml=stratAvg.length>0?`
+    <div style="margin-top:14px;font-size:12px;font-weight:800;color:var(--sub);margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px">전략별 평균 후킹점수</div>
+    ${stratAvg.map(s=>{
+      const si=STRATEGY_INFO[s.key];
+      if(!si) return '';
+      const barCol=s.avg>=70?'var(--green)':s.avg>=45?'var(--yellow)':'var(--red)';
+      return `<div class="strat-eff-row">
+        <div class="strat-eff-lbl">${si.icon} ${si.name}</div>
+        <div class="strat-eff-bar-wrap"><div class="strat-eff-bar" style="width:${Math.round(s.avg/maxAvg*100)}%;background:${barCol}"></div></div>
+        <div class="strat-eff-score">${s.avg}점</div>
+        <div style="font-size:10px;color:var(--sub);margin-left:4px">(${s.count}개)</div>
+      </div>`;
+    }).join('')}`:'' ;
+
+  document.getElementById('vidCardList').innerHTML=tableHtml+stratHtml;
+}
+
+// ─── Module toggle ────────────────────────────────────
+let activeModule='discover';
+function setModule(mod, btn){
+  activeModule=mod;
+  document.querySelectorAll('.module-card').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ─── Grade calculation (S/A/B/C/D) ───────────────────
+function calcGrade(score){
+  if(score>=85) return { grade:'S', label:'S급', cls:'grade-S', desc:'최고 우선순위 진입 키워드', icon:'⭐' };
+  if(score>=70) return { grade:'A', label:'A급', cls:'grade-A', desc:'강력 추천 진입 가능', icon:'✅' };
+  if(score>=55) return { grade:'B', label:'B급', cls:'grade-B', desc:'진입 가능 — 차별화 필요', icon:'⚠️' };
+  if(score>=40) return { grade:'C', label:'C급', cls:'grade-C', desc:'신중 검토 — 서브키워드 우선', icon:'🔶' };
+  return { grade:'D', label:'D급', cls:'grade-D', desc:'경쟁 과열 — 우회 전략 필요', icon:'❌' };
+}
+
+// ─── Auto Discover ────────────────────────────────────
+function autoDiscover(){
+  const seedKw=document.getElementById('kwMain').value.trim();
+  const cat=document.getElementById('kwCat').value;
+
+  if(!cat){ alert('카테고리를 먼저 선택해주세요.'); return; }
+
+  const mods=KW_MODIFIERS[cat]||KW_MODIFIERS.default;
+  const th=LEVEL_THRESHOLDS[cat]||LEVEL_THRESHOLDS.default;
+
+  // Generate 15 keyword combos: modifier × (seed or base term)
+  const catIdea=CAT_IDEAS.find(c=>c.key===cat);
+  const baseTerms=catIdea?[...catIdea.items.chosoo.slice(0,3).map(n=>n.split(' ').slice(-2).join(' '))]:[seedKw||'상품'];
+  const baseSeed=seedKw||(baseTerms[0]||'상품');
+
+  const combos=[];
+  mods.forEach((mod,i)=>{
+    // combo: modifier + seed
+    combos.push({ kw:`${mod} ${baseSeed}`, modIdx:i });
+    if(combos.length>=8) return;
+  });
+  // Also add seed + modifier (reversed)
+  mods.slice(0,7).forEach((mod,i)=>{
+    combos.push({ kw:`${baseSeed} ${mod}`, modIdx:i+10 });
+  });
+  const picks=combos.slice(0,15);
+
+  // Estimate entry score for each (heuristic: later modifiers = less competition)
+  const items=picks.map((p,rank)=>{
+    const competitiveness=p.modIdx<3?0.55:p.modIdx<6?0.7:0.85; // lower idx = more competition
+    const estScore=Math.round(45+competitiveness*45+Math.random()*8-4);
+    const cappedScore=Math.min(99,Math.max(30,estScore));
+    const g=calcGrade(cappedScore);
+    return { kw:p.kw, score:cappedScore, grade:g, rank:rank+1 };
+  }).sort((a,b)=>b.score-a.score);
+
+  const maxS=items[0].score;
+  document.getElementById('discoverCard').style.display='block';
+  document.getElementById('discGrid').innerHTML=items.map((item,i)=>{
+    const barPct=Math.round(item.score/maxS*100);
+    const barCol=item.score>=70?'#34d399':item.score>=50?'#fbbf24':'#f87171';
+    return `<div class="disc-item" onclick="fillKeyword('${item.kw.replace(/'/g,"\\'")}')">
+      <div class="disc-rank">${String(i+1).padStart(2,'0')}</div>
+      <div class="disc-kw">${item.kw}</div>
+      <div class="disc-score-bar"><div class="disc-score-fill" style="width:${barPct}%;background:${barCol}"></div></div>
+      <div class="disc-est" style="color:${barCol}">${item.grade.grade}급 · ${item.score}점</div>
+    </div>`;
+  }).join('');
+}
+
+function fillKeyword(kw){
+  document.getElementById('kwMain').value=kw;
+  document.getElementById('kwMain').focus();
+  // Smooth scroll to input
+  document.getElementById('kwMain').scrollIntoView({ behavior:'smooth', block:'center' });
+}
+
+// ─── Item Matching ─────────────────────────────────────
+function renderItemMatch(cat, mainKw){
+  if(!cat){ document.getElementById('kwMatchCard').style.display='none'; return; }
+  const catData=CAT_IDEAS.find(c=>c.key===cat);
+  if(!catData){ document.getElementById('kwMatchCard').style.display='none'; return; }
+
+  const levels=[
+    { key:'chosoo', label:'🌱 초수', cls:'chosoo', items:catData.items.chosoo },
+    { key:'jungsoo', label:'⚔️ 중수', cls:'jungsoo', items:catData.items.jungsoo },
+  ];
+  const cards=[];
+  levels.forEach(lv=>{
+    lv.items.slice(0,2).forEach(item=>{
+      cards.push({ level:lv.label, cls:lv.cls, name:item });
+    });
+  });
+
+  document.getElementById('kwMatchCard').style.display='block';
+  document.getElementById('kwMatchGrid').innerHTML=cards.map(c=>`
+    <div class="item-match-card ${c.cls}">
+      <div class="item-match-level" style="color:${c.cls==='chosoo'?'var(--green)':c.cls==='jungsoo'?'var(--yellow)':'var(--red)'}">${c.level}</div>
+      <div class="item-match-name">${c.name}</div>
+    </div>`).join('');
+}
+
+// ─── Patch analyzeKeyword to also show grade + item match ──
+const _origAnalyze=analyzeKeyword;
+analyzeKeyword=function(){
+  _origAnalyze();
+  // Grade badge
+  const score=parseInt(document.getElementById('kwScoreBig').textContent)||0;
+  if(score>0){
+    const g=calcGrade(score);
+    document.getElementById('kwGradeBadge').innerHTML=`<div class="grade-badge ${g.cls}">${g.icon} ${g.label}<span style="font-size:10px;font-weight:600;opacity:.75;margin-left:4px">${g.desc}</span></div>`;
+  }
+  // Item matching
+  const cat=document.getElementById('kwCat').value;
+  const mainKw=document.getElementById('kwMain').value.trim();
+  renderItemMatch(cat, mainKw);
+};
+</script>
+</body>
+</html>
