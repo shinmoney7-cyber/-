@@ -599,10 +599,16 @@ async function submitOrder() {
   const body = `이름: ${name}\n성별: ${gender}\n생년월일: ${birth} (${calType})\n태어난시간: ${time}\n연락처: ${contact}\n이메일: ${email||'없음'}\n\n선택 서비스: ${serviceList.join(', ')}\n총 금액: ${fmt(total)}\n\n요청사항: ${memo||'없음'}`;
 
   try {
-    const resp = await fetch('https://formspree.io/shinmoney7@gmail.com', {
+    const formData = new FormData();
+    formData.append('_subject', `[사주마루] 주문 - ${name} ${fmt(total)}`);
+    formData.append('message', body);
+    formData.append('name', name);
+    formData.append('email', email||'noreply@sajumaru.com');
+    formData.append('_captcha', 'false');
+    formData.append('_template', 'table');
+    const resp = await fetch('https://formsubmit.co/shinmoney7@gmail.com', {
       method: 'POST',
-      headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-      body: JSON.stringify({ _subject: `[사주마루] 주문 - ${name} ${fmt(total)}`, message: body, name, email: email||'noreply@sajumaru.com' })
+      body: formData
     });
 
     document.getElementById('confirm-items').textContent = serviceList.join(', ');
