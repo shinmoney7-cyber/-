@@ -1126,6 +1126,22 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
       </div>
     </div>
 
+    <div class="sep"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
+      <div style="font-size:12px;font-weight:700;color:var(--txt)">🐟 Fish Audio 음성 합성 (TTS)</div>
+      <a href="https://fish.audio" target="_blank" style="font-size:11px;color:var(--accent);text-decoration:none;font-weight:700;padding:3px 8px;border:1px solid rgba(124,111,255,.4);border-radius:8px;background:rgba(124,111,255,.08)">🔑 키 발급 →</a>
+    </div>
+    <div style="font-size:10px;color:var(--sub);margin-bottom:7px">대본을 AI 음성으로 즉시 변환. fish.audio에서 API 키 발급 후 입력하세요.</div>
+    <div style="display:flex;gap:6px;margin-bottom:6px;align-items:center">
+      <input type="password" id="fishApiKey" placeholder="fish_audio_api_key 붙여넣기" style="flex:1;margin-bottom:0;font-size:12px" oninput="saveFishKey()">
+      <button class="btn-sm" onclick="saveFishKey(true)" style="flex-shrink:0;white-space:nowrap">💾 저장 <span class="saved-ok" id="fishKeySaved">✓</span></button>
+    </div>
+    <label style="margin-bottom:4px">음성 모델 ID (Reference ID)</label>
+    <div style="display:flex;gap:6px;margin-bottom:4px;align-items:center">
+      <input type="text" id="fishVoiceId" placeholder="예: 54a5170264694bfc8e474488a01ddc77" style="flex:1;margin-bottom:0;font-size:12px" oninput="saveFishKey()">
+    </div>
+    <div style="font-size:10px;color:var(--sub);margin-bottom:8px">fish.audio에서 원하는 음성 모델 선택 → Reference ID 복사. 비워두면 기본 음성 사용.</div>
+
     <div style="font-size:10px;font-weight:700;color:var(--sub);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px">🔗 인포크링크 제휴 링크 (3개)</div>
     <input type="url" id="infoclink1" placeholder="인포크링크 링크 1 (예: https://link.infoclink.com/xxx)" style="margin-bottom:4px;font-size:11px" oninput="savePlatTokens()">
     <input type="url" id="infoclink2" placeholder="인포크링크 링크 2" style="margin-bottom:4px;font-size:11px" oninput="savePlatTokens()">
@@ -1204,6 +1220,85 @@ function parseArray(raw){
   if(m) try{return JSON.parse(m[0]);}catch{}
   return [];
 }
+// ── Fish Audio TTS ─────────────────────────────────────────
+function getFishKey(){ return LS.get('ss_fish_key'); }
+function getFishVoiceId(){ return LS.get('ss_fish_voice_id'); }
+function saveFishKey(showToast_=false){
+  const k=(document.getElementById('fishApiKey')?.value||'').trim();
+  const v=(document.getElementById('fishVoiceId')?.value||'').trim();
+  LS.set('ss_fish_key',k);
+  LS.set('ss_fish_voice_id',v);
+  const s=document.getElementById('fishKeySaved');
+  if(s){s.style.opacity='1';setTimeout(()=>s.style.opacity='0',1500);}
+  if(showToast_) showToast('🐟 Fish Audio 키 저장됨!','success');
+}
+let _fishAudioBlobs = {};
+async function generateFishAudio(i){
+  const key = getFishKey();
+  if(!key){ showToast('⚙️ 설정에서 Fish Audio API 키를 먼저 입력해줘!','warn',4000); openSettings(); return; }
+  const hook  = (document.getElementById('hook-'+i)?.value||'').trim();
+  const script= (document.getElementById('script-'+i)?.value||'').trim();
+  const text  = [hook, script].filter(Boolean).join('\n');
+  if(!text){ showToast('대본이 비어있어! 먼저 대본을 생성해줘','warn'); return; }
+
+  const btn   = document.getElementById('fishAudioBtn-'+i);
+  const area  = document.getElementById('fishAudioArea-'+i);
+  const status= document.getElementById('fishAudioStatus-'+i);
+  const player= document.getElementById('fishAudioPlayer-'+i);
+  const dlBtn = document.getElementById('fishDownloadBtn-'+i);
+  const rtBtn = document.getElementById('fishRetryBtn-'+i);
+
+  area.style.display='block';
+  status.textContent='🎙 음성 생성 중...';
+  status.style.color='var(--accent)';
+  player.style.display='none';
+  dlBtn.style.display='none';
+  rtBtn.style.display='none';
+  if(btn) btn.disabled=true;
+
+  const voiceId = getFishVoiceId();
+  const body = { text, format:'mp3', mp3_bitrate:128, latency:'normal' };
+  if(voiceId) body.reference_id = voiceId;
+
+  try {
+    const r = await fetch('https://api.fish.audio/v1/tts',{
+      method:'POST',
+      headers:{ 'Authorization':'Bearer '+key, 'Content-Type':'application/json' },
+      body: JSON.stringify(body)
+    });
+    if(!r.ok){
+      const err = await r.json().catch(()=>({message:r.statusText}));
+      throw new Error(err.message||'Fish Audio API 오류 ('+r.status+')');
+    }
+    const blob = await r.blob();
+    _fishAudioBlobs[i] = blob;
+    const url = URL.createObjectURL(blob);
+    player.src = url;
+    player.style.display='block';
+    dlBtn.style.display='block';
+    rtBtn.style.display='block';
+    status.textContent='✅ 음성 생성 완료!';
+    status.style.color='var(--green)';
+    player.play();
+    showToast('🎙 음성 생성 완료!','success');
+  } catch(e){
+    status.textContent='❌ 오류: '+e.message;
+    status.style.color='#ff3b5c';
+    rtBtn.style.display='block';
+    showToast('Fish Audio 오류: '+e.message,'error',5000);
+  } finally {
+    if(btn) btn.disabled=false;
+  }
+}
+function downloadFishAudio(i){
+  const blob = _fishAudioBlobs[i];
+  if(!blob){ showToast('먼저 음성을 생성해줘','warn'); return; }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'script_voice_'+(i+1)+'.mp3';
+  a.click();
+}
+
 function getCoupangCreds(){ return {access:LS.get('ss_cp_access'),secret:LS.get('ss_cp_secret'),subid:LS.get('ss_cp_subid')}; }
 function coupangSearchUrl(kw){ return `https://www.coupang.com/np/search?q=${encodeURIComponent(kw)}&channel=user`; }
 function coupangDeepLink(kw){
@@ -1567,6 +1662,20 @@ function buildScriptPanelHTML(i, s){
       <button class="btn-sm green" onclick="copyAll(${i})" style="flex:1;justify-content:center">📋 전체복사</button>
       <button class="btn-sm" onclick="sendToViral(${i})" style="flex:1;justify-content:center;background:rgba(124,111,255,.18);border-color:var(--accent);color:var(--accent)">🔗 바이럴연동</button>
     </div>
+    <!-- Fish Audio 음성 생성 -->
+    <button onclick="generateFishAudio(${i})" id="fishAudioBtn-${i}"
+      style="width:100%;margin-top:8px;padding:11px;border-radius:12px;border:none;background:linear-gradient(135deg,#00b4d8,#0077b6);color:#fff;font-size:14px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+      🎙 Fish Audio 음성 생성
+    </button>
+    <div id="fishAudioArea-${i}" style="display:none;margin-top:6px;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:10px 12px">
+      <div id="fishAudioStatus-${i}" style="font-size:12px;color:var(--sub);margin-bottom:6px;text-align:center">생성 중...</div>
+      <audio id="fishAudioPlayer-${i}" controls style="width:100%;border-radius:8px;margin-bottom:6px;display:none"></audio>
+      <div style="display:flex;gap:6px">
+        <button onclick="downloadFishAudio(${i})" id="fishDownloadBtn-${i}" style="display:none;flex:1;padding:7px;border-radius:8px;border:1px solid var(--accent);background:rgba(124,111,255,.12);color:var(--accent);font-size:12px;font-weight:700;cursor:pointer">⬇️ MP3 다운로드</button>
+        <button onclick="generateFishAudio(${i})" id="fishRetryBtn-${i}" style="display:none;flex:1;padding:7px;border-radius:8px;border:1px solid var(--border);background:var(--card3);color:var(--sub);font-size:12px;cursor:pointer">🔄 재생성</button>
+      </div>
+    </div>
+
     <button onclick="generateVideoFromScript(${i})" id="vidGenBtn-${i}"
       style="width:100%;margin-top:8px;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#7c6fff,#ff6b8a);color:#fff;font-size:14px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
       🎬 영상 직접 생성 (브라우저 렌더링)
@@ -2148,6 +2257,9 @@ function openSettings(focusKey=false){
   if(document.getElementById('cpSecret')) document.getElementById('cpSecret').value=c.secret||'';
   if(document.getElementById('cpSubid'))  document.getElementById('cpSubid').value=c.subid||'';
   if(typeof loadPlatTokens==='function') loadPlatTokens();
+  // Fish Audio 키 로드
+  const fk=document.getElementById('fishApiKey'); if(fk) fk.value=getFishKey()||'';
+  const fv=document.getElementById('fishVoiceId'); if(fv) fv.value=getFishVoiceId()||'';
   if(focusKey && el){
     setTimeout(()=>{
       el.scrollIntoView({behavior:'smooth',block:'center'});
