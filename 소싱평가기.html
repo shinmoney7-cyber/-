@@ -339,28 +339,51 @@ td.worst{color:var(--red)}
 .vid-cmp-best{color:var(--green);font-weight:900}
 .vid-cmp-worst{color:var(--red)}
 
-/* keyword sourcing tab */
-.kw-grid{display:grid;grid-template-columns:360px 1fr;gap:16px;align-items:start}
-@media(max-width:780px){.kw-grid{grid-template-columns:1fr}}
-.kw-score-wrap{background:var(--card2);border-radius:14px;padding:16px;margin-bottom:14px;text-align:center}
-.kw-score-big{font-size:46px;font-weight:900;line-height:1.1;margin-bottom:4px}
-.kw-score-label{font-size:12px;color:var(--sub);margin-bottom:12px}
-.kw-score-bar-wrap{background:var(--border);border-radius:4px;height:8px;overflow:hidden}
-.kw-score-bar{height:100%;border-radius:4px;transition:width .5s}
-.kw-sub-list{display:flex;flex-direction:column;gap:6px;margin-top:10px}
-.kw-sub-item{display:flex;align-items:center;gap:10px;background:var(--card2);border-radius:10px;padding:8px 12px}
-.kw-sub-chip{font-size:12px;font-weight:700;color:var(--accent);flex:1}
-.kw-sub-difficulty{font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;white-space:nowrap}
-.kw-sub-diff-low{background:rgba(16,185,129,.15);color:var(--green)}
-.kw-sub-diff-mid{background:rgba(245,158,11,.15);color:var(--yellow)}
-.kw-sub-diff-high{background:rgba(239,68,68,.15);color:var(--red)}
-.kw-saved-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
-.kw-saved-row{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-.kw-saved-name{font-size:13px;font-weight:800;color:var(--txt)}
-.kw-profit-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-.kw-profit-box{background:var(--card2);border-radius:10px;padding:12px;text-align:center}
-.kw-profit-val{font-size:18px;font-weight:900;color:var(--accent);margin-bottom:2px}
-.kw-profit-lbl{font-size:10px;color:var(--sub)}
+/* ── Tab 5: Sourcing Session ──────────────────────────── */
+.session-step{background:var(--card);border:1.5px solid var(--border);border-radius:16px;margin-bottom:12px;overflow:hidden;transition:.2s}
+.session-step.locked{opacity:.42;pointer-events:none}
+.session-step.done{border-color:var(--green)}
+.session-step-header{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer}
+.ss-num{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.session-step.done .ss-num{background:var(--green)}
+.session-step.locked .ss-num{background:var(--border);color:var(--sub)}
+.ss-title{font-size:13px;font-weight:800;color:var(--txt);flex:1}
+.ss-summary{font-size:11px;color:var(--sub);font-weight:600;white-space:nowrap}
+.session-step-body{padding:0 18px 18px;display:none}
+.session-step.active .session-step-body{display:block}
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+@media(max-width:480px){.cat-grid{grid-template-columns:repeat(2,1fr)}}
+.cat-btn{padding:10px 6px;border-radius:12px;border:1.5px solid var(--border);background:var(--card2);color:var(--txt);font-size:12px;font-weight:700;cursor:pointer;text-align:center;transition:.15s;font-family:inherit;line-height:1.5}
+.cat-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(79,70,229,.07)}
+.cat-btn.sel{border-color:var(--accent);background:rgba(79,70,229,.12);color:var(--accent)}
+.level-check-row{display:flex;gap:8px;align-items:flex-end;margin-top:10px}
+.level-check-row input{flex:1}
+.level-result{border-radius:12px;padding:12px 14px;margin-top:10px;display:flex;align-items:flex-start;gap:12px}
+.kw-attack-section{margin-top:14px}
+.kw-attack-section-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--sub);margin-bottom:8px}
+.kw-attack-list{display:flex;flex-direction:column;gap:5px}
+.kw-attack-item{display:flex;align-items:center;gap:10px;background:var(--card2);border-radius:10px;padding:8px 12px;cursor:pointer;border:1.5px solid transparent;transition:.15s;user-select:none}
+.kw-attack-item:hover{border-color:var(--accent2);background:rgba(79,70,229,.06)}
+.kw-attack-pri{font-size:10px;flex-shrink:0;min-width:48px;text-align:center;padding:2px 7px;border-radius:8px;font-weight:700;white-space:nowrap}
+.kw-attack-pri.top{background:rgba(239,68,68,.12);color:var(--red)}
+.kw-attack-pri.rec{background:rgba(16,185,129,.12);color:var(--green)}
+.kw-attack-pri.ref{background:rgba(245,158,11,.1);color:var(--yellow)}
+.kw-attack-kw{font-size:13px;font-weight:700;color:var(--txt);flex:1}
+.kw-attack-hint{font-size:10px;color:var(--sub);white-space:nowrap}
+.sourcing-rec-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px}
+@media(max-width:540px){.sourcing-rec-grid{grid-template-columns:1fr}}
+.sourcing-rec-card{border-radius:12px;padding:12px;border:2px solid transparent;cursor:pointer;transition:.15s;text-align:center}
+.sourcing-rec-card:hover{transform:translateY(-1px)}
+.sourcing-rec-card.dm{background:rgba(79,70,229,.07);border-color:rgba(79,70,229,.2)}
+.sourcing-rec-card.gd{background:rgba(16,185,129,.07);border-color:rgba(16,185,129,.2)}
+.sourcing-rec-card.oe{background:rgba(245,158,11,.07);border-color:rgba(245,158,11,.2)}
+.sourcing-rec-card.dm.sel{border-color:var(--accent);background:rgba(79,70,229,.15)}
+.sourcing-rec-card.gd.sel{border-color:var(--green);background:rgba(16,185,129,.15)}
+.sourcing-rec-card.oe.sel{border-color:var(--yellow);background:rgba(245,158,11,.15)}
+.product-hit-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.product-hit{background:var(--card2);border-radius:10px;padding:10px 12px;border-left:3px solid var(--green)}
+.product-hit-level{font-size:9px;font-weight:700;text-transform:uppercase;color:var(--green);letter-spacing:.8px;margin-bottom:4px}
+.product-hit-name{font-size:11px;font-weight:700;color:var(--txt);line-height:1.4}
 
 /* strategy effectiveness */
 .strat-eff-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
@@ -1424,162 +1447,106 @@ initSegOverview();
   </div>
 </div>
 
-<!-- ═══════════════ TAB 5: KEYWORD SOURCING ═══════════════ -->
+<!-- ═══════════════ TAB 5: ANDERSON SOURCING SESSION ═══════════════ -->
 <div class="tab-panel" id="panel-keyword">
   <div class="main">
 
-    <!-- AI Hero -->
-    <div class="ai-hero">
-      <div class="ai-hero-eyebrow">// ANDERSON KEYWORD ENGINE v2.0</div>
-      <div class="ai-hero-title">AI가 대신 분석하고<br><span>검증된 답을 드립니다</span></div>
-      <div class="ai-hero-sub">앤더슨 방법론 핵심 — 키워드가 구매대행 월 순익 5,800만원을 만든다.<br>꼴통키워드 자동 발굴 · 효자상품 매칭 · S급 키워드 필터링</div>
-      <div class="ai-stat-row">
-        <div class="ai-stat"><div class="ai-stat-num">87%</div><div class="ai-stat-lbl">TIME SAVED</div></div>
-        <div class="ai-stat"><div class="ai-stat-num">72%</div><div class="ai-stat-lbl">SUCCESS RATE</div></div>
-        <div class="ai-stat"><div class="ai-stat-num">3.2×</div><div class="ai-stat-lbl">ACCURACY</div></div>
-      </div>
-      <div class="module-grid">
-        <div class="module-card active" id="module-discover" onclick="setModule('discover',this)">
-          <div class="module-active-dot"></div>
-          <div class="module-tag">AUTO_DISCOVERY</div>
-          <div class="module-icon">🤖</div>
-          <div class="module-name">꼴통키워드 자동 발굴</div>
-          <div class="module-desc">경쟁 낮은 틈새 키워드를 AI가 자동으로 15개 발굴합니다</div>
-        </div>
-        <div class="module-card" id="module-match" onclick="setModule('match',this)">
-          <div class="module-active-dot"></div>
-          <div class="module-tag">ITEM_MATCHING</div>
-          <div class="module-icon">🛒</div>
-          <div class="module-name">효자상품 매칭</div>
-          <div class="module-desc">발굴된 키워드에 맞는 소싱 가능 상품을 자동 매칭합니다</div>
-        </div>
-        <div class="module-card" id="module-filter" onclick="setModule('filter',this)">
-          <div class="module-active-dot"></div>
-          <div class="module-tag">RANK_FILTER</div>
-          <div class="module-icon">🏆</div>
-          <div class="module-name">S급 키워드 필터링</div>
-          <div class="module-desc">상위 셀러 알고리즘 기반 A~S등급으로 키워드를 분류합니다</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="kw-grid">
-      <!-- LEFT: input -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px">
       <div>
-        <div class="card">
-          <div class="card-title">🔑 키워드 분석 입력</div>
-
-          <label class="lbl">메인 키워드</label>
-          <input type="text" id="kwMain" placeholder="예: 강아지 자동급수기">
-
-          <label class="lbl">카테고리</label>
-          <select id="kwCat">
-            <option value="">선택...</option>
-            <option value="pet">🐾 반려동물</option>
-            <option value="kitchen">🍳 주방/조리</option>
-            <option value="home">🏠 생활/인테리어</option>
-            <option value="baby">👶 유아/육아</option>
-            <option value="beauty">🌿 건강/뷰티</option>
-            <option value="electronics">📱 전자/가젯</option>
-            <option value="fashion">👗 패션/의류</option>
-            <option value="sports">🏋️ 스포츠/레저</option>
-            <option value="food">🍃 식품/음료</option>
-          </select>
-
-          <label class="lbl">월 검색량 (네이버 광고관리자)</label>
-          <input type="number" id="kwVolume" placeholder="예: 18000" min="0">
-          <div style="font-size:10px;color:var(--sub);margin-top:3px">1,000~30,000이 적정 틈새 (앤더슨 기준)</div>
-
-          <label class="lbl">이 키워드 1위 상품 리뷰 수</label>
-          <input type="number" id="kwTopReviews" placeholder="예: 420" min="0">
-
-          <label class="lbl">이 키워드 2~5위 평균 리뷰 수</label>
-          <input type="number" id="kwAvgReviews" placeholder="예: 180" min="0">
-
-          <div class="sep" style="margin:14px 0 10px"></div>
-          <div class="card-title" style="margin-bottom:8px">💰 수익 예측 (선택)</div>
-
-          <label class="lbl">예상 판매가 (원)</label>
-          <input type="number" id="kwPrice" placeholder="예: 29000" min="0">
-
-          <label class="lbl">예상 원가 (원)</label>
-          <input type="number" id="kwCost" placeholder="예: 8000" min="0">
-
-          <label class="lbl">예상 일 판매 목표 (개)</label>
-          <input type="number" id="kwDailySales" placeholder="예: 5" min="1">
-
-          <button class="btn-eval" onclick="analyzeKeyword()" style="margin-top:16px">🔍 키워드 분석 시작</button>
-          <button class="btn-discover" onclick="autoDiscover()">🤖 꼴통키워드 자동 발굴 (15개)</button>
-        </div>
-
-        <!-- Auto Discovery Results -->
-        <div class="result-card" id="discoverCard" style="display:none;margin-top:16px">
-          <div class="card-title">🤖 꼴통키워드 자동 발굴 결과</div>
-          <div style="font-size:11px;color:var(--sub);margin-bottom:8px">카테고리 + 시드 키워드 기반으로 경쟁 낮은 틈새 키워드 15개를 생성했습니다. 클릭하면 분석 입력창에 자동 입력됩니다.</div>
-          <div class="disc-grid" id="discGrid"></div>
-        </div>
+        <div style="font-size:18px;font-weight:900;color:var(--txt)">🎯 앤더슨 소싱 세션</div>
+        <div style="font-size:12px;color:var(--sub);margin-top:2px">"판매실력이 상품력보다 중요하다" — 앤더슨의 4단계 소싱 프로세스</div>
       </div>
+      <button onclick="resetSession()" style="background:var(--card2);border:1.5px solid var(--border);color:var(--sub);padding:7px 14px;font-size:12px;border-radius:10px;cursor:pointer;font-family:inherit;font-weight:700">↺ 새 세션</button>
+    </div>
 
-      <!-- RIGHT: results -->
-      <div id="kwResults" style="display:none">
+    <!-- progress bar -->
+    <div style="background:var(--border);border-radius:4px;height:4px;margin-bottom:18px;overflow:hidden">
+      <div id="sessionProgress" style="height:100%;background:var(--accent);width:25%;border-radius:4px;transition:width .4s ease"></div>
+    </div>
 
-        <!-- keyword score + grade -->
-        <div class="result-card">
-          <div class="card-title">⚡ 키워드 진입 점수</div>
-          <div class="kw-score-wrap">
-            <div style="display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin-bottom:6px">
-              <div>
-                <div class="kw-score-big" id="kwScoreBig">—</div>
-                <div class="kw-score-label" id="kwScoreLabel">점 / 100점</div>
-              </div>
-              <div id="kwGradeBadge"></div>
-            </div>
-            <div class="kw-score-bar-wrap"><div class="kw-score-bar" id="kwScoreBar" style="width:0%"></div></div>
-          </div>
-          <div id="kwMetricRows"></div>
+    <!-- STEP 1: Category -->
+    <div class="session-step active" id="step-1">
+      <div class="session-step-header" onclick="if(ss.step>1) gotoStep(1)">
+        <div class="ss-num">01</div>
+        <div class="ss-title">카테고리 선택</div>
+        <div class="ss-summary" id="s1-summary" style="display:none"></div>
+      </div>
+      <div class="session-step-body">
+        <div style="font-size:12px;color:var(--sub);line-height:1.6;margin-bottom:4px">앤더슨 기준 — 먼저 카테고리를 정하면 경쟁 구간(초수/중수/고수) 기준이 달라집니다.</div>
+        <div class="cat-grid">
+          <button class="cat-btn" onclick="selectCat('pet','🐾 반려동물')">🐾<br>반려동물</button>
+          <button class="cat-btn" onclick="selectCat('kitchen','🍳 주방')">🍳<br>주방/조리</button>
+          <button class="cat-btn" onclick="selectCat('home','🏠 생활')">🏠<br>생활/인테리어</button>
+          <button class="cat-btn" onclick="selectCat('baby','👶 유아')">👶<br>유아/육아</button>
+          <button class="cat-btn" onclick="selectCat('beauty','🌿 뷰티')">🌿<br>건강/뷰티</button>
+          <button class="cat-btn" onclick="selectCat('electronics','📱 전자')">📱<br>전자/가젯</button>
+          <button class="cat-btn" onclick="selectCat('fashion','👗 패션')">👗<br>패션/의류</button>
+          <button class="cat-btn" onclick="selectCat('sports','🏋️ 스포츠')">🏋️<br>스포츠/레저</button>
+          <button class="cat-btn" onclick="selectCat('food','🍃 식품')">🍃<br>식품/음료</button>
         </div>
-
-        <!-- item matching -->
-        <div class="result-card" id="kwMatchCard" style="display:none">
-          <div class="card-title">🛒 효자상품 매칭 결과</div>
-          <div style="font-size:11px;color:var(--sub);margin-bottom:8px">이 키워드/카테고리에서 소싱 가능한 추천 상품입니다.</div>
-          <div class="item-match-grid" id="kwMatchGrid"></div>
-        </div>
-
-        <!-- anderson level -->
-        <div class="result-card">
-          <div class="card-title">📊 앤더슨 구간 판정</div>
-          <div id="kwLevelResult"></div>
-        </div>
-
-        <!-- profit estimate -->
-        <div class="result-card" id="kwProfitCard" style="display:none">
-          <div class="card-title">💰 수익 예측</div>
-          <div class="kw-profit-row" id="kwProfitRows"></div>
-          <div class="highlight" id="kwProfitTip" style="margin-top:10px"></div>
-        </div>
-
-        <!-- sub-keyword suggestions -->
-        <div class="result-card">
-          <div class="card-title">🗝 서브키워드 전략 (앤더슨 핵심)</div>
-          <div style="font-size:11px;color:var(--sub);margin-bottom:10px;line-height:1.6">메인 키워드보다 경쟁이 낮은 롱테일 서브키워드 조합입니다. 각 키워드별로 별도 상품 등록을 검토하세요.</div>
-          <div class="kw-sub-list" id="kwSubList"></div>
-          <div class="highlight" style="margin-top:12px">💡 <strong>앤더슨의 키워드 전략:</strong> 메인 키워드 1위보다 중위 서브키워드 10~20개 합산이 더 안정적인 매출을 만든다. 각 서브키워드는 경쟁이 낮아 썸네일만 잘 만들어도 상위 노출 가능.</div>
-        </div>
-
-        <!-- coupang autocomplete guide -->
-        <div class="result-card">
-          <div class="card-title">🛒 쿠팡 자동완성 키워드 활용법</div>
-          <div id="kwAutoGuide"></div>
-        </div>
-
       </div>
     </div>
 
-    <!-- saved keywords comparison -->
-    <div class="result-card" id="kwSavedCard" style="display:none;margin-top:16px">
-      <div class="card-title">📋 분석 키워드 비교</div>
-      <div id="kwSavedList"></div>
+    <!-- STEP 2: Review count → 5-tier classification -->
+    <div class="session-step locked" id="step-2">
+      <div class="session-step-header" onclick="if(ss.step>2) gotoStep(2)">
+        <div class="ss-num">02</div>
+        <div class="ss-title">쿠팡 1위 리뷰 수 확인</div>
+        <div class="ss-summary" id="s2-summary" style="display:none"></div>
+      </div>
+      <div class="session-step-body">
+        <div style="font-size:12px;color:var(--sub);line-height:1.6;margin-bottom:10px" id="s2-threshold"></div>
+        <div style="background:var(--card2);border-radius:12px;padding:12px;margin-bottom:12px">
+          <div style="font-size:11px;font-weight:800;color:var(--sub);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">앤더슨 5구간 기준</div>
+          <div id="s2-5tier"></div>
+        </div>
+        <label class="lbl">목표 키워드 쿠팡 1위 리뷰 수 입력</label>
+        <div class="level-check-row">
+          <input type="number" id="ss-topReviews" placeholder="쿠팡에서 검색 후 입력" min="0" oninput="previewSessionLevel()">
+          <button class="btn-eval" onclick="confirmLevel()" style="white-space:nowrap;padding:9px 16px;margin:0;flex-shrink:0">구간 판정 →</button>
+        </div>
+        <div id="s2-level-preview" style="margin-top:6px;min-height:18px"></div>
+        <div id="s2-level-result" style="display:none"></div>
+        <button class="btn-eval" id="s2-next" onclick="advanceToStep(3)" style="display:none;margin-top:12px">다음: 키워드 공략 리스트 →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Keyword attack list (Anderson's Coupang + Naver method) -->
+    <div class="session-step locked" id="step-3">
+      <div class="session-step-header" onclick="if(ss.step>3) gotoStep(3)">
+        <div class="ss-num">03</div>
+        <div class="ss-title">키워드 공략 리스트</div>
+        <div class="ss-summary" id="s3-summary" style="display:none"></div>
+      </div>
+      <div class="session-step-body">
+        <div class="highlight" style="margin-bottom:12px" id="s3-strategy"></div>
+        <div style="background:var(--card2);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:11px;color:var(--sub);line-height:1.8">
+          <strong style="color:var(--txt)">앤더슨의 키워드 발굴 2단계</strong><br>
+          ① 쿠팡 검색창에 아래 키워드 입력 → 자동완성 10개 모두 캡처<br>
+          ② 각 키워드 1위 리뷰 수 확인 → 기준 이하면 <strong style="color:var(--green)">진입 타겟</strong>으로 저장<br>
+          ③ 네이버 광고관리자에서 검색량 확인 → <strong>1,000~30,000이 적정 틈새</strong>
+        </div>
+        <div id="s3-keyword-sections"></div>
+        <button class="btn-eval" onclick="advanceToStep(4)" style="margin-top:14px">진입 키워드 결정 → 소싱 방법 선택</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: Sourcing method (Anderson's 3 types with revenue data) -->
+    <div class="session-step locked" id="step-4">
+      <div class="session-step-header">
+        <div class="ss-num">04</div>
+        <div class="ss-title">소싱 방법 결정</div>
+      </div>
+      <div class="session-step-body">
+        <div style="font-size:12px;color:var(--sub);line-height:1.6;margin-bottom:12px" id="s4-desc"></div>
+        <div style="font-size:12px;font-weight:800;color:var(--txt);margin-bottom:8px">앤더슨 3가지 소싱 방법 — 클릭해서 선택하세요</div>
+        <div class="sourcing-rec-grid" id="s4-sourcing-types"></div>
+        <div id="s4-sourcing-detail" style="display:none;margin-top:14px"></div>
+        <div style="margin-top:16px;font-size:12px;font-weight:800;color:var(--txt);margin-bottom:8px">🛒 이 카테고리 초수 구간 추천 아이템</div>
+        <div class="product-hit-grid" id="s4-products"></div>
+        <div class="highlight" style="margin-top:14px">🎯 <strong>다음 액션:</strong> Tab 1 소싱 평가기에서 이 상품 점수를 계산하세요. <strong>70점 이상 → 소량 테스트 발주 (10~30개).</strong></div>
+        <button class="btn-eval" onclick="goToTab1FromSession()" style="margin-top:12px;background:var(--green)">Tab 1 소싱 평가기로 이동 ↗</button>
+      </div>
     </div>
 
   </div>
@@ -1752,9 +1719,7 @@ function isInSeg(rv, segName, th){
   return false;
 }
 
-// ─── Keyword Sourcing ─────────────────────────────────────
-let savedKeywords=[];
-
+// ─── Anderson Sourcing Session ─────────────────────────────────────
 const KW_MODIFIERS = {
   pet:       ['소형','대형견','고양이','강아지','자동','접이식','미니','휴대용','실내','방수'],
   kitchen:   ['1인용','대용량','무선','스마트','접이식','다기능','미니','정수','전기','주방용'],
@@ -1768,181 +1733,247 @@ const KW_MODIFIERS = {
   default:   ['고급','저렴','소형','대형','무선','접이식','휴대용','다기능','프리미엄','국내산'],
 };
 
-function analyzeKeyword(){
-  const mainKw=document.getElementById('kwMain').value.trim();
-  const cat=document.getElementById('kwCat').value;
-  const volume=parseInt(document.getElementById('kwVolume').value)||0;
-  const topReviews=parseInt(document.getElementById('kwTopReviews').value)||0;
-  const avgReviews=parseInt(document.getElementById('kwAvgReviews').value)||0;
-  const price=parseInt(document.getElementById('kwPrice').value)||0;
-  const cost=parseInt(document.getElementById('kwCost').value)||0;
-  const dailySales=parseInt(document.getElementById('kwDailySales').value)||5;
+let ss={step:1,cat:null,catLabel:'',topReviews:0,level:null};
 
-  if(!mainKw){ alert('메인 키워드를 입력해주세요.'); return; }
+function resetSession(){
+  ss={step:1,cat:null,catLabel:'',topReviews:0,level:null};
+  advanceToStep(1,true);
+  const inp=document.getElementById('ss-topReviews');
+  if(inp) inp.value='';
+}
 
-  const th=LEVEL_THRESHOLDS[cat||'default']||LEVEL_THRESHOLDS.default;
-
-  // Score 1: Search volume (0-25)
-  let vScore=0;
-  if(volume>=1000 && volume<=5000) vScore=25;
-  else if(volume>5000 && volume<=30000) vScore=20;
-  else if(volume>300 && volume<1000) vScore=15;
-  else if(volume>30000 && volume<=100000) vScore=10;
-  else if(volume>100000) vScore=5;
-  else if(volume>0) vScore=8;
-
-  // Score 2: Competition (based on top review = level) (0-25)
-  let cScore=0;
-  if(topReviews>0){
-    const lv=getLevel(cat||'default', topReviews);
-    cScore=lv==='chosoo'?25:lv==='jungsoo'?14:6;
-  } else { cScore=12; }
-
-  // Score 3: Review gap (top vs avg, if avg given) (0-25)
-  let gScore=12;
-  if(topReviews>0 && avgReviews>0){
-    const gap=topReviews-avgReviews;
-    const gapRatio=avgReviews/topReviews;
-    // High avg relative to top = healthy competition = easier to rank
-    if(gapRatio>=0.6) gScore=25;
-    else if(gapRatio>=0.4) gScore=20;
-    else if(gapRatio>=0.2) gScore=14;
-    else if(gapRatio>=0.1) gScore=8;
-    else gScore=4;
+function advanceToStep(n,reset){
+  if(!reset) ss.step=n;
+  const pcts={1:10,2:35,3:62,4:88};
+  const bar=document.getElementById('sessionProgress');
+  if(bar) bar.style.width=(pcts[n]||10)+'%';
+  [1,2,3,4].forEach(i=>{
+    const el=document.getElementById('step-'+i);
+    if(!el) return;
+    if(reset){ el.className='session-step'+(i===1?' active':' locked'); }
+    else if(i<n) el.className='session-step done';
+    else if(i===n) el.className='session-step active';
+    else el.className='session-step locked';
+  });
+  if(!reset){
+    ['s1-summary','s2-summary','s3-summary'].forEach((id,idx)=>{
+      const el=document.getElementById(id);
+      if(el) el.style.display=(idx+1<n)?'block':'none';
+    });
   }
+  if(n===4 && !reset) renderSourcingDecision();
+}
 
-  // Score 4: Volume ideal range bonus (0-25)
-  let iScore=0;
-  if(volume>=3000 && volume<=15000) iScore=25;
-  else if(volume>=1000 && volume<=30000) iScore=18;
-  else if(volume>=500 && volume<=50000) iScore=12;
-  else if(volume>0) iScore=6;
+function gotoStep(n){
+  if(n>=ss.step) return;
+  advanceToStep(n);
+}
 
-  const totalScore=vScore+cScore+gScore+iScore;
-  const scoreCol=totalScore>=70?'var(--green)':totalScore>=45?'var(--yellow)':'var(--red)';
-  const scoreMsg=totalScore>=70?'🔥 진입 강력 추천':totalScore>=55?'✅ 진입 가능':totalScore>=40?'⚠️ 신중하게 검토':'❌ 경쟁 과열 — 서브키워드로 우회';
+function selectCat(cat,label){
+  ss.cat=cat; ss.catLabel=label;
+  document.querySelectorAll('.cat-btn').forEach(b=>{
+    b.classList.remove('active');
+    if(b.getAttribute('onclick').includes("'"+cat+"'")) b.classList.add('active');
+  });
+  const s1sum=document.getElementById('s1-summary');
+  if(s1sum){ s1sum.textContent=label; s1sum.style.display='block'; }
+  const th=LEVEL_THRESHOLDS[cat]||LEVEL_THRESHOLDS.default;
+  document.getElementById('s2-5tier').innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <div style="display:grid;grid-template-columns:22px 1fr auto auto;gap:6px;align-items:center;background:rgba(16,185,129,.1);border-radius:8px;padding:7px 10px">
+        <span>🔵</span><span style="font-size:12px;font-weight:800;color:var(--green)">① 틈새 블루오션</span>
+        <span style="font-size:11px;color:var(--sub)">0 ~ 50개</span>
+        <span style="font-size:10px;background:rgba(16,185,129,.2);color:var(--green);padding:2px 7px;border-radius:8px;font-weight:700;white-space:nowrap">즉시 진입</span>
+      </div>
+      <div style="display:grid;grid-template-columns:22px 1fr auto auto;gap:6px;align-items:center;background:rgba(16,185,129,.06);border-radius:8px;padding:7px 10px">
+        <span>🟢</span><span style="font-size:12px;font-weight:700;color:var(--txt)">② 초수 구간</span>
+        <span style="font-size:11px;color:var(--sub)">51 ~ ${th.chosoo.toLocaleString()}개</span>
+        <span style="font-size:10px;background:rgba(16,185,129,.12);color:var(--green);padding:2px 7px;border-radius:8px;font-weight:700;white-space:nowrap">소량 테스트</span>
+      </div>
+      <div style="display:grid;grid-template-columns:22px 1fr auto auto;gap:6px;align-items:center;background:rgba(245,158,11,.06);border-radius:8px;padding:7px 10px">
+        <span>🟡</span><span style="font-size:12px;font-weight:700;color:var(--txt)">③ 중수 구간</span>
+        <span style="font-size:11px;color:var(--sub)">${(th.chosoo+1).toLocaleString()} ~ ${th.jungsoo.toLocaleString()}개</span>
+        <span style="font-size:10px;background:rgba(245,158,11,.12);color:var(--yellow);padding:2px 7px;border-radius:8px;font-weight:700;white-space:nowrap">차별화 필수</span>
+      </div>
+      <div style="display:grid;grid-template-columns:22px 1fr auto auto;gap:6px;align-items:center;background:rgba(239,68,68,.06);border-radius:8px;padding:7px 10px">
+        <span>🔴</span><span style="font-size:12px;font-weight:700;color:var(--txt)">④ 고수 구간</span>
+        <span style="font-size:11px;color:var(--sub)">${(th.jungsoo+1).toLocaleString()} ~ 10,000개</span>
+        <span style="font-size:10px;background:rgba(239,68,68,.1);color:var(--red);padding:2px 7px;border-radius:8px;font-weight:700;white-space:nowrap">서브키워드</span>
+      </div>
+      <div style="display:grid;grid-template-columns:22px 1fr auto auto;gap:6px;align-items:center;background:rgba(239,68,68,.1);border-radius:8px;padding:7px 10px">
+        <span>⛔</span><span style="font-size:12px;font-weight:700;color:var(--red)">⑤ 레전드 레드오션</span>
+        <span style="font-size:11px;color:var(--sub)">10,001개 이상</span>
+        <span style="font-size:10px;background:rgba(239,68,68,.2);color:var(--red);padding:2px 7px;border-radius:8px;font-weight:700;white-space:nowrap">진입 금지</span>
+      </div>
+    </div>
+    <div style="font-size:10px;color:var(--sub);margin-top:6px;text-align:right">📌 ${label} 카테고리 기준 (앤더슨)</div>`;
+  const s2thr=document.getElementById('s2-threshold');
+  if(s2thr) s2thr.innerHTML=`<strong style="color:var(--txt)">${label}</strong> 카테고리 — 쿠팡에서 목표 키워드를 검색하고 1위 상품의 리뷰 수를 입력하세요.`;
+  advanceToStep(2);
+}
 
-  document.getElementById('kwResults').style.display='block';
-  document.getElementById('kwScoreBig').textContent=totalScore;
-  document.getElementById('kwScoreBig').style.color=scoreCol;
-  document.getElementById('kwScoreLabel').textContent=`점 / 100점 — ${scoreMsg}`;
-  document.getElementById('kwScoreBar').style.width=totalScore+'%';
-  document.getElementById('kwScoreBar').style.background=scoreCol;
+function previewSessionLevel(){
+  const val=parseInt(document.getElementById('ss-topReviews').value)||0;
+  const prev=document.getElementById('s2-level-preview');
+  if(!prev) return;
+  if(!val||!ss.cat){ prev.innerHTML=''; return; }
+  const th=LEVEL_THRESHOLDS[ss.cat]||LEVEL_THRESHOLDS.default;
+  let lvName='',col='var(--sub)';
+  if(val<=50){ lvName='① 틈새 블루오션 — 즉시 진입!'; col='var(--green)'; }
+  else if(val<=th.chosoo){ lvName='② 초수 구간 — 소량 테스트 진행'; col='var(--green)'; }
+  else if(val<=th.jungsoo){ lvName='③ 중수 구간 — 차별화 필수'; col='var(--yellow)'; }
+  else if(val<=10000){ lvName='④ 고수 구간 — 서브키워드로 우회'; col='var(--red)'; }
+  else { lvName='⑤ 레전드 레드오션 — 진입 금지'; col='var(--red)'; }
+  prev.innerHTML=`<span style="font-size:12px;font-weight:800;color:${col}">${lvName}</span>`;
+}
 
-  // Metric rows
-  const metrics=[
-    { name:'🔍 검색량 적합도', val:volume>0?volume.toLocaleString()+'회/월':'미입력', score:vScore, pct:vScore/25 },
-    { name:'⚔️ 경쟁 강도 (역산)', val:topReviews>0?`1위 ${topReviews.toLocaleString()}개`:'미입력', score:cScore, pct:cScore/25 },
-    { name:'📊 리뷰 격차', val:avgReviews>0?`2~5위 평균 ${avgReviews.toLocaleString()}개`:'미입력', score:gScore, pct:gScore/25 },
-    { name:'🎯 볼륨 적정 구간', val:vScore>=20?'최적':'보통', score:iScore, pct:iScore/25 },
+function confirmLevel(){
+  const val=parseInt(document.getElementById('ss-topReviews').value)||0;
+  if(!val){ alert('1위 리뷰 수를 입력하세요.'); return; }
+  ss.topReviews=val;
+  const th=LEVEL_THRESHOLDS[ss.cat]||LEVEL_THRESHOLDS.default;
+  if(val<=50) ss.level='blue';
+  else if(val<=th.chosoo) ss.level='chosoo';
+  else if(val<=th.jungsoo) ss.level='jungsoo';
+  else if(val<=10000) ss.level='gosoo';
+  else ss.level='legend';
+  const lvLabels={blue:'틈새 블루오션',chosoo:'초수 구간',jungsoo:'중수 구간',gosoo:'고수 구간',legend:'레전드 레드오션'};
+  const lvColors={blue:'var(--green)',chosoo:'var(--green)',jungsoo:'var(--yellow)',gosoo:'var(--red)',legend:'var(--red)'};
+  const lvActions={
+    blue:'즉시 진입! 경쟁이 없는 황금 블루오션입니다. 소량 테스트(10~30개)를 즉시 시작하세요.',
+    chosoo:'소량 테스트 발주 후 썸네일·키워드 최적화에 집중하세요.',
+    jungsoo:'차별화 필수. 상세페이지 강화와 서브키워드 공략을 병행하세요.',
+    gosoo:'메인 키워드는 포기. 아래 서브키워드 조합으로 우회 공략하세요.',
+    legend:'⛔ 진입을 권장하지 않습니다. 다른 카테고리나 키워드를 찾으세요.',
+  };
+  const s2sum=document.getElementById('s2-summary');
+  if(s2sum){ s2sum.textContent=`1위 ${val.toLocaleString()}개 → ${lvLabels[ss.level]}`; s2sum.style.display='block'; }
+  const res=document.getElementById('s2-level-result');
+  if(res){
+    res.style.display='block';
+    res.innerHTML=`<div style="background:var(--card2);border-radius:10px;padding:12px;margin-top:10px;border-left:3px solid ${lvColors[ss.level]}">
+      <div style="font-size:14px;font-weight:900;color:${lvColors[ss.level]};margin-bottom:4px">${lvLabels[ss.level]}</div>
+      <div style="font-size:12px;color:var(--sub);line-height:1.5">${lvActions[ss.level]}</div>
+    </div>`;
+  }
+  const nxt=document.getElementById('s2-next');
+  if(nxt) nxt.style.display='block';
+  renderSessionKeywords();
+}
+
+function renderSessionKeywords(){
+  const cat=ss.cat||'default';
+  const mods=KW_MODIFIERS[cat]||KW_MODIFIERS.default;
+  const catData=CAT_IDEAS.find(c=>c.key===cat);
+  const lvlKey=(ss.level==='blue'||ss.level==='chosoo')?'chosoo':ss.level==='jungsoo'?'jungsoo':'gosoo';
+  const ideas=catData?(catData.items[lvlKey]||catData.items.chosoo||[]):[];
+  const catLbl=ss.catLabel||'상품';
+
+  const attackItems=mods.slice(0,8).map((mod,i)=>
+    `<div class="kw-attack-item">
+      <span class="kw-attack-kw">${mod} ${catLbl}</span>
+      <span class="kw-attack-hint">${i<3?'🔵 블루 가능성':'확인 필요'}</span>
+      <button onclick="copyKw('${mod} ${catLbl}',this)" style="flex-shrink:0;padding:3px 10px;font-size:10px;border:1px solid var(--border);border-radius:6px;background:var(--card);color:var(--sub);cursor:pointer;font-family:inherit;white-space:nowrap">복사</button>
+    </div>`).join('');
+
+  const longTailItems=ideas.slice(0,6).map(idea=>
+    `<div class="kw-attack-item">
+      <span class="kw-attack-kw">${idea}</span>
+      <span class="kw-attack-hint">롱테일</span>
+      <button onclick="copyKw(${JSON.stringify(idea)},this)" style="flex-shrink:0;padding:3px 10px;font-size:10px;border:1px solid var(--border);border-radius:6px;background:var(--card);color:var(--sub);cursor:pointer;font-family:inherit;white-space:nowrap">복사</button>
+    </div>`).join('');
+
+  document.getElementById('s3-keyword-sections').innerHTML=`
+    <div class="kw-attack-section">
+      <div class="kw-attack-section-title">📱 수식어 조합 키워드 (${catLbl})</div>
+      <div class="kw-attack-list">${attackItems}</div>
+    </div>
+    <div class="kw-attack-section">
+      <div class="kw-attack-section-title">🎯 카테고리 상품 키워드</div>
+      <div class="kw-attack-list">${longTailItems||'<div style="font-size:12px;color:var(--sub)">해당 구간 키워드를 쿠팡에서 검색해보세요.</div>'}</div>
+    </div>`;
+  const s3sum=document.getElementById('s3-summary');
+  if(s3sum){ s3sum.textContent=`${Math.min(8,mods.length)+Math.min(6,ideas.length)}개 후보`; s3sum.style.display='block'; }
+}
+
+function copyKw(kw,el){
+  navigator.clipboard.writeText(kw).then(()=>{
+    const orig=el.textContent; el.textContent='✓';
+    setTimeout(()=>{ el.textContent=orig; },1200);
+  }).catch(()=>{ el.textContent='✗'; setTimeout(()=>{ el.textContent='복사'; },1200); });
+}
+
+function renderSourcingDecision(){
+  const lvl=ss.level||'chosoo';
+  let rec='dm';
+  if(lvl==='jungsoo') rec='gd';
+  else if(lvl==='gosoo'||lvl==='legend') rec='oe';
+
+  const cards=[
+    { id:'dm', cls:'dm', icon:'🏪', name:'도매꾹 소싱',
+      stat:'₩147,530,050', statlbl:'TOP100 기준 월 수익',
+      sub:'하루 6시간 기준',
+      desc:'쿠팡 TOP100 분석 → 도매꾹 동일 상품 소싱. 가장 빠른 진입 전략.',
+    },
+    { id:'gd', cls:'gd', icon:'✈️', name:'구매대행 소싱',
+      stat:'5,800만원', statlbl:'월 순익 목표',
+      sub:'3대 비밀요소 준수 시',
+      desc:'알리·타오바오 소싱. 배송기간 명기·Top Supplier·리뷰관리가 핵심.',
+    },
+    { id:'oe', cls:'oe', icon:'🏭', name:'OEM 제조',
+      stat:'레드→블루오션', statlbl:'차별화 전환 효과',
+      sub:'브랜드·MOQ 협상 필요',
+      desc:'기존 상품 차별화·브랜드화. 레드오션도 블루오션으로 전환 가능.',
+    },
   ];
-  document.getElementById('kwMetricRows').innerHTML=metrics.map(m=>{
-    const cls=m.score>=18?'ms-green':m.score>=10?'ms-yellow':'ms-red';
-    const barCol=m.score>=18?'var(--green)':m.score>=10?'var(--yellow)':'var(--red)';
-    return `<div class="metric-row"><span class="metric-name">${m.name}</span><div class="metric-mini-bar-wrap"><div class="metric-mini-bar" style="width:${Math.round(m.pct*100)}%;background:${barCol}"></div></div><span class="metric-val">${m.val}</span><span class="metric-score ${cls}">${m.score}점</span></div>`;
-  }).join('');
 
-  // Anderson level
-  if(topReviews>0){
-    const lv=getLevel(cat||'default', topReviews);
-    const lvConf={
-      chosoo:{ col:'var(--green)', icon:'🌱', name:'초수 구간', action:'바로 진입. 소량 테스트 발주 후 썸네일·키워드 최적화 집중.' },
-      jungsoo:{ col:'var(--yellow)', icon:'⚔️', name:'중수 구간', action:'차별화 필수. 상세페이지 강화 + 서브키워드 공략 병행.' },
-      gosoo:{ col:'var(--red)', icon:'🏆', name:'고수 구간', action:'메인 키워드 포기. 아래 서브키워드 조합으로 우회 공략.' },
-    };
-    if(lv && lvConf[lv]){
-      const i=lvConf[lv];
-      document.getElementById('kwLevelResult').innerHTML=`<div style="background:var(--card2);border-radius:12px;padding:14px;display:flex;gap:12px;align-items:flex-start">
-        <div style="font-size:24px">${i.icon}</div>
-        <div><div style="font-size:14px;font-weight:900;color:${i.col};margin-bottom:4px">${i.name}</div>
-        <div style="font-size:12px;color:var(--sub);line-height:1.6">${i.action}</div></div></div>`;
-    }
-  } else {
-    document.getElementById('kwLevelResult').innerHTML='<div style="font-size:12px;color:var(--sub)">1위 리뷰 수를 입력하면 구간을 판별합니다.</div>';
-  }
+  document.getElementById('s4-sourcing-types').innerHTML=cards.map(c=>`
+    <div class="sourcing-rec-card ${c.cls}${c.id===rec?' sel':''}" onclick="selectSourcing(this,'${c.id}')">
+      <div style="font-size:22px;margin-bottom:6px">${c.icon}</div>
+      <div style="font-size:12px;font-weight:900;color:var(--txt);margin-bottom:4px">${c.name}</div>
+      ${c.id===rec?'<div style="font-size:9px;font-weight:700;background:var(--accent);color:#fff;border-radius:10px;padding:2px 8px;display:inline-block;margin-bottom:6px">⭐ 추천</div>':''}
+      <div style="font-size:14px;font-weight:900;color:${c.id==='dm'?'var(--accent)':c.id==='gd'?'var(--green)':'var(--yellow)'};line-height:1.2;margin-bottom:2px">${c.stat}</div>
+      <div style="font-size:9px;color:var(--sub);margin-bottom:2px">${c.statlbl}</div>
+      <div style="font-size:9px;color:var(--sub);opacity:.65">${c.sub}</div>
+      <div style="font-size:10px;color:var(--sub);margin-top:6px;line-height:1.4">${c.desc}</div>
+    </div>`).join('');
 
-  // Profit estimate
-  if(price>0 && cost>0){
-    const fee=Math.round(price*0.12);
-    const netPerUnit=price-cost-fee;
-    const marginPct=Math.round(netPerUnit/price*100);
-    const monthlyUnits=dailySales*30;
-    const monthlyNet=netPerUnit*monthlyUnits;
-    document.getElementById('kwProfitCard').style.display='block';
-    document.getElementById('kwProfitRows').innerHTML=`
-      <div class="kw-profit-box"><div class="kw-profit-val">₩${netPerUnit.toLocaleString()}</div><div class="kw-profit-lbl">개당 순수익</div></div>
-      <div class="kw-profit-box"><div class="kw-profit-val">${marginPct}%</div><div class="kw-profit-lbl">마진율</div></div>
-      <div class="kw-profit-box"><div class="kw-profit-val">${monthlyUnits}개</div><div class="kw-profit-lbl">월 판매 목표</div></div>
-      <div class="kw-profit-box" style="border:2px solid var(--accent)"><div class="kw-profit-val" style="color:var(--green)">₩${monthlyNet.toLocaleString()}</div><div class="kw-profit-lbl">월 순이익 예상</div></div>`;
-    document.getElementById('kwProfitTip').innerHTML=`💡 이 키워드 하루 <strong>${dailySales}개</strong> 판매 시 월 순이익 <strong style="color:var(--green)">₩${monthlyNet.toLocaleString()}</strong>. 앤더슨 기준 이런 키워드를 <strong>10~20개</strong> 쌓으면 안정적인 수익 구조 완성.`;
-  } else {
-    document.getElementById('kwProfitCard').style.display='none';
-  }
-
-  // Sub-keyword suggestions
-  const mods=KW_MODIFIERS[cat||'default']||KW_MODIFIERS.default;
-  const subKws=mods.slice(0,8).map((mod,i)=>{
-    // Estimate difficulty based on modifier position (earlier = more common)
-    const diff=i<3?'high':i<6?'mid':'low';
-    const diffLabel=diff==='low'?'낮음':diff==='mid'?'보통':'높음';
-    const diffCls=diff==='low'?'kw-sub-diff-low':diff==='mid'?'kw-sub-diff-mid':'kw-sub-diff-high';
-    return `<div class="kw-sub-item">
-      <div class="kw-sub-chip">${mod} ${mainKw}</div>
-      <div style="font-size:10px;color:var(--sub);flex:1">${diff==='low'?'블루오션 가능':diff==='mid'?'중간 경쟁':'경쟁 존재'}</div>
-      <span class="kw-sub-difficulty ${diffCls}">경쟁 ${diffLabel}</span>
-    </div>`;
-  }).join('');
-  document.getElementById('kwSubList').innerHTML=subKws;
-
-  // Coupang autocomplete guide
-  document.getElementById('kwAutoGuide').innerHTML=`
-    <div class="step-list">
-      <div class="step"><div class="step-num">1</div><div class="step-body">
-        <strong>쿠팡 검색창에 "${mainKw}" 입력</strong>
-        <span>자동완성 목록 10개를 모두 캡처합니다. 이 키워드들이 실제 구매자들이 찾는 검색어입니다.</span>
-      </div></div>
-      <div class="step"><div class="step-num">2</div><div class="step-body">
-        <strong>각 자동완성 키워드 클릭 → 1위 리뷰 수 확인</strong>
-        <span>리뷰 수가 <strong style="color:var(--green)">${th.chosoo.toLocaleString()}개 미만</strong>이면 이 도구 기준 초수 영역. 즉시 진입 검토.</span>
-      </div></div>
-      <div class="step"><div class="step-num">3</div><div class="step-body">
-        <strong>네이버 광고관리자에서 검색량 확인</strong>
-        <span>월 1,000~30,000회가 적정 틈새입니다. 이 범위의 서브키워드를 5~10개 확보하는 게 앤더슨 전략의 핵심.</span>
-      </div></div>
-      <div class="step"><div class="step-num">4</div><div class="step-body">
-        <strong>선택 키워드를 상품명·태그에 전부 삽입</strong>
-        <span>쿠팡 상품명에 서브키워드를 최대한 포함하세요. 키워드 1개당 노출 기회가 하나씩 생깁니다.</span>
-      </div></div>
-    </div>`;
-
-  // Save keyword
-  savedKeywords.push({ keyword:mainKw, cat, volume, topReviews, score:totalScore, price, cost, dailySales });
-  renderSavedKeywords();
+  const catData=CAT_IDEAS.find(c=>c.key===ss.cat);
+  const lvlKey=(lvl==='blue'||lvl==='chosoo')?'chosoo':lvl==='jungsoo'?'jungsoo':'gosoo';
+  const products=catData?(catData.items[lvlKey]||catData.items.chosoo||[]):[];
+  document.getElementById('s4-products').innerHTML=products.slice(0,4).map(p=>`
+    <div class="product-hit">
+      <div class="product-hit-level">${lvl==='blue'?'블루오션':lvl==='chosoo'?'초수 구간':lvl==='jungsoo'?'중수 구간':'고수 구간'}</div>
+      <div class="product-hit-name">${p}</div>
+    </div>`).join('');
 }
 
-function renderSavedKeywords(){
-  if(savedKeywords.length<2){ document.getElementById('kwSavedCard').style.display='none'; return; }
-  document.getElementById('kwSavedCard').style.display='block';
-  const sorted=[...savedKeywords].sort((a,b)=>b.score-a.score);
-  const maxScore=Math.max(...sorted.map(k=>k.score));
-  document.getElementById('kwSavedList').innerHTML=`
-    <table class="vid-cmp-table">
-      <thead><tr><th style="text-align:left">키워드</th><th>진입점수</th><th>검색량</th><th>1위 리뷰</th><th>마진율</th></tr></thead>
-      <tbody>${sorted.map(k=>{
-        const sCls=k.score===maxScore?'vid-cmp-best':'';
-        const sCol=k.score>=70?'var(--green)':k.score>=45?'var(--yellow)':'var(--red)';
-        const marginPct=k.price>0&&k.cost>0?Math.round((k.price-k.cost-k.price*0.12)/k.price*100):null;
-        return `<tr>
-          <td style="text-align:left;font-weight:700;color:var(--txt)">${k.keyword}</td>
-          <td class="${sCls}" style="color:${sCol};font-weight:900">${k.score}점</td>
-          <td>${k.volume>0?k.volume.toLocaleString():'—'}</td>
-          <td>${k.topReviews>0?k.topReviews.toLocaleString():'—'}</td>
-          <td>${marginPct!==null?marginPct+'%':'—'}</td>
-        </tr>`;
-      }).join('')}</tbody>
-    </table>`;
+function selectSourcing(el,type){
+  document.querySelectorAll('.sourcing-rec-card').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  const tips={
+    dm:['쿠팡 카테고리 TOP100 → 도매꾹 동일 상품 소싱','마진 30% 이상 상품만 선별','초기 50~100개 소량 테스트'],
+    gd:['배송기간 명기 — 고객 불만 50% 감소','알리 Top Supplier 배지 확인 필수','리뷰관리 — 초기 구매자 피드백 적극 대응'],
+    oe:['레드오션 키워드에 자사 브랜드로 차별화','MOQ 최소화 협상 (중국 공장 500개~)','쿠팡 풀필먼트 서비스(CFS) 활용'],
+  };
+  const names={dm:'도매꾹 소싱',gd:'구매대행',oe:'OEM 제조'};
+  const detail=document.getElementById('s4-sourcing-detail');
+  if(detail){
+    detail.style.display='block';
+    detail.innerHTML=`<div style="background:var(--card2);border-radius:12px;padding:14px">
+      <div style="font-size:12px;font-weight:900;color:var(--txt);margin-bottom:10px">✅ ${names[type]} 실행 체크리스트</div>
+      ${tips[type].map((t,i)=>`<div style="display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--border)">
+        <span style="font-size:13px;font-weight:900;color:var(--accent);flex-shrink:0">${i+1}</span>
+        <span style="font-size:12px;color:var(--sub);line-height:1.5">${t}</span>
+      </div>`).join('')}
+    </div>`;
+  }
 }
 
+function goToTab1FromSession(){
+  const btn=document.querySelector('.main-tab[onclick*="eval"]');
+  if(btn) showMainTab('eval',btn);
+}
 function renderSavedVids(){
   if(savedVids.length<2){ document.getElementById('savedVidsCard').style.display='none'; return; }
   document.getElementById('savedVidsCard').style.display='block';
@@ -2008,120 +2039,7 @@ function renderSavedVids(){
   document.getElementById('vidCardList').innerHTML=tableHtml+stratHtml;
 }
 
-// ─── Module toggle ────────────────────────────────────
-let activeModule='discover';
-function setModule(mod, btn){
-  activeModule=mod;
-  document.querySelectorAll('.module-card').forEach(c=>c.classList.remove('active'));
-  btn.classList.add('active');
-}
 
-// ─── Grade calculation (S/A/B/C/D) ───────────────────
-function calcGrade(score){
-  if(score>=85) return { grade:'S', label:'S급', cls:'grade-S', desc:'최고 우선순위 진입 키워드', icon:'⭐' };
-  if(score>=70) return { grade:'A', label:'A급', cls:'grade-A', desc:'강력 추천 진입 가능', icon:'✅' };
-  if(score>=55) return { grade:'B', label:'B급', cls:'grade-B', desc:'진입 가능 — 차별화 필요', icon:'⚠️' };
-  if(score>=40) return { grade:'C', label:'C급', cls:'grade-C', desc:'신중 검토 — 서브키워드 우선', icon:'🔶' };
-  return { grade:'D', label:'D급', cls:'grade-D', desc:'경쟁 과열 — 우회 전략 필요', icon:'❌' };
-}
-
-// ─── Auto Discover ────────────────────────────────────
-function autoDiscover(){
-  const seedKw=document.getElementById('kwMain').value.trim();
-  const cat=document.getElementById('kwCat').value;
-
-  if(!cat){ alert('카테고리를 먼저 선택해주세요.'); return; }
-
-  const mods=KW_MODIFIERS[cat]||KW_MODIFIERS.default;
-  const th=LEVEL_THRESHOLDS[cat]||LEVEL_THRESHOLDS.default;
-
-  // Generate 15 keyword combos: modifier × (seed or base term)
-  const catIdea=CAT_IDEAS.find(c=>c.key===cat);
-  const baseTerms=catIdea?[...catIdea.items.chosoo.slice(0,3).map(n=>n.split(' ').slice(-2).join(' '))]:[seedKw||'상품'];
-  const baseSeed=seedKw||(baseTerms[0]||'상품');
-
-  const combos=[];
-  mods.forEach((mod,i)=>{
-    // combo: modifier + seed
-    combos.push({ kw:`${mod} ${baseSeed}`, modIdx:i });
-    if(combos.length>=8) return;
-  });
-  // Also add seed + modifier (reversed)
-  mods.slice(0,7).forEach((mod,i)=>{
-    combos.push({ kw:`${baseSeed} ${mod}`, modIdx:i+10 });
-  });
-  const picks=combos.slice(0,15);
-
-  // Estimate entry score for each (heuristic: later modifiers = less competition)
-  const items=picks.map((p,rank)=>{
-    const competitiveness=p.modIdx<3?0.55:p.modIdx<6?0.7:0.85; // lower idx = more competition
-    const estScore=Math.round(45+competitiveness*45+Math.random()*8-4);
-    const cappedScore=Math.min(99,Math.max(30,estScore));
-    const g=calcGrade(cappedScore);
-    return { kw:p.kw, score:cappedScore, grade:g, rank:rank+1 };
-  }).sort((a,b)=>b.score-a.score);
-
-  const maxS=items[0].score;
-  document.getElementById('discoverCard').style.display='block';
-  document.getElementById('discGrid').innerHTML=items.map((item,i)=>{
-    const barPct=Math.round(item.score/maxS*100);
-    const barCol=item.score>=70?'#34d399':item.score>=50?'#fbbf24':'#f87171';
-    return `<div class="disc-item" onclick="fillKeyword('${item.kw.replace(/'/g,"\\'")}')">
-      <div class="disc-rank">${String(i+1).padStart(2,'0')}</div>
-      <div class="disc-kw">${item.kw}</div>
-      <div class="disc-score-bar"><div class="disc-score-fill" style="width:${barPct}%;background:${barCol}"></div></div>
-      <div class="disc-est" style="color:${barCol}">${item.grade.grade}급 · ${item.score}점</div>
-    </div>`;
-  }).join('');
-}
-
-function fillKeyword(kw){
-  document.getElementById('kwMain').value=kw;
-  document.getElementById('kwMain').focus();
-  // Smooth scroll to input
-  document.getElementById('kwMain').scrollIntoView({ behavior:'smooth', block:'center' });
-}
-
-// ─── Item Matching ─────────────────────────────────────
-function renderItemMatch(cat, mainKw){
-  if(!cat){ document.getElementById('kwMatchCard').style.display='none'; return; }
-  const catData=CAT_IDEAS.find(c=>c.key===cat);
-  if(!catData){ document.getElementById('kwMatchCard').style.display='none'; return; }
-
-  const levels=[
-    { key:'chosoo', label:'🌱 초수', cls:'chosoo', items:catData.items.chosoo },
-    { key:'jungsoo', label:'⚔️ 중수', cls:'jungsoo', items:catData.items.jungsoo },
-  ];
-  const cards=[];
-  levels.forEach(lv=>{
-    lv.items.slice(0,2).forEach(item=>{
-      cards.push({ level:lv.label, cls:lv.cls, name:item });
-    });
-  });
-
-  document.getElementById('kwMatchCard').style.display='block';
-  document.getElementById('kwMatchGrid').innerHTML=cards.map(c=>`
-    <div class="item-match-card ${c.cls}">
-      <div class="item-match-level" style="color:${c.cls==='chosoo'?'var(--green)':c.cls==='jungsoo'?'var(--yellow)':'var(--red)'}">${c.level}</div>
-      <div class="item-match-name">${c.name}</div>
-    </div>`).join('');
-}
-
-// ─── Patch analyzeKeyword to also show grade + item match ──
-const _origAnalyze=analyzeKeyword;
-analyzeKeyword=function(){
-  _origAnalyze();
-  // Grade badge
-  const score=parseInt(document.getElementById('kwScoreBig').textContent)||0;
-  if(score>0){
-    const g=calcGrade(score);
-    document.getElementById('kwGradeBadge').innerHTML=`<div class="grade-badge ${g.cls}">${g.icon} ${g.label}<span style="font-size:10px;font-weight:600;opacity:.75;margin-left:4px">${g.desc}</span></div>`;
-  }
-  // Item matching
-  const cat=document.getElementById('kwCat').value;
-  const mainKw=document.getElementById('kwMain').value.trim();
-  renderItemMatch(cat, mainKw);
-};
 </script>
 </body>
 </html>
