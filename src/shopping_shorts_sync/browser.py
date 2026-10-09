@@ -16,10 +16,14 @@ def launch_browser(headless: bool = True, chromium_path: str | None = None):
     """
     from playwright.sync_api import sync_playwright
 
-    executable_path = chromium_path or os.environ.get("PLAYWRIGHT_CHROMIUM_PATH", DEFAULT_CHROMIUM_PATH)
+    env_path = os.environ.get("PLAYWRIGHT_CHROMIUM_PATH", DEFAULT_CHROMIUM_PATH)
+    executable_path = chromium_path or env_path or None
 
     with sync_playwright() as pw:
-        browser = pw.chromium.launch(headless=headless, executable_path=executable_path)
+        launch_kwargs: dict = {"headless": headless}
+        if executable_path:
+            launch_kwargs["executable_path"] = executable_path
+        browser = pw.chromium.launch(**launch_kwargs)
         try:
             yield browser
         finally:
