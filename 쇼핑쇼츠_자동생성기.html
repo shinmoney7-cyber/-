@@ -1164,8 +1164,39 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
     <input type="url" id="infoclink3" placeholder="인포크링크 링크 3" style="margin-bottom:4px;font-size:11px" oninput="savePlatTokens()">
     <div style="font-size:10px;color:var(--sub);margin-bottom:8px">대본 게시 시 해시태그 아래에 자동으로 삽입됩니다.</div>
     <span id="platSaved" style="font-size:11px;color:var(--green);display:none">✅ 저장됨</span>
+
+    <div class="sep"></div>
+    <!-- 모델 배경 선택 -->
+    <div style="font-size:13px;font-weight:800;color:var(--txt);margin-bottom:8px">🧍 영상 모델 배경 선택</div>
+    <div style="font-size:11px;color:var(--sub);margin-bottom:10px">영상 생성 시 대본 뒤에 표시될 모델 이미지를 선택하세요. 뷰티·패션 상품에 특히 효과적입니다.</div>
+
+    <!-- 카테고리 탭 -->
+    <div style="display:flex;gap:5px;margin-bottom:10px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px">
+      <button class="mdl-cat-btn active" data-cat="beauty" onclick="switchModelCat('beauty',this)">🌸 뷰티</button>
+      <button class="mdl-cat-btn" data-cat="fashion" onclick="switchModelCat('fashion',this)">👗 패션</button>
+      <button class="mdl-cat-btn" data-cat="sports" onclick="switchModelCat('sports',this)">🏃 운동</button>
+      <button class="mdl-cat-btn" data-cat="home" onclick="switchModelCat('home',this)">🏠 생활</button>
+    </div>
+
+    <!-- "없음" + 모델 그리드 -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px" id="modelGrid">
+      <div data-model="" onclick="selectModel('',this)"
+        style="aspect-ratio:3/4;border-radius:8px;border:2px solid var(--border);background:var(--card2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;flex-direction:column;gap:2px;transition:.15s"
+        id="mdl-none">
+        <span>🚫</span><span style="font-size:10px;color:var(--sub)">없음</span>
+      </div>
+    </div>
+    <div id="modelSelLabel" style="font-size:11px;color:var(--green);text-align:center;margin-bottom:4px;min-height:16px"></div>
   </div>
 </div>
+
+<style>
+.mdl-cat-btn{padding:5px 12px;border-radius:10px;border:1px solid var(--border);background:var(--card2);color:var(--sub);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;transition:.15s;flex-shrink:0}
+.mdl-cat-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.mdl-thumb{aspect-ratio:3/4;border-radius:8px;border:2px solid transparent;background:var(--card2);cursor:pointer;overflow:hidden;transition:.15s;position:relative}
+.mdl-thumb.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.mdl-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+</style>
 
 <!-- ══ Tab 3: 외국인 영상 썸네일 + 나레이션 ═══════════════ -->
 
@@ -1247,6 +1278,68 @@ function saveFishKey(showToast_=false){
   const s=document.getElementById('fishKeySaved');
   if(s){s.style.opacity='1';setTimeout(()=>s.style.opacity='0',1500);}
   if(showToast_) showToast('🐟 Fish Audio 키 저장됨!','success');
+}
+
+// ── 모델 배경 선택 ─────────────────────────────────────────
+const MODEL_IMAGES = {
+  beauty:  [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15].map(n=>`assets/models/${n}.webp`),
+  fashion: [16,17,18].map(n=>`assets/models/${n}.webp`),
+  sports:  [19,20,21].map(n=>`assets/models/${n}.webp`),
+  home:    [22,23,24].map(n=>`assets/models/${n}.webp`),
+};
+let _curModelCat='beauty';
+
+function getSelectedModel(){ return LS.get('ss_model_bg')||''; }
+function setSelectedModel(path){
+  LS.set('ss_model_bg', path||'');
+  const lbl=document.getElementById('modelSelLabel');
+  if(lbl) lbl.textContent = path ? `✅ 선택: ${path.split('/').pop()}` : '배경 없음 선택됨';
+}
+
+function switchModelCat(cat, btn){
+  _curModelCat=cat;
+  document.querySelectorAll('.mdl-cat-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  renderModelGrid(cat);
+}
+
+function renderModelGrid(cat){
+  const imgs = MODEL_IMAGES[cat]||[];
+  const grid = document.getElementById('modelGrid');
+  if(!grid) return;
+  const sel = getSelectedModel();
+  let html = `<div data-model="" onclick="selectModel('',this)"
+    style="aspect-ratio:3/4;border-radius:8px;border:2px solid ${!sel?'var(--accent)':'var(--border)'};background:var(--card2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;flex-direction:column;gap:2px;transition:.15s" id="mdl-none">
+    <span>🚫</span><span style="font-size:10px;color:var(--sub)">없음</span></div>`;
+  imgs.forEach(src=>{
+    const isSel = sel===src;
+    html+=`<div class="mdl-thumb${isSel?' sel':''}" data-model="${src}" onclick="selectModel('${src}',this)">
+      <img src="${src}" loading="lazy" onerror="this.parentElement.style.display='none'">
+      ${isSel?'<div style="position:absolute;top:4px;right:4px;background:var(--accent);border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:10px">✓</div>':''}
+    </div>`;
+  });
+  grid.innerHTML=html;
+  const lbl=document.getElementById('modelSelLabel');
+  if(lbl) lbl.textContent = sel ? `✅ 선택: ${sel.split('/').pop()}` : '';
+}
+
+function selectModel(path, el){
+  setSelectedModel(path);
+  document.querySelectorAll('#modelGrid [data-model]').forEach(d=>{
+    const isSel = d.dataset.model===path;
+    if(d.classList.contains('mdl-thumb')){
+      d.classList.toggle('sel', isSel);
+      const chk=d.querySelector('div');
+      if(isSel && !chk){
+        const c=document.createElement('div');
+        c.style.cssText='position:absolute;top:4px;right:4px;background:var(--accent);border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:10px';
+        c.textContent='✓'; d.appendChild(c);
+      } else if(!isSel && chk) chk.remove();
+    } else {
+      d.style.borderColor = isSel ? 'var(--accent)' : 'var(--border)';
+    }
+  });
+  showToast(path ? `🧍 모델 배경 선택됨` : '🚫 배경 없음 선택됨','success',1800);
 }
 let _fishAudioBlobs = {};
 async function generateFishAudio(i){
@@ -2276,6 +2369,8 @@ function openSettings(focusKey=false){
   // Fish Audio 키 로드
   const fk=document.getElementById('fishApiKey'); if(fk) fk.value=getFishKey()||'';
   const fv=document.getElementById('fishVoiceId'); if(fv) fv.value=getFishVoiceId()||'';
+  // 모델 배경 그리드 초기화
+  renderModelGrid('beauty');
   if(focusKey && el){
     setTimeout(()=>{
       el.scrollIntoView({behavior:'smooth',block:'center'});
@@ -3458,6 +3553,7 @@ async function generateVideoFromScript(idx){
   try{
     setProgress(5,'이미지 로딩...');
     const prodImg = await loadImg(prodImgUrl);
+    const modelBg = await loadImg(getSelectedModel());
 
     const lines = parseScriptLines(script);
     if(hook && lines.length>0 && lines[0].startTime>0){
@@ -3498,7 +3594,30 @@ async function generateVideoFromScript(idx){
       ctx.fillStyle='#0a0a12';
       ctx.fillRect(0,0,W,H);
 
-      if(prodImg){
+      if(modelBg){
+        // 모델 이미지: 화면 상단 70% 차지
+        const mw=modelBg.naturalWidth, mh=modelBg.naturalHeight;
+        const mscale=Math.max(W/mw, H*0.75/mh);
+        const mdw=mw*mscale, mdh=mh*mscale;
+        ctx.drawImage(modelBg,0,0,mw,mh,(W-mdw)/2,0,mdw,mdh);
+        // 하단 그라디언트
+        const mg=ctx.createLinearGradient(0,H*0.45,0,H);
+        mg.addColorStop(0,'rgba(10,10,18,0)');
+        mg.addColorStop(0.35,'rgba(10,10,18,0.85)');
+        mg.addColorStop(1,'rgba(10,10,18,0.98)');
+        ctx.fillStyle=mg; ctx.fillRect(0,0,W,H);
+        // 상품 이미지 소형 오버레이 (우하단)
+        if(prodImg){
+          const pw=prodImg.naturalWidth, ph=prodImg.naturalHeight;
+          const ps=Math.min(280/pw,280/ph);
+          const pdw=pw*ps, pdh=ph*ps;
+          const px=W-pdw-30, py=H*0.55-pdh/2;
+          ctx.save();
+          ctx.shadowColor='rgba(0,0,0,0.5)'; ctx.shadowBlur=20;
+          ctx.drawImage(prodImg,0,0,pw,ph,px,py,pdw,pdh);
+          ctx.restore();
+        }
+      } else if(prodImg){
         const iw=prodImg.naturalWidth, ih=prodImg.naturalHeight;
         const scale=Math.max(W/iw, H*0.62/ih);
         const dw=iw*scale, dh=ih*scale;
@@ -3591,7 +3710,9 @@ async function generateViralVideo(){
   };
 
   try{
-    setP(5,'대본 파싱 중...');
+    setP(5,'이미지 로딩...');
+    const modelBg2 = await loadImg(getSelectedModel());
+    setP(8,'대본 파싱 중...');
     const lines = parseScriptLines(script);
     if(hook && (lines.length===0 || lines[0].startTime>0)){
       lines.unshift({startTime:0, endTime:lines.length>0?lines[0].startTime-0.1:3, text:hook});
@@ -3629,12 +3750,24 @@ async function generateViralVideo(){
       const prog = Math.min(99, 10 + Math.round(elapsed/totalDur*88));
       setP(prog, `렌더링 ${elapsed.toFixed(1)}s / ${totalDur.toFixed(1)}s`);
 
-      // 배경 그라디언트
-      const bgGrad = ctx.createLinearGradient(0,0,0,H);
-      bgGrad.addColorStop(0,'#0a0a1a');
-      bgGrad.addColorStop(1,'#1a0a2e');
-      ctx.fillStyle=bgGrad;
-      ctx.fillRect(0,0,W,H);
+      // 배경
+      ctx.fillStyle='#0a0a12'; ctx.fillRect(0,0,W,H);
+      if(modelBg2){
+        const mw=modelBg2.naturalWidth, mh=modelBg2.naturalHeight;
+        const mscale=Math.max(W/mw, H*0.75/mh);
+        const mdw=mw*mscale, mdh=mh*mscale;
+        ctx.drawImage(modelBg2,0,0,mw,mh,(W-mdw)/2,0,mdw,mdh);
+        const mg=ctx.createLinearGradient(0,H*0.45,0,H);
+        mg.addColorStop(0,'rgba(10,10,18,0)');
+        mg.addColorStop(0.35,'rgba(10,10,18,0.85)');
+        mg.addColorStop(1,'rgba(10,10,18,0.98)');
+        ctx.fillStyle=mg; ctx.fillRect(0,0,W,H);
+      } else {
+        const bgGrad = ctx.createLinearGradient(0,0,0,H);
+        bgGrad.addColorStop(0,'#0a0a1a');
+        bgGrad.addColorStop(1,'#1a0a2e');
+        ctx.fillStyle=bgGrad; ctx.fillRect(0,0,W,H);
+      }
 
       // 상품명
       if(prodName){
