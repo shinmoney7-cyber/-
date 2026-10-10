@@ -129,7 +129,11 @@ body {
   padding: 8px 18px;
   border-radius: 8px;
   margin-bottom: 10px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity .15s;
 }
+.ad-card .cta:hover { opacity: .85; }
 .ad-card .note {
   font-size: 11px;
   color: var(--fg2);
@@ -219,8 +223,8 @@ body {
         📍 AI 사주 분석 + 전문가 감수<br>
         ⏰ 주문 후 당일 결과 발송
       </div>
-      <span class="cta">지금 확인하기 →</span>
-      <div class="note">링크: 사주마루 랜딩페이지 URL</div>
+      <a class="cta" href="https://shinmoney7-cyber.github.io/-/saju-page.html?utm_source=daangn&utm_medium=cpc&utm_campaign=공감형" target="_blank" rel="noopener">지금 확인하기 →</a>
+      <div class="note">클릭 시 사주마루 주문 페이지로 이동</div>
       <button class="copy-btn" onclick="copyAd(this,'ad1')">📋 문구 복사</button>
     </div>
 
@@ -234,8 +238,8 @@ body {
         ✅ 이메일·카카오로 바로 수령<br>
         ✅ 만족 보장 (재분석 서비스)
       </div>
-      <span class="cta">할인가로 신청 →</span>
-      <div class="note">할인 코드 or 랜딩 URL에 UTM 붙이기</div>
+      <a class="cta" href="https://shinmoney7-cyber.github.io/-/saju-page.html?utm_source=daangn&utm_medium=cpc&utm_campaign=혜택형" target="_blank" rel="noopener">할인가로 신청 →</a>
+      <div class="note">클릭 시 사주마루 주문 페이지로 이동</div>
       <button class="copy-btn" onclick="copyAd(this,'ad2')">📋 문구 복사</button>
     </div>
 
@@ -249,7 +253,7 @@ body {
         💜 연애운 전문 AI 사주 분석<br>
         💌 결과는 오늘 바로 받아보세요
       </div>
-      <span class="cta">내 연애 패턴 확인 →</span>
+      <a class="cta" href="https://shinmoney7-cyber.github.io/-/saju-page.html?utm_source=daangn&utm_medium=cpc&utm_campaign=연애운" target="_blank" rel="noopener">내 연애 패턴 확인 →</a>
       <div class="note">20~35세 여성 타겟 최적</div>
       <button class="copy-btn" onclick="copyAd(this,'ad3')">📋 문구 복사</button>
     </div>
@@ -263,7 +267,7 @@ body {
         📈 재물운 전문 분석 (투자·사업 포함)<br>
         🏆 10년 경력 명리학자 감수 완료
       </div>
-      <span class="cta">재물운 분석 신청 →</span>
+      <a class="cta" href="https://shinmoney7-cyber.github.io/-/saju-page.html?utm_source=daangn&utm_medium=cpc&utm_campaign=재물운" target="_blank" rel="noopener">재물운 분석 신청 →</a>
       <div class="note">30~50대 남성 / 자영업자 타겟</div>
       <button class="copy-btn" onclick="copyAd(this,'ad4')">📋 문구 복사</button>
     </div>
@@ -277,7 +281,7 @@ body {
         💼 직장운 + 재물운 묶음 분석<br>
         ⚡ 오늘 주문 → 오늘 결과 수령
       </div>
-      <span class="cta">직장운 확인하기 →</span>
+      <a class="cta" href="https://shinmoney7-cyber.github.io/-/saju-page.html?utm_source=daangn&utm_medium=cpc&utm_campaign=직장운" target="_blank" rel="noopener">직장운 확인하기 →</a>
       <div class="note">직장인 / 이직 고민층 타겟</div>
       <button class="copy-btn" onclick="copyAd(this,'ad5')">📋 문구 복사</button>
     </div>
@@ -291,7 +295,7 @@ body {
         🎯 2026년 신년운세 + 월별 운세<br>
         📧 PDF 리포트로 이메일 발송
       </div>
-      <span class="cta">신년운세 신청 →</span>
+      <a class="cta" href="https://shinmoney7-cyber.github.io/-/saju-page.html?utm_source=daangn&utm_medium=cpc&utm_campaign=신년운세" target="_blank" rel="noopener">신년운세 신청 →</a>
       <div class="note">1~3월 시즌 한정 집중 집행</div>
       <button class="copy-btn" onclick="copyAd(this,'ad6')">📋 문구 복사</button>
     </div>
@@ -398,8 +402,10 @@ function copyAd(btn, cardId) {
   const card = document.getElementById(cardId);
   const title = card.querySelector('h3').textContent.trim();
   const body  = card.querySelector('.body').textContent.trim().replace(/\n\s+/g, '\n');
-  const cta   = card.querySelector('.cta').textContent.trim();
-  const text  = `${title}\n\n${body}\n\n${cta}`;
+  const ctaEl = card.querySelector('.cta');
+  const cta   = ctaEl.textContent.trim();
+  const url   = ctaEl.href || '';
+  const text  = `${title}\n\n${body}\n\n${cta}\n${url}`;
   navigator.clipboard.writeText(text).then(() => {
     btn.textContent = '✅ 복사됨';
     btn.classList.add('copied');
