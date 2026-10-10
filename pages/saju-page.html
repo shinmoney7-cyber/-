@@ -197,6 +197,20 @@ body{padding:0 16px;padding-block:0}
 .gae-body strong{color:var(--fg)}
 /* 분석 내용 텍스트 */
 .narrative{padding:0;font-size:13.5px;line-height:1.9;white-space:pre-line;color:var(--fg);max-height:70vh;overflow-y:auto}
+/* 이사 신살 */
+.isa-sal-wrap{margin-top:14px}
+.isa-sal-title{font-size:11px;font-weight:700;color:var(--fg2);margin-bottom:8px;letter-spacing:.04em;text-transform:uppercase}
+.isa-sal-list{display:flex;flex-direction:column;gap:6px}
+.isa-sal-row{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:8px}
+.isa-sal-row.lv-절대금지{background:rgba(255,85,119,.1);border:1px solid rgba(255,85,119,.3)}
+.isa-sal-row.lv-경고{background:rgba(245,200,66,.08);border:1px solid rgba(245,200,66,.25)}
+.isa-sal-row.lv-주의{background:rgba(126,184,255,.07);border:1px solid rgba(126,184,255,.2)}
+.isa-sal-name{font-size:12px;font-weight:700;min-width:52px;flex-shrink:0}
+.isa-sal-dir{font-size:11px;padding:1px 7px;border-radius:10px;font-weight:700;flex-shrink:0;align-self:flex-start;margin-top:1px}
+.lv-절대금지 .isa-sal-dir{background:rgba(255,85,119,.2);color:#ff5577}
+.lv-경고 .isa-sal-dir{background:rgba(245,200,66,.2);color:#f5c842}
+.lv-주의 .isa-sal-dir{background:rgba(126,184,255,.2);color:#7eb8ff}
+.isa-sal-desc{font-size:11px;color:var(--fg2);flex:1}
 /* 이사 방향 나침반 */
 .isa-wrap{display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap}
 .isa-compass-box{flex-shrink:0}
@@ -326,20 +340,18 @@ body{padding:0 16px;padding-block:0}
         <button class="btn btn-outline" onclick="restart()">← 다시 분석</button>
         <button class="btn btn-primary" id="copyBtn" onclick="copyResult()">📋 전체 복사</button>
       </div>
-      <button class="btn btn-gold" style="width:100%;margin-top:8px" onclick="generate50Report()">📄 사주원리+AI 분석 합본 50페이지 보고서 생성</button>
-    </div>
-    <!-- 50p 보고서 뷰 -->
-    <div id="report50View" hidden style="padding-bottom:80px">
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0 8px">
-        <button class="btn btn-outline" style="font-size:12px;padding:6px 12px" onclick="document.getElementById('report50View').hidden=true;document.getElementById('resultsView').hidden=false;document.getElementById('doneActions').hidden=false">← 요약보기</button>
-        <span style="font-size:12px;color:var(--accent);font-weight:700">📄 50페이지 통합 보고서</span>
-        <button class="btn btn-outline" style="font-size:12px;padding:6px 12px" onclick="copy50Report()">📋 전체 복사</button>
+      <button class="btn btn-gold" id="btn50p" style="width:100%;margin-top:8px" onclick="generate50Report()">📄 사주원리+AI 분석 합본 50페이지 보고서 생성</button>
+      <div id="report50Progress" hidden style="margin-top:8px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="spinner" style="width:20px;height:20px;border-width:2px;flex-shrink:0"></div>
+          <div>
+            <div style="font-size:12px;font-weight:700;color:var(--fg)">보고서 작성 중...</div>
+            <div style="font-size:11px;color:var(--fg2);margin-top:2px">3~6분 소요 · 이 창은 닫지 마세요</div>
+          </div>
+          <div id="report50CharCount" style="margin-left:auto;font-size:11px;color:var(--fg3);font-variant-numeric:tabular-nums">0자</div>
+        </div>
       </div>
-      <div id="report50Loading" hidden style="text-align:center;padding:40px 0">
-        <div class="spinner"></div>
-        <p style="margin-top:14px;font-size:13px;color:var(--fg2)">사주원리와 AI 분석을 통합하여<br>50페이지 보고서를 작성 중입니다...<br>3~6분 소요됩니다. 창 닫지 마세요.</p>
-      </div>
-      <div id="report50Body" style="font-size:13.5px;line-height:2;white-space:pre-line;color:var(--fg)"></div>
+      <button id="btn50pOpen" hidden class="btn btn-outline" style="width:100%;margin-top:6px" onclick="open50Report()">📂 완성된 보고서 새 탭에서 열기</button>
     </div>
   </div>
 </div>
@@ -370,60 +382,201 @@ body{padding:0 16px;padding-block:0}
       <span class="st-e">🔠</span><span class="st-n">이름·한자</span>
     </div>
   </div>
-  <div class="field">
-    <label>추가 설정 <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--fg3)">(복수 선택 가능)</span></label>
-    <div class="chip-group" id="chipExtra">
-      <div class="chip-row"><span class="chip-head">생년</span>
-        <span class="chip" data-g="birth" onclick="toggleChip(this)">1960년대생</span>
-        <span class="chip" data-g="birth" onclick="toggleChip(this)">1970년대생</span>
-        <span class="chip" data-g="birth" onclick="toggleChip(this)">1980년대생</span>
-        <span class="chip" data-g="birth" onclick="toggleChip(this)">1990년대생</span>
-        <span class="chip" data-g="birth" onclick="toggleChip(this)">2000년대생</span>
+  <!-- ── 유형별 입력 패널 ── -->
+
+  <!-- 공통 패널: 경고형/재물운/year2026/인스타카드/이름한자 -->
+  <div id="shortsCommonFields">
+    <!-- 이름·한자 전용 -->
+    <div id="stypeNameField" hidden class="field" style="margin-bottom:10px">
+      <label>분석할 이름</label>
+      <input type="text" id="shortNameInput" placeholder="예: 김민준, 이서연" maxlength="20">
+      <div class="hint">이름의 한자 의미·획수·오행 분석에 활용됩니다</div>
+    </div>
+    <!-- 인스타 카드 전용 -->
+    <div id="stypeCardField" hidden class="field" style="margin-bottom:10px">
+      <label>카드뉴스 주제 (선택)</label>
+      <input type="text" id="shortCardTopic" placeholder="예: 2026 띠별 재물운, 일간별 성격 특징">
+    </div>
+    <div class="field">
+      <label>추가 설정 <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--fg3)">(복수 선택 가능)</span></label>
+      <div class="chip-group" id="chipExtra">
+        <div class="chip-row"><span class="chip-head">생년</span>
+          <span class="chip" data-g="birth" onclick="toggleChip(this)">1960년대생</span>
+          <span class="chip" data-g="birth" onclick="toggleChip(this)">1970년대생</span>
+          <span class="chip" data-g="birth" onclick="toggleChip(this)">1980년대생</span>
+          <span class="chip" data-g="birth" onclick="toggleChip(this)">1990년대생</span>
+          <span class="chip" data-g="birth" onclick="toggleChip(this)">2000년대생</span>
+        </div>
+        <div class="chip-row"><span class="chip-head">성별</span>
+          <span class="chip" data-g="gender" onclick="toggleChip(this)">여성</span>
+          <span class="chip" data-g="gender" onclick="toggleChip(this)">남성</span>
+        </div>
+        <div class="chip-row"><span class="chip-head">일간</span>
+          <span class="chip" data-g="stem" onclick="toggleChip(this)">갑목</span>
+          <span class="chip" data-g="stem" onclick="toggleChip(this)">을목</span>
+          <span class="chip" data-g="stem" onclick="toggleChip(this)">병화</span>
+          <span class="chip" data-g="stem" onclick="toggleChip(this)">정화</span>
+          <span class="chip" data-g="stem" onclick="toggleChip(this)">무토</span>
+          <span class="chip" data-g="stem" onclick="toggleChip(this)">기토</span>
+          <span class="chip" data-g="stem" onclick="toggleChip(this)">경금</span>
+          <span class="chip" data-g="stem" onclick="toggleChip(this)">신금</span>
+          <span class="chip" data-g="stem" onclick="toggleChip(this)">임수</span>
+          <span class="chip" data-g="stem" onclick="toggleChip(this)">계수</span>
+        </div>
+        <div class="chip-row"><span class="chip-head">중심</span>
+          <span class="chip" data-g="focus_type" onclick="toggleChip(this)">재물·직장운</span>
+          <span class="chip" data-g="focus_type" onclick="toggleChip(this)">연애·결혼운</span>
+          <span class="chip" data-g="focus_type" onclick="toggleChip(this)">건강운</span>
+          <span class="chip" data-g="focus_type" onclick="toggleChip(this)">평생운</span>
+          <span class="chip" data-g="focus_type" onclick="toggleChip(this)">사업·창업운</span>
+        </div>
       </div>
-      <div class="chip-row"><span class="chip-head">성별</span>
-        <span class="chip" data-g="gender" onclick="toggleChip(this)">여성</span>
-        <span class="chip" data-g="gender" onclick="toggleChip(this)">남성</span>
-      </div>
-      <div class="chip-row"><span class="chip-head">일간</span>
-        <span class="chip" data-g="stem" onclick="toggleChip(this)">갑목</span>
-        <span class="chip" data-g="stem" onclick="toggleChip(this)">을목</span>
-        <span class="chip" data-g="stem" onclick="toggleChip(this)">병화</span>
-        <span class="chip" data-g="stem" onclick="toggleChip(this)">정화</span>
-        <span class="chip" data-g="stem" onclick="toggleChip(this)">무토</span>
-        <span class="chip" data-g="stem" onclick="toggleChip(this)">기토</span>
-        <span class="chip" data-g="stem" onclick="toggleChip(this)">경금</span>
-        <span class="chip" data-g="stem" onclick="toggleChip(this)">신금</span>
-        <span class="chip" data-g="stem" onclick="toggleChip(this)">임수</span>
-        <span class="chip" data-g="stem" onclick="toggleChip(this)">계수</span>
-      </div>
-      <div class="chip-row"><span class="chip-head">중심</span>
-        <span class="chip" data-g="focus_type" onclick="toggleChip(this)">재물·직장운</span>
-        <span class="chip" data-g="focus_type" onclick="toggleChip(this)">연애·결혼운</span>
-        <span class="chip" data-g="focus_type" onclick="toggleChip(this)">건강운</span>
-        <span class="chip" data-g="focus_type" onclick="toggleChip(this)">평생운</span>
-        <span class="chip" data-g="focus_type" onclick="toggleChip(this)">사업·창업운</span>
+    </div>
+    <div class="field">
+      <label>특별 강조 포인트 <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--fg3)">(복수 선택 가능)</span></label>
+      <div class="chip-group" id="chipFocus">
+        <div class="chip-row">
+          <span class="chip" onclick="toggleChip(this)">2026년 상반기 기회</span>
+          <span class="chip" onclick="toggleChip(this)">이직·창업 적기</span>
+          <span class="chip" onclick="toggleChip(this)">재회 가능성</span>
+          <span class="chip" onclick="toggleChip(this)">승진·명예운</span>
+          <span class="chip" onclick="toggleChip(this)">결혼 시기</span>
+          <span class="chip" onclick="toggleChip(this)">재물 상승 시기</span>
+          <span class="chip" onclick="toggleChip(this)">건강 주의 시기</span>
+          <span class="chip" onclick="toggleChip(this)">해외·이동 운</span>
+          <span class="chip" onclick="toggleChip(this)">도화살 발현</span>
+          <span class="chip" onclick="toggleChip(this)">사업 파트너 운</span>
+          <span class="chip" onclick="toggleChip(this)">이별·이혼 시기</span>
+          <span class="chip" onclick="toggleChip(this)">자녀 인연</span>
+        </div>
       </div>
     </div>
   </div>
-  <div class="field">
-    <label>특별 강조 포인트 <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--fg3)">(복수 선택 가능)</span></label>
-    <div class="chip-group" id="chipFocus">
-      <div class="chip-row">
-        <span class="chip" onclick="toggleChip(this)">2026년 상반기 기회</span>
-        <span class="chip" onclick="toggleChip(this)">이직·창업 적기</span>
-        <span class="chip" onclick="toggleChip(this)">재회 가능성</span>
-        <span class="chip" onclick="toggleChip(this)">승진·명예운</span>
-        <span class="chip" onclick="toggleChip(this)">결혼 시기</span>
-        <span class="chip" onclick="toggleChip(this)">재물 상승 시기</span>
-        <span class="chip" onclick="toggleChip(this)">건강 주의 시기</span>
-        <span class="chip" onclick="toggleChip(this)">해외·이동 운</span>
-        <span class="chip" onclick="toggleChip(this)">도화살 발현</span>
-        <span class="chip" onclick="toggleChip(this)">사업 파트너 운</span>
-        <span class="chip" onclick="toggleChip(this)">이별·이혼 시기</span>
-        <span class="chip" onclick="toggleChip(this)">자녀 인연</span>
+
+  <!-- 궁합 전용 패널 -->
+  <div id="shortsCoupleFields" hidden>
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:16px;margin-bottom:10px">
+      <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:12px;letter-spacing:.04em">👨 남성 생년월일시</div>
+      <div class="row3">
+        <div class="field" style="margin-bottom:8px">
+          <label>생년</label>
+          <input type="number" id="cMaleYear" placeholder="1990" min="1900" max="2010" style="text-align:center">
+        </div>
+        <div class="field" style="margin-bottom:8px">
+          <label>월</label>
+          <select id="cMaleMonth">
+            <option value="">월</option>
+            <option>1</option><option>2</option><option>3</option><option>4</option>
+            <option>5</option><option>6</option><option>7</option><option>8</option>
+            <option>9</option><option>10</option><option>11</option><option>12</option>
+          </select>
+        </div>
+        <div class="field" style="margin-bottom:8px">
+          <label>일</label>
+          <select id="cMaleDay">
+            <option value="">일</option>
+            <script>for(let i=1;i<=31;i++)document.write(`<option>${i}</option>`)</script>
+          </select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field" style="margin-bottom:0">
+          <label>태어난 시간</label>
+          <select id="cMaleTime">
+            <option value="모름">모름</option>
+            <option value="子시(23-01)">子시(23~01시)</option>
+            <option value="丑시(01-03)">丑시(01~03시)</option>
+            <option value="寅시(03-05)">寅시(03~05시)</option>
+            <option value="卯시(05-07)">卯시(05~07시)</option>
+            <option value="辰시(07-09)">辰시(07~09시)</option>
+            <option value="巳시(09-11)">巳시(09~11시)</option>
+            <option value="午시(11-13)">午시(11~13시)</option>
+            <option value="未시(13-15)">未시(13~15시)</option>
+            <option value="申시(15-17)">申시(15~17시)</option>
+            <option value="酉시(17-19)">酉시(17~19시)</option>
+            <option value="戌시(19-21)">戌시(19~21시)</option>
+            <option value="亥시(21-23)">亥시(21~23시)</option>
+          </select>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label>양력/음력</label>
+          <select id="cMaleCal">
+            <option value="양력">양력</option>
+            <option value="음력">음력</option>
+            <option value="음력윤달">음력 윤달</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:16px;margin-bottom:10px">
+      <div style="font-size:12px;font-weight:700;color:#f5c842;margin-bottom:12px;letter-spacing:.04em">👩 여성 생년월일시</div>
+      <div class="row3">
+        <div class="field" style="margin-bottom:8px">
+          <label>생년</label>
+          <input type="number" id="cFemYear" placeholder="1993" min="1900" max="2010" style="text-align:center">
+        </div>
+        <div class="field" style="margin-bottom:8px">
+          <label>월</label>
+          <select id="cFemMonth">
+            <option value="">월</option>
+            <option>1</option><option>2</option><option>3</option><option>4</option>
+            <option>5</option><option>6</option><option>7</option><option>8</option>
+            <option>9</option><option>10</option><option>11</option><option>12</option>
+          </select>
+        </div>
+        <div class="field" style="margin-bottom:8px">
+          <label>일</label>
+          <select id="cFemDay">
+            <option value="">일</option>
+            <script>for(let i=1;i<=31;i++)document.write(`<option>${i}</option>`)</script>
+          </select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field" style="margin-bottom:0">
+          <label>태어난 시간</label>
+          <select id="cFemTime">
+            <option value="모름">모름</option>
+            <option value="子시(23-01)">子시(23~01시)</option>
+            <option value="丑시(01-03)">丑시(01~03시)</option>
+            <option value="寅시(03-05)">寅시(03~05시)</option>
+            <option value="卯시(05-07)">卯시(05~07시)</option>
+            <option value="辰시(07-09)">辰시(07~09시)</option>
+            <option value="巳시(09-11)">巳시(09~11시)</option>
+            <option value="午시(11-13)">午시(11~13시)</option>
+            <option value="未시(13-15)">未시(13~15시)</option>
+            <option value="申시(15-17)">申시(15~17시)</option>
+            <option value="酉시(17-19)">酉시(17~19시)</option>
+            <option value="戌시(19-21)">戌시(19~21시)</option>
+            <option value="亥시(21-23)">亥시(21~23시)</option>
+          </select>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label>양력/음력</label>
+          <select id="cFemCal">
+            <option value="양력">양력</option>
+            <option value="음력">음력</option>
+            <option value="음력윤달">음력 윤달</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="field">
+      <label>분석 포인트 (선택)</label>
+      <div class="chip-group">
+        <div class="chip-row">
+          <span class="chip" onclick="toggleChip(this)">결혼 가능성</span>
+          <span class="chip" onclick="toggleChip(this)">오행 궁합</span>
+          <span class="chip" onclick="toggleChip(this)">일간 궁합</span>
+          <span class="chip" onclick="toggleChip(this)">12지지 삼합·반합</span>
+          <span class="chip" onclick="toggleChip(this)">재회 가능성</span>
+          <span class="chip" onclick="toggleChip(this)">갈등 요소</span>
+          <span class="chip" onclick="toggleChip(this)">결혼 적령기</span>
+        </div>
       </div>
     </div>
   </div>
+
   <button class="btn btn-primary" id="shortsBtn" onclick="generateShorts()">🎬 스크립트 생성</button>
   <div class="shorts-result" id="shortsResult" hidden></div>
   <div id="shortsCopyRow" hidden style="margin-top:10px">
@@ -992,6 +1145,13 @@ function selectStype(el){
   document.querySelectorAll(".stype-btn").forEach(b=>b.classList.remove("selected"));
   el.classList.add("selected");
   selectedStype=el.dataset.stype;
+  const isCouple=selectedStype==="couple";
+  document.getElementById("shortsCommonFields").hidden=isCouple;
+  document.getElementById("shortsCoupleFields").hidden=!isCouple;
+  const nameField=document.getElementById("stypeNameField");
+  const cardField=document.getElementById("stypeCardField");
+  if(nameField) nameField.hidden=selectedStype!=="name";
+  if(cardField) cardField.hidden=selectedStype!=="card";
 }
 
 const STYPE_PROMPTS={
@@ -1028,10 +1188,52 @@ async function generateShorts(){
   result.hidden=false;
   document.getElementById("shortsCopyRow").hidden=true;
 
-  const extra=getChipValues("chipExtra").join(" / ");
-  const focus=getChipValues("chipFocus").join(" / ");
-  const basePrompt=STYPE_PROMPTS[selectedStype];
-  const prompt=`${basePrompt}
+  let prompt="";
+
+  if(selectedStype==="couple"){
+    const mY=document.getElementById("cMaleYear")?.value||"";
+    const mM=document.getElementById("cMaleMonth")?.value||"";
+    const mD=document.getElementById("cMaleDay")?.value||"";
+    const mT=document.getElementById("cMaleTime")?.value||"모름";
+    const mC=document.getElementById("cMaleCal")?.value||"양력";
+    const fY=document.getElementById("cFemYear")?.value||"";
+    const fM=document.getElementById("cFemMonth")?.value||"";
+    const fD=document.getElementById("cFemDay")?.value||"";
+    const fT=document.getElementById("cFemTime")?.value||"모름";
+    const fC=document.getElementById("cFemCal")?.value||"양력";
+    if(!mY||!fY){alert("남성과 여성의 생년을 입력해 주세요.");btn.disabled=false;btn.textContent="🎬 스크립트 생성";result.hidden=true;return;}
+    const couplePoints=getChipValues("shortsCoupleFields").join(" / ");
+    const maleGanji=getGanji(+mY);
+    const femGanji=getGanji(+fY);
+    prompt=`💑 사주 궁합 분석 유튜브 쇼츠 스크립트를 작성해 주세요.
+
+【남성 사주】 ${mY}년(${maleGanji}) ${mM}월 ${mD}일 ${mC} ${mT}시생
+【여성 사주】 ${fY}년(${femGanji}) ${fM}월 ${fD}일 ${fC} ${fT}시생
+${couplePoints?"분석 포인트: "+couplePoints:""}
+
+형식: 0-3초 충격 훅(이 두 사람의 궁합 결과는?) → 3-50초 본문(오행궁합·일간궁합·합충형 분석) → 50-60초 CTA
+톤: 흥미롭고 구체적, 희망적 마무리. 한국어.
+
+반드시 포함:
+- 썸네일 제목 (15자 이내, 궁합 점수 또는 결과 포함)
+- 스크립트 본문 (초 단위 타임코드 포함)
+- 오행/일간 기준 궁합 분석
+- 두 사람이 맞는 이유 / 주의할 점 각 1~2가지
+- 해시태그 10개 (한국어 + 영어 혼합)
+- CTA: "사주마루 링크는 프로필에"`;
+  } else {
+    const extra=getChipValues("chipExtra").join(" / ");
+    const focus=getChipValues("chipFocus").join(" / ");
+    let basePrompt=STYPE_PROMPTS[selectedStype];
+    if(selectedStype==="name"){
+      const nameVal=document.getElementById("shortNameInput")?.value?.trim()||"";
+      if(nameVal) basePrompt=`🔠 "${nameVal}"이라는 이름의 한자 의미·획수·오행 분석 유튜브 쇼츠 스크립트를 작성해 주세요.\n형식: 0-3초 훅(이 이름 가진 사람 운명은?) → 3-50초 본문(한자·획수·오행 풀이) → 50-60초 CTA\n톤: 흥미롭고 지적. 한국어.`;
+    }
+    if(selectedStype==="card"){
+      const topicVal=document.getElementById("shortCardTopic")?.value?.trim()||"";
+      if(topicVal) basePrompt=`🃏 "${topicVal}" 주제의 인스타그램 카드뉴스 텍스트를 작성해 주세요.\n형식: 카드 5~7장 분량의 짧은 텍스트 (각 카드당 1~2문장)\n첫 장: 시선 끄는 문구 / 마지막 장: CTA\n톤: 깔끔하고 감성적. 한국어.`;
+    }
+    prompt=`${basePrompt}
 ${extra?"추가 정보: "+extra:""}
 ${focus?"강조 포인트: "+focus:""}
 
@@ -1040,6 +1242,7 @@ ${focus?"강조 포인트: "+focus:""}
 - 스크립트 본문 (초 단위 타임코드 포함)
 - 해시태그 10개 (한국어 + 영어 혼합)
 - CTA: "사주마루 링크는 프로필에"`;
+  }
 
   try{
     let txt="";
@@ -1246,7 +1449,19 @@ ${regionNote}
     "bad_dir":["방향1"],
     "best_year":"YYYY년",
     "best_month":"N월 또는 N월",
-    "timing_reason":"이사 최적 시기 이유 1문장"
+    "timing_reason":"이사 최적 시기 이유 1문장",
+    "isa_shinsal":[
+      {"name":"삼살방","dir":"방향","level":"절대금지","desc":"겁살+재살+천살 집결 방향. 년도 기준 계산."},
+      {"name":"태세방","dir":"방향","level":"절대금지","desc":"그해 연지 방향. 이사하면 큰 재앙."},
+      {"name":"날삼방","dir":"방향","level":"절대금지","desc":"이사 당일 나가는 방향 삼살."},
+      {"name":"들삼방","dir":"방향","level":"절대금지","desc":"새집으로 들어오는 방향 삼살."},
+      {"name":"관제살","dir":"방향","level":"경고","desc":"소송·관청·법적 분쟁 위험 방향."},
+      {"name":"겁살방","dir":"방향","level":"경고","desc":"재물 강탈·갑작스런 손실 위험."},
+      {"name":"재살방","dir":"방향","level":"경고","desc":"재난·사고·질병 유발 방향."},
+      {"name":"천살방","dir":"방향","level":"주의","desc":"하늘의 재앙 방향. 예기치 못한 흉사."},
+      {"name":"오황살","dir":"방향","level":"주의","desc":"풍수 구성(九星) 오황토 비성 방향. 해당 년 흉방."},
+      {"name":"황천살","dir":"방향","level":"주의","desc":"현관·대문 방향과 결합 시 대흉."}
+    ]
   }
 }`;
   try{
@@ -1502,6 +1717,29 @@ function renderIsaSection(isa, region){
     <span style="color:#ff5577">▼ 흉(凶) — 피할 방향</span>
     <span style="color:var(--fg3)">― 중(中) — 무난</span>
   </div>`;
+  // ── 이사 신살 섹션
+  const salsData=isa.isa_shinsal||[];
+  const lvOrder={"절대금지":0,"경고":1,"주의":2};
+  const sorted=[...salsData].sort((a,b)=>(lvOrder[a.level]||9)-(lvOrder[b.level]||9));
+  const lvIcon={"절대금지":"🚫","경고":"⚠️","주의":"🔔"};
+  const salRows=sorted.map(s=>`
+    <div class="isa-sal-row lv-${s.level}">
+      <div class="isa-sal-name">${lvIcon[s.level]||"•"} ${s.name}</div>
+      <div class="isa-sal-dir">${s.dir||"—"}</div>
+      <div class="isa-sal-desc">${s.desc||""}</div>
+    </div>`).join("");
+  const salSection=salsData.length?`
+    <div class="isa-sal-wrap">
+      <div class="isa-sal-title">⛔ 이사 주의 신살(神殺) 상세</div>
+      <div style="font-size:11px;color:var(--fg3);margin-bottom:8px">절대금지 방향은 어떤 이유로도 이사 불가. 경고·주의 방향은 시기 조정으로 완화 가능.</div>
+      <div class="isa-sal-list">${salRows}</div>
+      <div style="margin-top:10px;background:var(--bg3);border-radius:8px;padding:10px 12px;font-size:11px;color:var(--fg2)">
+        <strong style="color:var(--gold)">2026 丙午년 삼살방 계산:</strong> 寅午戌년 → <span style="color:#ff5577;font-weight:700">북방(北) 삼살</span><br>
+        태세방(午년) = <span style="color:#ff5577;font-weight:700">남방(南)</span> — 해당 방향 이사 절대 금지<br>
+        <span style="color:var(--fg3)">* 사주 개인 용신·기신을 함께 고려하여 최종 판단</span>
+      </div>
+    </div>`:"";
+
   wrap.innerHTML=`
     ${isa.current_desc?`<div class="isa-current">${isa.current_desc}</div>`:""}
     ${legendHtml}
@@ -1511,7 +1749,8 @@ function renderIsaSection(isa, region){
         <div class="isa-dir-list">${dirRows}</div>
         ${timing}
       </div>
-    </div>`;
+    </div>
+    ${salSection}`;
 }
 
 // ─── 50페이지 통합 보고서 ────────────────────────────────────────────────
@@ -1617,13 +1856,19 @@ const SECTIONS_50=[
     - 2026년에 특히 효과적인 개운법 3가지
     - 행운의 숫자·색·방위·이름·상호에 좋은 한자`,
 
-`19. 🏠 거주지·이사 방향 완전 분석 (2페이지)
-    - 현재 거주 지역(${`\${m.region||'미입력'}`})의 오행·방위적 의미와 사주와의 관계
-    - 용신·기신 오행 기반 이사 방향 8방위 상세 분석 (길방/흉방/중립방 각각)
-    - 동·서·남·북·동남·동북·서남·서북 각 방향이 이 사주에 미치는 영향을 구체적으로 서술
-    - 절대 피해야 할 방향과 그 이유
-    - 이사 최적 시기(연도·월) 계산 근거와 구체적 시기 제안
-    - 이사할 때 지켜야 할 풍수·사주적 조건`,
+`19. 🏠 거주지·이사 방향 완전 분석 (3페이지)
+    - 현재 거주 지역의 오행·방위적 의미와 사주와의 관계
+    - 용신·기신 오행 기반 이사 방향 8방위 상세 분석 (길방/흉방/중립 각각 이유 포함)
+    - 2026년 삼살방(三殺方): 寅午戌년→북방(北) 삼살 — 절대금지 이유 상세 설명
+    - 태세방(太歲方): 2026 午년→남방(南) — 발동 시 결과와 대처법
+    - 날삼(날삼살): 현재 집에서 나가는 방향 기준 삼살 판단 방법
+    - 들삼(들삼살): 새집으로 들어오는 방향 기준 삼살 판단 방법
+    - 관제살: 이 사주의 관제살 발동 여부와 해당 방향
+    - 겁살방·재살방·천살방 각각 방향과 주의사항
+    - 오황살(五黃殺) 2026년 해당 방위(서방)와 영향
+    - 황천살: 현관·대문 방향과 결합 주의사항
+    - 손없는날 활용법과 이사 택일 구체적 날짜 제안
+    - 이사 후 집안 배치(침대·책상 방향)에서 용신 오행 활용법`,
 
 `20. ✨ 마무리 — 인생 전체 조언 (1페이지)
     - 사주가 말하는 이 사람의 본질과 사명
@@ -1638,6 +1883,64 @@ const OHANG_PRINCIPLE=`【오행 원리 참고】
 금(金): 가을, 서쪽, 폐대장, 결단·의리·의(義), 직업=법률·군경·금융·제조·철강
 수(水): 겨울, 북쪽, 신방광, 지혜·적응·지(智), 직업=무역·유통·철학·예술·수산`;
 
+const ISA_SHINSAL_REF=`【이사 방향 신살(神殺) 완전 참고자료】
+
+▶ 삼살방(三殺方) — 절대금지 이사 방향
+  삼살 = 겁살(劫殺) + 재살(災殺) + 천살(天殺)이 한곳에 집결한 방향
+  해당 방향으로 이사하면 사고·재난·재물손실·건강악화 위험.
+  년도별 삼살방 계산 (연지 삼합 기준):
+  · 申子辰(원숭이·쥐·용)년 → 남방(南) 삼살 [午방]
+  · 亥卯未(돼지·토끼·양)년 → 서방(西) 삼살 [酉방]
+  · 寅午戌(호랑이·말·개)년 → 북방(北) 삼살 [子방] ← 2026 丙午년 해당
+  · 巳酉丑(뱀·닭·소)년    → 동방(東) 삼살 [卯방]
+
+▶ 태세방(太歲方) — 절대금지
+  그해 연지(年支)가 가리키는 방향. 태세 방향으로 이사하면 대재앙.
+  2026 午년 → 남방(南)이 태세방.
+  태세 뒷방(세파방)도 흉: 북방(北) 세파방.
+
+▶ 날삼방(날삼살) — 절대금지
+  삼살방 기준, 이사 당일 '나가는 방향'의 삼살.
+  현재 집에서 새 집 방향이 삼살방이면 날삼 발동.
+  해결: 이삿날을 삼살방이 적용되지 않는 날로 택일.
+
+▶ 들삼방(들삼살) — 절대금지
+  이사 후 새집으로 '들어오는 방향'의 삼살.
+  새 집 현관·입구 방향이 삼살방과 겹치면 들삼 발동.
+  해결: 들어오는 방향을 삼살방 반대쪽으로 우회.
+
+▶ 겁살방(劫殺方)
+  삼합 중 첫 지지 반대편: 申子辰→巳방, 亥卯未→寅방, 寅午戌→亥방, 巳酉丑→申방
+  강도·절도·재물 강탈 등 갑작스런 손실 위험.
+
+▶ 재살방(災殺方)
+  삼합 중간 지지 방향: 申子辰→午(南), 亥卯未→酉(西), 寅午戌→子(北), 巳酉丑→卯(東)
+  재난·사고·질병 유발. 삼살방과 같은 방향인 경우 더욱 흉.
+
+▶ 천살방(天殺方)
+  삼합 마지막 지지 방향: 申子辰→申방, 亥卯未→亥방, 寅午戌→寅방, 巳酉丑→巳방
+  예기치 못한 하늘의 재앙. 가족 이별·사별 위험.
+
+▶ 관제살(官帝殺)
+  소송·관청 분쟁·법적 문제를 일으키는 살.
+  일간과 현재 대운·년운의 충·형 관계에서 발동.
+  해당 방향 이사 시 직장·법적 분쟁 위험.
+
+▶ 오황살(五黃殺) [풍수 구성(九星)]
+  每年 다른 방위에 위치하는 흉성. 해당 방위 이사·건축·수리 금지.
+  2025년 → 중앙, 2026년 → 서방(西), 2027년 → 동남방
+  해결: 오황방위는 이사·공사 절대 불가, 우회 必.
+
+▶ 황천살(黃泉殺)
+  현관·대문의 방향과 연계. 특정 방향 조합에서 발동.
+  甲·壬 방향 현관 + 坤방 이사 = 황천살 발동 등.
+
+▶ 이사 택일 원칙
+  1. 삼살방·태세방·오황방 완전 회피
+  2. 이사날 天干·地支가 이사인의 일간과 충·형 없어야 함
+  3. 이사방향 용신 오행 우선, 기신 오행 회피
+  4. 손없는날(손이 없는 날 = 음력 9,10일·19,20일·29,30일) 활용`;
+
 const YUNSUNG_PRINCIPLE=`【12운성 원리 참고】
 장생(長生): 탄생·희망·순탄한 출발 / 목욕(沐浴): 감수성·예술성·이성운 강함
 관대(冠帶): 배움·성장·자존심 강함 / 건록(建祿): 독립·자수성가·직업운 강함
@@ -1648,15 +1951,63 @@ const YUNSUNG_PRINCIPLE=`【12운성 원리 참고】
 
 let fullReport50Text='';
 
+function open50Report(){
+  if(!fullReport50Text){return;}
+  const m=lastSajuMeta||{};
+  const name=m.name||"의뢰인";
+  const html=`<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${name} 사주 통합 50페이지 보고서</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;600;700&display=swap">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR','Malgun Gothic',sans-serif;background:#faf8f4;color:#1a0a30;line-height:2;padding:0}
+.cover{background:linear-gradient(135deg,#1a0a30 0%,#2d1660 60%,#1a0a30 100%);color:#f0e8ff;text-align:center;padding:80px 40px 60px;min-height:40vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+.cover-eyebrow{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#b87fff;font-weight:700}
+.cover-title{font-family:'Noto Serif KR',Georgia,serif;font-size:clamp(26px,4vw,42px);font-weight:900;text-wrap:balance;color:#f0e8ff}
+.cover-name{font-size:clamp(18px,3vw,28px);font-weight:700;color:#f5c842;font-family:'Noto Serif KR',serif}
+.cover-meta{font-size:13px;color:#a090c0;margin-top:4px}
+.cover-date{font-size:12px;color:#6a5a8a;margin-top:20px;padding-top:20px;border-top:1px solid rgba(180,130,255,.2)}
+.body-wrap{max-width:720px;margin:0 auto;padding:48px 32px 80px}
+.report-text{font-size:14.5px;line-height:2.1;white-space:pre-line;color:#1a0a30;word-break:keep-all}
+.report-text h1,.report-text h2{font-family:'Noto Serif KR',serif;margin:2em 0 .6em;color:#2d1660}
+@media print{
+  .cover{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{background:#fff}
+  .body-wrap{padding:20px}
+}
+@media(max-width:480px){.body-wrap{padding:24px 16px 60px}}
+</style>
+</head><body>
+<div class="cover">
+  <div class="cover-eyebrow">사주마루 AI 스튜디오</div>
+  <div class="cover-title">사주원리 & AI 분석<br>통합 보고서</div>
+  <div class="cover-name">${name} 선생님</div>
+  <div class="cover-meta">${m.year||""}년 ${m.month||""}월 ${m.day||""}일 ${m.calNote||""} · ${m.gender||""} · ${m.timeStr||""}</div>
+  <div class="cover-date">생성일: ${new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'})}</div>
+</div>
+<div class="body-wrap">
+  <div class="report-text">${fullReport50Text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+</div>
+</body></html>`;
+  const win=window.open('','_blank');
+  if(win){win.document.write(html);win.document.close();}
+  else{
+    const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+    const url=URL.createObjectURL(blob);
+    window.open(url,'_blank');
+  }
+}
+
 async function generate50Report(){
   if(!sampleCap){alert("AI 서비스 불가. claude.ai 로그인 필요.");return;}
-  const rv=document.getElementById("resultsView");
-  const da=document.getElementById("doneActions");
-  const r50=document.getElementById("report50View");
-  const r50b=document.getElementById("report50Body");
-  const r50l=document.getElementById("report50Loading");
-  rv.hidden=true; da.hidden=true;
-  r50.hidden=false; r50b.textContent=""; r50l.hidden=false;
+  const btn=document.getElementById("btn50p");
+  const prog=document.getElementById("report50Progress");
+  const countEl=document.getElementById("report50CharCount");
+  const openBtn=document.getElementById("btn50pOpen");
+  btn.disabled=true; btn.textContent="⏳ 보고서 작성 중...";
+  prog.hidden=false; openBtn.hidden=true;
   fullReport50Text="";
 
   const m=lastSajuMeta||{};
@@ -1700,6 +2051,9 @@ ${OHANG_PRINCIPLE}
 ${YUNSUNG_PRINCIPLE}
 
 ══════════════════════════════════════
+${ISA_SHINSAL_REF}
+
+══════════════════════════════════════
 【보고서 구성 — 아래 19개 섹션 순서대로 빠짐없이 작성】
 ══════════════════════════════════════
 ${SECTIONS_50.join('\n\n')}
@@ -1711,24 +2065,22 @@ ${SECTIONS_50.join('\n\n')}
       modelTier:"complex",
       onText({text}){
         fullReport50Text=text;
-        r50b.textContent=text;
-        if(r50l&&!r50l.hidden) r50l.hidden=true;
+        if(countEl) countEl.textContent=(text.length).toLocaleString()+"자";
       }
     });
+    btn.textContent="✅ 보고서 완성!";
+    openBtn.hidden=false;
+    open50Report();
   }catch(e){
-    r50b.textContent="오류: "+(e?.message||JSON.stringify(e));
+    btn.textContent="📄 사주원리+AI 분석 합본 50페이지 보고서 생성";
+    btn.disabled=false;
+    prog.hidden=true;
+    const m2=lastSajuMeta||{};
+    alert("오류 발생: "+(e?.message||"알 수 없는 오류")+"\n다시 시도해 주세요.");
   }finally{
-    r50l.hidden=true;
+    prog.hidden=true;
   }
 }
-
-function copy50Report(){
-  if(!fullReport50Text) return;
-  navigator.clipboard?.writeText(fullReport50Text).then(()=>{
-    const b=document.getElementById("report50View").querySelector("button:last-of-type");
-    const o=b.textContent; b.textContent="✓ 복사 완료!";
-    setTimeout(()=>b.textContent=o,2000);
-  });
 }
 
 function renderOhangDonut(d){
