@@ -197,6 +197,19 @@ body{padding:0 16px;padding-block:0}
 .gae-body strong{color:var(--fg)}
 /* 분석 내용 텍스트 */
 .narrative{padding:0;font-size:13.5px;line-height:1.9;white-space:pre-line;color:var(--fg);max-height:70vh;overflow-y:auto}
+/* 이사 방향 나침반 */
+.isa-wrap{display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.isa-compass-box{flex-shrink:0}
+.isa-info{flex:1;min-width:180px;font-size:12px}
+.isa-current{background:var(--bg3);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:var(--fg2)}
+.isa-dir-list{display:flex;flex-direction:column;gap:6px}
+.isa-dir-row{display:flex;align-items:center;gap:7px}
+.isa-dir-badge{width:34px;text-align:center;font-size:11px;font-weight:700;padding:2px 0;border-radius:5px;flex-shrink:0}
+.isa-gil{background:rgba(92,230,133,.18);color:#5ce685;border:1px solid rgba(92,230,133,.4)}
+.isa-흉{background:rgba(255,85,119,.18);color:#ff5577;border:1px solid rgba(255,85,119,.4)}
+.isa-중{background:rgba(100,100,120,.2);color:var(--fg3);border:1px solid var(--border)}
+.isa-timing{margin-top:12px;background:var(--bg3);border-radius:8px;padding:10px 12px}
+.isa-timing strong{color:var(--gold)}
 </style>
 
 <!-- 헤더 -->
@@ -259,6 +272,11 @@ body{padding:0 16px;padding-block:0}
           <input type="checkbox" id="iUnknownTime"> 출생 시간 모름
         </label>
       </div>
+    </div>
+    <div class="field">
+      <label>현재 거주 지역</label>
+      <input type="text" id="iRegion" placeholder="예: 서울 강남구, 부산 해운대구, 경기 성남시">
+      <div class="hint">이사 방향 분석에 활용됩니다 (선택)</div>
     </div>
     <div class="field" id="imgUploadField">
       <label>얼굴 사진 (관상 분석 포함)</label>
@@ -775,6 +793,7 @@ async function startAnalysis(){
   show("loadingView");hide("errorView");hide("resultsView");hide("doneActions");
 
   const name=v("iName"), gender=v("iGender"), cal=v("iCal");
+  const region=v("iRegion")||"";
   const year=parseInt(v("iYear")), month=parseInt(v("iMonth")), day=parseInt(v("iDay"));
   const unknown=document.getElementById("iUnknownTime").checked;
   const hour=unknown?null:(parseInt(v("iHour"))||0);
@@ -923,12 +942,17 @@ ${sections.join('\n\n')}
         <div class="rpt-sec-title">⑧ AI 상세 분석 보고서</div>
         <div class="narrative" id="mainResult">${fullResultText||''}</div>
       </div>
+      <!-- ⑨ 거주지·이사 방향 -->
+      <div class="rpt-sec" id="sec-isa">
+        <div class="rpt-sec-title">⑨ 거주지 분석 & 이사 방향</div>
+        <div id="isaWrap"><div style="font-size:12px;color:var(--fg3)">⏳ 계산 중...</div></div>
+      </div>
     </div>`;
   show("resultsView");
   show("doneActions");
   // Fetch chart data separately (non-blocking)
-  lastSajuMeta={name,year,month,day,gender,cal,timeStr,calNote,selected};
-  fetchAndRenderCharts(name, year, month, day, gender, cal, timeStr);
+  lastSajuMeta={name,year,month,day,gender,cal,timeStr,calNote,selected,region};
+  fetchAndRenderCharts(name, year, month, day, gender, cal, timeStr, region);
 }
 
 function copyResult(){
@@ -1177,11 +1201,13 @@ const OHANG_KEYS=["목","화","토","금","수"];
 const SIP_COLORS=["#b87fff","#7eb8ff","#5ce685","#f5c842","#ff7755"];
 const SIP_KEYS=["인성","비겁","식상","재성","관성"];
 
-async function fetchAndRenderCharts(name,year,month,day,gender,cal,timeStr){
+async function fetchAndRenderCharts(name,year,month,day,gender,cal,timeStr,region){
   if(!sampleCap) return;
   const calNote=cal==="음력"?"(음력)":"(양력)";
+  const regionNote=region?`거주지: ${region}`:"거주지: 미입력";
   const jp=`사주를 정확히 계산하여 JSON만 출력하세요. 다른 설명 없이 JSON만.
 의뢰인: ${name}/${gender}/${year}년${month}월${day}일${calNote}/${timeStr}
+${regionNote}
 
 {
   "saju":{
@@ -1202,7 +1228,26 @@ async function fetchAndRenderCharts(name,year,month,day,gender,cal,timeStr){
   ],
   "shinsal":[{"name":"신살명","desc":"특성 1문장"}],
   "gaewoon":[{"icon":"이모지","title":"제목","desc":"설명 1문장"}],
-  "monthly2026":[숫자0-100,숫자,숫자,숫자,숫자,숫자,숫자,숫자,숫자,숫자,숫자,숫자]
+  "monthly2026":[숫자0-100,숫자,숫자,숫자,숫자,숫자,숫자,숫자,숫자,숫자,숫자,숫자],
+  "isa":{
+    "current_ohang":"목|화|토|금|수 (거주지 방위 오행)",
+    "current_desc":"현재 거주지가 사주에 미치는 영향 2문장",
+    "compass":[
+      {"dir":"북","ohang":"수","luck":"길|흉|중","score":숫자0-100,"reason":"한 문장 이유"},
+      {"dir":"북동","ohang":"토","luck":"길|흉|중","score":숫자,"reason":""},
+      {"dir":"동","ohang":"목","luck":"길|흉|중","score":숫자,"reason":""},
+      {"dir":"동남","ohang":"목화","luck":"길|흉|중","score":숫자,"reason":""},
+      {"dir":"남","ohang":"화","luck":"길|흉|중","score":숫자,"reason":""},
+      {"dir":"남서","ohang":"토","luck":"길|흉|중","score":숫자,"reason":""},
+      {"dir":"서","ohang":"금","luck":"길|흉|중","score":숫자,"reason":""},
+      {"dir":"북서","ohang":"금수","luck":"길|흉|중","score":숫자,"reason":""}
+    ],
+    "best_dir":["방향1","방향2"],
+    "bad_dir":["방향1"],
+    "best_year":"YYYY년",
+    "best_month":"N월 또는 N월",
+    "timing_reason":"이사 최적 시기 이유 1문장"
+  }
 }`;
   try{
     const d=await sampleCap.json(jp,{modelTier:"default",cache:false});
@@ -1214,6 +1259,7 @@ async function fetchAndRenderCharts(name,year,month,day,gender,cal,timeStr){
     renderShinsal(d.shinsal||[]);
     renderMonthlyLine2(d.monthly2026||[70,75,65,85,80,70,72,80,90,68,74,78]);
     renderGaewoon(d.gaewoon||[]);
+    renderIsaSection(d.isa||null, region);
   }catch(e){
     const seed=(year*month*day)%97;
     renderOhangSection({목:1+(seed%3),화:seed%3,토:1+((seed*3)%2),금:1+(seed%2),수:(seed*7)%3},"오행 기반 분석");
@@ -1378,6 +1424,96 @@ function renderGaewoon(arr){
     </div>`).join("")}</div>`;
 }
 
+function renderIsaSection(isa, region){
+  const wrap=document.getElementById("isaWrap");
+  if(!wrap) return;
+  if(!isa){
+    wrap.innerHTML=`<div style="font-size:12px;color:var(--fg3)">거주지를 입력하면 이사 방향을 분석합니다.</div>`;
+    return;
+  }
+  // ── 8방위 정의 (북에서 시계방향)
+  const DIRS=[
+    {dir:"북",  ang:270, ohang:"수",  color:"#60a5fa"},
+    {dir:"북동", ang:315, ohang:"토수", color:"#93c5fd"},
+    {dir:"동",  ang:0,  ohang:"목",  color:"#4ade80"},
+    {dir:"동남", ang:45, ohang:"목화", color:"#86efac"},
+    {dir:"남",  ang:90, ohang:"화",  color:"#f87171"},
+    {dir:"남서", ang:135,ohang:"토",  color:"#fbbf24"},
+    {dir:"서",  ang:180,ohang:"금",  color:"#e2e8f0"},
+    {dir:"북서", ang:225,ohang:"금수", color:"#cbd5e1"},
+  ];
+  // compass 데이터 인덱싱
+  const cMap={};
+  (isa.compass||[]).forEach(c=>{cMap[c.dir]=c;});
+  // ── 나침반 SVG
+  const cx=100,cy=100,R=88,r=28,labelR=72;
+  let svg=`<svg viewBox="0 0 200 200" width="190" height="190">`;
+  // 배경원
+  svg+=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="var(--bg3)" stroke="var(--border)" stroke-width="1"/>`;
+  // 8 웨지
+  DIRS.forEach(({dir,ang,color})=>{
+    const c=cMap[dir]||{};
+    const luck=c.luck||"중";
+    const score=+(c.score||50);
+    const fillCol=luck==="길"?"#5ce685":luck==="흉"?"#ff5577":"#6a5a8a";
+    const opacity=luck==="중"?0.25:0.55+(score/400);
+    const startAng=(ang-22.5)*Math.PI/180;
+    const endAng=(ang+22.5)*Math.PI/180;
+    const x1=cx+R*Math.cos(startAng),y1=cy+R*Math.sin(startAng);
+    const x2=cx+R*Math.cos(endAng), y2=cy+R*Math.sin(endAng);
+    const ix1=cx+r*Math.cos(startAng),iy1=cy+r*Math.sin(startAng);
+    const ix2=cx+r*Math.cos(endAng), iy2=cy+r*Math.sin(endAng);
+    svg+=`<path d="M${ix1.toFixed(1)} ${iy1.toFixed(1)} L${x1.toFixed(1)} ${y1.toFixed(1)} A${R} ${R} 0 0 1 ${x2.toFixed(1)} ${y2.toFixed(1)} L${ix2.toFixed(1)} ${iy2.toFixed(1)} A${r} ${r} 0 0 0 ${ix1.toFixed(1)} ${iy1.toFixed(1)}Z" fill="${fillCol}" opacity="${opacity.toFixed(2)}"/>`;
+    // 방향 레이블
+    const lx=cx+labelR*Math.cos(ang*Math.PI/180);
+    const ly=cy+labelR*Math.sin(ang*Math.PI/180);
+    const icon=luck==="길"?"▲":luck==="흉"?"▼":"";
+    svg+=`<text x="${lx.toFixed(1)}" y="${(ly+3).toFixed(1)}" text-anchor="middle" font-size="9.5" font-weight="700" fill="${fillCol}">${dir}</text>`;
+    if(icon) svg+=`<text x="${lx.toFixed(1)}" y="${(ly+13).toFixed(1)}" text-anchor="middle" font-size="7.5" fill="${fillCol}">${icon}</text>`;
+  });
+  // 방위 구분선
+  for(let i=0;i<8;i++){
+    const a=(i*45-22.5)*Math.PI/180;
+    svg+=`<line x1="${(cx+r*Math.cos(a)).toFixed(1)}" y1="${(cy+r*Math.sin(a)).toFixed(1)}" x2="${(cx+R*Math.cos(a)).toFixed(1)}" y2="${(cy+R*Math.sin(a)).toFixed(1)}" stroke="var(--bg)" stroke-width="1.5" opacity="0.7"/>`;
+  }
+  // 내원 + 나 레이블
+  svg+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="var(--card)" stroke="var(--border2)" stroke-width="1.5"/>`;
+  svg+=`<text x="${cx}" y="${cy-4}" text-anchor="middle" font-size="10" fill="var(--fg2)">현위치</text>`;
+  svg+=`<text x="${cx}" y="${cy+9}" text-anchor="middle" font-size="8.5" fill="var(--fg3)">${region||"(미입력)"}</text>`;
+  svg+=`</svg>`;
+  // ── 방향 리스트
+  const sortedDirs=[...(isa.compass||DIRS.map(d=>({dir:d.dir,ohang:d.ohang,luck:"중",score:50,reason:""})))].sort((a,b)=>b.score-a.score);
+  const dirRows=sortedDirs.map(c=>`
+    <div class="isa-dir-row">
+      <div class="isa-dir-badge isa-${c.luck}">${c.dir}</div>
+      <div style="flex:1;font-size:11px;color:var(--fg2)"><span style="color:var(--fg3);font-size:10px">${c.ohang}</span> ${c.reason||""}</div>
+      <div style="font-size:11px;color:${c.luck==="길"?"#5ce685":c.luck==="흉"?"#ff5577":"var(--fg3)"};font-weight:700;width:28px;text-align:right">${c.score}</div>
+    </div>`).join("");
+  // ── 타이밍 박스
+  const timing=`<div class="isa-timing">
+    <div style="font-size:11px;color:var(--fg3);margin-bottom:4px">이사 최적 시기</div>
+    <strong>${isa.best_year||""}  ${isa.best_month||""}</strong>
+    <div style="font-size:11px;color:var(--fg2);margin-top:4px">${isa.timing_reason||""}</div>
+    ${(isa.best_dir||[]).length?`<div style="margin-top:8px;font-size:11px">✅ 추천 방향: <span style="color:#5ce685;font-weight:700">${(isa.best_dir||[]).join(" · ")}</span></div>`:""}
+    ${(isa.bad_dir||[]).length?`<div style="font-size:11px">⛔ 피할 방향: <span style="color:#ff5577;font-weight:700">${(isa.bad_dir||[]).join(" · ")}</span></div>`:""}
+  </div>`;
+  const legendHtml=`<div style="display:flex;gap:8px;margin-bottom:8px;font-size:10px;flex-wrap:wrap">
+    <span style="color:#5ce685">▲ 길(吉) — 이사 추천</span>
+    <span style="color:#ff5577">▼ 흉(凶) — 피할 방향</span>
+    <span style="color:var(--fg3)">― 중(中) — 무난</span>
+  </div>`;
+  wrap.innerHTML=`
+    ${isa.current_desc?`<div class="isa-current">${isa.current_desc}</div>`:""}
+    ${legendHtml}
+    <div class="isa-wrap">
+      <div class="isa-compass-box">${svg}</div>
+      <div class="isa-info">
+        <div class="isa-dir-list">${dirRows}</div>
+        ${timing}
+      </div>
+    </div>`;
+}
+
 // ─── 50페이지 통합 보고서 ────────────────────────────────────────────────
 const SECTIONS_50=[
 `1. 📜 인사말 & 이 보고서 소개 (1페이지)
@@ -1481,7 +1617,15 @@ const SECTIONS_50=[
     - 2026년에 특히 효과적인 개운법 3가지
     - 행운의 숫자·색·방위·이름·상호에 좋은 한자`,
 
-`19. ✨ 마무리 — 인생 전체 조언 (1페이지)
+`19. 🏠 거주지·이사 방향 완전 분석 (2페이지)
+    - 현재 거주 지역(${`\${m.region||'미입력'}`})의 오행·방위적 의미와 사주와의 관계
+    - 용신·기신 오행 기반 이사 방향 8방위 상세 분석 (길방/흉방/중립방 각각)
+    - 동·서·남·북·동남·동북·서남·서북 각 방향이 이 사주에 미치는 영향을 구체적으로 서술
+    - 절대 피해야 할 방향과 그 이유
+    - 이사 최적 시기(연도·월) 계산 근거와 구체적 시기 제안
+    - 이사할 때 지켜야 할 풍수·사주적 조건`,
+
+`20. ✨ 마무리 — 인생 전체 조언 (1페이지)
     - 사주가 말하는 이 사람의 본질과 사명
     - 가장 빛나는 순간을 만드는 방법
     - 인생 전체를 관통하는 핵심 한마디`,
