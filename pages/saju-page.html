@@ -350,9 +350,9 @@ body{padding:0 16px;padding-block:0}
 
   <div class="section-title" style="font-size:15px">🌅 일일 배치 생성</div>
   <div style="font-size:12px;color:var(--fg2);margin-bottom:10px">오늘 날짜 기반으로 유튜브·인스타·틱톡 3플랫폼 스크립트를 한번에 자동 생성합니다</div>
-  <div class="today-topic" id="todayTopicBox">
-    <span>오늘의 주제:</span>
-    <b id="todayTopicText">로딩 중...</b>
+  <div style="font-size:11px;color:var(--fg3);margin-bottom:6px">오늘의 주제 선택 <span style="color:var(--accent)">(최대 3개 · 날짜 기반 자동 선택됨)</span></div>
+  <div class="chip-group" id="chipTopics" style="margin-bottom:12px">
+    <div class="chip-row" style="flex-wrap:wrap;gap:6px" id="topicChipRow"></div>
   </div>
   <div class="field">
     <label>보조 정보 <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--fg3)">(선택)</span></label>
@@ -1207,18 +1207,35 @@ const DAILY_TOPICS=[
   {emoji:"🏠",name:"이사 방향",desc:"풍수·사주로 보는 이사 방향"},
 ];
 
-function getTodayTopics(){
+function getTodayTopicIndices(){
   const d=new Date(); const doy=Math.floor((d-(new Date(d.getFullYear(),0,0)))/86400000);
   const i1=doy%DAILY_TOPICS.length;
   const i2=(doy*3+7)%DAILY_TOPICS.length;
   const i3=(doy*7+13)%DAILY_TOPICS.length;
-  return [DAILY_TOPICS[i1],DAILY_TOPICS[i2!==i1?i2:(i2+1)%DAILY_TOPICS.length],DAILY_TOPICS[i3!==i1&&i3!==i2?i3:(i3+2)%DAILY_TOPICS.length]];
+  const safe2=i2!==i1?i2:(i2+1)%DAILY_TOPICS.length;
+  const safe3=i3!==i1&&i3!==safe2?i3:(i3+2)%DAILY_TOPICS.length;
+  return [i1, safe2, safe3];
 }
 
-(function setTodayTopic(){
-  const topics=getTodayTopics();
-  const el=document.getElementById("todayTopicText");
-  if(el) el.textContent=`${topics[0].emoji} ${topics[0].name} / ${topics[1].emoji} ${topics[1].name} / ${topics[2].emoji} ${topics[2].name}`;
+(function buildTopicChips(){
+  const row=document.getElementById("topicChipRow");
+  if(!row) return;
+  const presel=new Set(getTodayTopicIndices());
+  DAILY_TOPICS.forEach((t,i)=>{
+    const c=document.createElement("span");
+    c.className="chip topic-chip"+(presel.has(i)?" on":"");
+    c.dataset.idx=i;
+    c.textContent=`${t.emoji} ${t.name}`;
+    c.onclick=function(){
+      const onChips=[...document.querySelectorAll(".topic-chip.on")];
+      if(!this.classList.contains("on")&&onChips.length>=3){
+        // deselect the oldest selected
+        onChips[0].classList.remove("on");
+      }
+      this.classList.toggle("on");
+    };
+    row.appendChild(c);
+  });
 })();
 
 async function generateDailyBatch(){
@@ -1229,31 +1246,28 @@ async function generateDailyBatch(){
   rl.hidden=false;
   rl.innerHTML=`<div class="loading" style="padding:24px"><div class="spinner"></div><p style="color:var(--fg2);font-size:12px">3플랫폼 스크립트 생성 중...<br>약 30~60초 소요됩니다</p></div>`;
 
-  const topics=getTodayTopics();
+  const selChips=[...document.querySelectorAll(".topic-chip.on")];
+  const topics=selChips.length>0
+    ? selChips.map(c=>DAILY_TOPICS[+c.dataset.idx])
+    : getTodayTopicIndices().map(i=>DAILY_TOPICS[i]);
   const extra=getChipValues("chipBatch").join(" / ");
   const today=new Date().toLocaleDateString("ko-KR",{year:"numeric",month:"long",day:"numeric"});
 
-  const batchPrompt=`오늘(${today}) 사주마루 SNS 콘텐츠를 3개 작성해 주세요.
+  const platforms=[
+    {label:"유튜브 쇼츠 스크립트 (45-60초)", fmt:"썸네일제목(15자이내) + 타임코드별스크립트 + #해시태그15개", cta:"링크는 프로필에"},
+    {label:"인스타그램 릴스 스크립트 (30-45초)", fmt:"시각적장면묘사 + 자막텍스트 + 감성캡션 + #해시태그20개", cta:"프로필 링크"},
+    {label:"틱톡 스크립트 (15-20초)", fmt:"임팩트훅(5초) + 핵심내용 + CTA + #해시태그10개", cta:"짧고 강렬하게"},
+  ].slice(0,topics.length);
+
+  const topicLines=topics.map((t,i)=>`주제${i+1}(${["유튜브","인스타","틱톡"][i]||"플랫폼"+(i+1)}): ${t.emoji} ${t.name} — ${t.desc}`).join("\n");
+  const sectionLines=platforms.map((p,i)=>`━━━━━━━━━━━━━━━━━━━━\n【${p.label}】\n형식: ${p.fmt}\n서비스: 사주마루 | CTA: "${p.cta}"`).join("\n\n");
+
+  const batchPrompt=`오늘(${today}) 사주마루 SNS 콘텐츠를 ${topics.length}개 작성해 주세요.
 ${extra?"추가 설정: "+extra:""}
 
-주제1(유튜브): ${topics[0].emoji} ${topics[0].name} — ${topics[0].desc}
-주제2(인스타): ${topics[1].emoji} ${topics[1].name} — ${topics[1].desc}
-주제3(틱톡): ${topics[2].emoji} ${topics[2].name} — ${topics[2].desc}
+${topicLines}
 
-━━━━━━━━━━━━━━━━━━━━
-【유튜브 쇼츠 스크립트 (45-60초)】
-형식: 썸네일제목(15자이내) + 타임코드별스크립트 + #해시태그15개
-서비스: 사주마루 | CTA: "링크는 프로필에"
-
-━━━━━━━━━━━━━━━━━━━━
-【인스타그램 릴스 스크립트 (30-45초)】
-형식: 시각적장면묘사 + 자막텍스트 + 감성캡션 + #해시태그20개
-서비스: 사주마루 | CTA: "프로필 링크"
-
-━━━━━━━━━━━━━━━━━━━━
-【틱톡 스크립트 (15-20초)】
-형식: 임팩트훅(5초) + 핵심내용 + CTA + #해시태그10개
-서비스: 사주마루 | 짧고 강렬하게
+${sectionLines}
 
 한국어. 각 섹션 구분선 "━━━━━━━━━━━━" 유지.`;
 
