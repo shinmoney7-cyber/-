@@ -160,6 +160,7 @@ body{padding:0 16px;padding-block:0}
   <button class="tab-btn active" onclick="switchTab('analyze')">🔮 AI 분석</button>
   <button class="tab-btn" onclick="switchTab('shorts')">🎬 쇼츠 생성</button>
   <button class="tab-btn" onclick="switchTab('biz')">💼 비즈니스</button>
+  <button class="tab-btn" onclick="switchTab('theory')">📐 사주원리</button>
 </div>
 
 <!-- ══════════════════════════════════════
@@ -623,7 +624,7 @@ let fullResultText='';
 // ─── 탭 전환 ─────────────────────────────────────────────────────────────
 function switchTab(name){
   document.querySelectorAll(".tab-btn").forEach((b,i)=>{
-    const ids=["analyze","shorts","biz"];
+    const ids=["analyze","shorts","biz","theory"];
     b.classList.toggle("active", ids[i]===name);
   });
   document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active"));
@@ -1327,3 +1328,672 @@ function copyText(id){
   });
 }
 </script>
+
+<!-- ══════════════════════════════════════
+     TAB 4: 사주원리
+══════════════════════════════════════ -->
+<div class="tab-panel" id="tab-theory">
+<style>
+.theory-section{margin-bottom:32px}
+.theory-title{font-family:var(--fdisp);font-size:15px;font-weight:800;color:var(--gold);margin-bottom:14px;padding-bottom:6px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.theory-sub{font-size:11px;color:var(--fg3);font-weight:400;margin-left:4px}
+.ohang-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:8px}
+.ohang-card{border-radius:12px;padding:12px 8px;text-align:center}
+.ohang-hanja{font-size:26px;font-weight:900;display:block;line-height:1.1}
+.ohang-hangul{font-size:13px;font-weight:700;display:block;margin:3px 0}
+.ohang-desc{font-size:10px;line-height:1.5;opacity:.85}
+.stem-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.stem-card{border-radius:10px;padding:10px 6px;text-align:center;border:1.5px solid transparent}
+.stem-hanja{font-size:20px;font-weight:900;display:block;line-height:1.1}
+.stem-kor{font-size:11px;font-weight:700;display:block;margin:2px 0}
+.stem-attr{font-size:9.5px;opacity:.8;line-height:1.4}
+.branch-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.branch-card{border-radius:10px;padding:8px 4px;text-align:center;border:1.5px solid transparent}
+.branch-hanja{font-size:18px;font-weight:900;display:block;line-height:1.1}
+.branch-kor{font-size:10px;font-weight:700;display:block;margin:1px 0}
+.branch-attr{font-size:9px;opacity:.8;line-height:1.3}
+.flow-wrap{overflow-x:auto}
+.daewoon-bar{display:flex;gap:0;margin-top:8px;border-radius:10px;overflow:hidden}
+.dw-block{flex:1;padding:10px 4px;text-align:center;font-size:10px;min-width:60px}
+.dw-block strong{display:block;font-size:13px;margin-bottom:2px}
+.sipsung-table{width:100%;border-collapse:collapse;font-size:12px}
+.sipsung-table th{background:var(--card2);padding:8px;text-align:center;font-weight:700;border:1px solid var(--border)}
+.sipsung-table td{padding:8px;border:1px solid var(--border);text-align:center;vertical-align:top;line-height:1.5}
+.yunsung-wrap{overflow-x:auto}
+.yunsung-ring{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}
+.yun-card{border-radius:8px;padding:8px 4px;text-align:center;border:1px solid var(--border)}
+.yun-name{font-size:12px;font-weight:800;display:block}
+.yun-kor{font-size:10px;display:block;margin:2px 0;opacity:.85}
+.yun-desc{font-size:9px;opacity:.7;line-height:1.4}
+.calc-box{background:var(--card);border:1.5px solid var(--border2);border-radius:12px;padding:16px;margin-bottom:12px}
+.calc-step{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
+.calc-num{width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.calc-content{flex:1}
+.calc-label{font-size:12px;font-weight:700;color:var(--fg);margin-bottom:3px}
+.calc-detail{font-size:11px;color:var(--fg2);line-height:1.6}
+.highlight-box{background:color-mix(in srgb,var(--gold) 12%,var(--card));border:1.5px solid var(--gold2);border-radius:10px;padding:12px 14px;font-size:12px;line-height:1.7;margin-top:8px}
+.saju-pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}
+.pillar{border-radius:12px;overflow:hidden;border:1.5px solid var(--border2)}
+.pillar-label{text-align:center;font-size:10px;font-weight:700;padding:6px;letter-spacing:.05em;background:var(--bg3)}
+.pillar-stem{text-align:center;font-size:28px;font-weight:900;padding:14px 8px;border-bottom:1px solid var(--border)}
+.pillar-branch{text-align:center;font-size:28px;font-weight:900;padding:14px 8px}
+.legend-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.legend-item{display:flex;align-items:center;gap:4px;font-size:11px}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+</style>
+
+<!-- ─── 1. 사주 구성 과정 ─────────────────── -->
+<div class="theory-section">
+  <div class="theory-title">① 사주팔자(四柱八字) 구성 과정 <span class="theory-sub">— 생년월일시 → 8글자</span></div>
+
+  <div class="flow-wrap">
+  <svg viewBox="0 0 620 200" style="width:100%;max-width:620px;display:block;margin:0 auto" font-family="'Noto Sans KR',sans-serif">
+    <!-- 생년월일시 박스 -->
+    <rect x="10" y="70" width="100" height="60" rx="10" fill="#2a1a50" stroke="#b87fff" stroke-width="1.5"/>
+    <text x="60" y="93" text-anchor="middle" fill="#f0e8ff" font-size="10" font-weight="700">생년월일시</text>
+    <text x="60" y="110" text-anchor="middle" fill="#a090c0" font-size="9">1990.08.15 子시</text>
+    <text x="60" y="124" text-anchor="middle" fill="#a090c0" font-size="9">남 · 양력</text>
+    <!-- 화살표 -->
+    <path d="M112 100 L140 100" stroke="#b87fff" stroke-width="2" marker-end="url(#arr)"/>
+    <defs>
+      <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+        <path d="M0,0 L6,3 L0,6 Z" fill="#b87fff"/>
+      </marker>
+    </defs>
+    <!-- 절기 달력 박스 -->
+    <rect x="142" y="60" width="90" height="80" rx="10" fill="#1a1040" stroke="#f5c842" stroke-width="1.5"/>
+    <text x="187" y="85" text-anchor="middle" fill="#f5c842" font-size="10" font-weight="800">절기 달력</text>
+    <text x="187" y="102" text-anchor="middle" fill="#a090c0" font-size="9">24절기 기준</text>
+    <text x="187" y="116" text-anchor="middle" fill="#a090c0" font-size="9">월주 결정</text>
+    <text x="187" y="130" text-anchor="middle" fill="#5ce685" font-size="9">만세력 참조</text>
+    <!-- 화살표 -->
+    <path d="M234 100 L262 100" stroke="#b87fff" stroke-width="2" marker-end="url(#arr)"/>
+    <!-- 사주팔자 4기둥 -->
+    <rect x="264" y="10" width="60" height="180" rx="10" fill="#1c1050" stroke="#ff5577" stroke-width="1.5"/>
+    <text x="294" y="32" text-anchor="middle" fill="#ff7799" font-size="9" font-weight="800">년주(年柱)</text>
+    <text x="294" y="75" text-anchor="middle" fill="#f5c842" font-size="28" font-weight="900">庚</text>
+    <line x1="274" y1="100" x2="314" y2="100" stroke="#333" stroke-width="1"/>
+    <text x="294" y="140" text-anchor="middle" fill="#7eb8ff" font-size="28" font-weight="900">午</text>
+    <text x="294" y="178" text-anchor="middle" fill="#ff7799" font-size="9">1990년</text>
+
+    <rect x="332" y="10" width="60" height="180" rx="10" fill="#1c1050" stroke="#5ce685" stroke-width="1.5"/>
+    <text x="362" y="32" text-anchor="middle" fill="#5ce685" font-size="9" font-weight="800">월주(月柱)</text>
+    <text x="362" y="75" text-anchor="middle" fill="#5ce685" font-size="28" font-weight="900">甲</text>
+    <line x1="342" y1="100" x2="372" y2="100" stroke="#333" stroke-width="1"/>
+    <text x="362" y="140" text-anchor="middle" fill="#5ce685" font-size="28" font-weight="900">申</text>
+    <text x="362" y="178" text-anchor="middle" fill="#5ce685" font-size="9">8월</text>
+
+    <rect x="400" y="10" width="60" height="180" rx="10" fill="#1c1050" stroke="#f5c842" stroke-width="1.5"/>
+    <text x="430" y="32" text-anchor="middle" fill="#f5c842" font-size="9" font-weight="800">일주(日柱)</text>
+    <text x="430" y="75" text-anchor="middle" fill="#f5c842" font-size="28" font-weight="900">壬</text>
+    <line x1="410" y1="100" x2="450" y2="100" stroke="#333" stroke-width="1"/>
+    <text x="430" y="140" text-anchor="middle" fill="#7eb8ff" font-size="28" font-weight="900">子</text>
+    <text x="430" y="178" text-anchor="middle" fill="#f5c842" font-size="9">15일</text>
+
+    <rect x="468" y="10" width="60" height="180" rx="10" fill="#1c1050" stroke="#b87fff" stroke-width="1.5"/>
+    <text x="498" y="32" text-anchor="middle" fill="#b87fff" font-size="9" font-weight="800">시주(時柱)</text>
+    <text x="498" y="75" text-anchor="middle" fill="#7eb8ff" font-size="28" font-weight="900">壬</text>
+    <line x1="478" y1="100" x2="518" y2="100" stroke="#333" stroke-width="1"/>
+    <text x="498" y="140" text-anchor="middle" fill="#7eb8ff" font-size="28" font-weight="900">子</text>
+    <text x="498" y="178" text-anchor="middle" fill="#b87fff" font-size="9">子시(23~01)</text>
+
+    <!-- 레이블 -->
+    <text x="294" y="50" text-anchor="middle" fill="#a090c0" font-size="8">천간↑</text>
+    <text x="294" y="165" text-anchor="middle" fill="#a090c0" font-size="8">↓지지</text>
+    <!-- = 8글자 -->
+    <text x="540" y="96" fill="#f5c842" font-size="11" font-weight="800">= 8자</text>
+    <text x="540" y="112" fill="#a090c0" font-size="9">사주팔자</text>
+  </svg>
+  </div>
+
+  <div class="highlight-box">
+    💡 <strong>핵심:</strong> 4기둥(년·월·일·시) × 2글자(천간+지지) = <strong style="color:var(--gold)">사주팔자(8글자)</strong><br>
+    · 일간(日干, 일주의 천간) = <strong style="color:var(--accent)">나 자신</strong>의 핵심 기운<br>
+    · 년·월주 = 조상·부모·어린시절 / 일주 = 나·배우자 / 시주 = 자식·말년
+  </div>
+</div>
+
+<!-- ─── 2. 천간 10개 ─────────────────────── -->
+<div class="theory-section">
+  <div class="theory-title">② 천간(天干) 10개 — 하늘의 기운</div>
+  <div class="stem-grid">
+    <div class="stem-card" style="background:color-mix(in srgb,#3a8a50 25%,var(--card));border-color:#3a8a50">
+      <span class="stem-hanja" style="color:#5ce685">甲</span>
+      <span class="stem-kor" style="color:#5ce685">갑·양목</span>
+      <span class="stem-attr">큰 나무·리더<br>곧고 강직함</span>
+    </div>
+    <div class="stem-card" style="background:color-mix(in srgb,#3a8a50 20%,var(--card));border-color:#3a8a50">
+      <span class="stem-hanja" style="color:#7ec885">乙</span>
+      <span class="stem-kor" style="color:#7ec885">을·음목</span>
+      <span class="stem-attr">풀·꽃·덩굴<br>유연·적응력</span>
+    </div>
+    <div class="stem-card" style="background:color-mix(in srgb,#cc2244 25%,var(--card));border-color:#cc2244">
+      <span class="stem-hanja" style="color:#ff5577">丙</span>
+      <span class="stem-kor" style="color:#ff5577">병·양화</span>
+      <span class="stem-attr">태양·밝음<br>화려·외향적</span>
+    </div>
+    <div class="stem-card" style="background:color-mix(in srgb,#cc2244 20%,var(--card));border-color:#cc2244">
+      <span class="stem-hanja" style="color:#ff8899">丁</span>
+      <span class="stem-kor" style="color:#ff8899">정·음화</span>
+      <span class="stem-attr">촛불·달빛<br>섬세·감성적</span>
+    </div>
+    <div class="stem-card" style="background:color-mix(in srgb,#c8991a 25%,var(--card));border-color:#c8991a">
+      <span class="stem-hanja" style="color:#f5c842">戊</span>
+      <span class="stem-kor" style="color:#f5c842">무·양토</span>
+      <span class="stem-attr">큰 산·대지<br>묵직·신뢰감</span>
+    </div>
+    <div class="stem-card" style="background:color-mix(in srgb,#c8991a 20%,var(--card));border-color:#c8991a">
+      <span class="stem-hanja" style="color:#f5d870">己</span>
+      <span class="stem-kor" style="color:#f5d870">기·음토</span>
+      <span class="stem-attr">논밭·평지<br>포용·실용적</span>
+    </div>
+    <div class="stem-card" style="background:color-mix(in srgb,#6080a0 25%,var(--card));border-color:#6080a0">
+      <span class="stem-hanja" style="color:#a0b8d0">庚</span>
+      <span class="stem-kor" style="color:#a0b8d0">경·양금</span>
+      <span class="stem-attr">바위·쇠<br>강직·결단력</span>
+    </div>
+    <div class="stem-card" style="background:color-mix(in srgb,#6080a0 20%,var(--card));border-color:#6080a0">
+      <span class="stem-hanja" style="color:#c8dce8">辛</span>
+      <span class="stem-kor" style="color:#c8dce8">신·음금</span>
+      <span class="stem-attr">보석·칼날<br>예민·완벽주의</span>
+    </div>
+    <div class="stem-card" style="background:color-mix(in srgb,#2244aa 30%,var(--card));border-color:#2244aa">
+      <span class="stem-hanja" style="color:#7eb8ff">壬</span>
+      <span class="stem-kor" style="color:#7eb8ff">임·양수</span>
+      <span class="stem-attr">큰 강·바다<br>지혜·스케일큰</span>
+    </div>
+    <div class="stem-card" style="background:color-mix(in srgb,#2244aa 25%,var(--card));border-color:#2244aa">
+      <span class="stem-hanja" style="color:#aad0ff">癸</span>
+      <span class="stem-kor" style="color:#aad0ff">계·음수</span>
+      <span class="stem-attr">빗물·샘<br>감성·직관력</span>
+    </div>
+  </div>
+  <div class="legend-row">
+    <div class="legend-item"><div class="legend-dot" style="background:#5ce685"></div>木(목) — 봄, 동쪽</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#ff5577"></div>火(화) — 여름, 남쪽</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f5c842"></div>土(토) — 환절기, 중앙</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#a0b8d0"></div>金(금) — 가을, 서쪽</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#7eb8ff"></div>水(수) — 겨울, 북쪽</div>
+  </div>
+</div>
+
+<!-- ─── 3. 지지 12개 ─────────────────────── -->
+<div class="theory-section">
+  <div class="theory-title">③ 지지(地支) 12개 — 땅의 기운 · 12띠</div>
+  <div class="branch-grid">
+    <div class="branch-card" style="background:color-mix(in srgb,#2244aa 30%,var(--card));border-color:#2244aa">
+      <span class="branch-hanja" style="color:#7eb8ff">子</span>
+      <span class="branch-kor" style="color:#7eb8ff">자·쥐</span>
+      <span class="branch-attr">水·北<br>11월·23~01시</span>
+    </div>
+    <div class="branch-card" style="background:color-mix(in srgb,#c8991a 25%,var(--card));border-color:#c8991a">
+      <span class="branch-hanja" style="color:#f5c842">丑</span>
+      <span class="branch-kor" style="color:#f5c842">축·소</span>
+      <span class="branch-attr">土·北<br>12월·01~03시</span>
+    </div>
+    <div class="branch-card" style="background:color-mix(in srgb,#3a8a50 25%,var(--card));border-color:#3a8a50">
+      <span class="branch-hanja" style="color:#5ce685">寅</span>
+      <span class="branch-kor" style="color:#5ce685">인·범</span>
+      <span class="branch-attr">木·東<br>1월·03~05시</span>
+    </div>
+    <div class="branch-card" style="background:color-mix(in srgb,#3a8a50 20%,var(--card));border-color:#3a8a50">
+      <span class="branch-hanja" style="color:#7ec885">卯</span>
+      <span class="branch-kor" style="color:#7ec885">묘·토끼</span>
+      <span class="branch-attr">木·東<br>2월·05~07시</span>
+    </div>
+    <div class="branch-card" style="background:color-mix(in srgb,#c8991a 25%,var(--card));border-color:#c8991a">
+      <span class="branch-hanja" style="color:#f5d870">辰</span>
+      <span class="branch-kor" style="color:#f5d870">진·용</span>
+      <span class="branch-attr">土·東<br>3월·07~09시</span>
+    </div>
+    <div class="branch-card" style="background:color-mix(in srgb,#cc2244 25%,var(--card));border-color:#cc2244">
+      <span class="branch-hanja" style="color:#ff5577">巳</span>
+      <span class="branch-kor" style="color:#ff5577">사·뱀</span>
+      <span class="branch-attr">火·南<br>4월·09~11시</span>
+    </div>
+    <div class="branch-card" style="background:color-mix(in srgb,#cc2244 20%,var(--card));border-color:#cc2244">
+      <span class="branch-hanja" style="color:#ff8899">午</span>
+      <span class="branch-kor" style="color:#ff8899">오·말</span>
+      <span class="branch-attr">火·南<br>5월·11~13시</span>
+    </div>
+    <div class="branch-card" style="background:color-mix(in srgb,#c8991a 20%,var(--card));border-color:#c8991a">
+      <span class="branch-hanja" style="color:#f5c842">未</span>
+      <span class="branch-kor" style="color:#f5c842">미·양</span>
+      <span class="branch-attr">土·南<br>6월·13~15시</span>
+    </div>
+    <div class="branch-card" style="background:color-mix(in srgb,#6080a0 25%,var(--card));border-color:#6080a0">
+      <span class="branch-hanja" style="color:#a0b8d0">申</span>
+      <span class="branch-kor" style="color:#a0b8d0">신·원숭이</span>
+      <span class="branch-attr">金·西<br>7월·15~17시</span>
+    </div>
+    <div class="branch-card" style="background:color-mix(in srgb,#6080a0 20%,var(--card));border-color:#6080a0">
+      <span class="branch-hanja" style="color:#c8dce8">酉</span>
+      <span class="branch-kor" style="color:#c8dce8">유·닭</span>
+      <span class="branch-attr">金·西<br>8월·17~19시</span>
+    </div>
+    <div class="branch-card" style="background:color-mix(in srgb,#c8991a 22%,var(--card));border-color:#c8991a">
+      <span class="branch-hanja" style="color:#f5d870">戌</span>
+      <span class="branch-kor" style="color:#f5d870">술·개</span>
+      <span class="branch-attr">土·西<br>9월·19~21시</span>
+    </div>
+    <div class="branch-card" style="background:color-mix(in srgb,#2244aa 25%,var(--card));border-color:#2244aa">
+      <span class="branch-hanja" style="color:#aad0ff">亥</span>
+      <span class="branch-kor" style="color:#aad0ff">해·돼지</span>
+      <span class="branch-attr">水·北<br>10월·21~23시</span>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 4. 오행 상생상극 ──────────────────── -->
+<div class="theory-section">
+  <div class="theory-title">④ 오행(五行) 상생상극 관계도</div>
+  <div class="flow-wrap">
+  <svg viewBox="0 0 500 300" style="width:100%;max-width:500px;display:block;margin:0 auto" font-family="'Noto Sans KR',sans-serif">
+    <!-- 오행 배치: 木(좌), 火(상), 土(중), 金(우), 水(하) -->
+    <!-- Pentagon layout: 木=왼, 火=위, 金=오른, 水=아래오른, 土=아래왼 -->
+    <defs>
+      <marker id="green-arr" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
+        <path d="M0,0 L7,3.5 L0,7 Z" fill="#5ce685" opacity=".8"/>
+      </marker>
+      <marker id="red-arr" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
+        <path d="M0,0 L7,3.5 L0,7 Z" fill="#ff5577" opacity=".8"/>
+      </marker>
+    </defs>
+    <!-- 상생 (generating) 화살표 — 외곽 순환 -->
+    <!-- 木→火 -->
+    <path d="M140 95 Q185 48 230 65" stroke="#5ce685" stroke-width="2.5" fill="none" marker-end="url(#green-arr)" opacity=".7"/>
+    <!-- 火→土 -->
+    <path d="M258 72 Q295 95 290 135" stroke="#5ce685" stroke-width="2.5" fill="none" marker-end="url(#green-arr)" opacity=".7"/>
+    <!-- 土→金 -->
+    <path d="M300 160 Q340 165 355 140" stroke="#5ce685" stroke-width="2.5" fill="none" marker-end="url(#green-arr)" opacity=".7"/>
+    <!-- 金→水 -->
+    <path d="M360 175 Q355 230 310 235" stroke="#5ce685" stroke-width="2.5" fill="none" marker-end="url(#green-arr)" opacity=".7"/>
+    <!-- 水→木 -->
+    <path d="M255 240 Q175 255 128 180" stroke="#5ce685" stroke-width="2.5" fill="none" marker-end="url(#green-arr)" opacity=".7"/>
+    <!-- 상극 (controlling) 화살표 — 내부 별형 -->
+    <!-- 木→土 -->
+    <path d="M138 158 Q195 155 282 145" stroke="#ff5577" stroke-width="1.5" fill="none" marker-end="url(#red-arr)" stroke-dasharray="5,3" opacity=".6"/>
+    <!-- 火→金 -->
+    <path d="M248 90 Q310 105 348 140" stroke="#ff5577" stroke-width="1.5" fill="none" marker-end="url(#red-arr)" stroke-dasharray="5,3" opacity=".6"/>
+    <!-- 土→水 -->
+    <path d="M278 155 Q285 200 270 232" stroke="#ff5577" stroke-width="1.5" fill="none" marker-end="url(#red-arr)" stroke-dasharray="5,3" opacity=".6"/>
+    <!-- 金→木 -->
+    <path d="M342 152 Q270 185 150 178" stroke="#ff5577" stroke-width="1.5" fill="none" marker-end="url(#red-arr)" stroke-dasharray="5,3" opacity=".6"/>
+    <!-- 水→火 -->
+    <path d="M258 228 Q230 165 242 100" stroke="#ff5577" stroke-width="1.5" fill="none" marker-end="url(#red-arr)" stroke-dasharray="5,3" opacity=".6"/>
+    <!-- 오행 원 -->
+    <circle cx="115" cy="162" r="35" fill="color-mix(in srgb,#3a8a50 35%,#181430)" stroke="#5ce685" stroke-width="2"/>
+    <text x="115" y="155" text-anchor="middle" fill="#5ce685" font-size="22" font-weight="900">木</text>
+    <text x="115" y="175" text-anchor="middle" fill="#5ce685" font-size="10">봄·동쪽·청</text>
+
+    <circle cx="248" cy="68" r="35" fill="color-mix(in srgb,#cc2244 35%,#181430)" stroke="#ff5577" stroke-width="2"/>
+    <text x="248" y="61" text-anchor="middle" fill="#ff5577" font-size="22" font-weight="900">火</text>
+    <text x="248" y="81" text-anchor="middle" fill="#ff5577" font-size="10">여름·남쪽·적</text>
+
+    <circle cx="288" cy="148" r="35" fill="color-mix(in srgb,#c8991a 35%,#181430)" stroke="#f5c842" stroke-width="2"/>
+    <text x="288" y="141" text-anchor="middle" fill="#f5c842" font-size="22" font-weight="900">土</text>
+    <text x="288" y="161" text-anchor="middle" fill="#f5c842" font-size="10">환절기·중앙·황</text>
+
+    <circle cx="368" cy="152" r="35" fill="color-mix(in srgb,#6080a0 35%,#181430)" stroke="#a0b8d0" stroke-width="2"/>
+    <text x="368" y="145" text-anchor="middle" fill="#a0b8d0" font-size="22" font-weight="900">金</text>
+    <text x="368" y="165" text-anchor="middle" fill="#a0b8d0" font-size="10">가을·서쪽·백</text>
+
+    <circle cx="280" cy="234" r="35" fill="color-mix(in srgb,#2244aa 40%,#181430)" stroke="#7eb8ff" stroke-width="2"/>
+    <text x="280" y="227" text-anchor="middle" fill="#7eb8ff" font-size="22" font-weight="900">水</text>
+    <text x="280" y="247" text-anchor="middle" fill="#7eb8ff" font-size="10">겨울·북쪽·흑</text>
+
+    <!-- 범례 -->
+    <line x1="22" y1="22" x2="52" y2="22" stroke="#5ce685" stroke-width="2"/>
+    <path d="M47,18 L53,22 L47,26 Z" fill="#5ce685"/>
+    <text x="58" y="26" fill="#5ce685" font-size="9">상생(相生) 생해줌</text>
+    <line x1="22" y1="40" x2="52" y2="40" stroke="#ff5577" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <path d="M47,36 L53,40 L47,44 Z" fill="#ff5577"/>
+    <text x="58" y="44" fill="#ff5577" font-size="9">상극(相剋) 억제함</text>
+  </svg>
+  </div>
+  <div class="highlight-box">
+    🟢 <strong>상생(生):</strong> 木생火 → 火생土 → 土생金 → 金생水 → 水생木<br>
+    🔴 <strong>상극(剋):</strong> 木극土 → 土극水 → 水극火 → 火극金 → 金극木<br>
+    💡 일간이 어떤 오행을 만나느냐에 따라 십성(十星)이 결정됨
+  </div>
+</div>
+
+<!-- ─── 5. 60갑자 순환 ────────────────────── -->
+<div class="theory-section">
+  <div class="theory-title">⑤ 60갑자(六十甲子) 순환 <span class="theory-sub">— 천간10 × 지지12 = 60년 1사이클</span></div>
+  <div class="flow-wrap">
+  <svg viewBox="0 0 580 220" style="width:100%;max-width:580px;display:block;margin:0 auto" font-family="'Noto Sans KR',sans-serif">
+    <!-- 10천간 행 -->
+    <text x="8" y="24" fill="#a090c0" font-size="9" font-weight="700">천간→</text>
+    <text x="8" y="52" fill="#a090c0" font-size="9" font-weight="700">지지↓</text>
+    <text x="8" y="72" fill="#a090c0" font-size="8">子</text>
+    <text x="8" y="92" fill="#a090c0" font-size="8">丑</text>
+    <text x="8" y="112" fill="#a090c0" font-size="8">寅</text>
+    <text x="8" y="132" fill="#a090c0" font-size="8">卯</text>
+    <text x="8" y="152" fill="#a090c0" font-size="8">辰</text>
+    <text x="8" y="172" fill="#a090c0" font-size="8">巳</text>
+    <text x="8" y="192" fill="#a090c0" font-size="8">午</text>
+    <text x="8" y="212" fill="#a090c0" font-size="8">未</text>
+    <!-- 6열 × 10행 grid (갑~기 6개씩 두 줄) -->
+    <defs>
+      <style>
+        .gj{font-size:10px;font-weight:700}
+        .gjl{font-size:7px;opacity:.7}
+      </style>
+    </defs>
+    <!-- 甲子~癸亥 순서로 배치 (6열 10행) -->
+    <!-- Row header: 甲乙丙丁戊己庚辛壬癸 -->
+    <text x="42" y="24" class="gj" fill="#5ce685">甲</text>
+    <text x="96" y="24" class="gj" fill="#7ec885">乙</text>
+    <text x="150" y="24" class="gj" fill="#ff5577">丙</text>
+    <text x="204" y="24" class="gj" fill="#ff8899">丁</text>
+    <text x="258" y="24" class="gj" fill="#f5c842">戊</text>
+    <text x="312" y="24" class="gj" fill="#f5d870">己</text>
+    <text x="366" y="24" class="gj" fill="#a0b8d0">庚</text>
+    <text x="420" y="24" class="gj" fill="#c8dce8">辛</text>
+    <text x="474" y="24" class="gj" fill="#7eb8ff">壬</text>
+    <text x="528" y="24" class="gj" fill="#aad0ff">癸</text>
+    <!-- 60갑자 조합 (색으로 오행 표시) -->
+    <!-- 甲子 乙丑 丙寅 丁卯 戊辰 己巳 庚午 辛未 壬申 癸酉 -->
+    <text x="35" y="50" fill="#ccc" font-size="8">갑자</text><text x="88" y="50" fill="#ccc" font-size="8">을축</text>
+    <text x="142" y="50" fill="#ccc" font-size="8">병인</text><text x="196" y="50" fill="#ccc" font-size="8">정묘</text>
+    <text x="250" y="50" fill="#ccc" font-size="8">무진</text><text x="304" y="50" fill="#ccc" font-size="8">기사</text>
+    <text x="358" y="50" fill="#ccc" font-size="8">경오</text><text x="412" y="50" fill="#ccc" font-size="8">신미</text>
+    <text x="466" y="50" fill="#ccc" font-size="8">임신</text><text x="520" y="50" fill="#ccc" font-size="8">계유</text>
+    <!-- 甲戌 乙亥 丙子 丁丑 戊寅 己卯 庚辰 辛巳 壬午 癸未 -->
+    <text x="35" y="70" fill="#ccc" font-size="8">갑술</text><text x="88" y="70" fill="#ccc" font-size="8">을해</text>
+    <text x="142" y="70" fill="#ccc" font-size="8">병자</text><text x="196" y="70" fill="#ccc" font-size="8">정축</text>
+    <text x="250" y="70" fill="#ccc" font-size="8">무인</text><text x="304" y="70" fill="#ccc" font-size="8">기묘</text>
+    <text x="358" y="70" fill="#ccc" font-size="8">경진</text><text x="412" y="70" fill="#ccc" font-size="8">신사</text>
+    <text x="466" y="70" fill="#ccc" font-size="8">임오</text><text x="520" y="70" fill="#ccc" font-size="8">계미</text>
+    <!-- 계속 ... -->
+    <text x="35" y="90" fill="#ccc" font-size="8">갑신</text><text x="88" y="90" fill="#ccc" font-size="8">을유</text>
+    <text x="142" y="90" fill="#ccc" font-size="8">병술</text><text x="196" y="90" fill="#ccc" font-size="8">정해</text>
+    <text x="250" y="90" fill="#ccc" font-size="8">무자</text><text x="304" y="90" fill="#ccc" font-size="8">기축</text>
+    <text x="358" y="90" fill="#ccc" font-size="8">경인</text><text x="412" y="90" fill="#ccc" font-size="8">신묘</text>
+    <text x="466" y="90" fill="#ccc" font-size="8">임진</text><text x="520" y="90" fill="#ccc" font-size="8">계사</text>
+    <text x="35" y="110" fill="#ccc" font-size="8">갑오</text><text x="88" y="110" fill="#ccc" font-size="8">을미</text>
+    <text x="142" y="110" fill="#ccc" font-size="8">병신</text><text x="196" y="110" fill="#ccc" font-size="8">정유</text>
+    <text x="250" y="110" fill="#ccc" font-size="8">무술</text><text x="304" y="110" fill="#ccc" font-size="8">기해</text>
+    <text x="358" y="110" fill="#ccc" font-size="8">경자</text><text x="412" y="110" fill="#ccc" font-size="8">신축</text>
+    <text x="466" y="110" fill="#ccc" font-size="8">임인</text><text x="520" y="110" fill="#ccc" font-size="8">계묘</text>
+    <text x="35" y="130" fill="#ccc" font-size="8">갑진</text><text x="88" y="130" fill="#ccc" font-size="8">을사</text>
+    <text x="142" y="130" fill="#ccc" font-size="8">병오</text><text x="196" y="130" fill="#ccc" font-size="8">정미</text>
+    <text x="250" y="130" fill="#ccc" font-size="8">무신</text><text x="304" y="130" fill="#ccc" font-size="8">기유</text>
+    <text x="358" y="130" fill="#ccc" font-size="8">경술</text><text x="412" y="130" fill="#ccc" font-size="8">신해</text>
+    <text x="466" y="130" fill="#ccc" font-size="8">임자</text><text x="520" y="130" fill="#ccc" font-size="8">계축</text>
+    <text x="35" y="150" fill="#ccc" font-size="8">갑인</text><text x="88" y="150" fill="#ccc" font-size="8">을묘</text>
+    <text x="142" y="150" fill="#ccc" font-size="8">병진</text><text x="196" y="150" fill="#ccc" font-size="8">정사</text>
+    <text x="250" y="150" fill="#ccc" font-size="8">무오</text><text x="304" y="150" fill="#ccc" font-size="8">기미</text>
+    <text x="358" y="150" fill="#ccc" font-size="8">경신</text><text x="412" y="150" fill="#ccc" font-size="8">신유</text>
+    <text x="466" y="150" fill="#ccc" font-size="8">임술</text><text x="520" y="150" fill="#ccc" font-size="8">계해</text>
+    <text x="145" y="175" fill="#f5c842" font-size="9" font-weight="700">↑ 총 60가지 조합 = 60년 주기 완성 (환갑 = 60년 후 같은 간지로 돌아옴)</text>
+  </svg>
+  </div>
+</div>
+
+<!-- ─── 6. 대운 계산법 ────────────────────── -->
+<div class="theory-section">
+  <div class="theory-title">⑥ 대운(大運) 계산법 <span class="theory-sub">— 10년 주기 큰 운의 흐름</span></div>
+
+  <div class="calc-box">
+    <div class="calc-step">
+      <div class="calc-num">1</div>
+      <div class="calc-content">
+        <div class="calc-label">순행·역행 결정</div>
+        <div class="calc-detail">
+          🔵 <strong>순행(남성 양년생 / 여성 음년생)</strong>: 월주 다음 절기로 진행<br>
+          🔴 <strong>역행(남성 음년생 / 여성 양년생)</strong>: 월주 이전 절기로 역행<br>
+          <em style="color:var(--fg3)">→ 양년생: 甲·丙·戊·庚·壬년 / 음년생: 乙·丁·己·辛·癸년</em>
+        </div>
+      </div>
+    </div>
+    <div class="calc-step">
+      <div class="calc-num">2</div>
+      <div class="calc-content">
+        <div class="calc-label">대운 시작 나이 계산</div>
+        <div class="calc-detail">
+          생일 → (순행: 다음 절기 / 역행: 이전 절기) 까지 남은 날수<br>
+          <strong style="color:var(--gold)">날수 ÷ 3 = 대운 시작 나이</strong><br>
+          <em style="color:var(--fg3)">예: 15일 남았다면 → 5세에 첫 대운 시작</em>
+        </div>
+      </div>
+    </div>
+    <div class="calc-step">
+      <div class="calc-num">3</div>
+      <div class="calc-content">
+        <div class="calc-label">이후 10년씩 순환</div>
+        <div class="calc-detail">
+          월주 간지에서 시작해 60갑자 순서로 10년씩 진행<br>
+          <em style="color:var(--fg3)">각 대운의 천간 5년 → 지지 5년으로 세분화 가능</em>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 대운 타임라인 -->
+  <div style="font-size:11px;color:var(--fg2);margin-bottom:8px">예시) 5세 대운 시작, 甲月주 → 순행</div>
+  <div class="daewoon-bar">
+    <div class="dw-block" style="background:color-mix(in srgb,#3a8a50 25%,var(--card))">
+      <strong style="color:#5ce685">甲子</strong>5~14세<br><span style="color:#a090c0;font-size:9px">木水·성장기</span>
+    </div>
+    <div class="dw-block" style="background:color-mix(in srgb,#5ce685 15%,var(--card))">
+      <strong style="color:#7ec885">乙丑</strong>15~24세<br><span style="color:#a090c0;font-size:9px">木土·청년기</span>
+    </div>
+    <div class="dw-block" style="background:color-mix(in srgb,#cc2244 25%,var(--card))">
+      <strong style="color:#ff5577">丙寅</strong>25~34세<br><span style="color:#a090c0;font-size:9px">火木·활동기</span>
+    </div>
+    <div class="dw-block" style="background:color-mix(in srgb,#cc2244 20%,var(--card))">
+      <strong style="color:#ff8899">丁卯</strong>35~44세<br><span style="color:#a090c0;font-size:9px">火木·전성기</span>
+    </div>
+    <div class="dw-block" style="background:color-mix(in srgb,#c8991a 25%,var(--card))">
+      <strong style="color:#f5c842">戊辰</strong>45~54세<br><span style="color:#a090c0;font-size:9px">土土·안정기</span>
+    </div>
+    <div class="dw-block" style="background:color-mix(in srgb,#c8991a 20%,var(--card))">
+      <strong style="color:#f5d870">己巳</strong>55~64세<br><span style="color:#a090c0;font-size:9px">土火·원숙기</span>
+    </div>
+    <div class="dw-block" style="background:color-mix(in srgb,#6080a0 25%,var(--card))">
+      <strong style="color:#a0b8d0">庚午</strong>65~74세<br><span style="color:#a090c0;font-size:9px">金火·후반기</span>
+    </div>
+    <div class="dw-block" style="background:color-mix(in srgb,#6080a0 20%,var(--card))">
+      <strong style="color:#c8dce8">辛未</strong>75~84세<br><span style="color:#a090c0;font-size:9px">金土·노년기</span>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 7. 세운·월운·일운 ──────────────────── -->
+<div class="theory-section">
+  <div class="theory-title">⑦ 세운·월운·일운 주기 <span class="theory-sub">— 대운 위에 겹치는 단기 운</span></div>
+
+  <div class="flow-wrap">
+  <svg viewBox="0 0 560 140" style="width:100%;max-width:560px;display:block;margin:0 auto" font-family="'Noto Sans KR',sans-serif">
+    <!-- 층위 다이어그램 -->
+    <!-- 사주 원국 (바닥) -->
+    <rect x="10" y="110" width="540" height="24" rx="6" fill="color-mix(in srgb,#b87fff 20%,#181430)" stroke="#b87fff" stroke-width="1.5"/>
+    <text x="280" y="126" text-anchor="middle" fill="#b87fff" font-size="10" font-weight="700">사주 원국 (태어날 때 타고난 고정 기운)</text>
+    <!-- 대운 (10년) -->
+    <rect x="10" y="82" width="540" height="24" rx="6" fill="color-mix(in srgb,#f5c842 15%,#181430)" stroke="#f5c842" stroke-width="1.5"/>
+    <text x="280" y="98" text-anchor="middle" fill="#f5c842" font-size="10" font-weight="700">대운 大運 — 10년 주기 (가장 큰 흐름 결정)</text>
+    <!-- 세운 (1년) -->
+    <rect x="10" y="54" width="540" height="24" rx="6" fill="color-mix(in srgb,#5ce685 15%,#181430)" stroke="#5ce685" stroke-width="1.5"/>
+    <text x="280" y="70" text-anchor="middle" fill="#5ce685" font-size="10" font-weight="700">세운 歲運 (流年) — 1년 주기 (그 해의 간지)</text>
+    <!-- 월운 -->
+    <rect x="10" y="28" width="540" height="22" rx="6" fill="color-mix(in srgb,#7eb8ff 15%,#181430)" stroke="#7eb8ff" stroke-width="1.5"/>
+    <text x="280" y="43" text-anchor="middle" fill="#7eb8ff" font-size="10" font-weight="700">월운 月運 — 월별 주기 / 일운 日運 — 일별 주기</text>
+    <!-- 화살표 층위 -->
+    <text x="8" y="18" fill="#a090c0" font-size="8">▲ 단기</text>
+    <text x="8" y="135" fill="#a090c0" font-size="8">▼ 장기</text>
+  </svg>
+  </div>
+
+  <div class="highlight-box">
+    💡 <strong>겹치는 원리:</strong> 사주원국(기반) + 대운(10년 환경) + 세운(그 해 기운) + 월운<br>
+    → 셋이 겹치는 시점에 인생의 <strong style="color:var(--gold)">전환점</strong>이 만들어짐<br>
+    → 2026년 丙午년: 병(丙)=양화, 오(午)=화 → <strong style="color:var(--red)">火의 해</strong>
+  </div>
+
+  <!-- 2026~2035 세운 타임라인 -->
+  <div style="font-size:11px;color:var(--fg2);margin:12px 0 6px">연도별 세운(歲運) — 2026~2035</div>
+  <div class="daewoon-bar">
+    <div class="dw-block" style="background:color-mix(in srgb,#cc2244 30%,var(--card))"><strong style="color:#ff5577;font-size:11px">丙午</strong><br><span style="font-size:9px;color:#a090c0">2026<br>火火</span></div>
+    <div class="dw-block" style="background:color-mix(in srgb,cc2244 20%,var(--card))"><strong style="color:#ff8899;font-size:11px">丁未</strong><br><span style="font-size:9px;color:#a090c0">2027<br>火土</span></div>
+    <div class="dw-block" style="background:color-mix(in srgb,#c8991a 25%,var(--card))"><strong style="color:#f5c842;font-size:11px">戊申</strong><br><span style="font-size:9px;color:#a090c0">2028<br>土金</span></div>
+    <div class="dw-block" style="background:color-mix(in srgb,#c8991a 20%,var(--card))"><strong style="color:#f5d870;font-size:11px">己酉</strong><br><span style="font-size:9px;color:#a090c0">2029<br>土金</span></div>
+    <div class="dw-block" style="background:color-mix(in srgb,#6080a0 25%,var(--card))"><strong style="color:#a0b8d0;font-size:11px">庚戌</strong><br><span style="font-size:9px;color:#a090c0">2030<br>金土</span></div>
+    <div class="dw-block" style="background:color-mix(in srgb,#6080a0 20%,var(--card))"><strong style="color:#c8dce8;font-size:11px">辛亥</strong><br><span style="font-size:9px;color:#a090c0">2031<br>金水</span></div>
+    <div class="dw-block" style="background:color-mix(in srgb,#2244aa 30%,var(--card))"><strong style="color:#7eb8ff;font-size:11px">壬子</strong><br><span style="font-size:9px;color:#a090c0">2032<br>水水</span></div>
+    <div class="dw-block" style="background:color-mix(in srgb,#2244aa 25%,var(--card))"><strong style="color:#aad0ff;font-size:11px">癸丑</strong><br><span style="font-size:9px;color:#a090c0">2033<br>水土</span></div>
+    <div class="dw-block" style="background:color-mix(in srgb,#3a8a50 30%,var(--card))"><strong style="color:#5ce685;font-size:11px">甲寅</strong><br><span style="font-size:9px;color:#a090c0">2034<br>木木</span></div>
+    <div class="dw-block" style="background:color-mix(in srgb,#3a8a50 20%,var(--card))"><strong style="color:#7ec885;font-size:11px">乙卯</strong><br><span style="font-size:9px;color:#a090c0">2035<br>木木</span></div>
+  </div>
+</div>
+
+<!-- ─── 8. 12운성 사이클 ──────────────────── -->
+<div class="theory-section">
+  <div class="theory-title">⑧ 12운성(十二運星) — 생명의 12단계 사이클</div>
+  <div class="yunsung-ring">
+    <div class="yun-card" style="border-color:#5ce685;background:color-mix(in srgb,#5ce685 12%,var(--card))">
+      <span class="yun-name" style="color:#5ce685">長生</span>
+      <span class="yun-kor">장생</span>
+      <span class="yun-desc">새 출발·성장 시작<br>새 직장·사업 시작</span>
+    </div>
+    <div class="yun-card" style="border-color:#7eb8ff;background:color-mix(in srgb,#7eb8ff 12%,var(--card))">
+      <span class="yun-name" style="color:#7eb8ff">沐浴</span>
+      <span class="yun-kor">목욕</span>
+      <span class="yun-desc">변화·감정기복<br>도화·인기·이성운</span>
+    </div>
+    <div class="yun-card" style="border-color:#f5c842;background:color-mix(in srgb,#f5c842 12%,var(--card))">
+      <span class="yun-name" style="color:#f5c842">冠帶</span>
+      <span class="yun-kor">관대</span>
+      <span class="yun-desc">발전·인정받음<br>취업·독립·승진</span>
+    </div>
+    <div class="yun-card" style="border-color:#f5c842;background:color-mix(in srgb,#f5c842 15%,var(--card))">
+      <span class="yun-name" style="color:#f5c842">建祿</span>
+      <span class="yun-kor">건록</span>
+      <span class="yun-desc">독립·자립·전성<br>재물·명예 확립</span>
+    </div>
+    <div class="yun-card" style="border-color:#ff5577;background:color-mix(in srgb,#ff5577 15%,var(--card))">
+      <span class="yun-name" style="color:#ff5577">帝旺</span>
+      <span class="yun-kor">제왕</span>
+      <span class="yun-desc">최강에너지·리더<br>인생 최전성기</span>
+    </div>
+    <div class="yun-card" style="border-color:#a0b8d0;background:color-mix(in srgb,#a0b8d0 12%,var(--card))">
+      <span class="yun-name" style="color:#a0b8d0">衰</span>
+      <span class="yun-kor">쇠</span>
+      <span class="yun-desc">안정·보수<br>지키는 운기</span>
+    </div>
+    <div class="yun-card" style="border-color:#ff8899;background:color-mix(in srgb,#ff8899 10%,var(--card))">
+      <span class="yun-name" style="color:#ff8899">病</span>
+      <span class="yun-kor">병</span>
+      <span class="yun-desc">건강주의·예민<br>감수성 높음</span>
+    </div>
+    <div class="yun-card" style="border-color:#6a5a8a;background:color-mix(in srgb,#6a5a8a 15%,var(--card))">
+      <span class="yun-name" style="color:#9080b0">死</span>
+      <span class="yun-kor">사</span>
+      <span class="yun-desc">내면성찰·종교<br>철학·명상·학문</span>
+    </div>
+    <div class="yun-card" style="border-color:#f5c842;background:color-mix(in srgb,#f5c842 10%,var(--card))">
+      <span class="yun-name" style="color:#f5d870">墓</span>
+      <span class="yun-kor">묘</span>
+      <span class="yun-desc">저장·축적<br>재물 모으는 운</span>
+    </div>
+    <div class="yun-card" style="border-color:#6080a0;background:color-mix(in srgb,#6080a0 12%,var(--card))">
+      <span class="yun-name" style="color:#a0b8d0">絶</span>
+      <span class="yun-kor">절</span>
+      <span class="yun-desc">단절·비움<br>새 시작 직전</span>
+    </div>
+    <div class="yun-card" style="border-color:#5ce685;background:color-mix(in srgb,#5ce685 10%,var(--card))">
+      <span class="yun-name" style="color:#7ec885">胎</span>
+      <span class="yun-kor">태</span>
+      <span class="yun-desc">씨앗·계획<br>잉태·준비</span>
+    </div>
+    <div class="yun-card" style="border-color:#5ce685;background:color-mix(in srgb,#5ce685 10%,var(--card))">
+      <span class="yun-name" style="color:#5ce685">養</span>
+      <span class="yun-kor">양</span>
+      <span class="yun-desc">준비·수련<br>기반 다지기</span>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 9. 십성(十星) 표 ──────────────────── -->
+<div class="theory-section">
+  <div class="theory-title">⑨ 십성(十星) — 일간과의 관계로 결정</div>
+  <div class="flow-wrap">
+  <table class="sipsung-table">
+    <thead>
+      <tr>
+        <th>분류</th><th>십성</th><th>관계</th><th>의미</th><th>직업/인물</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td rowspan="2" style="background:color-mix(in srgb,#3a8a50 15%,var(--card));color:#5ce685;font-weight:800">인성<br>印星</td>
+        <td style="color:#5ce685;font-weight:700">정인<br>正印</td>
+        <td>나를 生해주는<br>같은 음양</td>
+        <td>학문·어머니<br>문서·자격증·보수적</td>
+        <td>교사·공무원<br>학자·종교인</td>
+      </tr>
+      <tr>
+        <td style="color:#7ec885;font-weight:700">편인<br>偏印</td>
+        <td>나를 生해주는<br>다른 음양</td>
+        <td>기술·창의력<br>독특·예술·직관</td>
+        <td>예술가·프리랜서<br>의사·심리상담</td>
+      </tr>
+      <tr>
+        <td rowspan="2" style="background:color-mix(in srgb,#7eb8ff 12%,var(--card));color:#7eb8ff;font-weight:800">비겁<br>比劫</td>
+        <td style="color:#7eb8ff;font-weight:700">비견<br>比肩</td>
+        <td>나와 같은 오행<br>같은 음양</td>
+        <td>자존심·독립심<br>형제·동료·경쟁</td>
+        <td>자영업·자수성가<br>운동선수</td>
+      </tr>
+      <tr>
+        <td style="color:#aad0ff;font-weight:700">겁재<br>劫財</td>
+        <td>나와 같은 오행<br>다른 음양</td>
+        <td>경쟁심·승부욕<br>도전·재물변동</td>
+        <td>영업·투자<br>승부업종</td>
+      </tr>
+      <tr>
+        <td rowspan="2" style="background:color-mix(in srgb,#cc2244 15%,var(--card));color:#ff5577;font-weight:800">식상<br>食傷</td>
+        <td style="color:#ff5577;font-weight:700">식신<br>食神</td>
+        <td>내가 生하는<br>같은 음양</td>
+        <td>재능·먹복·창의성<br>여유·자식운(여)</td>
+        <td>요리사·예술가<br>유튜버·크리에이터</td>
+      </tr>
+      <tr>
+        <td style="color:#ff8899;font-weight:700">상관<br>傷官</td>
+        <td>내가 生하는<br>다른 음양</td>
+        <td>표현력·자유·반항<br>예술·창조·구설</td>
+        <td>연예인·작가<br>디자이너·강사</td>
+      </tr>
+      <tr>
+        <td rowspan="2" style="background:color-mix(in srgb,#f5c842 12%,var(--card));color:#f5c842;font-weight:800">재성<br>財星</td>
+        <td style="color:#f5c842;font-weight:700">정재<br>正財</td>
+        <td>내가 剋하는<br>같은 음양</td>
+        <td>정직한 노력·월급<br>저축·배우자(남)</td>
+        <td>회사원·공무원<br>재무·회계</td>
+      </tr>
+      <tr>
+        <td style="color:#f5d870;font-weight:700">편재<br>偏財</td>
+        <td>내가 剋하는<br>다른 음양</td>
+        <td>투자·사업·현금<br>무역·아버지</td>
+        <td>사업가·투자자<br>트레이더·무역</td>
+      </tr>
+      <tr>
+        <td rowspan="2" style="background:color-mix(in srgb,#b87fff 12%,var(--card));color:#b87fff;font-weight:800">관성<br>官星</td>
+        <td style="color:#b87fff;font-weight:700">정관<br>正官</td>
+        <td>나를 剋하는<br>같은 음양</td>
+        <td>규칙·직책·책임<br>명예·남편(여)</td>
+        <td>관리자·임원<br>공무원·법조인</td>
+      </tr>
+      <tr>
+        <td style="color:#d8aaff;font-weight:700">편관<br>偏官</td>
+        <td>나를 剋하는<br>다른 음양</td>
+        <td>강한 추진력·권력<br>군인기질·도전</td>
+        <td>군인·경찰<br>의사·검사</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+</div><!-- /#tab-theory -->
