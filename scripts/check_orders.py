@@ -30,7 +30,7 @@ MENU_NAMES = [
     "성향·기질 분석", "평생운", "연애운", "배우자운·결혼운", "재물운",
     "건강운", "대운·세운", "부모운", "자식운", "형제간운", "새해운세",
     "월별운세", "수능·입시운", "재회운", "사업운", "이혼·결별운",
-    "도화살 전문분석", "이런 사람 만나지 마라",
+    "도화살 전문분석", "이런 사람 만나지 마라", "친구·우정운",
 ]
 
 
@@ -157,7 +157,7 @@ def run():
         return
 
     sys.path.insert(0, str(Path(__file__).parent))
-    from fl_order import place_order
+    from saju_analysis import process_order_with_analysis
 
     for eid in email_ids:
         _, data = mail.fetch(eid, "(RFC822)")
@@ -178,13 +178,16 @@ def run():
 
         all_ok = True
         for order in orders:
-            result = place_order(order)
-            if result.get("success"):
-                dm = order.get("delivery_method", "이메일")
-                dc = order.get("delivery_contact", "")
-                print(f"  ✅ {order['product']} → FL 주문 완료 [{dm}: {dc}]: {result.get('url')}")
+            results = process_order_with_analysis(order)
+            fl_res  = results.get("fl", {})
+            ai_res  = results.get("analysis", {})
+            dm = order.get("delivery_method", "이메일")
+            dc = order.get("delivery_contact", "")
+            if fl_res.get("success"):
+                ai_note = "AI분석메일 발송" if ai_res.get("success") else "AI분석 스킵"
+                print(f"  ✅ {order['product']} → FL완료 + {ai_note} [{dm}: {dc}]: {fl_res.get('url')}")
             else:
-                print(f"  ❌ {order['product']} → 실패: {result.get('error')}")
+                print(f"  ❌ {order['product']} → FL실패: {fl_res.get('error')}")
                 all_ok = False
 
         if all_ok:
