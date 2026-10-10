@@ -146,6 +146,57 @@ body{padding:0 16px;padding-block:0}
 .chip{display:inline-flex;align-items:center;padding:5px 10px;border-radius:20px;font-size:12px;font-weight:600;background:var(--card);border:1.5px solid var(--border);color:var(--fg2);cursor:pointer;transition:all .15s;user-select:none}
 .chip:hover{border-color:var(--border2);color:var(--fg)}
 .chip.on{background:color-mix(in srgb,var(--accent) 15%,var(--card));border-color:var(--accent);color:var(--accent)}
+/* ── 보고서 섹션 ── */
+.rpt-sec{padding:16px 20px;border-bottom:1px solid var(--border)}
+.rpt-sec:last-child{border-bottom:none}
+.rpt-sec-title{font-size:13px;font-weight:700;color:var(--accent);border-left:3px solid var(--accent);padding-left:9px;margin-bottom:12px;letter-spacing:.03em}
+/* 사주 원국표 */
+.saju-tbl{width:100%;border-collapse:collapse;font-size:13px}
+.saju-tbl th,.saju-tbl td{border:1px solid var(--border);text-align:center;padding:8px 4px}
+.saju-tbl th{background:var(--bg3);color:var(--fg2);font-weight:600;font-size:11px}
+.saju-tbl .gan{font-size:18px;font-weight:700;font-family:var(--fdisp)}
+.saju-tbl .ji{font-size:18px;font-weight:700;font-family:var(--fdisp)}
+.saju-tbl .jjg{font-size:10px;color:var(--fg3)}
+.oh-목{color:#4ade80}.oh-화{color:#f87171}.oh-토{color:#fbbf24}.oh-금{color:#e2e8f0}.oh-수{color:#60a5fa}
+/* 오행 가로 분포 */
+.ohang-wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.ohang-wrap svg{flex-shrink:0}
+.ohang-legend{display:flex;flex-direction:column;gap:7px;font-size:12px}
+.ohang-legend-row{display:flex;align-items:center;gap:7px}
+.ohang-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+/* 십성 바 (가로) */
+.sip10-list{display:flex;flex-direction:column;gap:7px}
+.sip10-row{display:flex;align-items:center;gap:8px}
+.sip10-lbl{width:52px;font-size:11px;color:var(--fg2);text-align:right;flex-shrink:0}
+.sip10-track{flex:1;background:var(--bg3);border-radius:4px;height:8px}
+.sip10-fill{height:100%;border-radius:4px;transition:width .4s}
+.sip10-cnt{width:18px;font-size:11px;color:var(--fg3);flex-shrink:0}
+/* 대운 타임라인 */
+.dw-list{display:flex;flex-direction:column}
+.dw-item{display:flex;gap:10px;align-items:stretch}
+.dw-line{display:flex;flex-direction:column;align-items:center;width:18px;flex-shrink:0}
+.dw-dot{width:9px;height:9px;border-radius:50%;background:var(--accent);margin-top:5px;flex-shrink:0}
+.dw-conn{flex:1;width:2px;background:var(--border);margin:2px 0}
+.dw-body{padding-bottom:16px;flex:1}
+.dw-age{font-size:10px;color:var(--fg3);margin-bottom:2px}
+.dw-stem{font-size:15px;font-weight:700;font-family:var(--fdisp);margin-bottom:3px}
+.dw-tag{display:inline-block;font-size:9px;padding:1px 6px;border-radius:9px;margin-left:5px;vertical-align:middle}
+.dw-up{background:rgba(92,230,133,.15);color:#5ce685}
+.dw-flat{background:rgba(245,200,66,.15);color:#f5c842}
+.dw-down{background:rgba(255,85,119,.15);color:#ff5577}
+.dw-desc{font-size:12px;color:var(--fg2)}
+/* 신살 배지 */
+.sal-list{display:flex;flex-wrap:wrap;gap:8px}
+.sal-badge{background:var(--bg3);border:1px solid var(--border);border-radius:18px;padding:5px 12px;font-size:12px}
+.sal-badge strong{color:var(--accent);margin-right:4px}
+/* 개운법 */
+.gae-list{display:flex;flex-direction:column;gap:9px}
+.gae-item{display:flex;gap:10px;align-items:flex-start}
+.gae-icon{font-size:17px;flex-shrink:0;margin-top:1px}
+.gae-body{font-size:12px;color:var(--fg2)}
+.gae-body strong{color:var(--fg)}
+/* 분석 내용 텍스트 */
+.narrative{padding:0;font-size:13.5px;line-height:1.9;white-space:pre-line;color:var(--fg);max-height:70vh;overflow-y:auto}
 </style>
 
 <!-- 헤더 -->
@@ -813,30 +864,49 @@ ${sections.join('\n\n')}
         ${uploadedImgUrl?`<img src="${uploadedImgUrl}" alt="프로필">`:''}
         <div class="rh-info">
           <div class="rh-name">${name}님 사주 분석</div>
-          <div class="rh-meta">${year}.${month}.${day} ${calNote} · ${timeStr} · ${reportType}섹션</div>
+          <div class="rh-meta">${year}.${month}.${day} ${calNote} · ${timeStr} · ${selected.map(m=>m.name).join(', ')}</div>
         </div>
       </div>
-      <div style="padding:14px 20px 0">
-        <div id="chartsGrid" style="display:none">
-          <div class="chart-grid">
-            <div class="chart-card">
-              <div class="chart-title">🌊 오행 분포</div>
-              <div id="ohangSvg"></div>
-              <div class="chart-legend" id="ohangLegend"></div>
-            </div>
-            <div class="chart-card">
-              <div class="chart-title">💎 십성 분포</div>
-              <div id="sipSvg"></div>
-            </div>
-          </div>
-          <div class="chart-card wide" style="margin-bottom:14px">
-            <div class="chart-title">📅 2026년 월별 운세 강도</div>
-            <div id="monthSvg"></div>
-          </div>
-        </div>
-        <div id="chartLoading" style="text-align:center;padding:14px;font-size:12px;color:var(--fg3)">📊 차트 데이터 계산 중...</div>
+      <!-- ① 사주 원국 -->
+      <div class="rpt-sec" id="sec-saju">
+        <div class="rpt-sec-title">① 사주 원국 구성</div>
+        <div id="sajuTableWrap"><div style="font-size:12px;color:var(--fg3);padding:8px 0">⏳ 사주 계산 중...</div></div>
       </div>
-      <div class="result-body" id="mainResult">${fullResultText||"분석 결과가 없습니다."}</div>
+      <!-- ② 오행 -->
+      <div class="rpt-sec" id="sec-ohang">
+        <div class="rpt-sec-title">② 오행(五行) 강약 분석</div>
+        <div id="ohangWrap"><div style="font-size:12px;color:var(--fg3)">⏳ 계산 중...</div></div>
+      </div>
+      <!-- ③ 십성 -->
+      <div class="rpt-sec" id="sec-sip">
+        <div class="rpt-sec-title">③ 십성(十星) 구성 분석</div>
+        <div id="sipWrap"><div style="font-size:12px;color:var(--fg3)">⏳ 계산 중...</div></div>
+      </div>
+      <!-- ④ 대운 -->
+      <div class="rpt-sec" id="sec-dw">
+        <div class="rpt-sec-title">④ 대운(大運) 10년 주기 흐름</div>
+        <div id="daewoonWrap"><div style="font-size:12px;color:var(--fg3)">⏳ 계산 중...</div></div>
+      </div>
+      <!-- ⑤ 신살 -->
+      <div class="rpt-sec" id="sec-sal">
+        <div class="rpt-sec-title">⑤ 주요 신살(神殺)</div>
+        <div id="shinsalWrap"><div style="font-size:12px;color:var(--fg3)">⏳ 계산 중...</div></div>
+      </div>
+      <!-- ⑥ 월별운세 -->
+      <div class="rpt-sec" id="sec-mon">
+        <div class="rpt-sec-title">⑥ 2026년 월별 운세 강도</div>
+        <div id="monthSvgWrap"><div style="font-size:12px;color:var(--fg3)">⏳ 계산 중...</div></div>
+      </div>
+      <!-- ⑦ 개운법 -->
+      <div class="rpt-sec" id="sec-gae">
+        <div class="rpt-sec-title">⑦ 핵심 개운법(開運法)</div>
+        <div id="gaewoonWrap"><div style="font-size:12px;color:var(--fg3)">⏳ 계산 중...</div></div>
+      </div>
+      <!-- ⑧ AI 상세 분석 -->
+      <div class="rpt-sec">
+        <div class="rpt-sec-title">⑧ AI 상세 분석 보고서</div>
+        <div class="narrative" id="mainResult">${fullResultText||''}</div>
+      </div>
     </div>`;
   show("resultsView");
   show("doneActions");
@@ -1091,31 +1161,203 @@ const SIP_COLORS=["#b87fff","#7eb8ff","#5ce685","#f5c842","#ff7755"];
 const SIP_KEYS=["인성","비겁","식상","재성","관성"];
 
 async function fetchAndRenderCharts(name,year,month,day,gender,cal,timeStr){
-  const cg=document.getElementById("chartsGrid");
-  const cl=document.getElementById("chartLoading");
-  if(!sampleCap||!cg){if(cl)cl.hidden=true;return;}
+  if(!sampleCap) return;
   const calNote=cal==="음력"?"(음력)":"(양력)";
-  const chartPrompt=`사주를 계산하여 아래 JSON만 출력하세요. 다른 텍스트 없이 JSON만.
+  const jp=`사주를 정확히 계산하여 JSON만 출력하세요. 다른 설명 없이 JSON만.
 의뢰인: ${name}/${gender}/${year}년${month}월${day}일${calNote}/${timeStr}
 
-{"ohang":{"목":숫자,"화":숫자,"토":숫자,"금":숫자,"수":숫자},"sipsung":{"인성":숫자,"비겁":숫자,"식상":숫자,"재성":숫자,"관성":숫자},"monthly2026":[1월~12월운강도숫자0-100,12개]}`;
+{
+  "saju":{
+    "nyeon":{"gan":"한자(독음)","ji":"한자(독음)","jjg":"지장간한자","ganOh":"목|화|토|금|수","jiOh":"목|화|토|금|수","jiNote":"신살있으면표기"},
+    "wol":{"gan":"","ji":"","jjg":"","ganOh":"","jiOh":"","jiNote":""},
+    "il":{"gan":"","ji":"","jjg":"","ganOh":"","jiOh":"","jiNote":""},
+    "si":{"gan":"","ji":"","jjg":"","ganOh":"","jiOh":"","jiNote":""}
+  },
+  "ilju_name":"○○일주",
+  "ilju_desc":"일주 핵심 특성 2문장",
+  "yongshin":{"yong":"오행","gi":"오행","hee":"오행"},
+  "ohang":{"목":숫자,"화":숫자,"토":숫자,"금":숫자,"수":숫자},
+  "ohang_desc":"오행 해석 1문장",
+  "sipsung":{"비견":0,"겁재":0,"식신":0,"상관":0,"편재":0,"정재":0,"편관":0,"정관":0,"편인":0,"정인":0},
+  "sipsung_desc":"십성 핵심 해석 2문장",
+  "daewoon":[
+    {"ageFrom":숫자,"ageTo":숫자,"gan":"한자(독음)","ji":"한자(독음)","ganOh":"목|화|토|금|수","jiOh":"목|화|토|금|수","trend":"up|flat|down","desc":"특성 1문장"}
+  ],
+  "shinsal":[{"name":"신살명","desc":"특성 1문장"}],
+  "gaewoon":[{"icon":"이모지","title":"제목","desc":"설명 1문장"}],
+  "monthly2026":[숫자0-100,숫자,숫자,숫자,숫자,숫자,숫자,숫자,숫자,숫자,숫자,숫자]
+}`;
   try{
-    const data=await sampleCap.json(chartPrompt,{modelTier:"quick",cache:false});
-    if(cl)cl.hidden=true;
-    renderOhangDonut(data.ohang||{목:2,화:1,토:2,금:2,수:1});
-    renderSipBar(data.sipsung||{인성:2,비겁:1,식상:1,재성:2,관성:2});
-    renderMonthlyLine(data.monthly2026||[72,85,65,90,88,70,75,82,95,68,78,80]);
-    cg.style.display="block";
+    const d=await sampleCap.json(jp,{modelTier:"default",cache:false});
+    renderSajuTable(d.saju, d.ilju_name, d.ilju_desc, d.yongshin);
+    renderOhangSection(d.ohang||{목:2,화:2,토:1,금:2,수:1}, d.ohang_desc||"");
+    renderSip10(d.sipsung||{비견:1,겁재:0,식신:1,상관:1,편재:1,정재:0,편관:1,정관:0,편인:1,정인:0}, d.sipsung_desc||"");
+    renderDaewoon(d.daewoon||[]);
+    renderShinsal(d.shinsal||[]);
+    renderMonthlyLine2(d.monthly2026||[70,75,65,85,80,70,72,80,90,68,74,78]);
+    renderGaewoon(d.gaewoon||[]);
   }catch(e){
-    if(cl)cl.hidden=true;
-    // Fallback: render approximate charts based on birth data
-    const seed=(year*month*day)%100;
-    renderOhangDonut({목:1+(seed%3),화:seed%2,토:1+((seed*3)%2),금:1+(seed%2),수:(seed*7)%3});
-    renderSipBar({인성:1+(seed%3),비겁:seed%2,식상:1+(seed%2),재성:(seed*5)%3,관성:1+((seed*2)%2)});
-    const m12=Array.from({length:12},(_,i)=>55+Math.round(Math.sin((i+seed)*0.6)*30));
-    renderMonthlyLine(m12);
-    cg.style.display="block";
+    const seed=(year*month*day)%97;
+    renderOhangSection({목:1+(seed%3),화:seed%3,토:1+((seed*3)%2),금:1+(seed%2),수:(seed*7)%3},"오행 기반 분석");
+    renderSip10({비견:1,겁재:0,식신:1,상관:1,편재:1,정재:0,편관:2,정관:0,편인:1,정인:0},"십성 기반 분석");
+    renderMonthlyLine2(Array.from({length:12},(_,i)=>55+Math.round(Math.sin((i+seed)*0.6)*30)));
+    ["sajuTableWrap","daewoonWrap","shinsalWrap","gaewoonWrap"].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el) el.innerHTML=`<div style="font-size:12px;color:var(--fg3)">데이터 로드 실패 — AI 상세 분석을 참고하세요</div>`;
+    });
   }
+}
+
+const OH_COLORS={"목":"#4ade80","화":"#f87171","토":"#fbbf24","금":"#e2e8f0","수":"#60a5fa"};
+const OH_KEYS=["목","화","토","금","수"];
+const SIP_ALL=["비견","겁재","식신","상관","편재","정재","편관","정관","편인","정인"];
+const SIP_COLS=["#a78bfa","#7c3aed","#4ade80","#86efac","#fbbf24","#f59e0b","#f87171","#fca5a5","#60a5fa","#93c5fd"];
+
+function renderSajuTable(saju, iljuName, iljuDesc, yongshin){
+  const wrap=document.getElementById("sajuTableWrap");
+  if(!wrap||!saju) return;
+  const cols=[
+    {label:"연주(年柱)",key:"nyeon"},
+    {label:"월주(月柱)",key:"wol"},
+    {label:"일주(日柱)",key:"il"},
+    {label:"시주(時柱)",key:"si"},
+  ];
+  const ohClass=(oh)=>"oh-"+(oh||"").toLowerCase().replace(/[^가-힣]/g,"");
+  let html=`<div style="overflow-x:auto"><table class="saju-tbl">
+    <thead><tr><th>구분</th>${cols.map(c=>`<th>${c.label}</th>`).join("")}</tr></thead>
+    <tbody>
+      <tr><td style="font-size:11px;color:var(--fg2)">천간</td>
+        ${cols.map(c=>{const p=saju[c.key]||{};return`<td><div class="gan ${ohClass(p.ganOh)}">${p.gan||"?"}</div><div style="font-size:10px;color:var(--fg3)">${p.ganOh||""}</div></td>`;}).join("")}
+      </tr>
+      <tr><td style="font-size:11px;color:var(--fg2)">지지</td>
+        ${cols.map(c=>{const p=saju[c.key]||{};return`<td><div class="ji ${ohClass(p.jiOh)}">${p.ji||"?"}</div><div style="font-size:10px;color:var(--fg3)">${(p.jiNote||"")||p.jiOh||""}</div></td>`;}).join("")}
+      </tr>
+      <tr><td style="font-size:11px;color:var(--fg2)">지장간</td>
+        ${cols.map(c=>{const p=saju[c.key]||{};return`<td class="jjg">${p.jjg||""}</td>`;}).join("")}
+      </tr>
+    </tbody>
+  </table></div>`;
+  if(iljuName||iljuDesc){
+    html+=`<div style="margin-top:10px;background:var(--bg3);border-radius:8px;padding:12px 14px">
+      <div style="font-size:11px;color:var(--fg3);margin-bottom:4px">일주(日柱) 핵심</div>
+      <div style="font-size:14px;font-weight:700;color:var(--fg);margin-bottom:5px">${iljuName||""}</div>
+      <div style="font-size:12px;color:var(--fg2)">${iljuDesc||""}</div>
+      ${yongshin?`<div style="margin-top:8px;font-size:12px"><span style="color:#60a5fa">용신: ${yongshin.yong||""}</span> · <span style="color:#f87171">기신: ${yongshin.gi||""}</span> · <span style="color:#4ade80">희신: ${yongshin.hee||""}</span></div>`:""}
+    </div>`;
+  }
+  wrap.innerHTML=html;
+}
+
+function renderOhangSection(d, desc){
+  const wrap=document.getElementById("ohangWrap");
+  if(!wrap) return;
+  const vals=OH_KEYS.map(k=>+(d[k]||0));
+  const total=vals.reduce((a,b)=>a+b,0)||1;
+  const cx=80,cy=80,R=65,r=35;
+  let svg=`<svg viewBox="0 0 160 175" width="150" height="150">`;
+  let off=-Math.PI/2;
+  vals.forEach((v,i)=>{
+    if(!v)return;
+    const a=(v/total)*2*Math.PI;
+    const x1=cx+R*Math.cos(off),y1=cy+R*Math.sin(off);
+    const x2=cx+R*Math.cos(off+a),y2=cy+R*Math.sin(off+a);
+    const ix1=cx+r*Math.cos(off),iy1=cy+r*Math.sin(off);
+    const ix2=cx+r*Math.cos(off+a),iy2=cy+r*Math.sin(off+a);
+    const lg=a>Math.PI?1:0;
+    svg+=`<path d="M${ix1} ${iy1} L${x1} ${y1} A${R} ${R} 0 ${lg} 1 ${x2} ${y2} L${ix2} ${iy2} A${r} ${r} 0 ${lg} 0 ${ix1} ${iy1}Z" fill="${OH_COLORS[OH_KEYS[i]]}" opacity=".9"/>`;
+    off+=a;
+  });
+  svg+=`<text x="${cx}" y="${cy-4}" text-anchor="middle" font-size="15" font-weight="700" fill="var(--fg)">${total}</text>`;
+  svg+=`<text x="${cx}" y="${cy+13}" text-anchor="middle" font-size="9.5" fill="var(--fg2)">총 8자</text>`;
+  svg+=`</svg>`;
+  const legend=OH_KEYS.map((k,i)=>{
+    const pct=Math.round(vals[i]/total*100);
+    const warn=vals[i]===0?" ⚠️ 없음":vals[i]>=4?" ⚠️ 과다":"";
+    return `<div class="ohang-legend-row"><div class="ohang-dot" style="background:${OH_COLORS[k]}"></div><span style="color:${OH_COLORS[k]}">${k} ${vals[i]}개 (${pct}%)${warn}</span></div>`;
+  }).join("");
+  wrap.innerHTML=`<div class="ohang-wrap"><div>${svg}</div><div class="ohang-legend">${legend}</div></div>`
+    +(desc?`<div style="margin-top:10px;font-size:12px;color:var(--fg2);background:var(--bg3);border-radius:7px;padding:10px 12px">${desc}</div>`:"");
+}
+
+function renderSip10(d, desc){
+  const wrap=document.getElementById("sipWrap");
+  if(!wrap) return;
+  const vals=SIP_ALL.map(k=>+(d[k]||0));
+  const mx=Math.max(...vals,1);
+  const rows=SIP_ALL.map((k,i)=>`
+    <div class="sip10-row">
+      <div class="sip10-lbl">${k}</div>
+      <div class="sip10-track"><div class="sip10-fill" style="width:${Math.round(vals[i]/mx*100)}%;background:${SIP_COLS[i]}"></div></div>
+      <div class="sip10-cnt">${vals[i]}</div>
+    </div>`).join("");
+  wrap.innerHTML=`<div class="sip10-list">${rows}</div>`
+    +(desc?`<div style="margin-top:10px;font-size:12px;color:var(--fg2);background:var(--bg3);border-radius:7px;padding:10px 12px">${desc}</div>`:"");
+}
+
+function renderDaewoon(arr){
+  const wrap=document.getElementById("daewoonWrap");
+  if(!wrap||!arr.length) return;
+  const tagClass=t=>t==="up"?"dw-up":t==="down"?"dw-down":"dw-flat";
+  const tagLabel=t=>t==="up"?"▲ 상승":t==="down"?"▼ 주의":"― 유지";
+  const ohC=oh=>OH_COLORS[oh]||"var(--fg)";
+  let html=`<div class="dw-list">`;
+  arr.forEach((dw,idx)=>{
+    const isLast=idx===arr.length-1;
+    html+=`<div class="dw-item">
+      <div class="dw-line">
+        <div class="dw-dot" style="background:${ohC(dw.jiOh)}"></div>
+        ${isLast?"":`<div class="dw-conn"></div>`}
+      </div>
+      <div class="dw-body">
+        <div class="dw-age">${dw.ageFrom||"?"}세 ~ ${dw.ageTo||"?"}세</div>
+        <div class="dw-stem"><span style="color:${ohC(dw.ganOh)}">${dw.gan||""}</span><span style="color:${ohC(dw.jiOh)}">${dw.ji||""}</span><span class="dw-tag ${tagClass(dw.trend)}">${tagLabel(dw.trend)}</span></div>
+        <div class="dw-desc">${dw.desc||""}</div>
+      </div>
+    </div>`;
+  });
+  html+=`</div>`;
+  wrap.innerHTML=html;
+}
+
+function renderShinsal(arr){
+  const wrap=document.getElementById("shinsalWrap");
+  if(!wrap) return;
+  if(!arr.length){wrap.innerHTML=`<div style="font-size:12px;color:var(--fg3)">해당 신살 없음</div>`;return;}
+  wrap.innerHTML=`<div class="sal-list">${arr.map(s=>`<div class="sal-badge"><strong>${s.name}</strong>${s.desc||""}</div>`).join("")}</div>`;
+}
+
+function renderMonthlyLine2(data){
+  const wrap=document.getElementById("monthSvgWrap");
+  if(!wrap) return;
+  const vals=(data||[]).slice(0,12);
+  const mx=Math.max(...vals)||100,mn=Math.min(...vals)||0,rng=mx-mn||1;
+  const W=340,H=90,pad=14;
+  const pts=vals.map((v,i)=>[
+    Math.round(pad+i/(vals.length-1)*(W-2*pad)),
+    Math.round(H-pad-((v-mn)/rng)*(H-2*pad))
+  ]);
+  let svg=`<svg viewBox="0 0 ${W} ${H+20}" width="100%" style="overflow:visible">`;
+  svg+=`<defs><linearGradient id="mg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--accent)" stop-opacity=".3"/><stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>`;
+  svg+=`<polygon points="${pad},${H} ${pts.map(p=>p.join(" ")).join(" ")} ${W-pad},${H}" fill="url(#mg2)"/>`;
+  svg+=`<polyline points="${pts.map(p=>p.join(",")).join(" ")}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>`;
+  pts.forEach(([x,y],i)=>{
+    svg+=`<circle cx="${x}" cy="${y}" r="3.5" fill="var(--accent)" stroke="var(--bg)" stroke-width="1.5"/>`;
+    svg+=`<text x="${x}" y="${H+16}" text-anchor="middle" font-size="8.5" fill="var(--fg3)">${i+1}월</text>`;
+    svg+=`<text x="${x}" y="${y-6}" text-anchor="middle" font-size="8" fill="var(--fg2)">${vals[i]}</text>`;
+  });
+  svg+=`</svg>`;
+  wrap.innerHTML=svg;
+}
+
+function renderGaewoon(arr){
+  const wrap=document.getElementById("gaewoonWrap");
+  if(!wrap) return;
+  if(!arr.length){wrap.innerHTML=`<div style="font-size:12px;color:var(--fg3)">개운법 데이터 없음</div>`;return;}
+  wrap.innerHTML=`<div class="gae-list">${arr.map(g=>`
+    <div class="gae-item">
+      <div class="gae-icon">${g.icon||"✨"}</div>
+      <div class="gae-body"><strong>${g.title||""}</strong> — ${g.desc||""}</div>
+    </div>`).join("")}</div>`;
 }
 
 function renderOhangDonut(d){
