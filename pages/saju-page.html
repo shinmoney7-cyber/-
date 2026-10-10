@@ -140,6 +140,12 @@ body{padding:0 16px;padding-block:0}
 .batch-body{padding:14px;font-size:13px;line-height:1.8;white-space:pre-line;max-height:260px;overflow-y:auto}
 .today-topic{background:var(--bg2);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--fg2);display:flex;align-items:center;gap:8px}
 .today-topic b{color:var(--gold)}
+.chip-group{display:flex;flex-direction:column;gap:7px}
+.chip-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chip-head{font-size:10px;font-weight:700;color:var(--fg3);letter-spacing:.04em;min-width:28px;white-space:nowrap}
+.chip{display:inline-flex;align-items:center;padding:5px 10px;border-radius:20px;font-size:12px;font-weight:600;background:var(--card);border:1.5px solid var(--border);color:var(--fg2);cursor:pointer;transition:all .15s;user-select:none}
+.chip:hover{border-color:var(--border2);color:var(--fg)}
+.chip.on{background:color-mix(in srgb,var(--accent) 15%,var(--card));border-color:var(--accent);color:var(--accent)}
 </style>
 
 <!-- 헤더 -->
@@ -281,12 +287,58 @@ body{padding:0 16px;padding-block:0}
     </div>
   </div>
   <div class="field">
-    <label>추가 설정 (선택사항)</label>
-    <input type="text" id="stExtra" placeholder="예: 1990년생 여성 / 갑목 일간 / 재물·직장운 중심">
+    <label>추가 설정 <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--fg3)">(복수 선택 가능)</span></label>
+    <div class="chip-group" id="chipExtra">
+      <div class="chip-row"><span class="chip-head">생년</span>
+        <span class="chip" data-g="birth" onclick="toggleChip(this)">1960년대생</span>
+        <span class="chip" data-g="birth" onclick="toggleChip(this)">1970년대생</span>
+        <span class="chip" data-g="birth" onclick="toggleChip(this)">1980년대생</span>
+        <span class="chip" data-g="birth" onclick="toggleChip(this)">1990년대생</span>
+        <span class="chip" data-g="birth" onclick="toggleChip(this)">2000년대생</span>
+      </div>
+      <div class="chip-row"><span class="chip-head">성별</span>
+        <span class="chip" data-g="gender" onclick="toggleChip(this)">여성</span>
+        <span class="chip" data-g="gender" onclick="toggleChip(this)">남성</span>
+      </div>
+      <div class="chip-row"><span class="chip-head">일간</span>
+        <span class="chip" data-g="stem" onclick="toggleChip(this)">갑목</span>
+        <span class="chip" data-g="stem" onclick="toggleChip(this)">을목</span>
+        <span class="chip" data-g="stem" onclick="toggleChip(this)">병화</span>
+        <span class="chip" data-g="stem" onclick="toggleChip(this)">정화</span>
+        <span class="chip" data-g="stem" onclick="toggleChip(this)">무토</span>
+        <span class="chip" data-g="stem" onclick="toggleChip(this)">기토</span>
+        <span class="chip" data-g="stem" onclick="toggleChip(this)">경금</span>
+        <span class="chip" data-g="stem" onclick="toggleChip(this)">신금</span>
+        <span class="chip" data-g="stem" onclick="toggleChip(this)">임수</span>
+        <span class="chip" data-g="stem" onclick="toggleChip(this)">계수</span>
+      </div>
+      <div class="chip-row"><span class="chip-head">중심</span>
+        <span class="chip" data-g="focus_type" onclick="toggleChip(this)">재물·직장운</span>
+        <span class="chip" data-g="focus_type" onclick="toggleChip(this)">연애·결혼운</span>
+        <span class="chip" data-g="focus_type" onclick="toggleChip(this)">건강운</span>
+        <span class="chip" data-g="focus_type" onclick="toggleChip(this)">평생운</span>
+        <span class="chip" data-g="focus_type" onclick="toggleChip(this)">사업·창업운</span>
+      </div>
+    </div>
   </div>
   <div class="field">
-    <label>특별 강조 포인트</label>
-    <textarea id="stFocus" placeholder="예: 2026년 상반기에 특별한 기회 / 이직·창업 시기 / 재회 가능성 등"></textarea>
+    <label>특별 강조 포인트 <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--fg3)">(복수 선택 가능)</span></label>
+    <div class="chip-group" id="chipFocus">
+      <div class="chip-row">
+        <span class="chip" onclick="toggleChip(this)">2026년 상반기 기회</span>
+        <span class="chip" onclick="toggleChip(this)">이직·창업 적기</span>
+        <span class="chip" onclick="toggleChip(this)">재회 가능성</span>
+        <span class="chip" onclick="toggleChip(this)">승진·명예운</span>
+        <span class="chip" onclick="toggleChip(this)">결혼 시기</span>
+        <span class="chip" onclick="toggleChip(this)">재물 상승 시기</span>
+        <span class="chip" onclick="toggleChip(this)">건강 주의 시기</span>
+        <span class="chip" onclick="toggleChip(this)">해외·이동 운</span>
+        <span class="chip" onclick="toggleChip(this)">도화살 발현</span>
+        <span class="chip" onclick="toggleChip(this)">사업 파트너 운</span>
+        <span class="chip" onclick="toggleChip(this)">이별·이혼 시기</span>
+        <span class="chip" onclick="toggleChip(this)">자녀 인연</span>
+      </div>
+    </div>
   </div>
   <button class="btn btn-primary" id="shortsBtn" onclick="generateShorts()">🎬 스크립트 생성</button>
   <div class="shorts-result" id="shortsResult" hidden></div>
@@ -303,8 +355,21 @@ body{padding:0 16px;padding-block:0}
     <b id="todayTopicText">로딩 중...</b>
   </div>
   <div class="field">
-    <label>보조 정보 (선택)</label>
-    <input type="text" id="batchExtra" placeholder="예: 2026년 1월 특집 / 갑목 일간 특성 / 도화살 있는 사람">
+    <label>보조 정보 <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--fg3)">(선택)</span></label>
+    <div class="chip-group" id="chipBatch">
+      <div class="chip-row">
+        <span class="chip" onclick="toggleChip(this)">1970년대생</span>
+        <span class="chip" onclick="toggleChip(this)">1980년대생</span>
+        <span class="chip" onclick="toggleChip(this)">1990년대생</span>
+        <span class="chip" onclick="toggleChip(this)">여성 중심</span>
+        <span class="chip" onclick="toggleChip(this)">남성 중심</span>
+        <span class="chip" onclick="toggleChip(this)">도화살 있는 사람</span>
+        <span class="chip" onclick="toggleChip(this)">역마살 있는 사람</span>
+        <span class="chip" onclick="toggleChip(this)">2026년 1월 특집</span>
+        <span class="chip" onclick="toggleChip(this)">신년 첫 콘텐츠</span>
+        <span class="chip" onclick="toggleChip(this)">트렌드 운세</span>
+      </div>
+    </div>
   </div>
   <button class="btn btn-gold" id="batchBtn" onclick="generateDailyBatch()">🌅 3플랫폼 스크립트 배치 생성</button>
   <div id="batchResultList" class="batch-list" hidden></div>
@@ -851,8 +916,8 @@ async function generateShorts(){
   result.hidden=false;
   document.getElementById("shortsCopyRow").hidden=true;
 
-  const extra=document.getElementById("stExtra").value.trim();
-  const focus=document.getElementById("stFocus").value.trim();
+  const extra=getChipValues("chipExtra").join(" / ");
+  const focus=getChipValues("chipFocus").join(" / ");
   const basePrompt=STYPE_PROMPTS[selectedStype];
   const prompt=`${basePrompt}
 ${extra?"추가 정보: "+extra:""}
@@ -1003,6 +1068,10 @@ function renderOrders(){
 }
 
 // ─── 유틸 ────────────────────────────────────────────────────────────────
+function toggleChip(el){el.classList.toggle("on");}
+function getChipValues(groupId){
+  return [...document.querySelectorAll(`#${groupId} .chip.on`)].map(c=>c.textContent.trim());
+}
 function v(id){return document.getElementById(id).value.trim();}
 function show(id){document.getElementById(id).hidden=false;}
 function hide(id){document.getElementById(id).hidden=true;}
@@ -1161,7 +1230,7 @@ async function generateDailyBatch(){
   rl.innerHTML=`<div class="loading" style="padding:24px"><div class="spinner"></div><p style="color:var(--fg2);font-size:12px">3플랫폼 스크립트 생성 중...<br>약 30~60초 소요됩니다</p></div>`;
 
   const topics=getTodayTopics();
-  const extra=document.getElementById("batchExtra").value.trim();
+  const extra=getChipValues("chipBatch").join(" / ");
   const today=new Date().toLocaleDateString("ko-KR",{year:"numeric",month:"long",day:"numeric"});
 
   const batchPrompt=`오늘(${today}) 사주마루 SNS 콘텐츠를 3개 작성해 주세요.
