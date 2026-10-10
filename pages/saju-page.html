@@ -448,26 +448,26 @@ body{padding:0 16px;padding-block:0}
 <script>
 // ─── 상수 ───────────────────────────────────────────────────────────────
 const MENU=[
-  {name:"성향·기질 분석",price:0,      focus:"타고난 성격·강점·약점·적성"},
-  {name:"평생운",          price:29000, focus:"전반적 평생운·대운 흐름·핵심 기질"},
-  {name:"연애운",          price:18000, focus:"연애·이성 인연·궁합·결혼 시기"},
-  {name:"배우자운·결혼운", price:18000, focus:"배우자 인연·결혼 시기·부부 궁합"},
-  {name:"재물운",          price:18000, focus:"재물 흐름·투자 시기·사업 재물"},
-  {name:"건강운",          price:18000, focus:"건강 취약점·주의할 시기·관리법"},
-  {name:"대운·세운",       price:25000, focus:"대운 10년 흐름·올해 세운"},
-  {name:"직장운",          price:18000, focus:"직장 운·이직 시기·승진 가능성"},
-  {name:"사업운",          price:18000, focus:"사업 시기·파트너·성패 요인"},
-  {name:"부모운",          price:13000, focus:"부모와의 인연·부모 건강·덕"},
-  {name:"자식운",          price:13000, focus:"자식 인연·자녀 수·자녀 성향"},
-  {name:"형제간운",        price:13000, focus:"형제자매 관계·덕·협력 여부"},
-  {name:"친구·우정운",     price:18000, focus:"친구 인연·좋은 우정 시기·인간관계 특성"},
-  {name:"새해운세",        price:18000, focus:"2026년 전반 운세·월별 핵심"},
-  {name:"월별운세",        price:22000, focus:"2026년 월별 상세 운세"},
-  {name:"수능·입시운",     price:18000, focus:"학업 운·시험 시기·합격 가능성"},
-  {name:"재회운",          price:18000, focus:"전 연인 재회 가능성·시기"},
-  {name:"이혼·결별운",     price:18000, focus:"이별·이혼 시기·원인·향후 운"},
-  {name:"도화살 전문분석", price:14900, focus:"도화살 종류·발현 시기·활용법"},
-  {name:"이런 사람 만나지 마라",price:13000,focus:"피해야 할 인연 유형·특징"},
+  {name:"성향·기질 분석",      price:0,      pages:3,  focus:"타고난 성격·강점·약점·적성"},
+  {name:"평생운",              price:29000,  pages:15, focus:"전반적 평생운·대운 흐름·핵심 기질"},
+  {name:"연애운",              price:18000,  pages:8,  focus:"연애·이성 인연·궁합·결혼 시기"},
+  {name:"배우자운·결혼운",     price:18000,  pages:8,  focus:"배우자 인연·결혼 시기·부부 궁합"},
+  {name:"재물운",              price:18000,  pages:8,  focus:"재물 흐름·투자 시기·사업 재물"},
+  {name:"건강운",              price:18000,  pages:7,  focus:"건강 취약점·주의할 시기·관리법"},
+  {name:"대운·세운",           price:25000,  pages:12, focus:"대운 10년 흐름·올해 세운"},
+  {name:"직장운",              price:18000,  pages:8,  focus:"직장 운·이직 시기·승진 가능성"},
+  {name:"사업운",              price:18000,  pages:8,  focus:"사업 시기·파트너·성패 요인"},
+  {name:"부모운",              price:13000,  pages:5,  focus:"부모와의 인연·부모 건강·덕"},
+  {name:"자식운",              price:13000,  pages:5,  focus:"자식 인연·자녀 수·자녀 성향"},
+  {name:"형제간운",            price:13000,  pages:5,  focus:"형제자매 관계·덕·협력 여부"},
+  {name:"친구·우정운",         price:18000,  pages:6,  focus:"친구 인연·좋은 우정 시기·인간관계 특성"},
+  {name:"새해운세",            price:18000,  pages:8,  focus:"2026년 전반 운세·월별 핵심"},
+  {name:"월별운세",            price:22000,  pages:14, focus:"2026년 월별 상세 운세"},
+  {name:"수능·입시운",         price:18000,  pages:8,  focus:"학업 운·시험 시기·합격 가능성"},
+  {name:"재회운",              price:18000,  pages:7,  focus:"전 연인 재회 가능성·시기"},
+  {name:"이혼·결별운",         price:18000,  pages:7,  focus:"이별·이혼 시기·원인·향후 운"},
+  {name:"도화살 전문분석",     price:14900,  pages:6,  focus:"도화살 종류·발현 시기·활용법"},
+  {name:"이런 사람 만나지 마라",price:13000, pages:5,  focus:"피해야 할 인연 유형·특징"},
 ];
 
 const GC=["갑","을","병","정","무","기","경","신","임","계"];
@@ -640,7 +640,7 @@ function switchTab(name){
     d.innerHTML=`<input type="checkbox" id="mc${i}" onchange="updateSel()">
       <div>
         <div class="mi-name">${m.name}${m.price===0?'<span class="mi-free">무료</span>':''}</div>
-        <div class="mi-price">${m.price===0?"무료":"₩"+m.price.toLocaleString()}</div>
+        <div class="mi-price">${m.price===0?"무료":"₩"+m.price.toLocaleString()} <span style="color:var(--fg3);font-size:10px">· ${m.pages}p</span></div>
       </div>`;
     d.onclick=e=>{
       if(e.target.tagName!=="INPUT"){
@@ -1994,6 +1994,208 @@ function copyText(id){
     </tbody>
   </table>
   </div>
+</div>
+
+<!-- ══ 합충형파해 ══ -->
+<div class="theory-section">
+  <h3 class="theory-h">⚡ 합·충·형·파·해(合沖刑破害) 관계표</h3>
+  <p class="theory-desc">지지(地支) 12개가 서로 만났을 때 발생하는 에너지 변화. 사주 해석의 핵심 동력.</p>
+
+  <h4 style="margin:16px 0 8px;font-size:13px;color:var(--fg2)">▶ 지지 육합(六合) — 2개씩 합쳐져 화(化)</h4>
+  <div style="overflow-x:auto">
+  <table class="theory-table">
+    <thead><tr><th>지지1</th><th>지지2</th><th>화(化)오행</th><th>특성</th></tr></thead>
+    <tbody>
+      <tr><td>子(자)</td><td>丑(축)</td><td>土</td><td>수분·결합·안정</td></tr>
+      <tr><td>寅(인)</td><td>亥(해)</td><td>木</td><td>생장·진취·새출발</td></tr>
+      <tr><td>卯(묘)</td><td>戌(술)</td><td>火</td><td>열정·결합·번영</td></tr>
+      <tr><td>辰(진)</td><td>酉(유)</td><td>金</td><td>결실·집중·결단</td></tr>
+      <tr><td>巳(사)</td><td>申(신)</td><td>水</td><td>변화·소통·이동</td></tr>
+      <tr><td>午(오)</td><td>未(미)</td><td>土</td><td>조화·중용·포용</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h4 style="margin:16px 0 8px;font-size:13px;color:var(--fg2)">▶ 지지 육충(六沖) — 정반대 충돌</h4>
+  <div style="overflow-x:auto">
+  <table class="theory-table">
+    <thead><tr><th>충 쌍</th><th>오행 충돌</th><th>영향</th></tr></thead>
+    <tbody>
+      <tr><td>子↔午</td><td>水↔火</td><td>감정 기복·분리·이동</td></tr>
+      <tr><td>丑↔未</td><td>土↔土</td><td>직업 변동·갈등·분쟁</td></tr>
+      <tr><td>寅↔申</td><td>木↔金</td><td>사고·수술·이동수</td></tr>
+      <tr><td>卯↔酉</td><td>木↔金</td><td>관재·구설·이별</td></tr>
+      <tr><td>辰↔戌</td><td>土↔土</td><td>재물 변동·집이사</td></tr>
+      <tr><td>巳↔亥</td><td>火↔水</td><td>건강·부부 충돌</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h4 style="margin:16px 0 8px;font-size:13px;color:var(--fg2)">▶ 지지 삼형(三刑) — 3개 모여 형성</h4>
+  <div style="overflow-x:auto">
+  <table class="theory-table">
+    <thead><tr><th>형 조합</th><th>형 이름</th><th>주요 영향</th></tr></thead>
+    <tbody>
+      <tr><td>寅·巳·申</td><td>무은지형(無恩之刑)</td><td>수술·사고·배신·법적 문제</td></tr>
+      <tr><td>丑·戌·未</td><td>지세지형(持勢之刑)</td><td>고집·자존심 충돌·분쟁</td></tr>
+      <tr><td>子·卯</td><td>무례지형(無禮之刑)</td><td>예의 없음·감정적 갈등</td></tr>
+      <tr><td>辰·辰, 午·午, 酉·酉, 亥·亥</td><td>자형(自刑)</td><td>자해·자기파괴·스트레스</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h4 style="margin:16px 0 8px;font-size:13px;color:var(--fg2)">▶ 파(破)·해(害)</h4>
+  <div style="overflow-x:auto">
+  <table class="theory-table">
+    <thead><tr><th>구분</th><th>조합</th><th>영향</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="3"><strong>파(破)</strong><br>방해·손실</td><td>子↔酉</td><td>재물 손실·건강 이상</td></tr>
+      <tr><td>午↔卯</td><td>인간관계 파괴</td></tr>
+      <tr><td>寅↔亥 / 辰↔丑 / 巳↔申 / 戌↔未</td><td>계획 차질·방해</td></tr>
+      <tr><td rowspan="3"><strong>해(害)</strong><br>암해·질투</td><td>子↔未 / 丑↔午</td><td>배신·암해·질병</td></tr>
+      <tr><td>寅↔巳 / 卯↔辰</td><td>관재·시비</td></tr>
+      <tr><td>申↔亥 / 酉↔戌</td><td>재물 손해·인간관계 손상</td></tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<!-- ══ 삼합·방합 ══ -->
+<div class="theory-section">
+  <h3 class="theory-h">🔺 삼합(三合)·방합(方合)·천간합(天干合)</h3>
+
+  <h4 style="margin:0 0 8px;font-size:13px;color:var(--fg2)">▶ 삼합(三合) — 3지지 결합으로 강한 오행 형성</h4>
+  <div style="overflow-x:auto">
+  <table class="theory-table">
+    <thead><tr><th>삼합 조합</th><th>화(化)오행</th><th>생지·왕지·묘지</th><th>의미</th></tr></thead>
+    <tbody>
+      <tr><td>寅·午·戌</td><td>火局</td><td>寅(생)·午(왕)·戌(묘)</td><td>열정·명예·리더십</td></tr>
+      <tr><td>申·子·辰</td><td>水局</td><td>申(생)·子(왕)·辰(묘)</td><td>지혜·감수성·유동성</td></tr>
+      <tr><td>亥·卯·未</td><td>木局</td><td>亥(생)·卯(왕)·未(묘)</td><td>성장·인정·창의성</td></tr>
+      <tr><td>巳·酉·丑</td><td>金局</td><td>巳(생)·酉(왕)·丑(묘)</td><td>결실·결단·재물</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h4 style="margin:16px 0 8px;font-size:13px;color:var(--fg2)">▶ 방합(方合) — 같은 방향 3지지 결합</h4>
+  <div style="overflow-x:auto">
+  <table class="theory-table">
+    <thead><tr><th>방합 조합</th><th>오행·방위</th><th>계절</th><th>특성</th></tr></thead>
+    <tbody>
+      <tr><td>寅·卯·辰</td><td>木 / 동(東)</td><td>봄</td><td>시작·성장·신생</td></tr>
+      <tr><td>巳·午·未</td><td>火 / 남(南)</td><td>여름</td><td>번성·활력·명예</td></tr>
+      <tr><td>申·酉·戌</td><td>金 / 서(西)</td><td>가을</td><td>결실·수확·냉철</td></tr>
+      <tr><td>亥·子·丑</td><td>水 / 북(北)</td><td>겨울</td><td>저축·내성·지혜</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h4 style="margin:16px 0 8px;font-size:13px;color:var(--fg2)">▶ 천간합(天干合) — 음양 합화</h4>
+  <div style="overflow-x:auto">
+  <table class="theory-table">
+    <thead><tr><th>천간 합</th><th>화(化)오행</th><th>특성</th></tr></thead>
+    <tbody>
+      <tr><td>甲(갑)·己(기)</td><td>土</td><td>중재·포용·통합</td></tr>
+      <tr><td>乙(을)·庚(경)</td><td>金</td><td>결단·의리·규율</td></tr>
+      <tr><td>丙(병)·辛(신)</td><td>水</td><td>지혜·유연·변화</td></tr>
+      <tr><td>丁(정)·壬(임)</td><td>木</td><td>인정·성장·창의</td></tr>
+      <tr><td>戊(무)·癸(계)</td><td>火</td><td>열정·명예·변화</td></tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<!-- ══ 일주론 60갑자 ══ -->
+<div class="theory-section">
+  <h3 class="theory-h">📅 일주론(日柱論) — 60갑자 일주 특성</h3>
+  <p class="theory-desc">일주(日柱)는 내 본질·배우자·사회적 나를 나타낸다. 사주 해석에서 가장 중요한 기둥.</p>
+  <div style="overflow-x:auto">
+  <table class="theory-table">
+    <thead><tr><th>일주</th><th>오행</th><th>핵심 기질</th><th>배우자·인연 특성</th><th>주의점</th></tr></thead>
+    <tbody>
+      <tr><td>甲子(갑자)</td><td>木·水</td><td>총명·리더십·완벽주의</td><td>인연이 늦거나 재혼수</td><td>고집·독선</td></tr>
+      <tr><td>乙丑(을축)</td><td>木·土</td><td>성실·인내·근면</td><td>현실적·안정적 배우자</td><td>자기주장 부족</td></tr>
+      <tr><td>丙寅(병인)</td><td>火·木</td><td>카리스마·추진력·사교성</td><td>강한 배우자 만남</td><td>성급·충동</td></tr>
+      <tr><td>丁卯(정묘)</td><td>火·木</td><td>예민·감수성·창의력</td><td>인연 변동 많음</td><td>소심·예민</td></tr>
+      <tr><td>戊辰(무진)</td><td>土·土</td><td>포용력·신뢰·안정</td><td>배우자와 재물 연결</td><td>고집·변화 거부</td></tr>
+      <tr><td>己巳(기사)</td><td>土·火</td><td>영리·계산적·신중</td><td>총명한 배우자</td><td>의심·소극적</td></tr>
+      <tr><td>庚午(경오)</td><td>金·火</td><td>강직·정의감·용기</td><td>강한 배우자·충돌 가능</td><td>충동·폭발</td></tr>
+      <tr><td>辛未(신미)</td><td>金·土</td><td>예술감·세련·완벽주의</td><td>예민한 배우자</td><td>신경질·까다로움</td></tr>
+      <tr><td>壬申(임신)</td><td>水·金</td><td>총명·재능·자유로움</td><td>다재다능한 배우자</td><td>변덕·집중 부족</td></tr>
+      <tr><td>癸酉(계유)</td><td>水·金</td><td>냉철·분석력·독립심</td><td>결혼 늦음·까다로운 인연</td><td>차가움·고독</td></tr>
+      <tr><td>甲戌(갑술)</td><td>木·土</td><td>의리·신뢰·지도력</td><td>배우자 덕 있음</td><td>고집·아집</td></tr>
+      <tr><td>乙亥(을해)</td><td>木·水</td><td>유연·감성·봉사정신</td><td>인자한 배우자</td><td>우유부단</td></tr>
+      <tr><td>丙子(병자)</td><td>Fire·Water</td><td>명랑·사교적·창의적</td><td>인연 변화 많음</td><td>감정 기복</td></tr>
+      <tr><td>丁丑(정축)</td><td>火·土</td><td>성실·끈기·내실</td><td>안정적 배우자</td><td>소심·내성적</td></tr>
+      <tr><td>戊寅(무인)</td><td>土·木</td><td>기개·추진력·독립</td><td>배우자 강함</td><td>독선·급함</td></tr>
+      <tr><td>己卯(기묘)</td><td>土·木</td><td>온화·인내·예술감</td><td>예민하고 감성적 배우자</td><td>우유부단</td></tr>
+      <tr><td>庚辰(경진)</td><td>金·土</td><td>강직·추진력·현실감</td><td>능력 있는 배우자</td><td>고집·완고</td></tr>
+      <tr><td>辛巳(신사)</td><td>金·火</td><td>예민·총명·집착</td><td>능력 있는 배우자</td><td>집착·의심</td></tr>
+      <tr><td>壬午(임오)</td><td>Water·Fire</td><td>감성·지혜·사교성</td><td>감성적 배우자</td><td>감정 기복</td></tr>
+      <tr><td>癸未(계미)</td><td>水·土</td><td>인내·끈기·내실</td><td>안정 추구 배우자</td><td>내성적·소극</td></tr>
+      <tr><td>甲申(갑신)</td><td>木·金</td><td>총명·다재다능·자존심</td><td>능력 있는 배우자</td><td>자존심·갈등</td></tr>
+      <tr><td>乙酉(을유)</td><td>木·金</td><td>예리·세련·완벽주의</td><td>외모 뛰어난 배우자</td><td>까다로움</td></tr>
+      <tr><td>丙戌(병술)</td><td>火·土</td><td>리더십·명예·열정</td><td>강한 배우자</td><td>고집·자기중심</td></tr>
+      <tr><td>丁亥(정해)</td><td>火·水</td><td>감수성·지혜·인내</td><td>지적인 배우자</td><td>감정 기복</td></tr>
+      <tr><td>戊子(무자)</td><td>土·水</td><td>포용·현실감·안정</td><td>지혜로운 배우자</td><td>변화 거부</td></tr>
+      <tr><td>己丑(기축)</td><td>土·土</td><td>성실·인내·신중</td><td>안정·현실적 배우자</td><td>소극적</td></tr>
+      <tr><td>庚寅(경인)</td><td>金·木</td><td>강직·용감·리더십</td><td>강한 배우자</td><td>충동·급함</td></tr>
+      <tr><td>辛卯(신묘)</td><td>金·木</td><td>예민·감수성·예술적</td><td>감성적 배우자</td><td>신경질</td></tr>
+      <tr><td>壬辰(임진)</td><td>Water·土</td><td>지혜·포용·추진력</td><td>능력 있는 배우자</td><td>과욕·조급</td></tr>
+      <tr><td>癸巳(계사)</td><td>水·火</td><td>총명·분석·예리</td><td>총명한 배우자</td><td>의심·집착</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p style="font-size:11px;color:var(--fg3);margin-top:8px">* 나머지 30개 일주(甲午~癸亥)는 앱 내 AI 분석으로 상세 확인 가능</p>
+</div>
+
+<!-- ══ 공망표 ══ -->
+<div class="theory-section">
+  <h3 class="theory-h">🕳 공망(空亡) 조견표</h3>
+  <p class="theory-desc">60갑자에서 천간(10)과 지지(12)의 차이로 짝이 없는 2개 지지. 공망에 해당되는 육친·분야는 힘이 약해진다.</p>
+  <div style="overflow-x:auto">
+  <table class="theory-table">
+    <thead><tr><th>일주 범위</th><th>공망 지지</th><th>비어있는 육친/분야</th></tr></thead>
+    <tbody>
+      <tr><td>甲子~癸酉 (갑자순)</td><td><strong>戌·亥</strong></td><td>술해 관련 인연·재물 약화</td></tr>
+      <tr><td>甲戌~癸未 (갑술순)</td><td><strong>申·酉</strong></td><td>서방 금기운·재물·결실 약화</td></tr>
+      <tr><td>甲申~癸巳 (갑신순)</td><td><strong>午·未</strong></td><td>명예·인기·남방 화기운 약화</td></tr>
+      <tr><td>甲午~癸卯 (갑오순)</td><td><strong>辰·巳</strong></td><td>동남방 기운·변화·재물 약화</td></tr>
+      <tr><td>甲辰~癸丑 (갑진순)</td><td><strong>寅·卯</strong></td><td>동방 목기운·성장·발전 약화</td></tr>
+      <tr><td>甲寅~癸亥 (갑인순)</td><td><strong>子·丑</strong></td><td>북방 수기운·지혜·계획 약화</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div style="background:var(--bg2);border-radius:8px;padding:12px 16px;margin-top:12px;font-size:12px;line-height:1.7;color:var(--fg2)">
+    <strong>공망 해석법</strong><br>
+    ① 일주 기준으로 자신의 공망 지지를 찾는다<br>
+    ② 사주 4개 기둥에 공망 지지가 있으면 해당 육친이 약해짐<br>
+    ③ 년지 공망: 조상·부모 덕 약화 / 월지 공망: 형제·직업 불안정<br>
+    ④ 일지 공망: 배우자 인연 희박 / 시지 공망: 자녀 인연 약화<br>
+    ⑤ 공망은 운이 들어오면 해공(解空)되어 오히려 크게 발복할 수 있음
+  </div>
+</div>
+
+<!-- ══ 신살 조견표 ══ -->
+<div class="theory-section">
+  <h3 class="theory-h">🌀 주요 신살(神殺) 조견표</h3>
+  <div style="overflow-x:auto">
+  <table class="theory-table">
+    <thead><tr><th>신살</th><th>기준</th><th>해당 지지</th><th>의미</th></tr></thead>
+    <tbody>
+      <tr><td><strong>도화살(桃花殺)</strong></td><td>년지·일지 기준</td><td>子→酉 / 午→卯 / 卯→子 / 酉→午</td><td>매력·인기·이성 인연·색정</td></tr>
+      <tr><td><strong>역마살(驛馬殺)</strong></td><td>년지·일지 기준</td><td>寅午戌→申 / 申子辰→寅 / 巳酉丑→亥 / 亥卯未→巳</td><td>이동·여행·해외·변화</td></tr>
+      <tr><td><strong>화개살(華蓋殺)</strong></td><td>년지·일지 기준</td><td>寅午戌→戌 / 申子辰→辰 / 巳酉丑→丑 / 亥卯未→未</td><td>종교·예술·고독·영성</td></tr>
+      <tr><td><strong>겁살(劫殺)</strong></td><td>년지 기준</td><td>寅午戌→亥 / 申子辰→巳 / 巳酉丑→申 / 亥卯未→寅</td><td>도둑·손실·재앙</td></tr>
+      <tr><td><strong>망신살(亡身殺)</strong></td><td>년지 기준</td><td>寅午戌→子 / 申子辰→卯 / 巳酉丑→戌 / 亥卯未→丑</td><td>망신·명예 손상·창피</td></tr>
+      <tr><td><strong>백호대살(白虎大殺)</strong></td><td>일간 기준</td><td>甲辰·乙未·丙戌·丁丑·戊辰·壬戌·癸丑</td><td>혈광·사고·수술·극적 사건</td></tr>
+      <tr><td><strong>괴강살(魁罡殺)</strong></td><td>일주</td><td>庚辰·庚戌·壬辰·戊戌</td><td>강한 기질·극단적 성격·총명</td></tr>
+      <tr><td><strong>양인살(羊刃殺)</strong></td><td>일간 기준</td><td>甲→卯 / 丙·戊→午 / 庚→酉 / 壬→子</td><td>칼날 기질·폭발력·사고수</td></tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
 </div>
 
 </div><!-- /#tab-theory -->
