@@ -308,6 +308,20 @@ body{padding:0 16px;padding-block:0}
         <button class="btn btn-outline" onclick="restart()">← 다시 분석</button>
         <button class="btn btn-primary" id="copyBtn" onclick="copyResult()">📋 전체 복사</button>
       </div>
+      <button class="btn btn-gold" style="width:100%;margin-top:8px" onclick="generate50Report()">📄 사주원리+AI 분석 합본 50페이지 보고서 생성</button>
+    </div>
+    <!-- 50p 보고서 뷰 -->
+    <div id="report50View" hidden style="padding-bottom:80px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0 8px">
+        <button class="btn btn-outline" style="font-size:12px;padding:6px 12px" onclick="document.getElementById('report50View').hidden=true;document.getElementById('resultsView').hidden=false;document.getElementById('doneActions').hidden=false">← 요약보기</button>
+        <span style="font-size:12px;color:var(--accent);font-weight:700">📄 50페이지 통합 보고서</span>
+        <button class="btn btn-outline" style="font-size:12px;padding:6px 12px" onclick="copy50Report()">📋 전체 복사</button>
+      </div>
+      <div id="report50Loading" hidden style="text-align:center;padding:40px 0">
+        <div class="spinner"></div>
+        <p style="margin-top:14px;font-size:13px;color:var(--fg2)">사주원리와 AI 분석을 통합하여<br>50페이지 보고서를 작성 중입니다...<br>3~6분 소요됩니다. 창 닫지 마세요.</p>
+      </div>
+      <div id="report50Body" style="font-size:13.5px;line-height:2;white-space:pre-line;color:var(--fg)"></div>
     </div>
   </div>
 </div>
@@ -654,6 +668,8 @@ let selectedStype='warning';
 let selectedPlat='daangn';
 let orders=[];
 let fullResultText='';
+let lastSajuData=null;
+let lastSajuMeta=null;
 
 // ─── 초기화 ─────────────────────────────────────────────────────────────
 (async function init(){
@@ -911,6 +927,7 @@ ${sections.join('\n\n')}
   show("resultsView");
   show("doneActions");
   // Fetch chart data separately (non-blocking)
+  lastSajuMeta={name,year,month,day,gender,cal,timeStr,calNote,selected};
   fetchAndRenderCharts(name, year, month, day, gender, cal, timeStr);
 }
 
@@ -1189,6 +1206,7 @@ async function fetchAndRenderCharts(name,year,month,day,gender,cal,timeStr){
 }`;
   try{
     const d=await sampleCap.json(jp,{modelTier:"default",cache:false});
+    lastSajuData=d;
     renderSajuTable(d.saju, d.ilju_name, d.ilju_desc, d.yongshin);
     renderOhangSection(d.ohang||{목:2,화:2,토:1,금:2,수:1}, d.ohang_desc||"");
     renderSip10(d.sipsung||{비견:1,겁재:0,식신:1,상관:1,편재:1,정재:0,편관:1,정관:0,편인:1,정인:0}, d.sipsung_desc||"");
@@ -1358,6 +1376,215 @@ function renderGaewoon(arr){
       <div class="gae-icon">${g.icon||"✨"}</div>
       <div class="gae-body"><strong>${g.title||""}</strong> — ${g.desc||""}</div>
     </div>`).join("")}</div>`;
+}
+
+// ─── 50페이지 통합 보고서 ────────────────────────────────────────────────
+const SECTIONS_50=[
+`1. 📜 인사말 & 이 보고서 소개 (1페이지)
+   - "${"{name}"} 선생님"께 드리는 인사 / 사주명리학의 의미 / 이 보고서를 읽는 법
+   - 자연스러운 산문 형식으로 작성. 격식체 유지.`,
+
+`2. 🌟 사주원국(四柱八字) 완전 해설 (4페이지)
+   - 년주·월주·일주·시주 각각의 천간과 지지를 산문으로 설명
+   - 각 주의 오행·음양 의미를 원리에서부터 설명 후 본인 명식에 적용
+   - 60갑자 중 어떤 조합인지, 그 갑자가 지닌 고유한 에너지
+   - 상호작용 관계(합·충·형·파·해) 유무와 의미`,
+
+`3. ☯️ 천간(天干) 원리와 나의 천간 분석 (4페이지)
+   - 10천간의 본질적 원리(木의 甲乙, 火의 丙丁, 土의 戊己, 金의 庚辛, 水의 壬癸) 설명
+   - 양간(甲丙戊庚壬)과 음간(乙丁己辛癸)의 차이점
+   - 본인 사주의 4천간이 갖는 각각의 성격·재능·약점
+   - 일간을 중심으로 한 천간 조합의 특성과 인생 키워드`,
+
+`4. 🌙 지지(地支) 원리와 나의 지지 분석 (4페이지)
+   - 12지지가 품고 있는 계절·시간·방위·오행의 원리 설명
+   - 지장간(支藏干) — 지지 속에 숨겨진 천간 에너지의 의미
+   - 본인 사주의 4지지와 지장간이 드러내는 숨겨진 성향
+   - 지지 합(六合·三合·方合)과 충(六沖)이 삶에 미치는 영향`,
+
+`5. 🌊 오행(五行) 원리와 나의 오행 분석 (3페이지)
+   - 목·화·토·금·수 오행의 본질과 상생(相生)·상극(相剋) 원리 설명
+   - 본인 사주의 오행 분포(개수·강약) 분석
+   - 부족한 오행과 과잉 오행이 성격·건강·인간관계에 미치는 영향
+   - 용신(用神)·희신(喜神)·기신(忌神) 선정과 실생활 활용법`,
+
+`6. 💎 일간(日干) 성향·기질 심층 분석 (4페이지)
+   - 일간 오행의 원리적 특성에서 출발한 성격 분석
+   - 강점과 약점 / 대인관계 패턴 / 스트레스 반응
+   - 재능과 잠재력 / 어울리는 직종과 환경
+   - 일간이 계절·월령에 따라 어떻게 달라지는지(득령·실령)`,
+
+`7. ⚖️ 십성(十星) 원리와 나의 십성 구성 (5페이지)
+   - 십성(비견·겁재·식신·상관·편재·정재·편관·정관·편인·정인)의 본질과 상호 관계 원리
+   - 각 십성이 대표하는 삶의 영역(성격·직업·인간관계·재물·건강) 설명
+   - 본인 명식의 십성 분포 — 강한 십성과 없는 십성이 만드는 삶의 패턴
+   - 길신과 흉신으로서의 십성 작용, 십성을 지혜롭게 활용하는 법`,
+
+`8. ⭐ 12운성(十二運星) 원리와 나의 운성 (2페이지)
+   - 12운성(장생·목욕·관대·건록·제왕·쇠·병·사·묘·절·태·양)의 생로병사 순환 원리
+   - 일간이 각 지지에서 어떤 운성을 받는지 설명
+   - 본인 사주의 핵심 운성이 기질과 운명에 미치는 영향`,
+
+`9. ⚡ 신살(神殺)·공망(空亡) 원리와 나의 신살 (2페이지)
+   - 길신(천을귀인·문창귀인·학당귀인 등)과 흉살(도화살·역마살·백호살·괴강 등)의 원리
+   - 공망의 의미와 어떤 궁위·지지가 공망인지
+   - 본인 사주의 신살 종류와 삶에서의 실제 발현 방식, 활용법`,
+
+`10. 🌺 평생운(平生運) — 타고난 운의 흐름 (3페이지)
+    - 일간의 강약·용신을 바탕으로 한 전체 운세 흐름
+    - 청년기(~30대) / 중년기(30~50대) / 노년기(50대 이후) 각 시기의 핵심 운세
+    - 황금기 10년과 조심해야 할 시기, 인생의 전환점`,
+
+`11. ⏳ 대운(大運) 원리와 나의 10년 주기 분석 (5페이지)
+    - 대운을 계산하는 원리(출생일에서 절기까지의 날수) 설명
+    - 대운이 사주원국과 어떻게 상호작용하는지 설명
+    - 현재 대운 상세 분석 + 향후 대운 3~4개의 흐름과 핵심 키워드
+    - 가장 크게 풀리는 대운 기간과 가장 조심할 대운 기간 구체적 지목`,
+
+`12. 🗓️ 세운(歲運)·년운 원리와 2026년 분석 (2페이지)
+    - 세운이 대운과 교차하는 원리 설명 (대운 × 세운 조합)
+    - 2026년 丙午년이 갖는 오행적 의미와 본인 사주와의 관계
+    - 2026년 전체 흐름 요약 — 기회·주의·핵심 키워드`,
+
+`13. 📅 2026년 월별 운세 상세 분석 (4페이지)
+    - 1월부터 12월까지 각 월의 운 강도와 핵심 이슈
+    - 가장 중요한 3개월 집중 분석 (기회·주의·행동 지침)
+    - 연간 타임라인으로 보는 흐름 변화
+    - 월별 추천 행동과 피해야 할 행동`,
+
+`14. 💝 연애운·결혼운 심층 분석 (3페이지)
+    - 연애 스타일·이상형의 사주적 근거 설명
+    - 배우자 인연의 시기·장소·유형 (일지 분석)
+    - 궁합 잘 맞는 오행·일간 유형과 그 이유
+    - 현재·미래 연애운 흐름과 관계에서 주의할 패턴`,
+
+`15. 💰 재물운 심층 분석 (3페이지)
+    - 재성(편재·정재)의 구조로 본 재물 취득 방식
+    - 사업 vs 직장, 유리한 방향의 사주적 근거
+    - 재물이 들어오는 시기와 나가는 시기의 패턴
+    - 재물을 키우는 구체적인 방법 (방향·색상·업종)`,
+
+`16. 🚀 직업·명예운 심층 분석 (2페이지)
+    - 관성(편관·정관)과 십성 구조로 본 직업 적성
+    - 어울리는 직종 10가지 이상 사주적 근거와 함께 설명
+    - 승진·인정받는 시기와 방법
+    - 사회적 성공을 위한 구체적 전략`,
+
+`17. 🌿 건강운 심층 분석 (2페이지)
+    - 오행 부족·과잉이 신체에 미치는 영향 (오행과 오장육부 대응 원리)
+    - 취약한 부위와 주의해야 할 시기
+    - 건강 관리를 위한 구체적 생활 지침 (식이·운동·수면·환경)`,
+
+`18. 🍀 개운법(開運法) & 행운 정보 (2페이지)
+    - 용신 오행을 강화하는 색상·방향·직업·음식·식물
+    - 피해야 할 기신 오행 관련 환경과 행동
+    - 2026년에 특히 효과적인 개운법 3가지
+    - 행운의 숫자·색·방위·이름·상호에 좋은 한자`,
+
+`19. ✨ 마무리 — 인생 전체 조언 (1페이지)
+    - 사주가 말하는 이 사람의 본질과 사명
+    - 가장 빛나는 순간을 만드는 방법
+    - 인생 전체를 관통하는 핵심 한마디`,
+];
+
+const OHANG_PRINCIPLE=`【오행 원리 참고】
+목(木): 봄, 동쪽, 간담, 성장·생명·인(仁), 직업=교육·목재·의료·예술
+화(火): 여름, 남쪽, 심소장, 열정·표현·예(禮), 직업=언론·방송·IT·미용·식음료
+토(土): 환절기, 중앙, 비위, 중재·신뢰·신(信), 직업=부동산·농업·건설·금융·중개
+금(金): 가을, 서쪽, 폐대장, 결단·의리·의(義), 직업=법률·군경·금융·제조·철강
+수(水): 겨울, 북쪽, 신방광, 지혜·적응·지(智), 직업=무역·유통·철학·예술·수산`;
+
+const YUNSUNG_PRINCIPLE=`【12운성 원리 참고】
+장생(長生): 탄생·희망·순탄한 출발 / 목욕(沐浴): 감수성·예술성·이성운 강함
+관대(冠帶): 배움·성장·자존심 강함 / 건록(建祿): 독립·자수성가·직업운 강함
+제왕(帝旺): 최전성·리더십·고집 강함 / 쇠(衰): 안정·보수·변화 꺼림
+병(病): 예민·감성·건강 주의 / 사(死): 집중·연구·철학적 성향
+묘(墓): 저축·내성적·비밀 많음 / 절(絶): 변화·이동·신비로운 인연
+태(胎): 창의·상상력·아이디어 / 양(養): 준비·성숙·후원 받음`;
+
+let fullReport50Text='';
+
+async function generate50Report(){
+  if(!sampleCap){alert("AI 서비스 불가. claude.ai 로그인 필요.");return;}
+  const rv=document.getElementById("resultsView");
+  const da=document.getElementById("doneActions");
+  const r50=document.getElementById("report50View");
+  const r50b=document.getElementById("report50Body");
+  const r50l=document.getElementById("report50Loading");
+  rv.hidden=true; da.hidden=true;
+  r50.hidden=false; r50b.textContent=""; r50l.hidden=false;
+  fullReport50Text="";
+
+  const m=lastSajuMeta||{};
+  const name=m.name||"의뢰인";
+  const ganji=m.year?getGanji(m.year):"";
+  const sajuJson=lastSajuData?JSON.stringify(lastSajuData,null,2):"(사주 데이터 없음 — 직접 계산 필요)";
+  const selectedItems=(m.selected||[]).map(x=>x.name).join(", ")||"전체";
+
+  const prompt=`당신은 30년 경력의 사주명리학 전문가이자 작가입니다.
+아래 참고자료와 사주 계산 데이터를 바탕으로 【사주원리와 AI 분석을 통합한 자연스러운 산문 형식의 50페이지 보고서】를 작성해 주세요.
+
+규칙:
+- 고객 호칭: "${name} 선생님"
+- 모든 내용은 자연스러운 완성된 문장(산문체)으로 작성. 불릿포인트(-)나 단순 나열 최소화.
+- 각 섹션에서 먼저 사주원리(원칙·개념)를 1~2문장으로 설명한 뒤, 즉시 "${name} 선생님의 명식"에 적용하는 방식으로 전개.
+- 따뜻하고 전문적이며 희망적인 어조. 과학적·근거 있는 표현.
+- 각 섹션 제목 앞에 이모지+번호+제목 표시, 그 아래 본문 작성.
+- 전체 50페이지(한 페이지 ≈ 500자) = 약 25,000자 분량 완성. 각 섹션 지정 분량 반드시 준수.
+
+══════════════════════════════════════
+【사전 계산된 사주 데이터 — 반드시 인용】
+══════════════════════════════════════
+의뢰인: ${name} / ${m.gender||""} / ${m.year||""}년 ${m.month||""}월 ${m.day||""}일 ${m.calNote||""} (${ganji}) / ${m.timeStr||""}
+신청 항목: ${selectedItems}
+
+${sajuJson}
+
+══════════════════════════════════════
+${STEMS_REF}
+
+══════════════════════════════════════
+${SIPSUNG_REF}
+
+══════════════════════════════════════
+${SHINSAL_REF}
+
+══════════════════════════════════════
+${OHANG_PRINCIPLE}
+
+══════════════════════════════════════
+${YUNSUNG_PRINCIPLE}
+
+══════════════════════════════════════
+【보고서 구성 — 아래 19개 섹션 순서대로 빠짐없이 작성】
+══════════════════════════════════════
+${SECTIONS_50.join('\n\n')}
+
+지금 바로 1번 섹션부터 시작하여 19번 섹션까지 완성된 50페이지 보고서를 작성해 주세요.`;
+
+  try{
+    await sampleCap(prompt,{
+      modelTier:"complex",
+      onText({text}){
+        fullReport50Text=text;
+        r50b.textContent=text;
+        if(r50l&&!r50l.hidden) r50l.hidden=true;
+      }
+    });
+  }catch(e){
+    r50b.textContent="오류: "+(e?.message||JSON.stringify(e));
+  }finally{
+    r50l.hidden=true;
+  }
+}
+
+function copy50Report(){
+  if(!fullReport50Text) return;
+  navigator.clipboard?.writeText(fullReport50Text).then(()=>{
+    const b=document.getElementById("report50View").querySelector("button:last-of-type");
+    const o=b.textContent; b.textContent="✓ 복사 완료!";
+    setTimeout(()=>b.textContent=o,2000);
+  });
 }
 
 function renderOhangDonut(d){
