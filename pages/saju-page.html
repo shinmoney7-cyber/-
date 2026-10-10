@@ -382,60 +382,201 @@ body{padding:0 16px;padding-block:0}
       <span class="st-e">🔠</span><span class="st-n">이름·한자</span>
     </div>
   </div>
-  <div class="field">
-    <label>추가 설정 <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--fg3)">(복수 선택 가능)</span></label>
-    <div class="chip-group" id="chipExtra">
-      <div class="chip-row"><span class="chip-head">생년</span>
-        <span class="chip" data-g="birth" onclick="toggleChip(this)">1960년대생</span>
-        <span class="chip" data-g="birth" onclick="toggleChip(this)">1970년대생</span>
-        <span class="chip" data-g="birth" onclick="toggleChip(this)">1980년대생</span>
-        <span class="chip" data-g="birth" onclick="toggleChip(this)">1990년대생</span>
-        <span class="chip" data-g="birth" onclick="toggleChip(this)">2000년대생</span>
+  <!-- ── 유형별 입력 패널 ── -->
+
+  <!-- 공통 패널: 경고형/재물운/year2026/인스타카드/이름한자 -->
+  <div id="shortsCommonFields">
+    <!-- 이름·한자 전용 -->
+    <div id="stypeNameField" hidden class="field" style="margin-bottom:10px">
+      <label>분석할 이름</label>
+      <input type="text" id="shortNameInput" placeholder="예: 김민준, 이서연" maxlength="20">
+      <div class="hint">이름의 한자 의미·획수·오행 분석에 활용됩니다</div>
+    </div>
+    <!-- 인스타 카드 전용 -->
+    <div id="stypeCardField" hidden class="field" style="margin-bottom:10px">
+      <label>카드뉴스 주제 (선택)</label>
+      <input type="text" id="shortCardTopic" placeholder="예: 2026 띠별 재물운, 일간별 성격 특징">
+    </div>
+    <div class="field">
+      <label>추가 설정 <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--fg3)">(복수 선택 가능)</span></label>
+      <div class="chip-group" id="chipExtra">
+        <div class="chip-row"><span class="chip-head">생년</span>
+          <span class="chip" data-g="birth" onclick="toggleChip(this)">1960년대생</span>
+          <span class="chip" data-g="birth" onclick="toggleChip(this)">1970년대생</span>
+          <span class="chip" data-g="birth" onclick="toggleChip(this)">1980년대생</span>
+          <span class="chip" data-g="birth" onclick="toggleChip(this)">1990년대생</span>
+          <span class="chip" data-g="birth" onclick="toggleChip(this)">2000년대생</span>
+        </div>
+        <div class="chip-row"><span class="chip-head">성별</span>
+          <span class="chip" data-g="gender" onclick="toggleChip(this)">여성</span>
+          <span class="chip" data-g="gender" onclick="toggleChip(this)">남성</span>
+        </div>
+        <div class="chip-row"><span class="chip-head">일간</span>
+          <span class="chip" data-g="stem" onclick="toggleChip(this)">갑목</span>
+          <span class="chip" data-g="stem" onclick="toggleChip(this)">을목</span>
+          <span class="chip" data-g="stem" onclick="toggleChip(this)">병화</span>
+          <span class="chip" data-g="stem" onclick="toggleChip(this)">정화</span>
+          <span class="chip" data-g="stem" onclick="toggleChip(this)">무토</span>
+          <span class="chip" data-g="stem" onclick="toggleChip(this)">기토</span>
+          <span class="chip" data-g="stem" onclick="toggleChip(this)">경금</span>
+          <span class="chip" data-g="stem" onclick="toggleChip(this)">신금</span>
+          <span class="chip" data-g="stem" onclick="toggleChip(this)">임수</span>
+          <span class="chip" data-g="stem" onclick="toggleChip(this)">계수</span>
+        </div>
+        <div class="chip-row"><span class="chip-head">중심</span>
+          <span class="chip" data-g="focus_type" onclick="toggleChip(this)">재물·직장운</span>
+          <span class="chip" data-g="focus_type" onclick="toggleChip(this)">연애·결혼운</span>
+          <span class="chip" data-g="focus_type" onclick="toggleChip(this)">건강운</span>
+          <span class="chip" data-g="focus_type" onclick="toggleChip(this)">평생운</span>
+          <span class="chip" data-g="focus_type" onclick="toggleChip(this)">사업·창업운</span>
+        </div>
       </div>
-      <div class="chip-row"><span class="chip-head">성별</span>
-        <span class="chip" data-g="gender" onclick="toggleChip(this)">여성</span>
-        <span class="chip" data-g="gender" onclick="toggleChip(this)">남성</span>
-      </div>
-      <div class="chip-row"><span class="chip-head">일간</span>
-        <span class="chip" data-g="stem" onclick="toggleChip(this)">갑목</span>
-        <span class="chip" data-g="stem" onclick="toggleChip(this)">을목</span>
-        <span class="chip" data-g="stem" onclick="toggleChip(this)">병화</span>
-        <span class="chip" data-g="stem" onclick="toggleChip(this)">정화</span>
-        <span class="chip" data-g="stem" onclick="toggleChip(this)">무토</span>
-        <span class="chip" data-g="stem" onclick="toggleChip(this)">기토</span>
-        <span class="chip" data-g="stem" onclick="toggleChip(this)">경금</span>
-        <span class="chip" data-g="stem" onclick="toggleChip(this)">신금</span>
-        <span class="chip" data-g="stem" onclick="toggleChip(this)">임수</span>
-        <span class="chip" data-g="stem" onclick="toggleChip(this)">계수</span>
-      </div>
-      <div class="chip-row"><span class="chip-head">중심</span>
-        <span class="chip" data-g="focus_type" onclick="toggleChip(this)">재물·직장운</span>
-        <span class="chip" data-g="focus_type" onclick="toggleChip(this)">연애·결혼운</span>
-        <span class="chip" data-g="focus_type" onclick="toggleChip(this)">건강운</span>
-        <span class="chip" data-g="focus_type" onclick="toggleChip(this)">평생운</span>
-        <span class="chip" data-g="focus_type" onclick="toggleChip(this)">사업·창업운</span>
+    </div>
+    <div class="field">
+      <label>특별 강조 포인트 <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--fg3)">(복수 선택 가능)</span></label>
+      <div class="chip-group" id="chipFocus">
+        <div class="chip-row">
+          <span class="chip" onclick="toggleChip(this)">2026년 상반기 기회</span>
+          <span class="chip" onclick="toggleChip(this)">이직·창업 적기</span>
+          <span class="chip" onclick="toggleChip(this)">재회 가능성</span>
+          <span class="chip" onclick="toggleChip(this)">승진·명예운</span>
+          <span class="chip" onclick="toggleChip(this)">결혼 시기</span>
+          <span class="chip" onclick="toggleChip(this)">재물 상승 시기</span>
+          <span class="chip" onclick="toggleChip(this)">건강 주의 시기</span>
+          <span class="chip" onclick="toggleChip(this)">해외·이동 운</span>
+          <span class="chip" onclick="toggleChip(this)">도화살 발현</span>
+          <span class="chip" onclick="toggleChip(this)">사업 파트너 운</span>
+          <span class="chip" onclick="toggleChip(this)">이별·이혼 시기</span>
+          <span class="chip" onclick="toggleChip(this)">자녀 인연</span>
+        </div>
       </div>
     </div>
   </div>
-  <div class="field">
-    <label>특별 강조 포인트 <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--fg3)">(복수 선택 가능)</span></label>
-    <div class="chip-group" id="chipFocus">
-      <div class="chip-row">
-        <span class="chip" onclick="toggleChip(this)">2026년 상반기 기회</span>
-        <span class="chip" onclick="toggleChip(this)">이직·창업 적기</span>
-        <span class="chip" onclick="toggleChip(this)">재회 가능성</span>
-        <span class="chip" onclick="toggleChip(this)">승진·명예운</span>
-        <span class="chip" onclick="toggleChip(this)">결혼 시기</span>
-        <span class="chip" onclick="toggleChip(this)">재물 상승 시기</span>
-        <span class="chip" onclick="toggleChip(this)">건강 주의 시기</span>
-        <span class="chip" onclick="toggleChip(this)">해외·이동 운</span>
-        <span class="chip" onclick="toggleChip(this)">도화살 발현</span>
-        <span class="chip" onclick="toggleChip(this)">사업 파트너 운</span>
-        <span class="chip" onclick="toggleChip(this)">이별·이혼 시기</span>
-        <span class="chip" onclick="toggleChip(this)">자녀 인연</span>
+
+  <!-- 궁합 전용 패널 -->
+  <div id="shortsCoupleFields" hidden>
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:16px;margin-bottom:10px">
+      <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:12px;letter-spacing:.04em">👨 남성 생년월일시</div>
+      <div class="row3">
+        <div class="field" style="margin-bottom:8px">
+          <label>생년</label>
+          <input type="number" id="cMaleYear" placeholder="1990" min="1900" max="2010" style="text-align:center">
+        </div>
+        <div class="field" style="margin-bottom:8px">
+          <label>월</label>
+          <select id="cMaleMonth">
+            <option value="">월</option>
+            <option>1</option><option>2</option><option>3</option><option>4</option>
+            <option>5</option><option>6</option><option>7</option><option>8</option>
+            <option>9</option><option>10</option><option>11</option><option>12</option>
+          </select>
+        </div>
+        <div class="field" style="margin-bottom:8px">
+          <label>일</label>
+          <select id="cMaleDay">
+            <option value="">일</option>
+            <script>for(let i=1;i<=31;i++)document.write(`<option>${i}</option>`)</script>
+          </select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field" style="margin-bottom:0">
+          <label>태어난 시간</label>
+          <select id="cMaleTime">
+            <option value="모름">모름</option>
+            <option value="子시(23-01)">子시(23~01시)</option>
+            <option value="丑시(01-03)">丑시(01~03시)</option>
+            <option value="寅시(03-05)">寅시(03~05시)</option>
+            <option value="卯시(05-07)">卯시(05~07시)</option>
+            <option value="辰시(07-09)">辰시(07~09시)</option>
+            <option value="巳시(09-11)">巳시(09~11시)</option>
+            <option value="午시(11-13)">午시(11~13시)</option>
+            <option value="未시(13-15)">未시(13~15시)</option>
+            <option value="申시(15-17)">申시(15~17시)</option>
+            <option value="酉시(17-19)">酉시(17~19시)</option>
+            <option value="戌시(19-21)">戌시(19~21시)</option>
+            <option value="亥시(21-23)">亥시(21~23시)</option>
+          </select>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label>양력/음력</label>
+          <select id="cMaleCal">
+            <option value="양력">양력</option>
+            <option value="음력">음력</option>
+            <option value="음력윤달">음력 윤달</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:16px;margin-bottom:10px">
+      <div style="font-size:12px;font-weight:700;color:#f5c842;margin-bottom:12px;letter-spacing:.04em">👩 여성 생년월일시</div>
+      <div class="row3">
+        <div class="field" style="margin-bottom:8px">
+          <label>생년</label>
+          <input type="number" id="cFemYear" placeholder="1993" min="1900" max="2010" style="text-align:center">
+        </div>
+        <div class="field" style="margin-bottom:8px">
+          <label>월</label>
+          <select id="cFemMonth">
+            <option value="">월</option>
+            <option>1</option><option>2</option><option>3</option><option>4</option>
+            <option>5</option><option>6</option><option>7</option><option>8</option>
+            <option>9</option><option>10</option><option>11</option><option>12</option>
+          </select>
+        </div>
+        <div class="field" style="margin-bottom:8px">
+          <label>일</label>
+          <select id="cFemDay">
+            <option value="">일</option>
+            <script>for(let i=1;i<=31;i++)document.write(`<option>${i}</option>`)</script>
+          </select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field" style="margin-bottom:0">
+          <label>태어난 시간</label>
+          <select id="cFemTime">
+            <option value="모름">모름</option>
+            <option value="子시(23-01)">子시(23~01시)</option>
+            <option value="丑시(01-03)">丑시(01~03시)</option>
+            <option value="寅시(03-05)">寅시(03~05시)</option>
+            <option value="卯시(05-07)">卯시(05~07시)</option>
+            <option value="辰시(07-09)">辰시(07~09시)</option>
+            <option value="巳시(09-11)">巳시(09~11시)</option>
+            <option value="午시(11-13)">午시(11~13시)</option>
+            <option value="未시(13-15)">未시(13~15시)</option>
+            <option value="申시(15-17)">申시(15~17시)</option>
+            <option value="酉시(17-19)">酉시(17~19시)</option>
+            <option value="戌시(19-21)">戌시(19~21시)</option>
+            <option value="亥시(21-23)">亥시(21~23시)</option>
+          </select>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label>양력/음력</label>
+          <select id="cFemCal">
+            <option value="양력">양력</option>
+            <option value="음력">음력</option>
+            <option value="음력윤달">음력 윤달</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="field">
+      <label>분석 포인트 (선택)</label>
+      <div class="chip-group">
+        <div class="chip-row">
+          <span class="chip" onclick="toggleChip(this)">결혼 가능성</span>
+          <span class="chip" onclick="toggleChip(this)">오행 궁합</span>
+          <span class="chip" onclick="toggleChip(this)">일간 궁합</span>
+          <span class="chip" onclick="toggleChip(this)">12지지 삼합·반합</span>
+          <span class="chip" onclick="toggleChip(this)">재회 가능성</span>
+          <span class="chip" onclick="toggleChip(this)">갈등 요소</span>
+          <span class="chip" onclick="toggleChip(this)">결혼 적령기</span>
+        </div>
       </div>
     </div>
   </div>
+
   <button class="btn btn-primary" id="shortsBtn" onclick="generateShorts()">🎬 스크립트 생성</button>
   <div class="shorts-result" id="shortsResult" hidden></div>
   <div id="shortsCopyRow" hidden style="margin-top:10px">
@@ -1004,6 +1145,13 @@ function selectStype(el){
   document.querySelectorAll(".stype-btn").forEach(b=>b.classList.remove("selected"));
   el.classList.add("selected");
   selectedStype=el.dataset.stype;
+  const isCouple=selectedStype==="couple";
+  document.getElementById("shortsCommonFields").hidden=isCouple;
+  document.getElementById("shortsCoupleFields").hidden=!isCouple;
+  const nameField=document.getElementById("stypeNameField");
+  const cardField=document.getElementById("stypeCardField");
+  if(nameField) nameField.hidden=selectedStype!=="name";
+  if(cardField) cardField.hidden=selectedStype!=="card";
 }
 
 const STYPE_PROMPTS={
@@ -1040,10 +1188,52 @@ async function generateShorts(){
   result.hidden=false;
   document.getElementById("shortsCopyRow").hidden=true;
 
-  const extra=getChipValues("chipExtra").join(" / ");
-  const focus=getChipValues("chipFocus").join(" / ");
-  const basePrompt=STYPE_PROMPTS[selectedStype];
-  const prompt=`${basePrompt}
+  let prompt="";
+
+  if(selectedStype==="couple"){
+    const mY=document.getElementById("cMaleYear")?.value||"";
+    const mM=document.getElementById("cMaleMonth")?.value||"";
+    const mD=document.getElementById("cMaleDay")?.value||"";
+    const mT=document.getElementById("cMaleTime")?.value||"모름";
+    const mC=document.getElementById("cMaleCal")?.value||"양력";
+    const fY=document.getElementById("cFemYear")?.value||"";
+    const fM=document.getElementById("cFemMonth")?.value||"";
+    const fD=document.getElementById("cFemDay")?.value||"";
+    const fT=document.getElementById("cFemTime")?.value||"모름";
+    const fC=document.getElementById("cFemCal")?.value||"양력";
+    if(!mY||!fY){alert("남성과 여성의 생년을 입력해 주세요.");btn.disabled=false;btn.textContent="🎬 스크립트 생성";result.hidden=true;return;}
+    const couplePoints=getChipValues("shortsCoupleFields").join(" / ");
+    const maleGanji=getGanji(+mY);
+    const femGanji=getGanji(+fY);
+    prompt=`💑 사주 궁합 분석 유튜브 쇼츠 스크립트를 작성해 주세요.
+
+【남성 사주】 ${mY}년(${maleGanji}) ${mM}월 ${mD}일 ${mC} ${mT}시생
+【여성 사주】 ${fY}년(${femGanji}) ${fM}월 ${fD}일 ${fC} ${fT}시생
+${couplePoints?"분석 포인트: "+couplePoints:""}
+
+형식: 0-3초 충격 훅(이 두 사람의 궁합 결과는?) → 3-50초 본문(오행궁합·일간궁합·합충형 분석) → 50-60초 CTA
+톤: 흥미롭고 구체적, 희망적 마무리. 한국어.
+
+반드시 포함:
+- 썸네일 제목 (15자 이내, 궁합 점수 또는 결과 포함)
+- 스크립트 본문 (초 단위 타임코드 포함)
+- 오행/일간 기준 궁합 분석
+- 두 사람이 맞는 이유 / 주의할 점 각 1~2가지
+- 해시태그 10개 (한국어 + 영어 혼합)
+- CTA: "사주마루 링크는 프로필에"`;
+  } else {
+    const extra=getChipValues("chipExtra").join(" / ");
+    const focus=getChipValues("chipFocus").join(" / ");
+    let basePrompt=STYPE_PROMPTS[selectedStype];
+    if(selectedStype==="name"){
+      const nameVal=document.getElementById("shortNameInput")?.value?.trim()||"";
+      if(nameVal) basePrompt=`🔠 "${nameVal}"이라는 이름의 한자 의미·획수·오행 분석 유튜브 쇼츠 스크립트를 작성해 주세요.\n형식: 0-3초 훅(이 이름 가진 사람 운명은?) → 3-50초 본문(한자·획수·오행 풀이) → 50-60초 CTA\n톤: 흥미롭고 지적. 한국어.`;
+    }
+    if(selectedStype==="card"){
+      const topicVal=document.getElementById("shortCardTopic")?.value?.trim()||"";
+      if(topicVal) basePrompt=`🃏 "${topicVal}" 주제의 인스타그램 카드뉴스 텍스트를 작성해 주세요.\n형식: 카드 5~7장 분량의 짧은 텍스트 (각 카드당 1~2문장)\n첫 장: 시선 끄는 문구 / 마지막 장: CTA\n톤: 깔끔하고 감성적. 한국어.`;
+    }
+    prompt=`${basePrompt}
 ${extra?"추가 정보: "+extra:""}
 ${focus?"강조 포인트: "+focus:""}
 
@@ -1052,6 +1242,7 @@ ${focus?"강조 포인트: "+focus:""}
 - 스크립트 본문 (초 단위 타임코드 포함)
 - 해시태그 10개 (한국어 + 영어 혼합)
 - CTA: "사주마루 링크는 프로필에"`;
+  }
 
   try{
     let txt="";
