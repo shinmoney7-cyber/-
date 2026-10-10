@@ -33,4 +33,5 @@ jobs:
           GMAIL_APP_PASSWORD: "${{ secrets.GMAIL_APP_PASSWORD }}"
           FL_ID: "${{ secrets.FL_ID }}"
           FL_PW: "${{ secrets.FL_PW }}"
+          ANTHROPIC_API_KEY: "${{ secrets.ANTHROPIC_API_KEY }}"
         run: python scripts/check_orders.py

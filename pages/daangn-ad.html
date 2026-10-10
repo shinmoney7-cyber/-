@@ -1,0 +1,409 @@
+<title>당근 광고 소재 킷</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;900&display=swap">
+
+<style>
+:root {
+  --bg: #fff8f5;
+  --bg2: #fff3ed;
+  --card: #ffffff;
+  --fg: #1a0800;
+  --fg2: #6b4030;
+  --accent: #ff6f0f;
+  --accent2: #ff4f00;
+  --border: rgba(255,111,15,0.18);
+  --font: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1a0d05; --bg2: #221006; --card: #2a1508;
+    --fg: #ffe8d6; --fg2: #c8907a;
+    --border: rgba(255,111,15,0.25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1a0d05; --bg2: #221006; --card: #2a1508;
+  --fg: #ffe8d6; --fg2: #c8907a;
+  --border: rgba(255,111,15,0.25);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--fg);
+  padding: 0 16px;
+  padding-block: 0;
+  line-height: 1.65;
+}
+
+.header {
+  text-align: center;
+  padding: 48px 0 32px;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 36px;
+}
+.header .logo {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 4px 14px;
+  border-radius: 999px;
+  margin-bottom: 14px;
+  letter-spacing: .04em;
+}
+.header h1 {
+  font-size: clamp(24px,5vw,40px);
+  font-weight: 900;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+.header h1 em { color: var(--accent); font-style: normal; }
+.header p { margin-top: 10px; color: var(--fg2); font-size: 14px; }
+
+/* 섹션 */
+.section { margin-bottom: 48px; }
+.section h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent2);
+  padding: 8px 0;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 광고 카드 그리드 */
+.ad-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+.ad-card {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.ad-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+}
+.ad-card .tag {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.ad-card h3 {
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.4;
+  margin-bottom: 10px;
+  text-wrap: balance;
+}
+.ad-card .body {
+  font-size: 13px;
+  color: var(--fg2);
+  line-height: 1.7;
+  margin-bottom: 14px;
+}
+.ad-card .cta {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 18px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+.ad-card .note {
+  font-size: 11px;
+  color: var(--fg2);
+  opacity: .7;
+  margin-top: 6px;
+}
+.copy-btn {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 8px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  cursor: pointer;
+  text-align: center;
+}
+.copy-btn:hover { background: var(--border); }
+.copy-btn.copied { color: #2cb67d; }
+
+/* 안내 박스 */
+.guide-box {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 22px;
+  margin-bottom: 16px;
+}
+.guide-box h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+.guide-box ul { padding-left: 18px; }
+.guide-box li { font-size: 13px; color: var(--fg2); margin-bottom: 6px; }
+.guide-box a { color: var(--accent); text-decoration: underline; }
+
+/* 타겟 배지 */
+.targets { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.target-badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1.5px solid var(--accent);
+  color: var(--accent);
+}
+
+/* 예산 테이블 */
+.budget-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.budget-table th {
+  background: var(--accent);
+  color: #fff;
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 600;
+}
+.budget-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--fg2);
+}
+.budget-table tr:nth-child(even) td { background: var(--bg2); }
+</style>
+
+<div class="header">
+  <div class="logo">🥕 당근마켓 광고</div>
+  <h1>사주마루 <em>당근 광고</em> 소재 킷</h1>
+  <p>복붙만 하면 되는 광고 문구 + 세팅 가이드</p>
+</div>
+
+<!-- 1. 추천 광고 문구 -->
+<div class="section">
+  <h2>📢 광고 문구 (복붙용)</h2>
+  <div class="ad-grid">
+
+    <div class="ad-card" id="ad1">
+      <div class="tag">공감형 · 클릭율↑</div>
+      <h3>올해 뭔가 이상하게 안 풀린다고 느끼신다면</h3>
+      <div class="body">
+        2026년, 사주에서 막히는 이유가 있습니다.<br>
+        연애·재물·직장 — 어디서 막혔는지 딱 짚어드릴게요.<br><br>
+        📍 AI 사주 분석 + 전문가 감수<br>
+        ⏰ 주문 후 당일 결과 발송
+      </div>
+      <span class="cta">지금 확인하기 →</span>
+      <div class="note">링크: 사주마루 랜딩페이지 URL</div>
+      <button class="copy-btn" onclick="copyAd(this,'ad1')">📋 문구 복사</button>
+    </div>
+
+    <div class="ad-card" id="ad2">
+      <div class="tag">혜택형 · 신규 유입</div>
+      <h3>첫 사주 상담 50% 할인 — 이번 주 한정</h3>
+      <div class="body">
+        정통 사주 + AI 분석으로<br>
+        내 운명의 흐름을 지금 확인하세요.<br><br>
+        ✅ 연애운 / 재물운 / 직장운 / 평생운<br>
+        ✅ 이메일·카카오로 바로 수령<br>
+        ✅ 만족 보장 (재분석 서비스)
+      </div>
+      <span class="cta">할인가로 신청 →</span>
+      <div class="note">할인 코드 or 랜딩 URL에 UTM 붙이기</div>
+      <button class="copy-btn" onclick="copyAd(this,'ad2')">📋 문구 복사</button>
+    </div>
+
+    <div class="ad-card" id="ad3">
+      <div class="tag">호기심형 · 연애운</div>
+      <h3>내 연애가 왜 매번 같은 패턴으로 끝나는지 알아?</h3>
+      <div class="body">
+        사주에 다 나와 있어요.<br>
+        내가 끌리는 사람, 피해야 할 인연 유형,<br>
+        언제쯤 좋은 인연 만나는지까지.<br><br>
+        💜 연애운 전문 AI 사주 분석<br>
+        💌 결과는 오늘 바로 받아보세요
+      </div>
+      <span class="cta">내 연애 패턴 확인 →</span>
+      <div class="note">20~35세 여성 타겟 최적</div>
+      <button class="copy-btn" onclick="copyAd(this,'ad3')">📋 문구 복사</button>
+    </div>
+
+    <div class="ad-card" id="ad4">
+      <div class="tag">재물운형 · 고단가</div>
+      <h3>2026년 내 재물 흐름, 투자해도 되는 시기인가요?</h3>
+      <div class="body">
+        사주에서 재물운이 열리는 시기가 있습니다.<br>
+        그 시기를 놓치지 않으려면 지금 확인하세요.<br><br>
+        📈 재물운 전문 분석 (투자·사업 포함)<br>
+        🏆 10년 경력 명리학자 감수 완료
+      </div>
+      <span class="cta">재물운 분석 신청 →</span>
+      <div class="note">30~50대 남성 / 자영업자 타겟</div>
+      <button class="copy-btn" onclick="copyAd(this,'ad4')">📋 문구 복사</button>
+    </div>
+
+    <div class="ad-card" id="ad5">
+      <div class="tag">직장운형</div>
+      <h3>이직하면 잘 될까요? 사주가 먼저 알고 있어요</h3>
+      <div class="body">
+        직장 운, 승진 시기, 이직 타이밍...<br>
+        막연한 불안감, 사주로 정리해드릴게요.<br><br>
+        💼 직장운 + 재물운 묶음 분석<br>
+        ⚡ 오늘 주문 → 오늘 결과 수령
+      </div>
+      <span class="cta">직장운 확인하기 →</span>
+      <div class="note">직장인 / 이직 고민층 타겟</div>
+      <button class="copy-btn" onclick="copyAd(this,'ad5')">📋 문구 복사</button>
+    </div>
+
+    <div class="ad-card" id="ad6">
+      <div class="tag">신년형 · 시즌</div>
+      <h3>2026년 당신의 운세, 아직 안 봤다면 지금이 마지막</h3>
+      <div class="body">
+        새해 벌써 한 달 지났어요.<br>
+        올해 흐름 모르고 가면 손해볼 수 있어요.<br><br>
+        🎯 2026년 신년운세 + 월별 운세<br>
+        📧 PDF 리포트로 이메일 발송
+      </div>
+      <span class="cta">신년운세 신청 →</span>
+      <div class="note">1~3월 시즌 한정 집중 집행</div>
+      <button class="copy-btn" onclick="copyAd(this,'ad6')">📋 문구 복사</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- 2. 타겟 설정 -->
+<div class="section">
+  <h2>🎯 당근 광고 타겟 설정</h2>
+  <div class="guide-box">
+    <h4>추천 타겟 조합</h4>
+    <ul>
+      <li><b>연애운:</b> 여성 · 20~35세 · 내 동네 반경 5km</li>
+      <li><b>재물운·사업운:</b> 30~55세 전체 · 자영업 관심 · 반경 10km</li>
+      <li><b>직장운:</b> 25~45세 · 직장인 관심사 · 반경 10km</li>
+      <li><b>신년운세:</b> 전 연령 · 전국 (지역 제한 없음) → 1~2월 시즌</li>
+    </ul>
+    <div class="targets">
+      <span class="target-badge">여성 20~35세</span>
+      <span class="target-badge">30~50대 전체</span>
+      <span class="target-badge">관심사: 운세/타로</span>
+      <span class="target-badge">관심사: 자기계발</span>
+      <span class="target-badge">관심사: 연애/결혼</span>
+    </div>
+  </div>
+</div>
+
+<!-- 3. 예산 가이드 -->
+<div class="section">
+  <h2>💰 예산 & ROI 가이드</h2>
+  <div style="overflow-x:auto;">
+    <table class="budget-table">
+      <tr>
+        <th>단계</th>
+        <th>일 예산</th>
+        <th>예상 클릭</th>
+        <th>예상 주문</th>
+        <th>예상 매출</th>
+      </tr>
+      <tr>
+        <td>테스트</td>
+        <td>₩5,000</td>
+        <td>20~40회</td>
+        <td>1~2건</td>
+        <td>₩30,000~60,000</td>
+      </tr>
+      <tr>
+        <td>스케일업</td>
+        <td>₩20,000</td>
+        <td>80~150회</td>
+        <td>4~8건</td>
+        <td>₩120,000~240,000</td>
+      </tr>
+      <tr>
+        <td>풀운영</td>
+        <td>₩50,000</td>
+        <td>200~400회</td>
+        <td>10~20건</td>
+        <td>₩300,000~600,000</td>
+      </tr>
+    </table>
+  </div>
+  <p style="font-size:12px;color:var(--fg2);margin-top:8px;">* 전환율 5% 기준, 객단가 ₩30,000 가정 · 실제는 소재 품질에 따라 차이</p>
+</div>
+
+<!-- 4. 세팅 방법 -->
+<div class="section">
+  <h2>⚙️ 당근 광고 세팅 순서</h2>
+  <div class="guide-box">
+    <h4>① 당근비즈니스 계정 만들기</h4>
+    <ul>
+      <li>business.daangn.com → 사업자 등록 (없어도 개인으로 가능)</li>
+      <li>카테고리: <b>서비스업 &gt; 기타 전문서비스</b></li>
+    </ul>
+  </div>
+  <div class="guide-box">
+    <h4>② 광고 소재 준비</h4>
+    <ul>
+      <li>이미지: 정방형 1:1, 최소 500×500px, JPG/PNG</li>
+      <li>추천: 사주마루 페이지 스크린샷 + 별점/후기 이미지</li>
+      <li>텍스트: 위 광고 문구에서 선택해서 붙여넣기</li>
+    </ul>
+  </div>
+  <div class="guide-box">
+    <h4>③ 랜딩 URL 설정</h4>
+    <ul>
+      <li>사주마루 주문 페이지 URL + UTM 파라미터 추가</li>
+      <li>예시: <code style="font-size:12px;background:var(--bg2);padding:2px 6px;border-radius:4px;">...?utm_source=daangn&amp;utm_medium=cpc&amp;utm_campaign=연애운</code></li>
+    </ul>
+  </div>
+  <div class="guide-box">
+    <h4>④ 예산 &amp; 일정</h4>
+    <ul>
+      <li>처음엔 <b>일 예산 ₩5,000~10,000</b>으로 1주 테스트</li>
+      <li>CTR 2% 이상 소재는 예산 늘리기</li>
+      <li>CTR 1% 미만은 문구/이미지 교체</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+function copyAd(btn, cardId) {
+  const card = document.getElementById(cardId);
+  const title = card.querySelector('h3').textContent.trim();
+  const body  = card.querySelector('.body').textContent.trim().replace(/\n\s+/g, '\n');
+  const cta   = card.querySelector('.cta').textContent.trim();
+  const text  = `${title}\n\n${body}\n\n${cta}`;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✅ 복사됨';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 문구 복사'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+</script>
