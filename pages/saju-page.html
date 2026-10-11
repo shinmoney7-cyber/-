@@ -247,6 +247,19 @@ body{padding:0 16px;padding-block:0}
 .isa-sal-title{font-size:11px;font-weight:700;color:var(--fg2);margin-bottom:8px;letter-spacing:.04em;text-transform:uppercase}
 .isa-sal-list{display:flex;flex-direction:column;gap:6px}
 .isa-sal-row{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:8px}
+/* 4대 귀인 조견표 */
+.guiin-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}
+.guiin-card{background:var(--bg3);border:1.5px solid var(--border);border-radius:10px;padding:9px 11px;transition:all .15s}
+.guiin-card.has{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 8%,var(--card));box-shadow:0 0 10px color-mix(in srgb,var(--gold) 15%,transparent)}
+.guiin-title{font-size:10px;font-weight:700;color:var(--fg2);letter-spacing:.03em;margin-bottom:3px}
+.guiin-card.has .guiin-title{color:var(--gold)}
+.guiin-ji{font-family:var(--fdisp);font-size:17px;font-weight:700;color:var(--fg);line-height:1.2;margin-bottom:2px}
+.guiin-desc{font-size:9.5px;color:var(--fg3);line-height:1.4}
+.guiin-badge{display:inline-block;padding:2px 7px;border-radius:8px;font-size:10px;font-weight:700;margin-top:5px}
+.guiin-yes{background:rgba(245,200,66,.18);color:var(--gold)}
+.guiin-no{background:var(--bg2);color:var(--fg3)}
+/* 경도보정/야자시 배지 */
+.adj-note{display:inline-flex;align-items:center;gap:4px;background:color-mix(in srgb,var(--blue) 10%,var(--card));border:1px solid color-mix(in srgb,var(--blue) 25%,transparent);border-radius:6px;padding:3px 8px;font-size:11px;color:var(--blue);font-weight:600;margin-top:5px}
 .isa-sal-row.lv-절대금지{background:rgba(255,85,119,.1);border:1px solid rgba(255,85,119,.3)}
 .isa-sal-row.lv-경고{background:rgba(245,200,66,.08);border:1px solid rgba(245,200,66,.25)}
 .isa-sal-row.lv-주의{background:rgba(126,184,255,.07);border:1px solid rgba(126,184,255,.2)}
@@ -326,11 +339,60 @@ body{padding:0 16px;padding-block:0}
         <input type="number" id="iHour" placeholder="시 (0~23)" min="0" max="23">
         <input type="number" id="iMin" placeholder="분 (0~59)" min="0" max="59">
       </div>
-      <div class="hint">
+      <div class="hint" style="display:flex;flex-wrap:wrap;gap:12px;margin-top:5px">
         <label class="check-row" style="display:inline-flex">
           <input type="checkbox" id="iUnknownTime"> 출생 시간 모름
         </label>
+        <label class="check-row" style="display:inline-flex;cursor:pointer" title="23:00~24:00을 다음날이 아닌 당일 子시로 처리합니다">
+          <input type="checkbox" id="iYajasi">
+          <span>야자시 적용 <span style="font-size:10px;color:var(--fg3)">(23시=당일子시)</span></span>
+        </label>
       </div>
+    </div>
+    <div class="field">
+      <label>출생지 <span style="font-weight:400;color:var(--fg3)">(경도보정 · 선택)</span></label>
+      <select id="iCity" style="background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 0l6 8 6-8z' fill='%23a090c0'/%3E%3C/svg%3E\");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px">
+        <option value="">미선택 (보정 없음)</option>
+        <optgroup label="수도권">
+          <option value="서울">서울 (+32분)</option>
+          <option value="인천">인천 (+33분)</option>
+          <option value="수원">수원 (+32분)</option>
+          <option value="의정부">의정부 (+31분)</option>
+          <option value="부천">부천 (+33분)</option>
+        </optgroup>
+        <optgroup label="충청">
+          <option value="대전">대전 (+30분)</option>
+          <option value="청주">청주 (+30분)</option>
+          <option value="충주">충주 (+29분)</option>
+        </optgroup>
+        <optgroup label="경상">
+          <option value="부산">부산 (+24분)</option>
+          <option value="대구">대구 (+26분)</option>
+          <option value="울산">울산 (+23분)</option>
+          <option value="창원">창원 (+25분)</option>
+          <option value="경주">경주 (+26분)</option>
+          <option value="진주">진주 (+26분)</option>
+          <option value="포항">포항 (+24분)</option>
+        </optgroup>
+        <optgroup label="전라">
+          <option value="광주">광주 (+33분)</option>
+          <option value="전주">전주 (+31분)</option>
+          <option value="목포">목포 (+35분)</option>
+          <option value="순천">순천 (+30분)</option>
+          <option value="군산">군산 (+33분)</option>
+        </optgroup>
+        <optgroup label="강원">
+          <option value="춘천">춘천 (+29분)</option>
+          <option value="원주">원주 (+29분)</option>
+          <option value="강릉">강릉 (+25분)</option>
+        </optgroup>
+        <optgroup label="제주">
+          <option value="제주">제주 (+34분)</option>
+          <option value="서귀포">서귀포 (+34분)</option>
+        </optgroup>
+      </select>
+      <div class="hint">표준시(KST)는 동경 135°기준 — 실제 출생지 경도로 보정합니다</div>
+      <div id="adjPreview" class="adj-note" hidden></div>
     </div>
     <div class="field">
       <label>이름 <span style="font-weight:400;color:var(--fg3)">(한글)</span></label>
@@ -767,6 +829,86 @@ const GC=["갑","을","병","정","무","기","경","신","임","계"];
 const GJ=["자","축","인","묘","진","사","오","미","신","유","술","해"];
 function getGanji(y){return GC[(y-4)%10]+GJ[(y-4)%12]+"년";}
 
+// ─── 경도보정 + 야자시 ──────────────────────────────────────────
+const CITY_CORR={
+  서울:32,인천:33,수원:32,의정부:31,부천:33,
+  대전:30,청주:30,충주:29,
+  부산:24,대구:26,울산:23,창원:25,경주:26,진주:26,포항:24,
+  광주:33,전주:31,목포:35,순천:30,군산:33,
+  춘천:29,원주:29,강릉:25,
+  제주:34,서귀포:34
+};
+
+function calcAdjustedTime(hour,min,city,yajasiOn,unknown){
+  if(unknown) return{adjHour:null,adjMin:null,adjNote:""};
+  let h=hour||0, m=min||0;
+  const notes=[];
+  const corr=CITY_CORR[city]||0;
+  if(corr){
+    let tot=h*60+m+corr;
+    if(tot>=1440) tot-=1440;
+    h=Math.floor(tot/60); m=tot%60;
+    notes.push(`${city} 경도보정 +${corr}분`);
+  }
+  if(yajasiOn && h===23) notes.push("야자시 적용(23시=당일子시)");
+  return{adjHour:h, adjMin:m, adjNote:notes.length?`[${notes.join(" / ")}]`:""};
+}
+
+// ─── 4대 귀인 조견표 ────────────────────────────────────────────
+const CHUNEUL_TBL={
+  갑:["축","미"],을:["자","신"],병:["해","유"],정:["해","유"],무:["축","미"],
+  기:["자","신"],경:["축","미"],신:["인","오"],임:["묘","사"],계:["묘","사"]
+};
+const MUNCHANG_TBL={
+  갑:"사",을:"오",병:"신",정:"유",무:"신",기:"유",경:"해",신:"자",임:"인",계:"묘"
+};
+const WOLDUK_TBL={
+  인:"병",오:"병",술:"병",신:"임",자:"임",진:"임",해:"갑",묘:"갑",미:"갑",사:"경",유:"경",축:"경"
+};
+const CHEONDUK_TBL={
+  인:"정",묘:"신",진:"임",사:"신",오:"해",미:"갑",신:"계",유:"인",술:"병",해:"을",자:"사",축:"경"
+};
+const CHUNEUL_DISP={
+  갑:"丑(축)·未(미)",을:"子(자)·申(신)",병:"亥(해)·酉(유)",정:"亥(해)·酉(유)",무:"丑(축)·未(미)",
+  기:"子(자)·申(신)",경:"丑(축)·未(미)",신:"寅(인)·午(오)",임:"卯(묘)·巳(사)",계:"卯(묘)·巳(사)"
+};
+const MUNCHANG_DISP={
+  갑:"巳(사)",을:"午(오)",병:"申(신)",정:"酉(유)",무:"申(신)",기:"酉(유)",경:"亥(해)",신:"子(자)",임:"寅(인)",계:"卯(묘)"
+};
+const WOLDUK_DISP={
+  인:"丙(병)",오:"丙(병)",술:"丙(병)",신:"壬(임)",자:"壬(임)",진:"壬(임)",
+  해:"甲(갑)",묘:"甲(갑)",미:"甲(갑)",사:"庚(경)",유:"庚(경)",축:"庚(경)"
+};
+const CHEONDUK_DISP={
+  인:"丁(정)",묘:"申(신)",진:"壬(임)",사:"辛(신)",오:"亥(해)",미:"甲(갑)",
+  신:"癸(계)",유:"寅(인)",술:"丙(병)",해:"乙(을)",자:"巳(사)",축:"庚(경)"
+};
+
+// 한자(독음) 형식에서 독음 추출 — e.g. "甲(갑)" → "갑", "갑" → "갑"
+function extractKor(s){const m=(s||"").match(/\(([^)]+)\)/);return m?m[1]:(s||"");}
+
+function computeGuiin(sajuData){
+  if(!sajuData) return null;
+  const ilGan=extractKor(sajuData.il?.gan||"");
+  const wolJi=extractKor(sajuData.wol?.ji||"");
+  const allJi=[sajuData.nyeon?.ji,sajuData.wol?.ji,sajuData.il?.ji,sajuData.si?.ji].map(j=>extractKor(j||""));
+  const allGan=[sajuData.nyeon?.gan,sajuData.wol?.gan,sajuData.il?.gan,sajuData.si?.gan].map(g=>extractKor(g||""));
+  const chuneulJi=CHUNEUL_TBL[ilGan]||[];
+  const hasChunEul=chuneulJi.some(j=>allJi.includes(j));
+  const munchangJi=MUNCHANG_TBL[ilGan]||"";
+  const hasMunchang=allJi.includes(munchangJi);
+  const cheondukTarget=CHEONDUK_TBL[wolJi]||"";
+  const hasCheonduk=[...allJi,...allGan].includes(cheondukTarget);
+  const woldukTarget=WOLDUK_TBL[wolJi]||"";
+  const hasWolduk=[...allJi,...allGan].includes(woldukTarget);
+  return{
+    chuneul:{disp:CHUNEUL_DISP[ilGan]||"—",has:hasChunEul},
+    munchang:{disp:MUNCHANG_DISP[ilGan]||"—",has:hasMunchang},
+    cheonduk:{disp:CHEONDUK_DISP[wolJi]||"—",has:hasCheonduk},
+    wolduk:{disp:WOLDUK_DISP[wolJi]||"—",has:hasWolduk},
+  };
+}
+
 const STEMS_REF=`【10천간(天干) 참고자료 — 일간 성향·기질 분석의 기반】
 ▶ 甲(갑) 木양 — 큰 나무·원목
 [성격] 리더십·진취성·개척자 기질. 강한 자존심과 원칙주의. 순수하지만 고집 셈.
@@ -1027,9 +1169,13 @@ async function startAnalysis(){
   const unknown=document.getElementById("iUnknownTime").checked;
   const hour=unknown?null:(parseInt(v("iHour"))||0);
   const min=unknown?null:(parseInt(v("iMin"))||0);
+  const city=v("iCity")||"";
+  const yajasiOn=document.getElementById("iYajasi").checked;
+  const {adjHour,adjMin,adjNote}=calcAdjustedTime(hour,min,city,yajasiOn,unknown);
   const ganji=getGanji(year);
   const calNote=cal==="음력"?"(음력)":"(양력)";
-  const timeStr=unknown?"시간 미상":`${hour}시 ${min}분`;
+  const timeStr=unknown?"시간 미상":`${adjHour}시 ${adjMin}분${adjNote?` ${adjNote}`:""}`;
+  const rawTimeStr=unknown?"시간 미상":`${hour}시 ${min}분`;
 
   if(!sampleCap){
     showError("AI 분석 서비스를 불러올 수 없습니다.<br>claude.ai 로그인 후 다시 시도해 주세요.");
@@ -1060,7 +1206,10 @@ ${SHINSAL_REF}
 ══════════════════════════════════════
 성함: ${name} / 성별: ${gender}
 생년월일: ${year}년 ${month}월 ${day}일 ${calNote} (${ganji})
-태어난 시간: ${timeStr}
+태어난 시간(원본): ${rawTimeStr}
+태어난 시간(보정): ${timeStr}
+출생지: ${city||"미입력"}${city?` (경도보정 +${CITY_CORR[city]||0}분 적용)`:""}
+야자시 처리: ${yajasiOn?"야자시 적용 — 23:00~24:00은 당일 子시로 처리":"표준 — 23:00 이후는 다음날 子시로 처리"}
 신청 항목: ${selectedItems}
 
 ══════════════════════════════════════
@@ -1186,8 +1335,8 @@ ${sections.join('\n\n')}
   show("resultsView");
   show("doneActions");
   // Fetch chart data separately (non-blocking) — theory generated inside
-  lastSajuMeta={name,year,month,day,gender,cal,timeStr,calNote,selected,region};
-  fetchAndRenderCharts(name, year, month, day, gender, cal, timeStr, region);
+  lastSajuMeta={name,year,month,day,gender,cal,timeStr,calNote,selected,region,city,yajasiOn};
+  fetchAndRenderCharts(name, year, month, day, gender, cal, timeStr, region, city, yajasiOn);
 }
 
 function copyResult(){
@@ -1479,6 +1628,26 @@ document.getElementById("iUnknownTime").addEventListener("change",function(){
   document.getElementById("iHour").disabled=d;
   document.getElementById("iMin").disabled=d;
   if(d){document.getElementById("iHour").value="";document.getElementById("iMin").value="";}
+  updateAdjPreview();
+});
+function updateAdjPreview(){
+  const city=document.getElementById("iCity")?.value||"";
+  const yajasi=document.getElementById("iYajasi")?.checked||false;
+  const unknown=document.getElementById("iUnknownTime")?.checked||false;
+  const h=parseInt(document.getElementById("iHour")?.value)||0;
+  const m=parseInt(document.getElementById("iMin")?.value)||0;
+  const prev=document.getElementById("adjPreview");
+  if(!prev) return;
+  if(!city&&!yajasi){prev.hidden=true;return;}
+  const {adjHour,adjMin,adjNote}=calcAdjustedTime(h,m,city,yajasi,unknown);
+  if(adjNote){
+    prev.textContent="🔧 "+adjNote+(unknown?"":" → "+adjHour+"시 "+adjMin+"분");
+    prev.hidden=false;
+  }else{prev.hidden=true;}
+}
+["iCity","iYajasi","iHour","iMin"].forEach(id=>{
+  document.getElementById(id)?.addEventListener("change",updateAdjPreview);
+  document.getElementById(id)?.addEventListener("input",updateAdjPreview);
 });
 
 // ─── 차트 ─────────────────────────────────────────────────────────────────
@@ -1487,13 +1656,15 @@ const OHANG_KEYS=["목","화","토","금","수"];
 const SIP_COLORS=["#b87fff","#7eb8ff","#5ce685","#f5c842","#ff7755"];
 const SIP_KEYS=["인성","비겁","식상","재성","관성"];
 
-async function fetchAndRenderCharts(name,year,month,day,gender,cal,timeStr,region){
+async function fetchAndRenderCharts(name,year,month,day,gender,cal,timeStr,region,city,yajasiOn){
   if(!sampleCap) return;
   const calNote=cal==="음력"?"(음력)":"(양력)";
   const regionNote=region?`거주지: ${region}`:"거주지: 미입력";
+  const corrNote=city?`출생지: ${city}(경도보정 +${CITY_CORR[city]||0}분 적용됨, 보정시간: ${timeStr})`:"경도보정: 없음";
+  const yajaNote=yajasiOn?"야자시 적용(23~24시=당일子시)":"표준처리(23시이후=다음날子시)";
   const jp=`사주를 정확히 계산하여 JSON만 출력하세요. 다른 설명 없이 JSON만.
 의뢰인: ${name}/${gender}/${year}년${month}월${day}일${calNote}/${timeStr}
-${regionNote}
+${regionNote} / ${corrNote} / ${yajaNote}
 
 {
   "saju":{
@@ -1554,7 +1725,7 @@ ${regionNote}
     renderOhangSection(d.ohang||{목:2,화:2,토:1,금:2,수:1}, d.ohang_desc||"");
     renderSip10(d.sipsung||{비견:1,겁재:0,식신:1,상관:1,편재:1,정재:0,편관:1,정관:0,편인:1,정인:0}, d.sipsung_desc||"");
     renderDaewoon(d.daewoon||[]);
-    renderShinsal(d.shinsal||[]);
+    renderShinsalFull(d);
     renderMonthlyLine2(d.monthly2026||[70,75,65,85,80,70,72,80,90,68,74,78]);
     renderGaewoon(d.gaewoon||[]);
     renderIsaSection(d.isa||null, region);
@@ -1751,8 +1922,45 @@ function renderDaewoon(arr){
 function renderShinsal(arr){
   const wrap=document.getElementById("shinsalWrap");
   if(!wrap) return;
-  if(!arr.length){wrap.innerHTML=`<div style="font-size:12px;color:var(--fg3)">해당 신살 없음</div>`;return;}
+  if(!arr||!arr.length){wrap.innerHTML=`<div style="font-size:12px;color:var(--fg3)">해당 신살 없음</div>`;return;}
   wrap.innerHTML=`<div class="sal-list">${arr.map(s=>`<div class="sal-badge"><strong>${s.name}</strong>${s.desc||""}</div>`).join("")}</div>`;
+}
+
+function renderShinsalFull(d){
+  const wrap=document.getElementById("shinsalWrap");
+  if(!wrap) return;
+  // ── 4대 귀인 조견표 계산
+  const g=computeGuiin(d.saju);
+  let html="";
+  if(g){
+    const cards=[
+      {name:"천을귀인(天乙貴人)",sub:"일간 기준",disp:g.chuneul.disp,has:g.chuneul.has,desc:"귀인 도움·관재 면함·어려울 때 조력자 등장"},
+      {name:"문창귀인(文昌貴人)",sub:"일간 기준",disp:g.munchang.disp,has:g.munchang.has,desc:"학문·문서·계약·시험 운 강화"},
+      {name:"천덕귀인(天德貴人)",sub:"월지 기준",disp:g.cheonduk.disp,has:g.cheonduk.has,desc:"하늘 덕·큰 재난 면함·귀인 인연"},
+      {name:"월덕귀인(月德貴人)",sub:"월지 기준",disp:g.wolduk.disp,has:g.wolduk.has,desc:"재물 보호·구설 면함·실속 있는 귀인"},
+    ];
+    const anyHas=cards.some(c=>c.has);
+    html+=`<div style="font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.04em;margin-bottom:8px;display:flex;align-items:center;gap:6px">
+      ✨ 4대 길신(吉神) 조견표
+      <span style="font-size:10px;color:var(--fg3);font-weight:400">— 사주 원국 기준 계산</span>
+      ${anyHas?`<span style="font-size:10px;background:rgba(245,200,66,.15);color:var(--gold);padding:2px 7px;border-radius:8px;font-weight:600">보유 있음</span>`:""}
+    </div>
+    <div class="guiin-grid">
+      ${cards.map(c=>`<div class="guiin-card ${c.has?"has":""}">
+        <div class="guiin-title">${c.name} <span style="font-size:9px;color:var(--fg3)">(${c.sub})</span></div>
+        <div class="guiin-ji">${c.disp}</div>
+        <div class="guiin-desc">${c.desc}</div>
+        <span class="guiin-badge ${c.has?"guiin-yes":"guiin-no"}">${c.has?"✅ 사주에 있음":"— 없음"}</span>
+      </div>`).join("")}
+    </div>`;
+  }
+  // ── AI 계산 신살 배지
+  const arr=d.shinsal||[];
+  if(arr.length){
+    html+=`<div style="font-size:11px;font-weight:700;color:var(--fg2);margin:14px 0 8px;letter-spacing:.04em">⚡ AI 계산 신살(神殺)</div>
+      <div class="sal-list">${arr.map(s=>`<div class="sal-badge"><strong>${s.name}</strong>${s.desc||""}</div>`).join("")}</div>`;
+  }
+  wrap.innerHTML=html||`<div style="font-size:12px;color:var(--fg3)">신살 데이터 없음</div>`;
 }
 
 function renderMonthlyLine2(data){
