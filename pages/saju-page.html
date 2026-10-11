@@ -267,8 +267,8 @@ body{padding:0 16px;padding-block:0}
       <label>생년월일</label>
       <div class="row3">
         <input type="number" id="iYear" placeholder="1990" min="1920" max="2015">
-        <input type="number" id="iMonth" placeholder="월" min="1" max="12">
-        <input type="number" id="iDay" placeholder="일" min="1" max="31">
+        <input type="text" inputmode="numeric" id="iMonth" placeholder="월" maxlength="2" onblur="padTwo(this,1,12)">
+        <input type="text" inputmode="numeric" id="iDay" placeholder="일" maxlength="2" onblur="padTwo(this,1,31)">
       </div>
     </div>
     <div class="field">
@@ -1407,6 +1407,7 @@ function getChipValues(groupId){
   return [...document.querySelectorAll(`#${groupId} .chip.on`)].map(c=>c.textContent.trim());
 }
 function v(id){return document.getElementById(id).value.trim();}
+function padTwo(el,min,max){const n=parseInt(el.value);if(!isNaN(n)&&n>=min&&n<=max)el.value=String(n).padStart(2,'0');}
 function show(id){document.getElementById(id).hidden=false;}
 function hide(id){document.getElementById(id).hidden=true;}
 
