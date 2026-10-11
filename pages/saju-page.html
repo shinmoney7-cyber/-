@@ -1119,12 +1119,33 @@ ${sections.join('\n\n')}
         <div class="rpt-sec-title">⑨ 거주지 분석 & 이사 방향</div>
         <div id="isaWrap"><div style="font-size:12px;color:var(--fg3)">⏳ 계산 중...</div></div>
       </div>
+      <!-- ⑩ 사주원리 해설 -->
+      <div class="rpt-sec" id="sec-theory-inline">
+        <div class="rpt-sec-title" style="cursor:pointer;user-select:none" onclick="toggleTheoryInline()">
+          📐 사주원리(四柱原理) 참고 해설 <span id="theoryToggleIcon" style="font-size:12px;opacity:.6">▼ 펼치기</span>
+        </div>
+        <div id="theoryInlineBody" hidden></div>
+      </div>
     </div>`;
   show("resultsView");
   show("doneActions");
+  // Inject theory content into inline section
+  const theoryBody=document.getElementById("theoryInlineBody");
+  const theorySrc=document.getElementById("tab-theory");
+  if(theoryBody&&theorySrc){
+    theoryBody.innerHTML=theorySrc.innerHTML;
+  }
   // Fetch chart data separately (non-blocking)
   lastSajuMeta={name,year,month,day,gender,cal,timeStr,calNote,selected,region};
   fetchAndRenderCharts(name, year, month, day, gender, cal, timeStr, region);
+}
+
+function toggleTheoryInline(){
+  const body=document.getElementById("theoryInlineBody");
+  const icon=document.getElementById("theoryToggleIcon");
+  if(!body) return;
+  body.hidden=!body.hidden;
+  icon.textContent=body.hidden?"▼ 펼치기":"▲ 접기";
 }
 
 function copyResult(){
