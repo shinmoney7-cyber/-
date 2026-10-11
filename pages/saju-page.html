@@ -248,6 +248,7 @@ body{padding:0 16px;padding-block:0}
   <button class="tab-btn" onclick="switchTab('shorts')">🎬 쇼츠 생성</button>
   <button class="tab-btn" onclick="switchTab('biz')">💼 비즈니스</button>
   <button class="tab-btn" onclick="switchTab('theory')">📐 사주원리</button>
+  <button class="tab-btn" onclick="switchTab('adcopy')">📢 홍보문구</button>
 </div>
 
 <!-- ══════════════════════════════════════
@@ -3625,6 +3626,202 @@ function copyText(id){
   </div>
 </div>
 
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB 5: 홍보문구
+══════════════════════════════════════ -->
+<div class="tab-panel" id="tab-adcopy">
+<style>
+.adcopy-intro{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:24px;font-size:13px;color:var(--fg2);line-height:1.7}
+.adcopy-platform{margin-bottom:36px}
+.adcopy-platform-title{font-family:var(--fdisp);font-size:16px;font-weight:800;color:var(--gold);margin-bottom:14px;padding:10px 14px;border-radius:10px;background:var(--card2);border-left:4px solid var(--gold);display:flex;align-items:center;gap:8px}
+.adcopy-list{display:flex;flex-direction:column;gap:8px}
+.adcopy-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px;transition:border-color .15s}
+.adcopy-item:hover{border-color:var(--border2)}
+.adcopy-num{font-size:10px;font-weight:800;color:var(--accent);min-width:22px;padding-top:2px;opacity:.7}
+.adcopy-text{flex:1;font-size:13px;color:var(--fg);line-height:1.7;word-break:keep-all}
+.adcopy-copy{background:none;border:1.5px solid var(--border2);border-radius:7px;color:var(--fg2);font-size:11px;font-weight:700;cursor:pointer;padding:4px 10px;white-space:nowrap;flex-shrink:0;transition:all .15s}
+.adcopy-copy:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.adcopy-copy.copied{background:var(--green);color:#fff;border-color:var(--green)}
+.adcopy-all-btn{width:100%;background:var(--card2);border:1.5px dashed var(--border2);border-radius:10px;color:var(--fg2);font-size:12px;font-weight:700;cursor:pointer;padding:10px;margin-bottom:14px;transition:all .15s}
+.adcopy-all-btn:hover{border-color:var(--accent);color:var(--accent)}
+</style>
+
+<div class="adcopy-intro">
+  📢 <strong>플랫폼별 홍보문구 100개</strong> — 각 문구를 클릭해 복사하세요.<br>
+  홈페이지·카카오채널 주소가 포함된 문구는 실제 링크로 교체 후 사용하세요.
+</div>
+
+<!-- 당근마켓 -->
+<div class="adcopy-platform">
+  <div class="adcopy-platform-title">🥕 당근마켓 (20개)</div>
+  <button class="adcopy-all-btn" onclick="copyAllPlatform('daangn')">📋 당근마켓 전체 복사</button>
+  <div class="adcopy-list" id="daangn">
+    <div class="adcopy-item"><span class="adcopy-num">01</span><span class="adcopy-text">우리 동네 사주명리 전문가! 사주마루 AI로 2026년 대운·세운 완전 분석 받아보세요 🔮</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">02</span><span class="adcopy-text">[사주 상담] AI와 전통 명리학의 만남 — 생년월일시 4개만 알면 35,000자 종합 보고서 생성!</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">03</span><span class="adcopy-text">신년 사주 예약 받습니다 ✨ 직업·연애·재물·건강 한 번에 — 사주마루 AI 스튜디오</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">04</span><span class="adcopy-text">2026년 운세가 걱정되세요? AI가 대운부터 월별 운세까지 정확하게 분석해드립니다 🌟</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">05</span><span class="adcopy-text">비대면 사주 상담 가능! 카카오채널로 문의주시면 바로 안내해드려요 💬 사주마루 AI 스튜디오</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">06</span><span class="adcopy-text">결혼·취업·이사 고민 중이세요? 사주로 최적의 타이밍을 알아보세요 📅 사주마루 AI</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">07</span><span class="adcopy-text">대화 나누듯 편하게 — 사주 처음이신 분도 쉽게 이해할 수 있는 설명으로 풀어드려요 😊</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">08</span><span class="adcopy-text">직장 이직 타이밍, 사업 시작 시기 — 사주마루 AI가 내 사주로 정확히 짚어드립니다 📊</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">09</span><span class="adcopy-text">자녀 사주도 봐드려요! 아이의 타고난 기질과 적성, 사주명리학으로 파악하세요 👶</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">10</span><span class="adcopy-text">궁합 보고 싶은 분! 두 사람의 사주를 비교해 상생·상극 관계 분석해드립니다 💑</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">11</span><span class="adcopy-text">이사 방향·시기도 사주로 정하세요! 동서남북 길방위 완전 분석 제공 🏠 사주마루</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">12</span><span class="adcopy-text">재물운이 언제 터질지 궁금하세요? 사주 원국의 財星(재성)으로 재물 흐름을 봅니다 💰</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">13</span><span class="adcopy-text">건강 주의해야 할 시기, 미리 알면 준비할 수 있어요 — 사주마루 AI 건강운 분석 💚</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">14</span><span class="adcopy-text">30년 전통 사주명리학 + 최신 AI — 더 정확하고 더 자세한 사주 분석 받아보세요 ⭐</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">15</span><span class="adcopy-text">지금 당장 무료 체험! 기본 사주 구성(사주팔자) 자동 계산 및 오행 분석 제공 🎁</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">16</span><span class="adcopy-text">사주를 처음 접하시는 분도 OK! 어려운 용어 없이 일상 언어로 쉽게 설명해드려요 📖</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">17</span><span class="adcopy-text">갑오년·을미년·병신년... 내가 태어난 해의 의미를 사주명리학으로 완전히 풀어드립니다</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">18</span><span class="adcopy-text">사주마루 AI — 오늘의 운세부터 평생운까지 한 번에! 35,000자 종합 분석 보고서 제공</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">19</span><span class="adcopy-text">분기별 정기 상담 받아보세요! 봄·여름·가을·겨울 계절 운세 변화를 미리 준비해요 🍃</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">20</span><span class="adcopy-text">우리 동네 사주 상담사를 찾고 계신가요? 사주마루 AI로 언제 어디서나 분석 가능해요 🌟</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+  </div>
+</div>
+
+<!-- 인스타그램 -->
+<div class="adcopy-platform">
+  <div class="adcopy-platform-title">📸 인스타그램 (20개)</div>
+  <button class="adcopy-all-btn" onclick="copyAllPlatform('insta')">📋 인스타그램 전체 복사</button>
+  <div class="adcopy-list" id="insta">
+    <div class="adcopy-item"><span class="adcopy-num">01</span><span class="adcopy-text">✨ 당신의 四柱(사주)가 말하는 2026년은? AI가 풀어드리는 나만의 운세 이야기<br>#사주마루 #사주명리 #2026운세 #AI사주 #운세스타그램</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">02</span><span class="adcopy-text">🌙 甲木(갑목) 일간이라면 주목! 2026년 丙午년의 에너지는 당신에게 이런 의미입니다<br>#갑목일간 #사주공부 #사주명리학 #일간분석</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">03</span><span class="adcopy-text">💫 生年月日時(생년월일시) 4가지로 알 수 있는 것들 — 재물운·연애운·직업운·건강운 한 번에<br>#사주상담 #운세 #사주마루 #명리학</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">04</span><span class="adcopy-text">🔮 사주마루 AI에서 35,000자 종합 보고서 받아보세요 ✨ 내 사주의 모든 것<br>#사주보고서 #명리학 #AI운세 #사주분석</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">05</span><span class="adcopy-text">🌟 대운(大運)이 바뀌는 해, 인생의 큰 전환점이 옵니다 — 내 대운 전환 시기 확인하기<br>#대운 #사주운세 #인생전환 #10년주기</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">06</span><span class="adcopy-text">💑 우리 궁합은? 두 사람의 사주로 보는 상생·상극 완전 분석<br>#궁합 #사주궁합 #커플사주 #결혼운</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">07</span><span class="adcopy-text">📅 2026년 월별 운세 상세 분석 🗓️ 1월~12월 매월 길흉 예측 + 행동 가이드<br>#2026운세 #월별운세 #사주달력 #운세다이어리</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">08</span><span class="adcopy-text">🌸 결혼하기 좋은 해? 취업 최적 시기? 사주로 답을 찾아보세요<br>#결혼운 #취업운 #사주상담 #인생타이밍</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">09</span><span class="adcopy-text">💰 재물운이 터지는 시기, 사주로 미리 알 수 있습니다 — 財星(재성) 완전 분석<br>#재물운 #돈운 #사주재물 #부자사주</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">10</span><span class="adcopy-text">🌿 내 타고난 기질과 적성, 사주명리학으로 보는 나의 본질<br>#일간분석 #타고난성격 #사주심리 #MBTI대신사주</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">11</span><span class="adcopy-text">⭐ 사주를 처음 접하는 분도 OK! 어려운 한자 없이 쉽게 이해하는 사주 이야기<br>#사주입문 #사주기초 #명리학입문 #운세입문</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">12</span><span class="adcopy-text">🔥 2026년 주의할 달 TOP3 vs 기회의 달 TOP3 — 사주마루 AI 분석<br>#운세달력 #길월 #흉월 #2026운세</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">13</span><span class="adcopy-text">🏠 이사 가기 좋은 방향은? 吉方位(길방위) 사주 분석으로 찾는 나의 행운 방향<br>#이사운 #행운방향 #풍수사주 #이사방위</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">14</span><span class="adcopy-text">🌙 사주팔자(四柱八字)란 무엇인가? 쉽게 이해하는 동양 철학 5,000년의 지혜<br>#사주입문 #동양철학 #명리학 #사주팔자</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">15</span><span class="adcopy-text">💫 개운법(開運法) 알고 계세요? 내 약한 오행을 보완하는 색깔·음식·방향 총정리<br>#개운법 #행운아이템 #사주개운 #오행보완</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">16</span><span class="adcopy-text">🌟 신살(神殺) 도화살·역마살·화개살 내 사주에 있나요? 신살 완전 분석<br>#신살 #도화살 #역마살 #화개살</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">17</span><span class="adcopy-text">📊 五行(오행) 균형이 내 인생의 균형 — 나의 오행 비율 분석으로 보는 강점과 약점<br>#오행 #사주오행 #균형 #자기이해</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">18</span><span class="adcopy-text">✨ AI가 분석하는 나의 十星(십성) — 비견·겁재·식신·상관·편재·정재... 내 사주의 구성은?<br>#십성 #사주기초 #사주구성 #명식</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">19</span><span class="adcopy-text">🔮 사주를 알면 인생이 보인다 — 사주마루 AI 스튜디오에서 나만의 이야기를 찾아보세요<br>#사주마루 #AI사주 #사주명리 #인생이야기</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">20</span><span class="adcopy-text">🌸 팔로우하고 매주 사주 정보 받아가세요! 甲乙丙丁戊己庚辛壬癸 — 일간별 2026년 운세<br>#사주팔로우 #운세스타그램 #사주마루 #일간운세</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+  </div>
+</div>
+
+<!-- 카카오채널 -->
+<div class="adcopy-platform">
+  <div class="adcopy-platform-title">💬 카카오채널 (20개)</div>
+  <button class="adcopy-all-btn" onclick="copyAllPlatform('kakao')">📋 카카오채널 전체 복사</button>
+  <div class="adcopy-list" id="kakao">
+    <div class="adcopy-item"><span class="adcopy-num">01</span><span class="adcopy-text">안녕하세요! 사주마루 AI 스튜디오입니다 🌟 채널 추가하시면 2026년 신년 운세 분석 먼저 받으실 수 있어요!</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">02</span><span class="adcopy-text">고민 있으세요? 💬 지금 채널로 생년월일시 보내주시면 바로 기본 사주 분석 해드릴게요!</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">03</span><span class="adcopy-text">[채널 친구 이벤트] 지금 추가하시면 사주 오행 무료 분석 쿠폰 드립니다 🎁 놓치지 마세요!</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">04</span><span class="adcopy-text">취업·이직·결혼·이사 — 중요한 결정 앞에서 사주의 도움을 받아보세요 📞 지금 문의하기</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">05</span><span class="adcopy-text">AI 사주 분석이 처음이신가요? 걱정 마세요, 쉽고 자세하게 설명해드립니다 😊 지금 채널 추가!</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">06</span><span class="adcopy-text">2026년 내 운세 어떻게 될까요? 지금 채널 추가하고 무료 기초 분석 받아가세요 ✨</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">07</span><span class="adcopy-text">🔮 사주마루 AI 스튜디오 — 30년 명리학 경험이 담긴 AI 분석으로 더 정확하게, 더 자세하게</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">08</span><span class="adcopy-text">월별 운세 알고 싶으신가요? 35,000자 종합 보고서에 1월~12월 상세 분석 포함! 📅 지금 문의</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">09</span><span class="adcopy-text">궁합·결혼운 문의 많이 주시는데요 💑 두 분 생년월일시 주시면 상세 분석해드립니다!</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">10</span><span class="adcopy-text">채널 알림 받고 매주 업데이트되는 운세 정보 먼저 확인하세요 🔔 지금 추가하기!</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">11</span><span class="adcopy-text">재물운 언제 오나요? 💰 사주 원국의 재성 흐름으로 재물 시기를 정확히 짚어드려요</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">12</span><span class="adcopy-text">건강 주의 시기 미리 아시면 예방할 수 있어요 💚 사주마루 AI 건강운 분석 서비스</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">13</span><span class="adcopy-text">아이 사주 궁금하신가요? 👶 자녀의 타고난 기질과 적성, 명리학으로 보는 진로 분석</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">14</span><span class="adcopy-text">이사 방향 고민이세요? 🏠 길방위(吉方位) 분석으로 가장 좋은 방향과 시기 알려드려요</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">15</span><span class="adcopy-text">상담 후기 보고 오셨나요? 감사합니다 🙏 저희와 함께 2026년을 더 잘 준비하세요!</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">16</span><span class="adcopy-text">지금 당장 문의하기! 생년월일시 알려주시면 5분 내 기본 분석 결과 보내드립니다 ⚡</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">17</span><span class="adcopy-text">사주 보고서가 너무 어렵다고요? 걱정 마세요! 처음 접하는 분도 이해할 수 있게 쉽게 설명해드려요 📖</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">18</span><span class="adcopy-text">정기 상담 패키지로 분기별·연간 운세 관리 받아보세요 📊 단골 고객 특별 혜택 있어요!</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">19</span><span class="adcopy-text">연인·부부 궁합부터 직장 동료 궁합까지 — 관계의 비밀을 사주로 풀어보세요 💑</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">20</span><span class="adcopy-text">친구에게도 알려주세요! 채널 공유하시면 특별 혜택 드립니다 🎉 사주마루 AI 스튜디오</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+  </div>
+</div>
+
+<!-- 유튜브 -->
+<div class="adcopy-platform">
+  <div class="adcopy-platform-title">▶️ 유튜브 (20개)</div>
+  <button class="adcopy-all-btn" onclick="copyAllPlatform('youtube')">📋 유튜브 전체 복사</button>
+  <div class="adcopy-list" id="youtube">
+    <div class="adcopy-item"><span class="adcopy-num">01</span><span class="adcopy-text">[사주 입문 1편] 사주팔자(四柱八字)가 뭔가요? 5분 만에 이해하는 사주명리학 기초 | 사주마루</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">02</span><span class="adcopy-text">甲木(갑목) 일간 완전 분석 — 2026년 丙午년 대운·세운 흐름과 주의점 | 사주마루 AI</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">03</span><span class="adcopy-text">내 사주에 도화살(桃花殺) 있다면? 도화살의 진짜 의미와 연애운 분석법 | 사주마루</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">04</span><span class="adcopy-text">五行(오행) 木火土金水 완전 이해 — 나의 오행 비율로 보는 성격과 운명 | 사주마루</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">05</span><span class="adcopy-text">2026년 12띠별 운세 총정리 🐍 사주마루 AI가 분석하는 쥐·소·범·토끼... 12띠 상세 운세</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">06</span><span class="adcopy-text">대운(大運)이 바뀌는 해가 왜 인생 전환점인가? — 10년 대운의 비밀 완전 정복 | 사주마루</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">07</span><span class="adcopy-text">十星(십성) 완전 정리 — 비견·겁재·식신·상관·편재·정재·편관·정관·편인·정인 의미와 작용</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">08</span><span class="adcopy-text">궁합 보는 법 완전 정복 — 상생·상극·원진·귀문 사주로 보는 진짜 궁합 | 사주마루</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">09</span><span class="adcopy-text">재물운이 터지는 사주 구조는? — 財星(재성)·食傷(식상)으로 보는 부자 사주 분석</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">10</span><span class="adcopy-text">사주로 직업 찾는 법 — 내 일간과 십성으로 보는 천직(天職) 분석 | 사주마루 AI</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">11</span><span class="adcopy-text">十二運星(12운성) 완전 이해 — 장생·목욕·관대·건록·제왕·쇠·병·사·묘·절·태·양 뜻과 적용</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">12</span><span class="adcopy-text">神殺(신살) 총정리 — 도화살·역마살·화개살·겁살·망신살·백호대살 내 사주에 있나요?</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">13</span><span class="adcopy-text">開運法(개운법) 실전편 — 내 약한 오행 보완하는 색깔·음식·직업·방향 완전 정리 | 사주마루</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">14</span><span class="adcopy-text">사주로 보는 건강 — 五臟(오장)과 오행의 관계, 건강 주의 시기 예측법 | 사주마루</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">15</span><span class="adcopy-text">2026년 월별 운세 완전 분석 — 1월부터 12월까지 길월·흉월 총정리 | 사주마루 AI</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">16</span><span class="adcopy-text">일주(日柱) 60갑자 완전 분석 — 甲子·乙丑·丙寅... 내 일주는 어떤 의미인가? | 사주마루</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">17</span><span class="adcopy-text">사주로 이사 방향 정하는 법 — 吉方位(길방위) 완전 이해와 실전 적용 | 사주마루</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">18</span><span class="adcopy-text">사업 시작 타이밍을 사주로? — 창업에 유리한 사주 구조와 시기 분석법 | 사주마루</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">19</span><span class="adcopy-text">부부 관계 사주로 보기 — 일간·배우자궁·관성으로 보는 결혼운의 비밀 | 사주마루</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">20</span><span class="adcopy-text">AI + 사주명리학의 만남 — 사주마루 AI 스튜디오 사용법 완전 가이드 (구독·알림 설정 필수!)</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+  </div>
+</div>
+
+<!-- 커뮤니티 -->
+<div class="adcopy-platform">
+  <div class="adcopy-platform-title">🌐 커뮤니티 (20개)</div>
+  <button class="adcopy-all-btn" onclick="copyAllPlatform('community')">📋 커뮤니티 전체 복사</button>
+  <div class="adcopy-list" id="community">
+    <div class="adcopy-item"><span class="adcopy-num">01</span><span class="adcopy-text">사주 공부 처음 시작하는 분들 모여요! 사주마루 AI로 내 사주부터 분석해보고 함께 공부해요 🌟</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">02</span><span class="adcopy-text">[질문] 甲木 일간인데 2026년 丙午년이 기쁨이 될까요, 걱정이 될까요? 같이 토론해봐요</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">03</span><span class="adcopy-text">사주마루 AI 사용 후기 공유해요! 35,000자 보고서 받아보신 분 소감이 궁금합니다 📝</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">04</span><span class="adcopy-text">오행 균형이 맞지 않을 때 개운법 어떻게 하세요? 실전 경험 나눠주세요 💫</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">05</span><span class="adcopy-text">도화살 있으신 분들 경험담 들어보고 싶어요 — 정말 이성에게 인기 있나요? 😄</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">06</span><span class="adcopy-text">사주로 직업 정한 분 계세요? 명리학적 근거로 찾은 천직(天職) 경험담 공유해요 💼</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">07</span><span class="adcopy-text">대운 전환 경험담 — 대운이 바뀌던 해 정말 인생이 달라지셨나요? 이야기 나눠요 🔄</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">08</span><span class="adcopy-text">[초보자 정리] 天干(천간)·地支(지지)·十星(십성) 쉽게 이해하는 법 — 사주마루 활용 꿀팁</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">09</span><span class="adcopy-text">AI 사주 분석 vs 전통 사주 상담 — 어떤 게 더 정확하고 유용할까요? 의견 나눠요</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">10</span><span class="adcopy-text">2026년 運勢(운세) 미리 보기 — 각자 사주 기반 올해 흐름 공유해봐요 📅 사주마루 활용</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">11</span><span class="adcopy-text">신살(神殺) 복합으로 있는 분들 경험담 — 역마살+도화살 함께 있으면 어떤가요? 🌀</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">12</span><span class="adcopy-text">사주로 건강 관리 실전 팁 — 木 오행 약한 분이 건강 지키는 법 같이 연구해요 💚</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">13</span><span class="adcopy-text">이사 방향 사주로 정하신 분 있나요? 실제 효과 있었는지 후기 들어보고 싶어요 🏠</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">14</span><span class="adcopy-text">궁합 보고 결혼하신 분들 — 사주 궁합과 실제 결혼 생활이 맞았나요? 솔직 후기 💑</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">15</span><span class="adcopy-text">사주마루 AI 스튜디오 꿀팁 공유방 🔮 더 정확한 분석을 위한 팁 알려주세요!</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">16</span><span class="adcopy-text">재물운 터진 경험 — 사주에서 예고된 시기에 정말 재물이 왔나요? 성공 사례 공유 💰</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">17</span><span class="adcopy-text">十二運星(12운성) 공부 모임 — 장생부터 양까지 같이 공부해요 📚 사주마루 AI 활용법</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">18</span><span class="adcopy-text">타고난 기질 vs 환경의 영향 — 사주가 정말 성격을 결정할까요? 철학적 토론 🤔</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">19</span><span class="adcopy-text">사주 상담 경험 공유 — 사주마루 AI 보고서 받고 삶이 달라진 이야기 들어주세요 🌟</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+    <div class="adcopy-item"><span class="adcopy-num">20</span><span class="adcopy-text">사주 공부 1년 후기 — 명리학 배우면서 나 자신이 얼마나 변했는지 이야기해요 🌱</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
+  </div>
+</div>
+
+<script>
+function copyAdcopy(btn){
+  const text=btn.previousElementSibling.innerText;
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent="✅ 복사됨";
+    btn.classList.add("copied");
+    setTimeout(()=>{btn.textContent="복사";btn.classList.remove("copied");},1800);
+  }).catch(()=>{
+    const ta=document.createElement("textarea");
+    ta.value=text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+    btn.textContent="✅ 복사됨";
+    btn.classList.add("copied");
+    setTimeout(()=>{btn.textContent="복사";btn.classList.remove("copied");},1800);
+  });
+}
+function copyAllPlatform(id){
+  const items=document.querySelectorAll(`#${id} .adcopy-text`);
+  const all=[...items].map((el,i)=>`${i+1}. ${el.innerText}`).join("\n\n");
+  navigator.clipboard.writeText(all).then(()=>{
+    const btn=event.target;
+    btn.textContent="✅ 전체 복사 완료!";
+    setTimeout(()=>{btn.textContent=btn.textContent.replace("✅ 전체 복사 완료!","📋 "+id.charAt(0).toUpperCase()+id.slice(1)+" 전체 복사");},2000);
+  });
+}
+</script>
 </div>
 
 </div><!-- /#tab-theory -->
