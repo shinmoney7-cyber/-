@@ -930,24 +930,28 @@ function goStep1(){
   show("step1");hide("step2");hide("step3");setStep(1);
 }
 function goStep2(){
-  const year=parseInt(v("iYear")),month=parseInt(v("iMonth")),day=parseInt(v("iDay"));
-  const errEl=document.getElementById("step1Error");
-  function showStep1Err(msg,focusId){
-    errEl.textContent=msg;
-    errEl.hidden=false;
-    errEl.scrollIntoView({behavior:"smooth",block:"center"});
-    if(focusId){
-      const el=document.getElementById(focusId);
-      if(el){el.style.outline="2px solid var(--red)";el.focus();}
+  try{
+    const btn=document.querySelector("#step1 .btn-primary");
+    if(btn) btn.textContent="⏳ 확인 중...";
+    const year=parseInt(v("iYear")),month=parseInt(v("iMonth")),day=parseInt(v("iDay"));
+    const errEl=document.getElementById("step1Error");
+    errEl.hidden=true;
+    if(!year||!month||!day){
+      errEl.textContent="⚠️ 생년월일(년/월/일)을 모두 입력해 주세요.";
+      errEl.hidden=false;
+      if(btn) btn.textContent="다음 → 항목 선택";
+      return;
     }
+    document.getElementById("step1").hidden=true;
+    document.getElementById("step2").hidden=false;
+    document.getElementById("step3").hidden=true;
+    setStep(2);
+  }catch(err){
+    const errEl=document.getElementById("step1Error");
+    if(errEl){errEl.textContent="오류: "+err.message;errEl.hidden=false;}
+    const btn=document.querySelector("#step1 .btn-primary");
+    if(btn) btn.textContent="다음 → 항목 선택";
   }
-  ["iYear","iMonth","iDay"].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el) el.style.outline="";
-  });
-  errEl.hidden=true;
-  if(!year||!month||!day){showStep1Err("⚠️ 생년월일을 모두 입력해 주세요.",!year?"iYear":!month?"iMonth":"iDay");return;}
-  hide("step1");show("step2");hide("step3");setStep(2);
 }
 
 // ─── 분석 시작 ───────────────────────────────────────────────────────────
@@ -2095,7 +2099,6 @@ ${SECTIONS_50.join('\n\n')}
   }finally{
     prog.hidden=true;
   }
-}
 }
 
 function renderOhangDonut(d){
