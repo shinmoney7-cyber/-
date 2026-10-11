@@ -177,6 +177,42 @@ body{padding:0 16px;padding-block:0}
 .sip10-list{display:flex;flex-direction:column;gap:7px}
 .sip10-row{display:flex;align-items:center;gap:8px}
 .sip10-lbl{width:52px;font-size:11px;color:var(--fg2);text-align:right;flex-shrink:0}
+/* ── 한자이름 탭 ── */
+.hanja-syl-block{margin-bottom:20px}
+.hanja-syl-label{font-size:12px;font-weight:800;color:var(--fg2);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.hanja-syl-label .syl-char{font-family:var(--fdisp);font-size:22px;font-weight:900;color:var(--fg)}
+.hanja-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:7px}
+.hj-card{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:8px 6px;text-align:center;cursor:pointer;transition:all .15s;user-select:none}
+.hj-card:hover{border-color:var(--border2);background:var(--card2)}
+.hj-card.selected{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 12%,var(--card))}
+.hj-char{font-family:var(--fdisp);font-size:28px;font-weight:700;color:var(--fg);line-height:1}
+.hj-mean{font-size:9px;color:var(--fg2);margin-top:4px;line-height:1.3;word-break:keep-all}
+.hj-stroke{font-size:9px;color:var(--fg3);margin-top:2px}
+.hanja-result-box{background:var(--card);border:2px solid var(--border2);border-radius:14px;padding:20px;margin-top:20px}
+.hanja-composed{font-family:var(--fdisp);font-size:36px;font-weight:900;color:var(--gold);text-align:center;letter-spacing:.15em;margin-bottom:12px;text-shadow:0 0 20px rgba(245,200,66,.3)}
+.hanja-stats-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
+.hj-stat{text-align:center;background:var(--bg2);border-radius:8px;padding:8px 14px}
+.hj-stat-n{font-size:18px;font-weight:800;color:var(--accent)}
+.hj-stat-l{font-size:10px;color:var(--fg3);margin-top:2px}
+.hanja-syl-meanings{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.hm-row{display:flex;align-items:center;gap:10px;font-size:12px}
+.hm-char{font-family:var(--fdisp);font-size:20px;font-weight:700;color:var(--fg);width:24px;text-align:center;flex-shrink:0}
+.hm-mean{color:var(--fg2)}
+.hm-oh{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:700}
+.hm-oh-목{background:rgba(74,222,128,.15);color:#4ade80}
+.hm-oh-화{background:rgba(248,113,113,.15);color:#f87171}
+.hm-oh-토{background:rgba(251,191,36,.15);color:#fbbf24}
+.hm-oh-금{background:rgba(226,232,240,.15);color:#e2e8f0}
+.hm-oh-수{background:rgba(96,165,250,.15);color:#60a5fa}
+/* ── 철학원 풀이 ── */
+.cheol-form{margin-bottom:16px}
+.cheol-result{background:var(--card);border:1.5px solid var(--border2);border-radius:14px;overflow:hidden;margin-top:14px}
+.cheol-result-head{background:linear-gradient(135deg,#1a0a20,#2d1050);padding:14px 18px;border-bottom:1px solid var(--border);font-family:var(--fdisp);font-size:14px;font-weight:700;color:var(--gold)}
+.cheol-body{padding:18px;font-size:14px;line-height:1.95;white-space:pre-line;color:var(--fg);max-height:70vh;overflow-y:auto}
+/* ── 간단본 ── */
+.simple-result{background:var(--card);border:1.5px solid var(--border2);border-radius:14px;padding:20px;font-size:14px;line-height:1.9;white-space:pre-line;margin-top:14px;min-height:100px;max-height:70vh;overflow-y:auto}
+.simple-notice{background:var(--bg2);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--fg2);margin-bottom:14px;line-height:1.6}
+.simple-notice b{color:var(--accent)}
 .sip10-track{flex:1;background:var(--bg3);border-radius:4px;height:8px}
 .sip10-fill{height:100%;border-radius:4px;transition:width .4s}
 .sip10-cnt{width:18px;font-size:11px;color:var(--fg3);flex-shrink:0}
@@ -245,6 +281,9 @@ body{padding:0 16px;padding-block:0}
 <!-- 탭 -->
 <div class="tabs">
   <button class="tab-btn active" onclick="switchTab('analyze')">🔮 AI 분석</button>
+  <button class="tab-btn" onclick="switchTab('simple')">📋 간단본</button>
+  <button class="tab-btn" onclick="switchTab('hanja')">🔡 한자이름</button>
+  <button class="tab-btn" onclick="switchTab('cheol')">🏛️ 철학원 풀이</button>
   <button class="tab-btn" onclick="switchTab('shorts')">🎬 쇼츠 생성</button>
   <button class="tab-btn" onclick="switchTab('biz')">💼 비즈니스</button>
   <button class="tab-btn" onclick="switchTab('theory')">📐 사주원리</button>
@@ -294,8 +333,15 @@ body{padding:0 16px;padding-block:0}
       </div>
     </div>
     <div class="field">
-      <label>이름 <span style="font-weight:400;color:var(--fg3)">(선택)</span></label>
-      <input type="text" id="iName" placeholder="홍길동 (미입력시 의뢰인으로 표기)">
+      <label>이름 <span style="font-weight:400;color:var(--fg3)">(한글)</span></label>
+      <input type="text" id="iName" placeholder="홍길동">
+    </div>
+    <div class="field">
+      <label>한자이름 <span style="font-weight:400;color:var(--fg3)">(선택)</span>
+        <button type="button" onclick="switchTab('hanja');syncHanjaFromForm()" style="margin-left:6px;padding:2px 9px;font-size:11px;font-weight:700;background:var(--bg3);border:1.5px solid var(--border2);border-radius:6px;color:var(--accent);cursor:pointer">🔡 한자 찾기</button>
+      </label>
+      <input type="text" id="iHanjaName" placeholder="洪吉童 (한자 탭에서 자동 입력 가능)">
+      <div class="hint">한자이름 입력 시 성명학·획수·오행 분석이 보고서에 포함됩니다</div>
     </div>
     <div class="field">
       <label>현재 거주 지역 <span style="font-weight:400;color:var(--fg3)">(선택)</span></label>
@@ -872,12 +918,13 @@ let lastSajuMeta=null;
 
 // ─── 탭 전환 ─────────────────────────────────────────────────────────────
 function switchTab(name){
+  const ids=["analyze","simple","hanja","cheol","shorts","biz","theory","adcopy"];
   document.querySelectorAll(".tab-btn").forEach((b,i)=>{
-    const ids=["analyze","shorts","biz","theory"];
     b.classList.toggle("active", ids[i]===name);
   });
   document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active"));
-  document.getElementById("tab-"+name).classList.add("active");
+  const el=document.getElementById("tab-"+name);
+  if(el) el.classList.add("active");
 }
 
 // ─── 메뉴 그리드 ─────────────────────────────────────────────────────────
@@ -2791,6 +2838,405 @@ function copyText(id){
     if(btn){const o=btn.textContent;btn.textContent="✓ 복사됨!";setTimeout(()=>btn.textContent=o,2000);}
   });
 }
+
+// ═══════════════════════════════════════════════════════
+// 한자이름 탭 — 한자 DB + 피커
+// ═══════════════════════════════════════════════════════
+const HANJA_DB={
+ '가':[{h:'嘉',m:'아름다울·훌륭할',s:14,o:'목'},{h:'佳',m:'아름다울',s:8,o:'화'},{h:'可',m:'옳을·허락할',s:5,o:'수'},{h:'加',m:'더할·추가',s:5,o:'토'},{h:'珈',m:'패옥',s:10,o:'토'}],
+ '강':[{h:'康',m:'편안할·건강할',s:11,o:'수'},{h:'剛',m:'굳셀·강할',s:10,o:'금'},{h:'江',m:'강·큰물',s:7,o:'수'},{h:'姜',m:'생강·성씨',s:9,o:'목'},{h:'强',m:'강할·억지로',s:12,o:'금'},{h:'鋼',m:'강철',s:16,o:'금'}],
+ '건':[{h:'健',m:'건강할·굳셀',s:11,o:'금'},{h:'建',m:'세울·건설할',s:9,o:'목'},{h:'乾',m:'하늘·마를',s:11,o:'금'},{h:'虔',m:'공경할',s:15,o:'화'}],
+ '경':[{h:'敬',m:'공경할·삼갈',s:13,o:'목'},{h:'景',m:'빛·경치',s:12,o:'화'},{h:'慶',m:'경사·기쁠',s:15,o:'수'},{h:'京',m:'서울',s:8,o:'목'},{h:'庚',m:'일곱째천간',s:8,o:'금'},{h:'卿',m:'높은벼슬',s:12,o:'금'},{h:'炅',m:'빛날',s:9,o:'화'}],
+ '계':[{h:'桂',m:'계수나무',s:10,o:'목'},{h:'啓',m:'열·깨우칠',s:11,o:'화'},{h:'溪',m:'시냇물',s:14,o:'수'},{h:'珪',m:'패옥',s:11,o:'토'}],
+ '관':[{h:'冠',m:'갓·으뜸',s:9,o:'목'},{h:'寬',m:'너그러울',s:15,o:'목'},{h:'官',m:'관직·벼슬',s:8,o:'금'},{h:'觀',m:'볼·관찰할',s:25,o:'수'}],
+ '광':[{h:'光',m:'빛·영광',s:6,o:'화'},{h:'廣',m:'넓을',s:15,o:'토'},{h:'珖',m:'옥피리',s:10,o:'토'}],
+ '규':[{h:'奎',m:'별이름·문장',s:9,o:'목'},{h:'圭',m:'패옥·홀',s:6,o:'토'},{h:'珪',m:'옥홀',s:11,o:'토'},{h:'奎',m:'문장성',s:9,o:'목'}],
+ '근':[{h:'根',m:'뿌리·근본',s:10,o:'목'},{h:'槿',m:'무궁화',s:15,o:'목'},{h:'勤',m:'부지런할',s:13,o:'토'},{h:'謹',m:'삼갈·신중할',s:17,o:'금'}],
+ '기':[{h:'奇',m:'기이할·뛰어날',s:8,o:'목'},{h:'基',m:'터·기초',s:11,o:'토'},{h:'祈',m:'빌·기원할',s:9,o:'토'},{h:'起',m:'일어날',s:10,o:'목'},{h:'琦',m:'아름다운옥',s:12,o:'토'},{h:'氣',m:'기운',s:10,o:'토'}],
+ '남':[{h:'南',m:'남쪽',s:9,o:'화'},{h:'男',m:'사내',s:7,o:'토'},{h:'楠',m:'녹나무',s:13,o:'목'}],
+ '대':[{h:'大',m:'클',s:3,o:'화'},{h:'代',m:'대신할·세대',s:5,o:'토'},{h:'臺',m:'높은집',s:14,o:'토'}],
+ '덕':[{h:'德',m:'덕·인품',s:15,o:'화'}],
+ '도':[{h:'道',m:'길·도리',s:13,o:'화'},{h:'度',m:'법도·헤아릴',s:9,o:'화'},{h:'島',m:'섬',s:10,o:'수'},{h:'陶',m:'질그릇·즐길',s:11,o:'토'}],
+ '동':[{h:'東',m:'동쪽·봄',s:8,o:'목'},{h:'棟',m:'마룻대·으뜸',s:12,o:'목'},{h:'童',m:'아이·동자',s:12,o:'토'}],
+ '두':[{h:'斗',m:'말·북두성',s:4,o:'금'},{h:'杜',m:'팥배나무·막을',s:7,o:'목'}],
+ '란':[{h:'蘭',m:'난초',s:23,o:'목'},{h:'嵐',m:'남기람',s:12,o:'목'}],
+ '련':[{h:'蓮',m:'연꽃',s:17,o:'목'},{h:'連',m:'이을·연속',s:11,o:'수'}],
+ '령':[{h:'寧',m:'편안할',s:14,o:'수'},{h:'嶺',m:'고개',s:17,o:'토'},{h:'令',m:'하여금·명령',s:5,o:'화'}],
+ '명':[{h:'明',m:'밝을',s:8,o:'화'},{h:'命',m:'목숨·명령',s:8,o:'화'},{h:'銘',m:'새길·명심할',s:14,o:'금'}],
+ '미':[{h:'美',m:'아름다울',s:9,o:'화'},{h:'微',m:'작을·은미할',s:13,o:'수'},{h:'媚',m:'아리따울',s:12,o:'화'}],
+ '민':[{h:'民',m:'백성',s:5,o:'수'},{h:'旻',m:'하늘·가을하늘',s:8,o:'화'},{h:'珉',m:'아름다운돌',s:10,o:'토'},{h:'敏',m:'민첩할·빠를',s:11,o:'수'},{h:'慜',m:'슬기로울',s:14,o:'화'}],
+ '범':[{h:'凡',m:'무릇·보통',s:3,o:'수'},{h:'汎',m:'넓을·두루',s:7,o:'수'},{h:'範',m:'법·본보기',s:15,o:'수'}],
+ '복':[{h:'福',m:'복',s:14,o:'수'},{h:'卜',m:'점',s:2,o:'화'}],
+ '봉':[{h:'鳳',m:'봉황',s:14,o:'화'},{h:'奉',m:'받들',s:8,o:'수'},{h:'峰',m:'봉우리',s:10,o:'토'}],
+ '사':[{h:'士',m:'선비',s:3,o:'화'},{h:'思',m:'생각할',s:9,o:'화'},{h:'師',m:'스승',s:10,o:'수'},{h:'絲',m:'실',s:12,o:'목'}],
+ '산':[{h:'山',m:'산',s:3,o:'토'},{h:'珊',m:'산호',s:10,o:'토'}],
+ '상':[{h:'相',m:'서로·재상',s:9,o:'목'},{h:'祥',m:'상서로울',s:11,o:'토'},{h:'尙',m:'오히려·숭상할',s:8,o:'화'},{h:'商',m:'헤아릴·장사',s:11,o:'금'},{h:'想',m:'생각할',s:13,o:'화'}],
+ '서':[{h:'書',m:'글·책',s:10,o:'목'},{h:'序',m:'차례·서문',s:7,o:'목'},{h:'瑞',m:'상서로울·서기',s:14,o:'토'},{h:'西',m:'서쪽',s:6,o:'금'},{h:'舒',m:'펼·느긋할',s:12,o:'목'}],
+ '선':[{h:'仙',m:'신선',s:5,o:'목'},{h:'善',m:'착할',s:12,o:'토'},{h:'宣',m:'베풀·발표할',s:9,o:'화'},{h:'先',m:'먼저',s:6,o:'금'},{h:'鮮',m:'신선할·고울',s:17,o:'수'}],
+ '성':[{h:'成',m:'이룰',s:7,o:'금'},{h:'盛',m:'성할·왕성할',s:12,o:'화'},{h:'星',m:'별',s:9,o:'화'},{h:'誠',m:'정성',s:14,o:'화'},{h:'聖',m:'성인·신성할',s:13,o:'화'},{h:'城',m:'성',s:10,o:'토'}],
+ '소':[{h:'昭',m:'밝을',s:9,o:'화'},{h:'素',m:'흴·본바탕',s:10,o:'금'},{h:'小',m:'작을',s:3,o:'수'},{h:'蕭',m:'쑥·쓸쓸할',s:19,o:'목'}],
+ '수':[{h:'秀',m:'빼어날',s:7,o:'목'},{h:'壽',m:'목숨·장수',s:14,o:'수'},{h:'殊',m:'다를·뛰어날',s:10,o:'금'},{h:'洙',m:'물이름',s:10,o:'수'}],
+ '순':[{h:'順',m:'순할·따를',s:12,o:'수'},{h:'淳',m:'순박할',s:12,o:'수'},{h:'舜',m:'순임금·무궁화',s:12,o:'화'}],
+ '숙':[{h:'淑',m:'맑을·착할',s:12,o:'수'},{h:'肅',m:'엄숙할',s:13,o:'금'}],
+ '승':[{h:'承',m:'이을·받들',s:8,o:'수'},{h:'昇',m:'오를',s:8,o:'화'},{h:'勝',m:'이길',s:12,o:'화'}],
+ '시':[{h:'時',m:'때',s:10,o:'화'},{h:'詩',m:'시·운문',s:13,o:'화'},{h:'施',m:'베풀',s:9,o:'화'}],
+ '신':[{h:'信',m:'믿을',s:9,o:'목'},{h:'新',m:'새로울',s:13,o:'금'},{h:'身',m:'몸',s:7,o:'금'}],
+ '아':[{h:'雅',m:'아담할·우아할',s:12,o:'목'},{h:'兒',m:'아이',s:8,o:'화'}],
+ '안':[{h:'安',m:'편안할',s:6,o:'목'},{h:'晏',m:'늦을·편안할',s:10,o:'화'},{h:'岸',m:'언덕',s:8,o:'토'}],
+ '애':[{h:'愛',m:'사랑',s:13,o:'화'}],
+ '양':[{h:'梁',m:'들보·다리',s:11,o:'목'},{h:'陽',m:'볕·양기',s:12,o:'화'},{h:'楊',m:'버드나무',s:13,o:'목'},{h:'亮',m:'밝을·빛날',s:9,o:'화'}],
+ '언':[{h:'彦',m:'선비·준걸',s:9,o:'화'}],
+ '연':[{h:'延',m:'늘일',s:8,o:'화'},{h:'娟',m:'곱고예쁠',s:10,o:'수'},{h:'蓮',m:'연꽃',s:17,o:'목'},{h:'燃',m:'불탈',s:16,o:'화'},{h:'淵',m:'못·깊을',s:12,o:'수'}],
+ '엽':[{h:'燁',m:'불빛·환할',s:16,o:'화'},{h:'曄',m:'빛날',s:16,o:'화'}],
+ '영':[{h:'永',m:'길·영원',s:5,o:'수'},{h:'英',m:'꽃부리·뛰어날',s:11,o:'목'},{h:'榮',m:'꽃필·영화',s:14,o:'목'},{h:'瑛',m:'아름다운옥',s:14,o:'토'},{h:'泳',m:'헤엄칠',s:9,o:'수'},{h:'令',m:'명령·하여금',s:5,o:'화'}],
+ '예':[{h:'藝',m:'재주·기예',s:21,o:'목'},{h:'叡',m:'슬기로울',s:16,o:'화'},{h:'禮',m:'예도·예절',s:18,o:'화'},{h:'睿',m:'슬기로울',s:14,o:'화'}],
+ '오':[{h:'五',m:'다섯',s:4,o:'토'},{h:'吾',m:'나·우리',s:7,o:'토'},{h:'梧',m:'오동나무',s:11,o:'목'}],
+ '용':[{h:'勇',m:'용감할',s:9,o:'수'},{h:'龍',m:'용',s:16,o:'토'},{h:'溶',m:'녹을·흐를',s:14,o:'수'},{h:'庸',m:'떳떳할',s:11,o:'토'}],
+ '우':[{h:'宇',m:'집·우주',s:6,o:'수'},{h:'雨',m:'비',s:8,o:'수'},{h:'佑',m:'도울',s:7,o:'화'},{h:'禹',m:'우임금',s:9,o:'수'},{h:'旴',m:'해돋을',s:8,o:'화'}],
+ '웅':[{h:'雄',m:'수컷·영웅',s:12,o:'화'}],
+ '원':[{h:'元',m:'으뜸·근원',s:4,o:'화'},{h:'遠',m:'멀',s:14,o:'화'},{h:'圓',m:'둥글',s:13,o:'토'},{h:'原',m:'언덕·근원',s:10,o:'토'},{h:'苑',m:'동산',s:9,o:'목'}],
+ '유':[{h:'有',m:'있을',s:6,o:'목'},{h:'裕',m:'너그러울·넉넉할',s:13,o:'목'},{h:'維',m:'이을·생각할',s:14,o:'목'},{h:'幽',m:'그윽할',s:9,o:'수'}],
+ '윤':[{h:'允',m:'믿을·허락할',s:4,o:'화'},{h:'尹',m:'다스릴·성씨',s:4,o:'화'},{h:'潤',m:'윤택할·젖을',s:16,o:'수'},{h:'倫',m:'인륜·차례',s:10,o:'화'}],
+ '은':[{h:'恩',m:'은혜',s:10,o:'화'},{h:'銀',m:'은',s:14,o:'금'},{h:'殷',m:'성할·붉을',s:10,o:'화'}],
+ '의':[{h:'義',m:'옳을·의리',s:13,o:'금'},{h:'宜',m:'마땅할',s:8,o:'목'}],
+ '인':[{h:'仁',m:'어질',s:4,o:'목'},{h:'認',m:'인정할',s:14,o:'금'},{h:'印',m:'도장',s:6,o:'금'},{h:'寅',m:'셋째지지·동방',s:11,o:'목'}],
+ '일':[{h:'一',m:'하나',s:1,o:'수'},{h:'日',m:'날·해',s:4,o:'화'},{h:'逸',m:'편안할·숨을',s:12,o:'목'}],
+ '임':[{h:'任',m:'맡길',s:6,o:'화'},{h:'林',m:'수풀',s:8,o:'목'},{h:'壬',m:'아홉째천간',s:4,o:'수'}],
+ '자':[{h:'慈',m:'사랑·어질',s:14,o:'화'},{h:'子',m:'아들·첫째지지',s:3,o:'수'},{h:'紫',m:'자줏빛',s:12,o:'화'}],
+ '재':[{h:'在',m:'있을',s:6,o:'토'},{h:'才',m:'재주',s:3,o:'목'},{h:'財',m:'재물',s:10,o:'금'},{h:'宰',m:'재상·다스릴',s:10,o:'목'}],
+ '전':[{h:'典',m:'법전·모범',s:8,o:'화'},{h:'全',m:'온전할',s:6,o:'금'},{h:'田',m:'밭',s:5,o:'토'},{h:'珍',m:'보배',s:10,o:'토'}],
+ '정':[{h:'定',m:'정할·고요할',s:8,o:'수'},{h:'貞',m:'곧을·정숙할',s:9,o:'화'},{h:'晶',m:'밝을·빛날',s:12,o:'화'},{h:'精',m:'정기·순수할',s:14,o:'목'},{h:'淨',m:'맑을',s:12,o:'수'},{h:'丁',m:'넷째천간',s:2,o:'화'}],
+ '조':[{h:'照',m:'비칠·빛날',s:13,o:'화'},{h:'朝',m:'아침·나라',s:12,o:'목'},{h:'助',m:'도울',s:7,o:'화'},{h:'早',m:'이를',s:6,o:'화'}],
+ '종':[{h:'宗',m:'마루·으뜸',s:8,o:'수'},{h:'鍾',m:'쇠북·모일',s:17,o:'금'},{h:'從',m:'따를·좇을',s:11,o:'화'}],
+ '주':[{h:'朱',m:'붉을',s:6,o:'화'},{h:'珠',m:'구슬',s:11,o:'수'},{h:'周',m:'두루·주나라',s:8,o:'화'},{h:'株',m:'그루·주식',s:10,o:'목'}],
+ '준':[{h:'俊',m:'준걸·뛰어날',s:9,o:'화'},{h:'準',m:'준할·법도',s:13,o:'수'},{h:'竣',m:'마칠',s:12,o:'목'},{h:'濬',m:'깊을·파낼',s:18,o:'수'},{h:'埈',m:'높을',s:10,o:'토'}],
+ '중':[{h:'中',m:'가운데',s:4,o:'토'},{h:'仲',m:'버금',s:6,o:'수'},{h:'重',m:'무거울·거듭',s:9,o:'토'}],
+ '지':[{h:'智',m:'지혜',s:12,o:'화'},{h:'知',m:'알',s:8,o:'화'},{h:'志',m:'뜻',s:7,o:'화'},{h:'芝',m:'지초·영지',s:7,o:'목'},{h:'枝',m:'가지',s:8,o:'목'}],
+ '진':[{h:'眞',m:'참',s:10,o:'목'},{h:'珍',m:'보배',s:10,o:'토'},{h:'振',m:'떨칠',s:11,o:'토'},{h:'鎭',m:'진압할·편안할',s:18,o:'금'},{h:'璡',m:'아름다운옥',s:17,o:'토'}],
+ '찬':[{h:'燦',m:'빛날',s:17,o:'화'},{h:'璨',m:'빛날',s:18,o:'토'},{h:'讚',m:'기릴',s:26,o:'화'}],
+ '창':[{h:'昌',m:'빛날·번창할',s:8,o:'화'},{h:'彰',m:'드러낼·빛날',s:14,o:'화'},{h:'蒼',m:'푸를',s:16,o:'목'},{h:'創',m:'만들·시작',s:12,o:'금'}],
+ '채':[{h:'彩',m:'빛깔·채색',s:11,o:'화'},{h:'採',m:'캘·취할',s:12,o:'목'},{h:'菜',m:'나물',s:12,o:'목'}],
+ '천':[{h:'天',m:'하늘',s:4,o:'화'},{h:'川',m:'내·물',s:3,o:'수'},{h:'千',m:'일천',s:3,o:'금'},{h:'泉',m:'샘',s:9,o:'수'}],
+ '철':[{h:'哲',m:'밝을·슬기로울',s:10,o:'화'},{h:'鐵',m:'쇠',s:21,o:'금'},{h:'徹',m:'통할·밝을',s:15,o:'화'},{h:'喆',m:'밝을',s:12,o:'화'}],
+ '청':[{h:'淸',m:'맑을',s:12,o:'수'},{h:'晴',m:'갤',s:12,o:'화'},{h:'靑',m:'푸를',s:8,o:'목'}],
+ '태':[{h:'泰',m:'클·태평할',s:10,o:'수'},{h:'太',m:'클',s:4,o:'화'},{h:'台',m:'별이름·나',s:5,o:'화'}],
+ '택':[{h:'澤',m:'못·윤택할',s:17,o:'수'},{h:'宅',m:'집·터',s:6,o:'목'}],
+ '하':[{h:'夏',m:'여름·크나라',s:10,o:'화'},{h:'河',m:'강',s:9,o:'수'},{h:'霞',m:'노을',s:17,o:'화'},{h:'荷',m:'연꽃·짐',s:13,o:'목'}],
+ '한':[{h:'漢',m:'한나라·한수',s:15,o:'수'},{h:'韓',m:'한국',s:17,o:'목'},{h:'翰',m:'편지·날',s:16,o:'화'},{h:'寒',m:'찰',s:12,o:'수'}],
+ '해':[{h:'海',m:'바다',s:11,o:'수'},{h:'解',m:'풀',s:13,o:'금'}],
+ '향':[{h:'香',m:'향기',s:9,o:'목'},{h:'鄕',m:'고향',s:17,o:'토'}],
+ '현':[{h:'賢',m:'어질',s:15,o:'목'},{h:'玄',m:'검을·깊을',s:5,o:'수'},{h:'炫',m:'빛날',s:9,o:'화'},{h:'顯',m:'나타날·빛날',s:23,o:'화'},{h:'絃',m:'줄·현악기',s:11,o:'목'},{h:'鉉',m:'솥귀',s:13,o:'금'}],
+ '혜':[{h:'惠',m:'은혜·베풀',s:12,o:'수'},{h:'慧',m:'슬기로울',s:15,o:'화'}],
+ '호':[{h:'浩',m:'넓을',s:11,o:'수'},{h:'好',m:'좋을',s:6,o:'화'},{h:'虎',m:'호랑이',s:8,o:'토'},{h:'昊',m:'하늘',s:8,o:'화'}],
+ '홍':[{h:'洪',m:'큰물·성씨',s:10,o:'수'},{h:'弘',m:'클·넓을',s:5,o:'화'},{h:'紅',m:'붉을',s:9,o:'화'},{h:'鴻',m:'기러기·클',s:17,o:'수'}],
+ '화':[{h:'花',m:'꽃',s:8,o:'목'},{h:'和',m:'화할·고를',s:8,o:'화'},{h:'華',m:'빛날·중국',s:12,o:'화'}],
+ '환':[{h:'桓',m:'굳셀',s:10,o:'목'},{h:'煥',m:'빛날·밝을',s:13,o:'화'},{h:'歡',m:'기뻐할',s:22,o:'화'}],
+ '효':[{h:'孝',m:'효도',s:7,o:'목'},{h:'曉',m:'새벽',s:16,o:'화'}],
+ '훈':[{h:'訓',m:'가르칠',s:10,o:'화'},{h:'薰',m:'향기로울',s:20,o:'목'},{h:'熏',m:'연기·향기',s:14,o:'화'}],
+ '휘':[{h:'輝',m:'빛날',s:15,o:'화'},{h:'徽',m:'아름다울',s:17,o:'화'},{h:'揮',m:'휘두를',s:12,o:'화'}],
+ '희':[{h:'希',m:'바랄',s:7,o:'화'},{h:'喜',m:'기쁠',s:12,o:'화'},{h:'熙',m:'빛날·화할',s:14,o:'화'},{h:'曦',m:'햇빛',s:20,o:'화'},{h:'姬',m:'아름다운여자',s:10,o:'화'}],
+};
+
+const OH_COLOR={'목':'hm-oh-목','화':'hm-oh-화','토':'hm-oh-토','금':'hm-oh-금','수':'hm-oh-수'};
+let _hanjaSelected={};  // {syllableIdx: {h,m,s,o}}
+
+function onHanjaInput(v){if(v.length>=2) buildHanjaPicker();}
+
+function syncHanjaFromForm(){
+  const n=document.getElementById("iName")?.value.trim()||"";
+  if(n) document.getElementById("hanjaNameInput").value=n;
+}
+
+function buildHanjaPicker(){
+  const raw=document.getElementById("hanjaNameInput").value.trim();
+  if(!raw){alert("이름을 입력해주세요.");return;}
+  const syllables=[...raw];
+  _hanjaSelected={};
+  const area=document.getElementById("hanjaSyllableArea");
+  area.innerHTML="";
+  document.getElementById("hanjaResultBox").hidden=true;
+
+  syllables.forEach((syl,i)=>{
+    const options=HANJA_DB[syl]||[];
+    const block=document.createElement("div");
+    block.className="hanja-syl-block";
+    const labelHTML=`<div class="hanja-syl-label"><span class="syl-char">${syl}</span><span style="font-size:12px">${i===0&&syllables.length>1?'(성·姓)':'(이름)'} ${i+1}번째 음절</span></div>`;
+    if(options.length===0){
+      block.innerHTML=labelHTML+`<div style="font-size:12px;color:var(--fg3);padding:8px">이 음절의 한자가 DB에 없습니다. 직접 입력해주세요.</div>`;
+    } else {
+      const gridItems=options.map((hj,j)=>`
+        <div class="hj-card" id="hjc_${i}_${j}" onclick="selectHanja(${i},${j},'${hj.h}','${hj.m.replace(/'/g,"\\'")}',${hj.s},'${hj.o}')">
+          <div class="hj-char">${hj.h}</div>
+          <div class="hj-mean">${hj.m}</div>
+          <div class="hj-stroke">${hj.s}획·${hj.o}</div>
+        </div>`).join("");
+      block.innerHTML=labelHTML+`<div class="hanja-grid">${gridItems}</div>`;
+    }
+    area.appendChild(block);
+  });
+
+  // 성(姓)은 첫 음절이 1글자인 경우 자동 선택 처리 안함 — 사용자가 직접 선택
+  updateHanjaResult(syllables);
+}
+
+function selectHanja(sylIdx,optIdx,h,m,s,o){
+  _hanjaSelected[sylIdx]={h,m,s,o};
+  // 같은 음절의 다른 카드 선택 해제
+  document.querySelectorAll(`[id^="hjc_${sylIdx}_"]`).forEach(el=>el.classList.remove("selected"));
+  document.getElementById(`hjc_${sylIdx}_${optIdx}`)?.classList.add("selected");
+  const raw=document.getElementById("hanjaNameInput").value.trim();
+  updateHanjaResult([...raw]);
+}
+
+function updateHanjaResult(syllables){
+  const box=document.getElementById("hanjaResultBox");
+  const composed=syllables.map((_,i)=>_hanjaSelected[i]?.h||"?").join("");
+  const totalStrokes=Object.values(_hanjaSelected).reduce((s,v)=>s+v.s,0);
+  const oh=Object.values(_hanjaSelected).map(v=>v.o);
+
+  document.getElementById("hanjaComposed").textContent=composed;
+
+  // 획수 격국
+  const nums=Object.values(_hanjaSelected).map(v=>v.s);
+  const genCount=(n)=>n%2===1?'양(陽)':'음(陰)';
+  let stats="";
+  if(nums.length>=1) stats+=`<div class="hj-stat"><div class="hj-stat-n">${nums[0]}</div><div class="hj-stat-l">원격(元格)</div></div>`;
+  if(nums.length>=2) stats+=`<div class="hj-stat"><div class="hj-stat-n">${nums[1]}</div><div class="hj-stat-l">형격(亨格)</div></div>`;
+  if(nums.length>=3) stats+=`<div class="hj-stat"><div class="hj-stat-n">${nums[2]}</div><div class="hj-stat-l">이격(利格)</div></div>`;
+  if(nums.length>=1) stats+=`<div class="hj-stat"><div class="hj-stat-n">${totalStrokes}</div><div class="hj-stat-l">정격(貞格)</div></div>`;
+  document.getElementById("hanjaStatsRow").innerHTML=stats;
+
+  // 의미 목록
+  const meanings=syllables.map((syl,i)=>{
+    const sel=_hanjaSelected[i];
+    if(!sel) return `<div class="hm-row"><span class="hm-char">${syl}</span><span class="hm-mean" style="color:var(--fg3)">— 미선택</span></div>`;
+    return `<div class="hm-row">
+      <span class="hm-char">${sel.h}</span>
+      <span class="hm-mean">${syl} · ${sel.m}</span>
+      <span class="hm-oh ${OH_COLOR[sel.o]||''}">${sel.o}</span>
+      <span style="font-size:11px;color:var(--fg3)">${sel.s}획 · ${genCount(sel.s)}</span>
+    </div>`;
+  }).join("");
+  document.getElementById("hanjaMeanings").innerHTML=meanings;
+
+  box.hidden=false;
+}
+
+function applyHanjaToForm(){
+  const composed=document.getElementById("hanjaComposed").textContent.replace(/\?/g,"").trim();
+  if(!composed){alert("먼저 한자를 선택해주세요.");return;}
+  document.getElementById("iHanjaName").value=composed;
+  // 철학원·간단본 탭에도 동기화
+  document.getElementById("cheolHanja").value=composed;
+  document.getElementById("simHanja").value=composed;
+  const name=document.getElementById("hanjaNameInput").value.trim();
+  if(name&&!document.getElementById("iName").value) document.getElementById("iName").value=name;
+  if(name&&!document.getElementById("cheolName").value) document.getElementById("cheolName").value=name;
+  if(name&&!document.getElementById("simName").value) document.getElementById("simName").value=name;
+  alert("한자이름이 적용되었습니다!\n이제 AI 분석 또는 철학원 풀이 탭에서 분석을 시작하세요.");
+  switchTab("analyze");
+}
+
+function resetHanjaPicker(){
+  _hanjaSelected={};
+  document.querySelectorAll(".hj-card").forEach(c=>c.classList.remove("selected"));
+  document.getElementById("hanjaResultBox").hidden=true;
+}
+
+// ═══════════════════════════════════════════════════════
+// 간단본 생성
+// ═══════════════════════════════════════════════════════
+async function generateSimple(){
+  const sampleCap=await getCap("sample");
+  if(!sampleCap){showSampleError("simple");return;}
+  const name=document.getElementById("simName").value.trim()||document.getElementById("iName")?.value.trim()||"";
+  const hanja=document.getElementById("simHanja").value.trim()||document.getElementById("iHanjaName")?.value.trim()||"";
+  const gender=document.getElementById("simGender").value;
+  const cal=document.getElementById("simCal").value;
+  const year=document.getElementById("simYear").value||document.getElementById("iYear")?.value||"";
+  const month=document.getElementById("simMonth").value||document.getElementById("iMonth")?.value||"";
+  const day=document.getElementById("simDay").value||document.getElementById("iDay")?.value||"";
+  const hour=document.getElementById("cheolUnknown")?.checked||document.getElementById("simUnknown")?.checked?"모름":(document.getElementById("simHour").value||document.getElementById("iHour")?.value||"");
+  if(!year||!month||!day){alert("생년월일을 입력해주세요.");return;}
+
+  const btn=document.getElementById("btnSimple");
+  btn.disabled=true;
+  document.getElementById("simpleLoading").hidden=false;
+  document.getElementById("simpleResult").hidden=true;
+
+  const nameStr=name?(hanja?`${name}(${hanja})`:`${name}`):"의뢰인";
+  document.getElementById("simResultTitle").textContent=`📋 ${nameStr} — 사주마루 간단본`;
+
+  const prompt=`당신은 35년 경력의 전통 사주명리학 전문가입니다. 아래 정보로 사주마루 간단본(簡單本) 풀이를 작성해주세요.
+
+【의뢰인 정보】
+이름: ${nameStr}
+성별: ${gender}
+생년월일: ${cal} ${year}년 ${month}월 ${day}일${hour&&hour!=="모름"?" "+hour+"시":""}
+
+【작성 요령】
+- 반말 금지, 격식체로 작성
+- 총 2,500~3,500자 목표
+- 한자 병기 필수 (예: 甲木(갑목), 日干(일간))
+- 아래 7개 항목을 반드시 포함:
+
+1. 📜 명식 개요 — 사주팔자 구성 요약, 일간 오행, 신강/신약 판단 (300자)
+2. 🌟 기질과 성격 — 타고난 성향, 강점, 약점 (400자)
+3. 💰 재물운 — 재물을 모으는 방식, 적합한 재테크 방향 (300자)
+4. 💼 직업·명예운 — 어울리는 직종 5개 이상, 사회운 흐름 (300자)
+5. 💝 연애·결혼운 — 이성 인연, 배우자 유형, 결혼 시기 (300자)
+6. 🗓️ 2026년 운세 — 丙午年 대운·세운 적용, 올해의 키워드 3가지 (400자)
+7. ✨ 개운법·총평 — 용신 오행 기반 개운법, 인생 핵심 조언 (300자)
+
+각 항목 제목(번호+이모지+제목)을 반드시 포함하고 내용을 충실하게 작성하세요.`;
+
+  const body=document.getElementById("simpleBody");
+  body.textContent="";
+  try{
+    await sampleCap(prompt,{modelTier:"complex",onText({text}){body.textContent=text;}});
+    document.getElementById("simpleResult").hidden=false;
+  }catch(e){
+    body.textContent="오류: "+e.message;
+    document.getElementById("simpleResult").hidden=false;
+  }
+  document.getElementById("simpleLoading").hidden=true;
+  btn.disabled=false;
+}
+
+function copySimple(){
+  const t=document.getElementById("simpleBody")?.textContent||"";
+  navigator.clipboard?.writeText(t).then(()=>{alert("복사되었습니다!");}).catch(()=>{});
+}
+
+// ═══════════════════════════════════════════════════════
+// 철학원 풀이 생성
+// ═══════════════════════════════════════════════════════
+async function generateCheol(){
+  const sampleCap=await getCap("sample");
+  if(!sampleCap){showSampleError("cheol");return;}
+  const name=document.getElementById("cheolName").value.trim();
+  const hanja=document.getElementById("cheolHanja").value.trim();
+  const gender=document.getElementById("cheolGender").value;
+  const cal=document.getElementById("cheolCal").value;
+  const year=document.getElementById("cheolYear").value;
+  const month=document.getElementById("cheolMonth").value;
+  const day=document.getElementById("cheolDay").value;
+  const unknown=document.getElementById("cheolUnknown").checked;
+  const hour=unknown?"모름":(document.getElementById("cheolHour").value||"");
+  const min=document.getElementById("cheolMin").value;
+  const depth=document.getElementById("cheolDepth").value;
+  if(!year||!month||!day){alert("생년월일을 입력해주세요.");return;}
+
+  const btn=document.getElementById("btnCheol");
+  btn.disabled=true;
+  document.getElementById("cheolLoading").hidden=false;
+  document.getElementById("cheolResultWrap").hidden=true;
+  const nameStr=name?(hanja?`${name}(${hanja})`:`${name}`):"의뢰인";
+  document.getElementById("cheolResultTitle").textContent=`🏛️ ${nameStr} 선생님 — 철학원 풀이`;
+  const loadMsg=document.getElementById("cheolLoadingMsg");
+  loadMsg.textContent=depth==="brief"?"간단 풀이 작성 중... 3~5분 소요됩니다":"심층 풀이 작성 중... 8~12분 소요됩니다";
+
+  const charTarget=depth==="brief"?"3,000자":"8,000자";
+  const nameSection=hanja?`
+【성명학(姓名學) 분석】
+한자이름: ${hanja}
+각 한자의 의미·획수·오행을 분석하고, 원격(元格)·형격(亨格)·이격(利格)·정격(貞格)·외격(外格) 수리를 계산하여 이름이 사주와 조화를 이루는지 분석해주세요.`:""
+
+  const prompt=`당신은 40년 경력의 전통 철학원 사주명리학 전문가입니다. 아래 의뢰인의 사주를 전통 철학원 방식으로 풀이해주세요.
+
+【의뢰인 정보】
+이름: ${nameStr}
+성별: ${gender}
+생년월일: ${cal} ${year}년 ${month}월 ${day}일${hour&&hour!=="모름"?" "+hour+"시"+(min?" "+min+"분":""):""}
+${nameSection}
+
+【철학원 풀이 형식 — 반드시 아래 형식으로 작성, 총 ${charTarget} 이상】
+
+━━━━━━━━━━━━━━━━━━━━━━━
+▶ 命式表(명식표)
+━━━━━━━━━━━━━━━━━━━━━━━
+사주팔자 명식표를 텍스트로 작성 (년주·월주·일주·시주 / 천간·지지 / 지장간)
+
+━━━━━━━━━━━━━━━━━━━━━━━
+▶ 格局(격국) 및 用神(용신) 판단
+━━━━━━━━━━━━━━━━━━━━━━━
+格局(격국) 명칭, 일간 강약(강·중·약), 用神(용신)·喜神(희신)·忌神(기신) 오행과 근거를 전통 명리학 문체로 상세 서술
+
+━━━━━━━━━━━━━━━━━━━━━━━
+▶ 총평(總評) — 타고난 운명의 기본 틀
+━━━━━━━━━━━━━━━━━━━━━━━
+의뢰인의 팔자 기본 구조, 천성·기질, 인생 전반의 큰 흐름을 전통 문체로 서술
+
+━━━━━━━━━━━━━━━━━━━━━━━
+▶ 관록운(官祿運) — 직업·명예·사회운
+━━━━━━━━━━━━━━━━━━━━━━━
+타고난 관직·명예·직업 적성. 언제 사회적으로 빛나는지, 리더십 유형
+
+━━━━━━━━━━━━━━━━━━━━━━━
+▶ 재물운(財物運) — 재성 분석
+━━━━━━━━━━━━━━━━━━━━━━━
+재물을 얻는 방식(偏財·正財), 재물이 모이는 시기, 재물 손실 조심 시기
+
+━━━━━━━━━━━━━━━━━━━━━━━
+▶ 배우자운(配偶者運) — 이성·결혼
+━━━━━━━━━━━━━━━━━━━━━━━
+배우자 인연의 특성, 결혼 시기, 부부 관계 패턴
+
+━━━━━━━━━━━━━━━━━━━━━━━
+▶ 자녀운(子女運)
+━━━━━━━━━━━━━━━━━━━━━━━
+자녀 인연 강약, 자녀와의 관계 패턴
+
+━━━━━━━━━━━━━━━━━━━━━━━
+▶ 건강운(健康運)
+━━━━━━━━━━━━━━━━━━━━━━━
+약한 오행에 따른 취약 부위, 건강 주의 시기
+
+━━━━━━━━━━━━━━━━━━━━━━━
+▶ 大運(대운)·歲運(세운) — 2026년 운세
+━━━━━━━━━━━━━━━━━━━━━━━
+현재 대운 분석 + 2026년 丙午年 세운 적용, 이해의 핵심 과제와 기회
+${hanja?`
+━━━━━━━━━━━━━━━━━━━━━━━
+▶ 성명학(姓名學) 풀이
+━━━━━━━━━━━━━━━━━━━━━━━
+이름 한자 각각의 의미·획수·오행, 수리 격국(원·형·이·정·외격) 분석, 이름이 사주와 조화를 이루는지 총평`:""}
+
+━━━━━━━━━━━━━━━━━━━━━━━
+▶ 개운법(開運法) 및 결론
+━━━━━━━━━━━━━━━━━━━━━━━
+용신 오행 기반 구체적 개운법(색·방향·음식·직업환경), 의뢰인에게 드리는 인생 핵심 조언
+
+전통 철학원 격식체 문어체로 작성하되, 한자를 풍부하게 병기하고, 초보자도 이해할 수 있도록 한자 옆에 반드시 한글 독음을 표기하세요.`;
+
+  const body=document.getElementById("cheolBody");
+  body.textContent="";
+  try{
+    await sampleCap(prompt,{modelTier:"complex",onText({text}){body.textContent=text;}});
+    document.getElementById("cheolResultWrap").hidden=false;
+  }catch(e){
+    body.textContent="오류: "+e.message;
+    document.getElementById("cheolResultWrap").hidden=false;
+  }
+  document.getElementById("cheolLoading").hidden=true;
+  btn.disabled=false;
+}
+
+function showSampleError(which){
+  const msgs={simple:"simpleLoading",cheol:"cheolLoading"};
+  const el=document.getElementById(msgs[which]);
+  if(el) el.innerHTML='<p style="color:var(--red)">AI 기능을 사용하려면 Claude 계정에 로그인하세요.</p>';
+}
+
+async function getCap(name){
+  if(typeof window.claude==="undefined") return null;
+  return await window.claude.use(name);
+}
+
+function copyCheol(){
+  const t=document.getElementById("cheolBody")?.textContent||"";
+  navigator.clipboard?.writeText(t).then(()=>{alert("복사되었습니다!");}).catch(()=>{});
+}
 </script>
 
 <!-- ══════════════════════════════════════
@@ -3959,6 +4405,170 @@ function copyAllPlatform(id){
   });
 }
 </script>
+</div>
+
+</div><!-- /#tab-adcopy -->
+
+<!-- ══════════════════════════════════════
+     TAB: 사주마루 간단본
+══════════════════════════════════════ -->
+<div class="tab-panel" id="tab-simple">
+  <div class="section-title">📋 사주마루 간단본</div>
+  <div class="simple-notice"><b>사주마루 간단본</b>은 AI 분석 탭의 생년월일·성별·이름 정보를 그대로 활용합니다.<br>먼저 <b>🔮 AI 분석 탭 → Step 1</b>에서 정보를 입력한 후 여기서 간단본을 생성하세요.</div>
+
+  <div class="field">
+    <label>이름 (직접 입력 가능)</label>
+    <input type="text" id="simName" placeholder="홍길동">
+  </div>
+  <div class="field">
+    <label>한자이름 (선택)</label>
+    <input type="text" id="simHanja" placeholder="洪吉童">
+  </div>
+  <div class="row2">
+    <div class="field">
+      <label>성별</label>
+      <select id="simGender"><option value="여성">여성</option><option value="남성">남성</option></select>
+    </div>
+    <div class="field">
+      <label>양력 / 음력</label>
+      <select id="simCal"><option value="양력">양력</option><option value="음력">음력</option></select>
+    </div>
+  </div>
+  <div class="field">
+    <label>생년월일</label>
+    <div class="row3">
+      <input type="number" id="simYear" placeholder="1990" min="1920" max="2015">
+      <input type="text" inputmode="numeric" id="simMonth" placeholder="월" maxlength="2">
+      <input type="text" inputmode="numeric" id="simDay" placeholder="일" maxlength="2">
+    </div>
+  </div>
+  <div class="field">
+    <label>출생 시간</label>
+    <div class="row2">
+      <input type="number" id="simHour" placeholder="시 (0~23)" min="0" max="23">
+      <input type="number" id="simMin" placeholder="분 (0~59)" min="0" max="59">
+    </div>
+    <div class="hint"><label class="check-row" style="display:inline-flex"><input type="checkbox" id="simUnknown"> 출생 시간 모름</label></div>
+  </div>
+
+  <button class="btn btn-primary" id="btnSimple" onclick="generateSimple()">📋 간단 사주 보기</button>
+
+  <div id="simpleLoading" hidden class="loading" style="padding:30px 0">
+    <div class="spinner"></div>
+    <p style="font-size:13px;color:var(--fg2)">간단 사주 분석 중... 30~60초 소요됩니다</p>
+  </div>
+  <div id="simpleResult" hidden>
+    <div class="cheol-result-head" style="margin-top:14px;border-radius:14px 14px 0 0;display:flex;justify-content:space-between;align-items:center">
+      <span id="simResultTitle">사주마루 간단본</span>
+      <button onclick="copySimple()" style="padding:4px 12px;font-size:11px;font-weight:700;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:6px;color:#fff;cursor:pointer">📋 복사</button>
+    </div>
+    <div class="simple-result" id="simpleBody"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB: 한자이름
+══════════════════════════════════════ -->
+<div class="tab-panel" id="tab-hanja">
+  <div class="section-title">🔡 한자이름 찾기</div>
+  <p style="font-size:13px;color:var(--fg2);margin-bottom:16px">한글 이름을 입력하면 음절별 한자를 고를 수 있습니다. 성(姓)은 한자가 정해져 있어 이름 부분만 선택합니다.</p>
+
+  <div class="field">
+    <label>한글 이름</label>
+    <div style="display:flex;gap:8px">
+      <input type="text" id="hanjaNameInput" placeholder="예: 홍민준" maxlength="5" style="flex:1" oninput="onHanjaInput(this.value)">
+      <button class="btn btn-primary" onclick="buildHanjaPicker()" style="width:auto;padding:10px 18px;white-space:nowrap">🔍 찾기</button>
+    </div>
+  </div>
+
+  <div id="hanjaSyllableArea"></div>
+
+  <div id="hanjaResultBox" hidden class="hanja-result-box">
+    <div class="hanja-composed" id="hanjaComposed">—</div>
+    <div class="hanja-stats-row" id="hanjaStatsRow"></div>
+    <div class="hanja-syl-meanings" id="hanjaMeanings"></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-gold" onclick="applyHanjaToForm()" style="flex:1">✅ AI 분석에 적용</button>
+      <button class="btn btn-outline" onclick="resetHanjaPicker()" style="width:auto;padding:10px 14px">↺ 초기화</button>
+    </div>
+  </div>
+
+  <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border)">
+    <div class="section-title" style="font-size:14px">📊 한자 획수 원리 (성명학)</div>
+    <div style="font-size:12px;color:var(--fg2);line-height:1.8">
+      <b style="color:var(--fg)">元格(원격)</b> — 성의 획수: 조상·부모 인연, 어린 시절<br>
+      <b style="color:var(--fg)">亨格(형격)</b> — 이름 첫 자 획수: 사회운·직업운·중년기<br>
+      <b style="color:var(--fg)">利格(이격)</b> — 이름 둘째 자 획수: 가정운·배우자·말년<br>
+      <b style="color:var(--fg)">貞格(정격)</b> — 총 획수: 평생 총운·인생 전체 흐름<br>
+      <b style="color:var(--fg)">外格(외격)</b> — 성+이름 끝자 획수: 대외 사회운
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:var(--fg3)">획수가 홀수(1·3·5·7·9)면 양수(陽數), 짝수면 음수(陰數). 陽陽陽·陰陰陰은 치우침, 陽陰 조화가 이상적입니다.</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB: 철학원 풀이
+══════════════════════════════════════ -->
+<div class="tab-panel" id="tab-cheol">
+  <div class="section-title">🏛️ 철학원 풀이</div>
+  <div class="simple-notice">전통 철학원 방식의 사주 풀이입니다. <b>이름·한자이름</b>을 포함해 사주명식과 성명학을 함께 분석합니다.<br>格局·用神·十星 기반의 전통 명리학 문체로 작성됩니다.</div>
+
+  <div class="field">
+    <label>이름 (한글)</label>
+    <input type="text" id="cheolName" placeholder="홍길동">
+  </div>
+  <div class="field">
+    <label>한자이름 (선택 — 더 정밀한 성명학 분석)</label>
+    <input type="text" id="cheolHanja" placeholder="洪吉童">
+  </div>
+  <div class="row2">
+    <div class="field">
+      <label>성별</label>
+      <select id="cheolGender"><option value="여성">여성</option><option value="남성">남성</option></select>
+    </div>
+    <div class="field">
+      <label>양력 / 음력</label>
+      <select id="cheolCal"><option value="양력">양력</option><option value="음력">음력</option></select>
+    </div>
+  </div>
+  <div class="field">
+    <label>생년월일</label>
+    <div class="row3">
+      <input type="number" id="cheolYear" placeholder="1990" min="1920" max="2015">
+      <input type="text" inputmode="numeric" id="cheolMonth" placeholder="월" maxlength="2">
+      <input type="text" inputmode="numeric" id="cheolDay" placeholder="일" maxlength="2">
+    </div>
+  </div>
+  <div class="field">
+    <label>출생 시간</label>
+    <div class="row2">
+      <input type="number" id="cheolHour" placeholder="시 (0~23)" min="0" max="23">
+      <input type="number" id="cheolMin" placeholder="분 (0~59)" min="0" max="59">
+    </div>
+    <div class="hint"><label class="check-row" style="display:inline-flex"><input type="checkbox" id="cheolUnknown"> 출생 시간 모름</label></div>
+  </div>
+
+  <div class="field">
+    <label>풀이 깊이</label>
+    <select id="cheolDepth">
+      <option value="brief">간단 풀이 (3,000자·3~5분)</option>
+      <option value="full" selected>심층 풀이 (8,000자·8~12분)</option>
+    </select>
+  </div>
+
+  <button class="btn btn-primary" id="btnCheol" onclick="generateCheol()">🏛️ 철학원 풀이 시작</button>
+
+  <div id="cheolLoading" hidden class="loading" style="padding:30px 0">
+    <div class="spinner"></div>
+    <p id="cheolLoadingMsg" style="font-size:13px;color:var(--fg2)">철학원 풀이 작성 중... 8~12분 소요됩니다</p>
+  </div>
+  <div id="cheolResultWrap" hidden class="cheol-result">
+    <div class="cheol-result-head" style="display:flex;justify-content:space-between;align-items:center">
+      <span id="cheolResultTitle">철학원 풀이</span>
+      <button onclick="copyCheol()" style="padding:4px 12px;font-size:11px;font-weight:700;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:6px;color:#fff;cursor:pointer">📋 복사</button>
+    </div>
+    <div class="cheol-body" id="cheolBody"></div>
+  </div>
 </div>
 
 </div><!-- /#tab-theory -->
