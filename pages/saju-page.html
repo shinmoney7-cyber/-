@@ -150,6 +150,10 @@ body{padding:0 16px;padding-block:0}
 .rpt-sec{padding:16px 20px;border-bottom:1px solid var(--border)}
 .rpt-sec:last-child{border-bottom:none}
 .rpt-sec-title{font-size:13px;font-weight:700;color:var(--accent);border-left:3px solid var(--accent);padding-left:9px;margin-bottom:12px;letter-spacing:.03em}
+.theory-ref-wrap{margin-top:14px}
+.theory-ref-btn{background:none;border:1px solid var(--border2);border-radius:8px;padding:7px 12px;font-size:12px;color:var(--fg2);cursor:pointer;width:100%;text-align:left;display:flex;justify-content:space-between;align-items:center}
+.theory-ref-btn:hover{background:var(--card2)}
+.theory-ref-body{margin-top:10px;padding:14px;background:var(--card);border-radius:10px;border:1px solid var(--border)}
 /* 사주 원국표 */
 .saju-tbl{width:100%;border-collapse:collapse;font-size:13px}
 .saju-tbl th,.saju-tbl td{border:1px solid var(--border);text-align:center;padding:8px 4px}
@@ -1078,31 +1082,37 @@ ${sections.join('\n\n')}
       <div class="rpt-sec" id="sec-saju">
         <div class="rpt-sec-title">① 사주 원국 구성</div>
         <div id="sajuTableWrap"><div style="font-size:12px;color:var(--fg3);padding:8px 0">⏳ 사주 계산 중...</div></div>
+        <div class="theory-ref-wrap" id="tr-saju"></div>
       </div>
       <!-- ② 오행 -->
       <div class="rpt-sec" id="sec-ohang">
         <div class="rpt-sec-title">② 오행(五行) 강약 분석</div>
         <div id="ohangWrap"><div style="font-size:12px;color:var(--fg3)">⏳ 계산 중...</div></div>
+        <div class="theory-ref-wrap" id="tr-ohang"></div>
       </div>
       <!-- ③ 십성 -->
       <div class="rpt-sec" id="sec-sip">
         <div class="rpt-sec-title">③ 십성(十星) 구성 분석</div>
         <div id="sipWrap"><div style="font-size:12px;color:var(--fg3)">⏳ 계산 중...</div></div>
+        <div class="theory-ref-wrap" id="tr-sip"></div>
       </div>
       <!-- ④ 대운 -->
       <div class="rpt-sec" id="sec-dw">
         <div class="rpt-sec-title">④ 대운(大運) 10년 주기 흐름</div>
         <div id="daewoonWrap"><div style="font-size:12px;color:var(--fg3)">⏳ 계산 중...</div></div>
+        <div class="theory-ref-wrap" id="tr-dw"></div>
       </div>
       <!-- ⑤ 신살 -->
       <div class="rpt-sec" id="sec-sal">
         <div class="rpt-sec-title">⑤ 주요 신살(神殺)</div>
         <div id="shinsalWrap"><div style="font-size:12px;color:var(--fg3)">⏳ 계산 중...</div></div>
+        <div class="theory-ref-wrap" id="tr-sal"></div>
       </div>
       <!-- ⑥ 월별운세 -->
       <div class="rpt-sec" id="sec-mon">
         <div class="rpt-sec-title">⑥ 2026년 월별 운세 강도</div>
         <div id="monthSvgWrap"><div style="font-size:12px;color:var(--fg3)">⏳ 계산 중...</div></div>
+        <div class="theory-ref-wrap" id="tr-mon"></div>
       </div>
       <!-- ⑦ 개운법 -->
       <div class="rpt-sec" id="sec-gae">
@@ -1119,33 +1129,45 @@ ${sections.join('\n\n')}
         <div class="rpt-sec-title">⑨ 거주지 분석 & 이사 방향</div>
         <div id="isaWrap"><div style="font-size:12px;color:var(--fg3)">⏳ 계산 중...</div></div>
       </div>
-      <!-- ⑩ 사주원리 해설 -->
-      <div class="rpt-sec" id="sec-theory-inline">
-        <div class="rpt-sec-title" style="cursor:pointer;user-select:none" onclick="toggleTheoryInline()">
-          📐 사주원리(四柱原理) 참고 해설 <span id="theoryToggleIcon" style="font-size:12px;opacity:.6">▼ 펼치기</span>
-        </div>
-        <div id="theoryInlineBody" hidden></div>
-      </div>
     </div>`;
   show("resultsView");
   show("doneActions");
-  // Inject theory content into inline section
-  const theoryBody=document.getElementById("theoryInlineBody");
-  const theorySrc=document.getElementById("tab-theory");
-  if(theoryBody&&theorySrc){
-    theoryBody.innerHTML=theorySrc.innerHTML;
-  }
+  setupTheoryRefs();
   // Fetch chart data separately (non-blocking)
   lastSajuMeta={name,year,month,day,gender,cal,timeStr,calNote,selected,region};
   fetchAndRenderCharts(name, year, month, day, gender, cal, timeStr, region);
 }
 
-function toggleTheoryInline(){
-  const body=document.getElementById("theoryInlineBody");
-  const icon=document.getElementById("theoryToggleIcon");
-  if(!body) return;
-  body.hidden=!body.hidden;
-  icon.textContent=body.hidden?"▼ 펼치기":"▲ 접기";
+function setupTheoryRefs(){
+  // Map: result section ref container id → theory section ids to inject
+  const MAP={
+    "tr-saju": ["th-saju","th-stem","th-branch","th-ganji60","th-ilju","th-chung","th-samhap"],
+    "tr-ohang": ["th-ohang"],
+    "tr-sip":   ["th-sipsung"],
+    "tr-dw":    ["th-daewoon","th-yunsung"],
+    "tr-sal":   ["th-shinsal","th-gongmang"],
+    "tr-mon":   ["th-woon"]
+  };
+  Object.entries(MAP).forEach(([wrapperId, thIds])=>{
+    const wrap=document.getElementById(wrapperId);
+    if(!wrap) return;
+    const uid=wrapperId;
+    const bodyId=uid+"-body";
+    const iconId=uid+"-icon";
+    wrap.innerHTML=`
+      <button class="theory-ref-btn" onclick="
+        var b=document.getElementById('${bodyId}');
+        var ic=document.getElementById('${iconId}');
+        b.hidden=!b.hidden;
+        ic.textContent=b.hidden?'▼ 펼치기':'▲ 접기';
+      ">📐 사주원리 참고 <span id="${iconId}">▼ 펼치기</span></button>
+      <div id="${bodyId}" hidden class="theory-ref-body"></div>`;
+    const body=document.getElementById(bodyId);
+    thIds.forEach(thId=>{
+      const src=document.getElementById(thId);
+      if(src) body.appendChild(src.cloneNode(true));
+    });
+  });
 }
 
 function copyResult(){
@@ -2388,7 +2410,7 @@ function copyText(id){
 </style>
 
 <!-- ─── 1. 사주 구성 과정 ─────────────────── -->
-<div class="theory-section">
+<div class="theory-section" id="th-saju">
   <div class="theory-title">① 사주팔자(四柱八字) 구성 과정 <span class="theory-sub">— 생년월일시 → 8글자</span></div>
 
   <div class="flow-wrap">
@@ -2459,7 +2481,7 @@ function copyText(id){
 </div>
 
 <!-- ─── 2. 천간 10개 ─────────────────────── -->
-<div class="theory-section">
+<div class="theory-section" id="th-stem">
   <div class="theory-title">② 천간(天干) 10개 — 하늘의 기운</div>
   <div class="stem-grid">
     <div class="stem-card" style="background:color-mix(in srgb,#3a8a50 25%,var(--card));border-color:#3a8a50">
@@ -2523,7 +2545,7 @@ function copyText(id){
 </div>
 
 <!-- ─── 3. 지지 12개 ─────────────────────── -->
-<div class="theory-section">
+<div class="theory-section" id="th-branch">
   <div class="theory-title">③ 지지(地支) 12개 — 땅의 기운 · 12띠</div>
   <div class="branch-grid">
     <div class="branch-card" style="background:color-mix(in srgb,#2244aa 30%,var(--card));border-color:#2244aa">
@@ -2590,7 +2612,7 @@ function copyText(id){
 </div>
 
 <!-- ─── 4. 오행 상생상극 ──────────────────── -->
-<div class="theory-section">
+<div class="theory-section" id="th-ohang">
   <div class="theory-title">④ 오행(五行) 상생상극 관계도</div>
   <div class="flow-wrap">
   <svg viewBox="0 0 500 300" style="width:100%;max-width:500px;display:block;margin:0 auto" font-family="'Noto Sans KR',sans-serif">
@@ -2664,7 +2686,7 @@ function copyText(id){
 </div>
 
 <!-- ─── 5. 60갑자 순환 ────────────────────── -->
-<div class="theory-section">
+<div class="theory-section" id="th-ganji60">
   <div class="theory-title">⑤ 60갑자(六十甲子) 순환 <span class="theory-sub">— 천간10 × 지지12 = 60년 1사이클</span></div>
   <div class="flow-wrap">
   <svg viewBox="0 0 580 220" style="width:100%;max-width:580px;display:block;margin:0 auto" font-family="'Noto Sans KR',sans-serif">
@@ -2738,7 +2760,7 @@ function copyText(id){
 </div>
 
 <!-- ─── 6. 대운 계산법 ────────────────────── -->
-<div class="theory-section">
+<div class="theory-section" id="th-daewoon">
   <div class="theory-title">⑥ 대운(大運) 계산법 <span class="theory-sub">— 10년 주기 큰 운의 흐름</span></div>
 
   <div class="calc-box">
@@ -2807,7 +2829,7 @@ function copyText(id){
 </div>
 
 <!-- ─── 7. 세운·월운·일운 ──────────────────── -->
-<div class="theory-section">
+<div class="theory-section" id="th-woon">
   <div class="theory-title">⑦ 세운·월운·일운 주기 <span class="theory-sub">— 대운 위에 겹치는 단기 운</span></div>
 
   <div class="flow-wrap">
@@ -2854,7 +2876,7 @@ function copyText(id){
 </div>
 
 <!-- ─── 8. 12운성 사이클 ──────────────────── -->
-<div class="theory-section">
+<div class="theory-section" id="th-yunsung">
   <div class="theory-title">⑧ 12운성(十二運星) — 생명의 12단계 사이클</div>
   <div class="yunsung-ring">
     <div class="yun-card" style="border-color:#5ce685;background:color-mix(in srgb,#5ce685 12%,var(--card))">
@@ -2921,7 +2943,7 @@ function copyText(id){
 </div>
 
 <!-- ─── 9. 십성(十星) 표 ──────────────────── -->
-<div class="theory-section">
+<div class="theory-section" id="th-sipsung">
   <div class="theory-title">⑨ 십성(十星) — 일간과의 관계로 결정</div>
   <div class="flow-wrap">
   <table class="sipsung-table">
@@ -3002,7 +3024,7 @@ function copyText(id){
 </div>
 
 <!-- ══ 합충형파해 ══ -->
-<div class="theory-section">
+<div class="theory-section" id="th-chung">
   <h3 class="theory-h">⚡ 합·충·형·파·해(合沖刑破害) 관계표</h3>
   <p class="theory-desc">지지(地支) 12개가 서로 만났을 때 발생하는 에너지 변화. 사주 해석의 핵심 동력.</p>
 
@@ -3066,7 +3088,7 @@ function copyText(id){
 </div>
 
 <!-- ══ 삼합·방합 ══ -->
-<div class="theory-section">
+<div class="theory-section" id="th-samhap">
   <h3 class="theory-h">🔺 삼합(三合)·방합(方合)·천간합(天干合)</h3>
 
   <h4 style="margin:0 0 8px;font-size:13px;color:var(--fg2)">▶ 삼합(三合) — 3지지 결합으로 강한 오행 형성</h4>
@@ -3111,7 +3133,7 @@ function copyText(id){
 </div>
 
 <!-- ══ 일주론 60갑자 ══ -->
-<div class="theory-section">
+<div class="theory-section" id="th-ilju">
   <h3 class="theory-h">📅 일주론(日柱論) — 60갑자 일주 특성</h3>
   <p class="theory-desc">일주(日柱)는 내 본질·배우자·사회적 나를 나타낸다. 사주 해석에서 가장 중요한 기둥.</p>
   <div style="overflow-x:auto">
@@ -3155,7 +3177,7 @@ function copyText(id){
 </div>
 
 <!-- ══ 공망표 ══ -->
-<div class="theory-section">
+<div class="theory-section" id="th-gongmang">
   <h3 class="theory-h">🕳 공망(空亡) 조견표</h3>
   <p class="theory-desc">60갑자에서 천간(10)과 지지(12)의 차이로 짝이 없는 2개 지지. 공망에 해당되는 육친·분야는 힘이 약해진다.</p>
   <div style="overflow-x:auto">
@@ -3182,7 +3204,7 @@ function copyText(id){
 </div>
 
 <!-- ══ 신살 조견표 ══ -->
-<div class="theory-section">
+<div class="theory-section" id="th-shinsal">
   <h3 class="theory-h">🌀 주요 신살(神殺) 조견표</h3>
   <div style="overflow-x:auto">
   <table class="theory-table">
