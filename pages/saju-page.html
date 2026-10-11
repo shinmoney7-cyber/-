@@ -150,10 +150,15 @@ body{padding:0 16px;padding-block:0}
 .rpt-sec{padding:16px 20px;border-bottom:1px solid var(--border)}
 .rpt-sec:last-child{border-bottom:none}
 .rpt-sec-title{font-size:13px;font-weight:700;color:var(--accent);border-left:3px solid var(--accent);padding-left:9px;margin-bottom:12px;letter-spacing:.03em}
-.theory-ref-wrap{margin-top:14px}
-.theory-ref-btn{background:none;border:1px solid var(--border2);border-radius:8px;padding:7px 12px;font-size:12px;color:var(--fg2);cursor:pointer;width:100%;text-align:left;display:flex;justify-content:space-between;align-items:center}
-.theory-ref-btn:hover{background:var(--card2)}
-.theory-ref-body{margin-top:10px;padding:14px;background:var(--card);border-radius:10px;border:1px solid var(--border)}
+.theory-inline{margin-top:16px;border-top:1px dashed var(--border2);padding-top:14px}
+.ti-loading{font-size:12px;color:var(--fg3);padding:6px 0;font-style:italic}
+.ti-label{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.06em;margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.ti-label::after{content:"";flex:1;height:1px;background:var(--border2)}
+.ti-body{font-size:13px;line-height:1.85;color:var(--fg2)}
+.ti-p{margin:0 0 10px}
+.ti-critical{background:color-mix(in srgb,var(--gold) 10%,var(--card));border-left:3px solid var(--gold);padding:8px 12px;border-radius:0 8px 8px 0;margin:10px 0;font-size:13px;font-weight:600;color:var(--fg);line-height:1.7}
+.ti-bold{font-weight:800;color:var(--fg);text-decoration:underline;text-underline-offset:3px;text-decoration-color:color-mix(in srgb,var(--accent) 50%,transparent)}
+.ti-note{font-size:12px;color:var(--fg3);font-style:italic;display:inline-block;margin-left:2px}
 /* 사주 원국표 */
 .saju-tbl{width:100%;border-collapse:collapse;font-size:13px}
 .saju-tbl th,.saju-tbl td{border:1px solid var(--border);text-align:center;padding:8px 4px}
@@ -1082,37 +1087,37 @@ ${sections.join('\n\n')}
       <div class="rpt-sec" id="sec-saju">
         <div class="rpt-sec-title">① 사주 원국 구성</div>
         <div id="sajuTableWrap"><div style="font-size:12px;color:var(--fg3);padding:8px 0">⏳ 사주 계산 중...</div></div>
-        <div class="theory-ref-wrap" id="tr-saju"></div>
+        <div class="theory-inline" id="ti-saju"><div class="ti-loading">📐 맞춤 원리 해설 생성 중...</div></div>
       </div>
       <!-- ② 오행 -->
       <div class="rpt-sec" id="sec-ohang">
         <div class="rpt-sec-title">② 오행(五行) 강약 분석</div>
         <div id="ohangWrap"><div style="font-size:12px;color:var(--fg3)">⏳ 계산 중...</div></div>
-        <div class="theory-ref-wrap" id="tr-ohang"></div>
+        <div class="theory-inline" id="ti-ohang"><div class="ti-loading">📐 맞춤 원리 해설 생성 중...</div></div>
       </div>
       <!-- ③ 십성 -->
       <div class="rpt-sec" id="sec-sip">
         <div class="rpt-sec-title">③ 십성(十星) 구성 분석</div>
         <div id="sipWrap"><div style="font-size:12px;color:var(--fg3)">⏳ 계산 중...</div></div>
-        <div class="theory-ref-wrap" id="tr-sip"></div>
+        <div class="theory-inline" id="ti-sip"><div class="ti-loading">📐 맞춤 원리 해설 생성 중...</div></div>
       </div>
       <!-- ④ 대운 -->
       <div class="rpt-sec" id="sec-dw">
         <div class="rpt-sec-title">④ 대운(大運) 10년 주기 흐름</div>
         <div id="daewoonWrap"><div style="font-size:12px;color:var(--fg3)">⏳ 계산 중...</div></div>
-        <div class="theory-ref-wrap" id="tr-dw"></div>
+        <div class="theory-inline" id="ti-dw"><div class="ti-loading">📐 맞춤 원리 해설 생성 중...</div></div>
       </div>
       <!-- ⑤ 신살 -->
       <div class="rpt-sec" id="sec-sal">
         <div class="rpt-sec-title">⑤ 주요 신살(神殺)</div>
         <div id="shinsalWrap"><div style="font-size:12px;color:var(--fg3)">⏳ 계산 중...</div></div>
-        <div class="theory-ref-wrap" id="tr-sal"></div>
+        <div class="theory-inline" id="ti-sal"><div class="ti-loading">📐 맞춤 원리 해설 생성 중...</div></div>
       </div>
       <!-- ⑥ 월별운세 -->
       <div class="rpt-sec" id="sec-mon">
         <div class="rpt-sec-title">⑥ 2026년 월별 운세 강도</div>
         <div id="monthSvgWrap"><div style="font-size:12px;color:var(--fg3)">⏳ 계산 중...</div></div>
-        <div class="theory-ref-wrap" id="tr-mon"></div>
+        <div class="theory-inline" id="ti-mon"><div class="ti-loading">📐 맞춤 원리 해설 생성 중...</div></div>
       </div>
       <!-- ⑦ 개운법 -->
       <div class="rpt-sec" id="sec-gae">
@@ -1132,42 +1137,9 @@ ${sections.join('\n\n')}
     </div>`;
   show("resultsView");
   show("doneActions");
-  setupTheoryRefs();
-  // Fetch chart data separately (non-blocking)
+  // Fetch chart data separately (non-blocking) — theory generated inside
   lastSajuMeta={name,year,month,day,gender,cal,timeStr,calNote,selected,region};
   fetchAndRenderCharts(name, year, month, day, gender, cal, timeStr, region);
-}
-
-function setupTheoryRefs(){
-  // Map: result section ref container id → theory section ids to inject
-  const MAP={
-    "tr-saju": ["th-saju","th-stem","th-branch","th-ganji60","th-ilju","th-chung","th-samhap"],
-    "tr-ohang": ["th-ohang"],
-    "tr-sip":   ["th-sipsung"],
-    "tr-dw":    ["th-daewoon","th-yunsung"],
-    "tr-sal":   ["th-shinsal","th-gongmang"],
-    "tr-mon":   ["th-woon"]
-  };
-  Object.entries(MAP).forEach(([wrapperId, thIds])=>{
-    const wrap=document.getElementById(wrapperId);
-    if(!wrap) return;
-    const uid=wrapperId;
-    const bodyId=uid+"-body";
-    const iconId=uid+"-icon";
-    wrap.innerHTML=`
-      <button class="theory-ref-btn" onclick="
-        var b=document.getElementById('${bodyId}');
-        var ic=document.getElementById('${iconId}');
-        b.hidden=!b.hidden;
-        ic.textContent=b.hidden?'▼ 펼치기':'▲ 접기';
-      ">📐 사주원리 참고 <span id="${iconId}">▼ 펼치기</span></button>
-      <div id="${bodyId}" hidden class="theory-ref-body"></div>`;
-    const body=document.getElementById(bodyId);
-    thIds.forEach(thId=>{
-      const src=document.getElementById(thId);
-      if(src) body.appendChild(src.cloneNode(true));
-    });
-  });
 }
 
 function copyResult(){
@@ -1538,6 +1510,8 @@ ${regionNote}
     renderMonthlyLine2(d.monthly2026||[70,75,65,85,80,70,72,80,90,68,74,78]);
     renderGaewoon(d.gaewoon||[]);
     renderIsaSection(d.isa||null, region);
+    // Generate personalized theory explanations (non-blocking)
+    generatePersonalizedTheory(d, name, gender, year, month, day, timeStr).catch(()=>{});
   }catch(e){
     const seed=(year*month*day)%97;
     renderOhangSection({목:1+(seed%3),화:seed%3,토:1+((seed*3)%2),금:1+(seed%2),수:(seed*7)%3},"오행 기반 분석");
@@ -1548,6 +1522,71 @@ ${regionNote}
       if(el) el.innerHTML=`<div style="font-size:12px;color:var(--fg3)">데이터 로드 실패 — AI 상세 분석을 참고하세요</div>`;
     });
   }
+}
+
+async function generatePersonalizedTheory(d, name, gender, year, month, day, timeStr){
+  if(!sampleCap) return;
+  const s=d.saju||{};
+  const sajuStr=`년주 ${(s.nyeon||{}).gan||""}${(s.nyeon||{}).ji||""} / 월주 ${(s.wol||{}).gan||""}${(s.wol||{}).ji||""} / 일주 ${(s.il||{}).gan||""}${(s.il||{}).ji||""} / 시주 ${(s.si||{}).gan||""}${(s.si||{}).ji||""}`;
+  const ohStr=Object.entries(d.ohang||{}).map(([k,v])=>`${k}${v}개`).join(" ");
+  const sipStr=Object.entries(d.sipsung||{}).filter(([,v])=>v>0).map(([k,v])=>`${k}${v}개`).join(", ");
+  const salStr=(d.shinsal||[]).map(s=>s.name).join(", ")||"없음";
+  const dwStr=(d.daewoon||[]).slice(0,3).map(dw=>`${dw.ageFrom}~${dw.ageTo}세 ${dw.gan}${dw.ji}(${dw.trend==="up"?"상승":"하강"})`).join(", ");
+  const prompt=`${name}님(${gender}, ${year}년${month}월${day}일, ${timeStr}) 사주 데이터:
+사주팔자: ${sajuStr}
+일간(日干): ${(s.il||{}).gan||""} (${(s.il||{}).ganOh||""}오행) — 나 자신을 상징하는 핵심 기운
+일주(日柱): ${d.ilju_name||""} — ${d.ilju_desc||""}
+오행(五行) 분포: ${ohStr}
+용신(用神): ${(d.yongshin||{}).yong||""} / 기신(忌神): ${(d.yongshin||{}).gi||""} / 희신(喜神): ${(d.yongshin||{}).hee||""}
+십성(十星): ${sipStr}
+신살(神殺): ${salStr}
+대운(大運) 흐름: ${dwStr}
+
+위 데이터를 바탕으로 이 분에게 딱 맞는 사주원리 해설을 아래 JSON 형식으로만 출력하세요.
+각 섹션은 이 분의 실제 사주 글자를 직접 인용해 설명해야 합니다.
+
+{
+  "saju": "사주팔자 구성 원리 해설 (이 분의 실제 사주 글자 기반)",
+  "ohang": "오행 강약 원리 해설 (이 분의 오행 분포 기반)",
+  "sipsung": "십성 구성 원리 해설 (이 분의 실제 십성 기반)",
+  "daewoon": "대운·12운성 원리 해설 (이 분의 대운 흐름 기반)",
+  "shinsal": "신살·공망 원리 해설 (이 분의 실제 신살 기반)",
+  "monthly": "세운·월운·일운 원리 해설 (2026년 운세 맥락)"
+}
+
+반드시 지킬 규칙:
+1. 한자는 반드시 甲(갑), 乙(을), 木(목), 日干(일간) 형식으로 음을 괄호에 표기
+2. ⭐중요⭐ — 이 분에게 특히 중요한 핵심 포인트는 이 기호로 시작하는 별도 줄에 표기
+3. 어려운 전문용어 뒤에는 → (쉽게: 설명) 형식으로 바로 이어서 설명
+4. **굵게** — 강조할 용어나 수치는 별표 두 개로 감싸기
+5. 각 섹션 400~600자. 이 분의 실제 사주 글자를 2회 이상 직접 인용
+6. 의뢰인이 한 번 읽으면 완전히 이해할 수 있도록 평이하게 서술
+7. JSON만 출력, 다른 설명 없이`;
+
+  try{
+    const result=await sampleCap.json(prompt,{modelTier:"complex",cache:false});
+    const map={saju:"ti-saju",ohang:"ti-ohang",sipsung:"ti-sip",daewoon:"ti-dw",shinsal:"ti-sal",monthly:"ti-mon"};
+    Object.entries(map).forEach(([key,divId])=>{
+      const el=document.getElementById(divId);
+      if(!el||!result[key]) return;
+      el.innerHTML=`<div class="ti-label">📐 사주원리 맞춤 해설</div><div class="ti-body">${theoryMarkdownToHtml(result[key])}</div>`;
+    });
+  }catch(e){
+    ["ti-saju","ti-ohang","ti-sip","ti-dw","ti-sal","ti-mon"].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el) el.innerHTML="";
+    });
+  }
+}
+
+function theoryMarkdownToHtml(text){
+  return text
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/⭐중요⭐\s*(.+)/g,'<div class="ti-critical">⭐ $1</div>')
+    .replace(/\*\*(.+?)\*\*/g,'<strong class="ti-bold">$1</strong>')
+    .replace(/→\s*\(쉽게:\s*([^)]+)\)/g,'<span class="ti-note">→ (쉽게: $1)</span>')
+    .replace(/\n{2,}/g,'</p><p class="ti-p">').replace(/\n/g,'<br>')
+    .replace(/^(.)/,'<p class="ti-p">$1').replace(/$/, '</p>');
 }
 
 const OH_COLORS={"목":"#4ade80","화":"#f87171","토":"#fbbf24","금":"#e2e8f0","수":"#60a5fa"};
