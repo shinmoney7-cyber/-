@@ -150,11 +150,13 @@ body{padding:0 16px;padding-block:0}
 .rpt-sec{padding:16px 20px;border-bottom:1px solid var(--border)}
 .rpt-sec:last-child{border-bottom:none}
 .rpt-sec-title{font-size:13px;font-weight:700;color:var(--accent);border-left:3px solid var(--accent);padding-left:9px;margin-bottom:12px;letter-spacing:.03em}
-.theory-inline{margin-top:16px;border-top:1px dashed var(--border2);padding-top:14px}
-.ti-loading{font-size:12px;color:var(--fg3);padding:6px 0;font-style:italic}
-.ti-label{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.06em;margin-bottom:8px;display:flex;align-items:center;gap:5px}
-.ti-label::after{content:"";flex:1;height:1px;background:var(--border2)}
-.ti-body{font-size:13px;line-height:1.85;color:var(--fg2)}
+.theory-inline{margin-top:20px;background:color-mix(in srgb,var(--gold) 5%,var(--bg2));border:1px solid color-mix(in srgb,var(--gold) 25%,var(--border));border-radius:12px;padding:16px 18px}
+.ti-loading{font-size:12px;color:var(--fg3);padding:6px 0;font-style:italic;display:flex;align-items:center;gap:6px}
+.ti-loading::before{content:"📐";font-style:normal}
+.ti-label{font-size:12px;font-weight:800;color:var(--gold);letter-spacing:.08em;margin-bottom:12px;display:flex;align-items:center;gap:6px;text-transform:uppercase}
+.ti-label::before{content:"📐";font-size:14px}
+.ti-label::after{content:"";flex:1;height:1.5px;background:color-mix(in srgb,var(--gold) 30%,transparent)}
+.ti-body{font-size:13.5px;line-height:1.95;color:var(--fg2)}
 .ti-p{margin:0 0 10px}
 .ti-critical{background:color-mix(in srgb,var(--gold) 10%,var(--card));border-left:3px solid var(--gold);padding:8px 12px;border-radius:0 8px 8px 0;margin:10px 0;font-size:13px;font-weight:600;color:var(--fg);line-height:1.7}
 .ti-bold{font-weight:800;color:var(--fg);text-decoration:underline;text-underline-offset:3px;text-decoration-color:color-mix(in srgb,var(--accent) 50%,transparent)}
@@ -1778,9 +1780,11 @@ async function generatePersonalizedTheory(d, name, gender, year, month, day, tim
 2. ⭐중요⭐ — 이 분에게 특히 중요한 핵심 포인트는 이 기호로 시작하는 별도 줄에 표기
 3. 어려운 전문용어 뒤에는 → (쉽게: 설명) 형식으로 바로 이어서 설명
 4. **굵게** — 강조할 용어나 수치는 별표 두 개로 감싸기
-5. 각 섹션 400~600자. 이 분의 실제 사주 글자를 2회 이상 직접 인용
+5. 각 섹션 700~1,200자. 이 분의 실제 사주 글자를 3회 이상 직접 인용
 6. 의뢰인이 한 번 읽으면 완전히 이해할 수 있도록 평이하게 서술
-7. JSON만 출력, 다른 설명 없이`;
+7. 각 섹션에 반드시 포함할 것: ①원리 설명 → ②이 분의 사주에 직접 적용 → ③실생활 활용/조언
+8. ⭐중요⭐ 핵심 포인트는 2개 이상 반드시 포함
+9. JSON만 출력, 다른 설명 없이`;
 
   try{
     const result=await sampleCap.json(prompt,{modelTier:"complex",cache:false});
@@ -3451,6 +3455,10 @@ function copyCheol(){
      TAB 4: 사주원리
 ══════════════════════════════════════ -->
 <div class="tab-panel" id="tab-theory">
+<div style="background:color-mix(in srgb,var(--gold) 8%,var(--bg2));border:1px solid color-mix(in srgb,var(--gold) 30%,var(--border));border-radius:12px;padding:14px 16px;margin-bottom:20px;font-size:13px;line-height:1.7;color:var(--fg2)">
+  <strong style="color:var(--gold)">📐 맞춤 원리 해설</strong>은 분석 결과 탭에서 각 섹션 바로 아래에 자동 생성됩니다.<br>
+  <span style="color:var(--fg3);font-size:12px">이 탭은 사주 기초 이론 참고표입니다 — 합충형파해·천간지지·12운성·십성 기본 원리를 확인하세요.</span>
+</div>
 <style>
 .theory-section{margin-bottom:32px}
 .theory-title{font-family:var(--fdisp);font-size:15px;font-weight:800;color:var(--gold);margin-bottom:14px;padding-bottom:6px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
