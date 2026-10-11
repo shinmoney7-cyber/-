@@ -300,6 +300,7 @@ body{padding:0 16px;padding-block:0}
         <div class="img-hint" id="imgHint">📸 사진 업로드 시 관상 분석 추가<br><small style="opacity:.7">선택사항 · 클릭하여 업로드</small></div>
       </div>
     </div>
+    <div id="step1Error" hidden style="background:rgba(255,85,119,.12);border:1px solid var(--red);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--red);margin-bottom:10px"></div>
     <button class="btn btn-primary" onclick="goStep2()">다음 → 항목 선택</button>
   </div>
 
@@ -930,8 +931,24 @@ function goStep1(){
 }
 function goStep2(){
   const name=v("iName"),year=parseInt(v("iYear")),month=parseInt(v("iMonth")),day=parseInt(v("iDay"));
-  if(!name){alert("이름을 입력해 주세요.");return;}
-  if(!year||!month||!day){alert("생년월일을 모두 입력해 주세요.");return;}
+  const errEl=document.getElementById("step1Error");
+  function showStep1Err(msg,focusId){
+    errEl.textContent=msg;
+    errEl.hidden=false;
+    errEl.scrollIntoView({behavior:"smooth",block:"center"});
+    if(focusId){
+      const el=document.getElementById(focusId);
+      if(el){el.style.outline="2px solid var(--red)";el.focus();}
+    }
+  }
+  // 이전 오류 스타일 초기화
+  ["iName","iYear","iMonth","iDay"].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.style.outline="";
+  });
+  errEl.hidden=true;
+  if(!name){showStep1Err("⚠️ 이름을 입력해 주세요.","iName");return;}
+  if(!year||!month||!day){showStep1Err("⚠️ 생년월일을 모두 입력해 주세요.",!year?"iYear":!month?"iMonth":"iDay");return;}
   hide("step1");show("step2");hide("step3");setStep(2);
 }
 
