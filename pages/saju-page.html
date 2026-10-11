@@ -350,18 +350,18 @@ body{padding:0 16px;padding-block:0}
         <button class="btn btn-outline" onclick="restart()">← 다시 분석</button>
         <button class="btn btn-primary" id="copyBtn" onclick="copyResult()">📋 전체 복사</button>
       </div>
-      <button class="btn btn-gold" id="btn50p" style="width:100%;margin-top:8px" onclick="generate50Report()">📄 사주원리+AI 분석 합본 50페이지 보고서 생성</button>
+      <button class="btn btn-gold" id="btn50p" style="width:100%;margin-top:8px" onclick="generate50Report()">📄 사주원리 풀이 + AI 분석 통합 50페이지 보고서 생성</button>
       <div id="report50Progress" hidden style="margin-top:8px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px">
         <div style="display:flex;align-items:center;gap:10px">
           <div class="spinner" style="width:20px;height:20px;border-width:2px;flex-shrink:0"></div>
           <div>
-            <div style="font-size:12px;font-weight:700;color:var(--fg)">보고서 작성 중...</div>
-            <div style="font-size:11px;color:var(--fg2);margin-top:2px">3~6분 소요 · 이 창은 닫지 마세요</div>
+            <div style="font-size:12px;font-weight:700;color:var(--fg)">50페이지 보고서 작성 중...</div>
+            <div style="font-size:11px;color:var(--fg2);margin-top:2px">사주원리 해설 + 개인 명식 적용 · 4~8분 소요 · 이 창은 닫지 마세요</div>
           </div>
-          <div id="report50CharCount" style="margin-left:auto;font-size:11px;color:var(--fg3);font-variant-numeric:tabular-nums">0자</div>
+          <div id="report50CharCount" style="margin-left:auto;font-size:11px;color:var(--gold);font-weight:700;font-variant-numeric:tabular-nums">0자</div>
         </div>
       </div>
-      <button id="btn50pOpen" hidden class="btn btn-outline" style="width:100%;margin-top:6px" onclick="open50Report()">📂 완성된 보고서 새 탭에서 열기</button>
+      <button id="btn50pOpen" hidden class="btn btn-outline" style="width:100%;margin-top:6px" onclick="open50Report()">📂 완성된 50페이지 보고서 열기 (인쇄/PDF 저장 가능)</button>
     </div>
   </div>
 </div>
@@ -1856,126 +1856,150 @@ function renderIsaSection(isa, region){
 }
 
 // ─── 50페이지 통합 보고서 ────────────────────────────────────────────────
+// 총 20섹션 × 지정 분량 = 정확히 50페이지(≈25,000자)
 const SECTIONS_50=[
-`1. 📜 인사말 & 이 보고서 소개 (1페이지)
-   - "${"{name}"} 선생님"께 드리는 인사 / 사주명리학의 의미 / 이 보고서를 읽는 법
-   - 자연스러운 산문 형식으로 작성. 격식체 유지.`,
+`1. 📜 인사말 & 이 보고서 소개 (1페이지 = 500자)
+반드시 포함: 의뢰인 이름 선생님께 드리는 따뜻한 인사 / 사주명리학(四柱命理學)의 역사적 의미 / 이 보고서를 읽는 법
+자연스러운 산문 격식체로 작성. 사주원리학의 깊이와 의미를 독자가 느낄 수 있도록.`,
 
-`2. 🌟 사주원국(四柱八字) 완전 해설 (4페이지)
-   - 년주·월주·일주·시주 각각의 천간과 지지를 산문으로 설명
-   - 각 주의 오행·음양 의미를 원리에서부터 설명 후 본인 명식에 적용
-   - 60갑자 중 어떤 조합인지, 그 갑자가 지닌 고유한 에너지
-   - 상호작용 관계(합·충·형·파·해) 유무와 의미`,
+`2. 🌟 사주원국(四柱八字) 완전 해설 (4페이지 = 2,000자)
+【사주원리 해설 — 반드시 400자 이상 작성】
+四柱(사주)란 무엇인가: 年柱(년주)·月柱(월주)·日柱(일주)·時柱(시주)의 구조 원리를 상세 설명.
+天干(천간)과 地支(지지)가 품은 陰陽(음양)·五行(오행)의 의미. 60甲子(갑자) 순환 원리.
+합(合)·충(沖)·형(刑)·파(破)·해(害)의 개념과 작용 원리.
+【명식 직접 적용 — 반드시 1,600자 이상 작성】
+의뢰인의 사주 계산 결과의 각 주(년·월·일·시) 天干·地支를 한 글자씩 상세 해설.
+八字(팔자) 구성의 고유한 특성과 60갑자 조합의 에너지. 실제 합·충·형 분석.`,
 
-`3. ☯️ 천간(天干) 원리와 나의 천간 분석 (4페이지)
-   - 10천간의 본질적 원리(木의 甲乙, 火의 丙丁, 土의 戊己, 金의 庚辛, 水의 壬癸) 설명
-   - 양간(甲丙戊庚壬)과 음간(乙丁己辛癸)의 차이점
-   - 본인 사주의 4천간이 갖는 각각의 성격·재능·약점
-   - 일간을 중심으로 한 천간 조합의 특성과 인생 키워드`,
+`3. ☯️ 天干(천간) 원리와 나의 천간 분석 (3페이지 = 1,500자)
+【사주원리 해설 — 반드시 500자 이상 작성】
+10천간의 본질: 甲(갑)·乙(을)=木(목), 丙(병)·丁(정)=火(화), 戊(무)·己(기)=土(토), 庚(경)·辛(신)=金(금), 壬(임)·癸(계)=水(수).
+양간(陽干)·음간(陰干)의 본질적 차이. 각 천간이 상징하는 기질·에너지·삶의 방식 원리 상세 설명.
+【명식 직접 적용 — 반드시 1,000자 이상 작성】
+의뢰인 사주의 4천간 각각의 성격·재능·약점 구체 분석. 日干(일간)을 중심으로 한 천간 조합의 특성과 인생 키워드.`,
 
-`4. 🌙 지지(地支) 원리와 나의 지지 분석 (4페이지)
-   - 12지지가 품고 있는 계절·시간·방위·오행의 원리 설명
-   - 지장간(支藏干) — 지지 속에 숨겨진 천간 에너지의 의미
-   - 본인 사주의 4지지와 지장간이 드러내는 숨겨진 성향
-   - 지지 합(六合·三合·方合)과 충(六沖)이 삶에 미치는 영향`,
+`4. 🌙 地支(지지) 원리와 나의 지지 분석 (3페이지 = 1,500자)
+【사주원리 해설 — 반드시 500자 이상 작성】
+12지지가 품은 계절·시간·방위·오행의 원리: 子(자)·丑(축)·寅(인)·卯(묘)·辰(진)·巳(사)·午(오)·未(미)·申(신)·酉(유)·戌(술)·亥(해) 각각의 본질.
+地藏干(지장간)의 원리 — 지지 속에 숨겨진 천간 에너지의 의미와 활용.
+六合(육합)·三合(삼합)·方合(방합)·六沖(육충)의 원리와 발생 조건.
+【명식 직접 적용 — 반드시 1,000자 이상 작성】
+의뢰인 사주의 4지지와 지장간이 드러내는 숨겨진 성향. 실제 합·충 분석과 삶에 미치는 영향.`,
 
-`5. 🌊 오행(五行) 원리와 나의 오행 분석 (3페이지)
-   - 목·화·토·금·수 오행의 본질과 상생(相生)·상극(相剋) 원리 설명
-   - 본인 사주의 오행 분포(개수·강약) 분석
-   - 부족한 오행과 과잉 오행이 성격·건강·인간관계에 미치는 영향
-   - 용신(用神)·희신(喜神)·기신(忌神) 선정과 실생활 활용법`,
+`5. 🌊 五行(오행) 원리와 나의 오행 분석 (3페이지 = 1,500자)
+【사주원리 해설 — 반드시 500자 이상 작성】
+木(목)·火(화)·土(토)·金(금)·水(수) 오행의 본질과 相生(상생)·相剋(상극)·相侮(상모) 순환 원리 상세 설명.
+각 오행이 상징하는 계절·방향·색깔·장부·직업·성격 특성. 오행 균형의 의미.
+用神(용신)·喜神(희신)·忌神(기신)·閑神(한신)·仇神(구신)의 개념과 선정 원리.
+【명식 직접 적용 — 반드시 1,000자 이상 작성】
+의뢰인 사주의 오행 분포·강약 상세 분석. 용신·기신 선정과 실생활 적용법.`,
 
-`6. 💎 일간(日干) 성향·기질 심층 분석 (4페이지)
-   - 일간 오행의 원리적 특성에서 출발한 성격 분석
-   - 강점과 약점 / 대인관계 패턴 / 스트레스 반응
-   - 재능과 잠재력 / 어울리는 직종과 환경
-   - 일간이 계절·월령에 따라 어떻게 달라지는지(득령·실령)`,
+`6. 💎 日干(일간) 성향·기질 심층 분석 (3페이지 = 1,500자)
+【사주원리 해설 — 반드시 400자 이상 작성】
+일간이 命式(명식)에서 갖는 위치와 의미: '나 자신'을 나타내는 일간의 원리.
+得令(득령)·失令(실령)·得地(득지)·得勢(득세)가 일간 강약에 미치는 영향 원리 설명.
+【명식 직접 적용 — 반드시 1,100자 이상 작성】
+의뢰인의 일간 오행 기질 심층 분석: 강점·약점, 대인관계 패턴, 스트레스 반응.
+타고난 재능과 잠재력, 어울리는 직종과 환경. 月令(월령)·계절과의 관계.`,
 
-`7. ⚖️ 십성(十星) 원리와 나의 십성 구성 (5페이지)
-   - 십성(비견·겁재·식신·상관·편재·정재·편관·정관·편인·정인)의 본질과 상호 관계 원리
-   - 각 십성이 대표하는 삶의 영역(성격·직업·인간관계·재물·건강) 설명
-   - 본인 명식의 십성 분포 — 강한 십성과 없는 십성이 만드는 삶의 패턴
-   - 길신과 흉신으로서의 십성 작용, 십성을 지혜롭게 활용하는 법`,
+`7. ⚖️ 十星(십성) 원리와 나의 십성 구성 (4페이지 = 2,000자)
+【사주원리 해설 — 반드시 600자 이상 작성】
+십성의 원리: 比肩(비견)·劫財(겁재)·食神(식신)·傷官(상관)·偏財(편재)·正財(정재)·偏官(편관)·正官(정관)·偏印(편인)·正印(정인) 각각의 의미와 담당 영역.
+吉神(길신)과 凶神(흉신)으로서의 십성 작용 원리. 十星 간의 生剋(생극) 관계.
+【명식 직접 적용 — 반드시 1,400자 이상 작성】
+의뢰인 명식의 십성 분포: 강한 십성과 없는 십성이 만드는 삶의 패턴.
+성격·직업·인간관계·재물·건강에 미치는 구체적 영향. 십성을 지혜롭게 활용하는 법.`,
 
-`8. ⭐ 12운성(十二運星) 원리와 나의 운성 (2페이지)
-   - 12운성(장생·목욕·관대·건록·제왕·쇠·병·사·묘·절·태·양)의 생로병사 순환 원리
-   - 일간이 각 지지에서 어떤 운성을 받는지 설명
-   - 본인 사주의 핵심 운성이 기질과 운명에 미치는 영향`,
+`8. ⭐ 十二運星(12운성) 원리와 나의 운성 (2페이지 = 1,000자)
+【사주원리 해설 — 반드시 350자 이상 작성】
+12운성(長生(장생)·沐浴(목욕)·冠帶(관대)·建祿(건록)·帝旺(제왕)·衰(쇠)·病(병)·死(사)·墓(묘)·絶(절)·胎(태)·養(양))의 생로병사 순환 원리.
+일간이 각 地支(지지)에서 어떤 운성을 받는지 판단하는 원리 설명.
+【명식 직접 적용 — 반드시 650자 이상 작성】
+의뢰인 사주의 핵심 12운성 분석: 기질과 운명에 미치는 영향, 실제 삶에서의 발현.`,
 
-`9. ⚡ 신살(神殺)·공망(空亡) 원리와 나의 신살 (2페이지)
-   - 길신(천을귀인·문창귀인·학당귀인 등)과 흉살(도화살·역마살·백호살·괴강 등)의 원리
-   - 공망의 의미와 어떤 궁위·지지가 공망인지
-   - 본인 사주의 신살 종류와 삶에서의 실제 발현 방식, 활용법`,
+`9. ⚡ 神殺(신살)·空亡(공망) 원리와 나의 신살 (2페이지 = 1,000자)
+【사주원리 해설 — 반드시 350자 이상 작성】
+길신(天乙貴人(천을귀인)·文昌貴人(문창귀인)·學堂貴人(학당귀인)·福星(복성))과 흉살(桃花殺(도화살)·驛馬殺(역마살)·白虎殺(백호살)·魁罡(괴강)) 원리.
+空亡(공망)의 의미와 발생 원리: 60갑자에서 12지지가 짝을 잃는 원리.
+【명식 직접 적용 — 반드시 650자 이상 작성】
+의뢰인의 신살 종류·공망 여부와 삶에서의 실제 발현 방식. 신살 극복·활용법 구체 제시.`,
 
-`10. 🌺 평생운(平生運) — 타고난 운의 흐름 (3페이지)
-    - 일간의 강약·용신을 바탕으로 한 전체 운세 흐름
-    - 청년기(~30대) / 중년기(30~50대) / 노년기(50대 이후) 각 시기의 핵심 운세
-    - 황금기 10년과 조심해야 할 시기, 인생의 전환점`,
+`10. 🌺 平生運(평생운) — 타고난 운의 흐름 (2페이지 = 1,000자)
+【사주원리 해설 — 반드시 300자 이상 작성】
+일간 강약·용신으로 보는 전체 운세 흐름의 원리. 大運(대운)·歲運(세운)이 평생 운에 미치는 파도 원리 설명.
+【명식 직접 적용 — 반드시 700자 이상 작성】
+의뢰인의 청년기(~30대)·중년기(30~50대)·노년기(50대 이후) 핵심 운세 흐름.
+황금기 10년과 조심해야 할 시기. 인생의 결정적 전환점.`,
 
-`11. ⏳ 대운(大運) 원리와 나의 10년 주기 분석 (5페이지)
-    - 대운을 계산하는 원리(출생일에서 절기까지의 날수) 설명
-    - 대운이 사주원국과 어떻게 상호작용하는지 설명
-    - 현재 대운 상세 분석 + 향후 대운 3~4개의 흐름과 핵심 키워드
-    - 가장 크게 풀리는 대운 기간과 가장 조심할 대운 기간 구체적 지목`,
+`11. ⏳ 大運(대운) 원리와 나의 10년 주기 분석 (4페이지 = 2,000자)
+【사주원리 해설 — 반드시 500자 이상 작성】
+대운을 계산하는 원리(출생일에서 절기까지의 날수 → 3일=1세, 순행·역행 결정 원리).
+大運(대운)이 사주원국과 어떻게 相互作用(상호작용)하는지: 천간 대 천간, 지지 대 지지 교차 분석 원리.
+현재 대운 기간과 다음 대운 예고.
+【명식 직접 적용 — 반드시 1,500자 이상 작성】
+의뢰인의 현재 대운 상세 분석 + 향후 대운 3~4개의 흐름과 핵심 키워드.
+가장 크게 풀리는 대운 기간과 가장 조심할 대운 기간 구체적 지목.`,
 
-`12. 🗓️ 세운(歲運)·년운 원리와 2026년 분석 (2페이지)
-    - 세운이 대운과 교차하는 원리 설명 (대운 × 세운 조합)
-    - 2026년 丙午년이 갖는 오행적 의미와 본인 사주와의 관계
-    - 2026년 전체 흐름 요약 — 기회·주의·핵심 키워드`,
+`12. 🗓️ 歲運(세운) 원리와 2026년 분석 (2페이지 = 1,000자)
+【사주원리 해설 — 반드시 300자 이상 작성】
+세운이 대운과 교차하는 원리(大運×歲運 조합). 2026년 丙午(병오)년이 갖는 오행적 의미.
+丙(병)=陽火(양화)=태양·열정, 午(오)=火(화)=여름·활력의 에너지 설명.
+【명식 직접 적용 — 반드시 700자 이상 작성】
+의뢰인의 2026년 전체 흐름 요약: 기회의 시기·주의 시기·핵심 키워드 3가지 이상.`,
 
-`13. 📅 2026년 월별 운세 상세 분석 (4페이지)
-    - 1월부터 12월까지 각 월의 운 강도와 핵심 이슈
-    - 가장 중요한 3개월 집중 분석 (기회·주의·행동 지침)
-    - 연간 타임라인으로 보는 흐름 변화
-    - 월별 추천 행동과 피해야 할 행동`,
+`13. 📅 2026년 월별 운세 상세 분석 (3페이지 = 1,500자)
+반드시 1월(丁丑월)부터 12월(戊子월)까지 각 월을 개별 분석 (각 월 약 120자).
+월별 운 강도(강/중/약)와 핵심 이슈, 각 월의 月支(월지) 오행이 의뢰인 명식과 어떻게 작용하는지.
+가장 중요한 3개월 집중 분석. 월별 추천 행동·피해야 할 행동 포함.`,
 
-`14. 💝 연애운·결혼운 심층 분석 (3페이지)
-    - 연애 스타일·이상형의 사주적 근거 설명
-    - 배우자 인연의 시기·장소·유형 (일지 분석)
-    - 궁합 잘 맞는 오행·일간 유형과 그 이유
-    - 현재·미래 연애운 흐름과 관계에서 주의할 패턴`,
+`14. 💝 연애운·결혼운 심층 분석 (2페이지 = 1,000자)
+【사주원리 해설 — 반드시 300자 이상 작성】
+日支(일지)와 財星(재성)·官星(관성)으로 보는 배우자 인연의 원리.
+남성은 재성이 이성을 나타내고, 여성은 관성이 이성을 나타내는 원리 설명.
+【명식 직접 적용 — 반드시 700자 이상 작성】
+의뢰인의 연애 스타일·이상형·배우자 인연의 시기와 유형. 현재·미래 연애운 흐름.`,
 
-`15. 💰 재물운 심층 분석 (3페이지)
-    - 재성(편재·정재)의 구조로 본 재물 취득 방식
-    - 사업 vs 직장, 유리한 방향의 사주적 근거
-    - 재물이 들어오는 시기와 나가는 시기의 패턴
-    - 재물을 키우는 구체적인 방법 (방향·색상·업종)`,
+`15. 💰 재물운 심층 분석 (2페이지 = 1,000자)
+【사주원리 해설 — 반드시 300자 이상 작성】
+財星(재성)의 원리: 偏財(편재)=흘러가는 재물·사업·투자·횡재, 正財(정재)=고정 수입·월급·안정.
+재물 취득 방식과 일간 강약에 따른 재물 운용 능력의 원리 설명.
+【명식 직접 적용 — 반드시 700자 이상 작성】
+의뢰인의 사업 vs 직장 유리한 방향, 재물이 들어오는 시기·나가는 시기 패턴. 재물 키우는 구체적 방법.`,
 
-`16. 🚀 직업·명예운 심층 분석 (2페이지)
-    - 관성(편관·정관)과 십성 구조로 본 직업 적성
-    - 어울리는 직종 10가지 이상 사주적 근거와 함께 설명
-    - 승진·인정받는 시기와 방법
-    - 사회적 성공을 위한 구체적 전략`,
+`16. 🚀 직업·명예운 심층 분석 (2페이지 = 1,000자)
+【사주원리 해설 — 반드시 300자 이상 작성】
+官星(관성)의 원리: 偏官(편관)=도전·추진력·군인기질·권력, 正官(정관)=책임감·규칙·명예·안정적 직장.
+용신 오행에 따른 유리한 직업군 판단 원리 설명.
+【명식 직접 적용 — 반드시 700자 이상 작성】
+의뢰인에게 어울리는 직종 8가지 이상 사주적 근거 포함. 승진·인정받는 시기와 사회적 성공 전략.`,
 
-`17. 🌿 건강운 심층 분석 (2페이지)
-    - 오행 부족·과잉이 신체에 미치는 영향 (오행과 오장육부 대응 원리)
-    - 취약한 부위와 주의해야 할 시기
-    - 건강 관리를 위한 구체적 생활 지침 (식이·운동·수면·환경)`,
+`17. 🌿 건강운 심층 분석 (2페이지 = 1,000자)
+【사주원리 해설 — 반드시 300자 이상 작성】
+오행과 五臟六腑(오장육부) 대응 원리: 木(목)=간담, 火(화)=심소장, 土(토)=비위, 金(금)=폐대장, 水(수)=신방광.
+오행 부족·과잉이 신체 증상으로 나타나는 원리. 대운·세운 시기별 건강 파동 원리.
+【명식 직접 적용 — 반드시 700자 이상 작성】
+의뢰인의 취약한 부위와 주의해야 할 시기. 건강 관리를 위한 구체적 생활 지침(식이·운동·수면·환경).`,
 
-`18. 🍀 개운법(開運法) & 행운 정보 (2페이지)
-    - 용신 오행을 강화하는 색상·방향·직업·음식·식물
-    - 피해야 할 기신 오행 관련 환경과 행동
-    - 2026년에 특히 효과적인 개운법 3가지
-    - 행운의 숫자·색·방위·이름·상호에 좋은 한자`,
+`18. 🍀 開運法(개운법) & 행운 정보 (2페이지 = 1,000자)
+【사주원리 해설 — 반드시 300자 이상 작성】
+용신 오행 강화가 운을 여는 원리: 오행이 주변 환경에 흘러드는 메커니즘.
+오행별 색상·방향·숫자·직업 환경이 운에 미치는 영향 원리 설명.
+【명식 직접 적용 — 반드시 700자 이상 작성】
+의뢰인의 용신 오행 기반 구체 개운법: 행운 색상·방향·숫자·이름에 좋은 한자.
+기신 오행 회피 사항. 2026년 특효 개운법 3가지 상세 설명.`,
 
-`19. 🏠 거주지·이사 방향 완전 분석 (3페이지)
-    - 현재 거주 지역의 오행·방위적 의미와 사주와의 관계
-    - 용신·기신 오행 기반 이사 방향 8방위 상세 분석 (길방/흉방/중립 각각 이유 포함)
-    - 2026년 삼살방(三殺方): 寅午戌년→북방(北) 삼살 — 절대금지 이유 상세 설명
-    - 태세방(太歲方): 2026 午년→남방(南) — 발동 시 결과와 대처법
-    - 날삼(날삼살): 현재 집에서 나가는 방향 기준 삼살 판단 방법
-    - 들삼(들삼살): 새집으로 들어오는 방향 기준 삼살 판단 방법
-    - 관제살: 이 사주의 관제살 발동 여부와 해당 방향
-    - 겁살방·재살방·천살방 각각 방향과 주의사항
-    - 오황살(五黃殺) 2026년 해당 방위(서방)와 영향
-    - 황천살: 현관·대문 방향과 결합 주의사항
-    - 손없는날 활용법과 이사 택일 구체적 날짜 제안
-    - 이사 후 집안 배치(침대·책상 방향)에서 용신 오행 활용법`,
+`19. 🏠 거주지·이사 방향 완전 분석 (3페이지 = 1,500자)
+【사주원리 해설 — 반드시 500자 이상 작성】
+三殺方(삼살방)·太歲方(태세방)·五黃殺(오황살)·黃泉殺(황천살)·官制殺(관제살) 등 이사 방향 판단의 원리 상세 설명.
+2026년 丙午年(병오년) 삼살방=北方(북방) 이유: 寅午戌(인오술) 삼합 화국 → 亥子丑(해자축)=북방이 삼살 원리.
+날삼(날삼살)·들삼(들삼살) 개념과 판단 원리.
+【명식 직접 적용 — 반드시 1,000자 이상 작성】
+의뢰인의 용신·기신 오행 기반 8방위 이사 방향 상세 분석(길방/흉방/중립 각각 이유 포함).
+손없는날 활용법과 이사 후 집안 배치(침대·책상 방향) 용신 오행 활용법.`,
 
-`20. ✨ 마무리 — 인생 전체 조언 (1페이지)
-    - 사주가 말하는 이 사람의 본질과 사명
-    - 가장 빛나는 순간을 만드는 방법
-    - 인생 전체를 관통하는 핵심 한마디`,
+`20. ✨ 마무리 — 인생 전체 조언 (1페이지 = 500자)
+사주가 말하는 의뢰인의 본질과 사명. 가장 빛나는 순간을 만드는 방법.
+인생 전체를 관통하는 핵심 한마디. 따뜻하고 희망적인 산문 마무리.`,
 ];
 
 const OHANG_PRINCIPLE=`【오행 원리 참고】
@@ -2053,44 +2077,134 @@ const YUNSUNG_PRINCIPLE=`【12운성 원리 참고】
 
 let fullReport50Text='';
 
+function reportTextToHtml(raw){
+  // 섹션 제목: "1. 📜 ..." 형태의 줄 → <h2>
+  // 【사주원리 해설】 → 파란 박스
+  // 【명식 적용】 or 【명식 직접 적용】 → 초록 박스
+  // ⭐ 로 시작하는 줄 → 강조 박스
+  const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const lines=raw.split('\n');
+  let out='';
+  let inBox=null; // 'theory' | 'apply' | null
+  for(let i=0;i<lines.length;i++){
+    const line=lines[i];
+    const el=esc(line);
+    // 섹션 제목 판별: 숫자. 이모지 또는 숫자. 텍스트
+    if(/^\d{1,2}\.\s+[^\s]/.test(line.trim())&&line.trim().length>4){
+      if(inBox){out+=`</div>`;inBox=null;}
+      out+=`<h2 class="sec-title">${el}</h2>`;
+    } else if(/【사주원리 해설/.test(line)||/사주원리 해설 파트/.test(line)||/\[사주원리/.test(line)){
+      if(inBox){out+=`</div>`;inBox=null;}
+      out+=`<div class="box-theory"><div class="box-label">📐 사주원리 해설</div><p class="bp">`;
+      inBox='theory';
+    } else if(/【명식 (직접 )?적용/.test(line)||/\[명식 적용/.test(line)){
+      if(inBox){out+=`</p></div>`;inBox=null;}
+      out+=`<div class="box-apply"><div class="box-label">✍️ 명식 적용</div><p class="bp">`;
+      inBox='apply';
+    } else if(/^⭐/.test(line.trim())){
+      const inner=el.replace(/^⭐\s*/,'');
+      out+=`<div class="highlight-row">⭐ ${inner}</div>`;
+    } else if(line.trim()===''){
+      if(inBox){out+=`</p><p class="bp">`;}
+      else{out+=`<div class="para-gap"></div>`;}
+    } else {
+      if(!inBox){out+=`<p class="body-p">${el}</p>`;}
+      else{out+=`${el}<br>`;}
+    }
+  }
+  if(inBox){out+=`</p></div>`;}
+  return out;
+}
+
 function open50Report(){
   if(!fullReport50Text){return;}
   const m=lastSajuMeta||{};
   const name=m.name||"의뢰인";
+  const bodyHtml=reportTextToHtml(fullReport50Text);
+  const charCount=fullReport50Text.length.toLocaleString();
   const html=`<!doctype html>
 <html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${name} 사주 통합 50페이지 보고서</title>
+<title>${name} 선생님 사주 50페이지 통합 보고서</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;600;700&display=swap">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Noto Sans KR','Malgun Gothic',sans-serif;background:#faf8f4;color:#1a0a30;line-height:2;padding:0}
-.cover{background:linear-gradient(135deg,#1a0a30 0%,#2d1660 60%,#1a0a30 100%);color:#f0e8ff;text-align:center;padding:80px 40px 60px;min-height:40vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+body{font-family:'Noto Sans KR','Malgun Gothic',sans-serif;background:#faf8f4;color:#1a0a30;line-height:1.9}
+.cover{background:linear-gradient(135deg,#1a0a30 0%,#2d1660 60%,#1a0a30 100%);color:#f0e8ff;text-align:center;padding:80px 40px 60px;min-height:45vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;page-break-after:always}
 .cover-eyebrow{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#b87fff;font-weight:700}
-.cover-title{font-family:'Noto Serif KR',Georgia,serif;font-size:clamp(26px,4vw,42px);font-weight:900;text-wrap:balance;color:#f0e8ff}
-.cover-name{font-size:clamp(18px,3vw,28px);font-weight:700;color:#f5c842;font-family:'Noto Serif KR',serif}
+.cover-title{font-family:'Noto Serif KR',Georgia,serif;font-size:clamp(26px,4vw,42px);font-weight:900;line-height:1.35;color:#f0e8ff}
+.cover-name{font-size:clamp(20px,3vw,30px);font-weight:900;color:#f5c842;font-family:'Noto Serif KR',serif;margin-top:8px}
 .cover-meta{font-size:13px;color:#a090c0;margin-top:4px}
 .cover-date{font-size:12px;color:#6a5a8a;margin-top:20px;padding-top:20px;border-top:1px solid rgba(180,130,255,.2)}
-.body-wrap{max-width:720px;margin:0 auto;padding:48px 32px 80px}
-.report-text{font-size:14.5px;line-height:2.1;white-space:pre-line;color:#1a0a30;word-break:keep-all}
-.report-text h1,.report-text h2{font-family:'Noto Serif KR',serif;margin:2em 0 .6em;color:#2d1660}
+.toc-wrap{max-width:680px;margin:0 auto;padding:40px 32px;page-break-after:always}
+.toc-title{font-family:'Noto Serif KR',serif;font-size:20px;font-weight:900;color:#2d1660;margin-bottom:24px;border-bottom:2px solid #2d1660;padding-bottom:10px}
+.toc-list{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:6px 24px}
+.toc-list li{font-size:13px;color:#3a2060;padding:4px 0;border-bottom:1px dotted #c0b0e0}
+.body-wrap{max-width:720px;margin:0 auto;padding:40px 32px 80px}
+.sec-title{font-family:'Noto Serif KR',serif;font-size:20px;font-weight:900;color:#1a0550;margin:2.5em 0 1em;padding:12px 16px;background:linear-gradient(135deg,#f0eaff,#e8e0ff);border-left:4px solid #7b2fff;border-radius:0 8px 8px 0;page-break-after:avoid}
+.box-theory{background:#eef5ff;border:1.5px solid #5580cc;border-radius:10px;padding:16px 20px;margin:14px 0;page-break-inside:avoid}
+.box-apply{background:#eefff3;border:1.5px solid #3aaa66;border-radius:10px;padding:16px 20px;margin:14px 0;page-break-inside:avoid}
+.box-label{font-size:11px;font-weight:800;letter-spacing:.08em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.box-theory .box-label{color:#3355aa}
+.box-apply .box-label{color:#2a7a50}
+.box-label::after{content:"";flex:1;height:1px;background:currentColor;opacity:.3}
+.bp{font-size:14px;line-height:2;color:#1a0a30;margin:0}
+.body-p{font-size:14.5px;line-height:2;color:#1a0a30;margin:0 0 12px;word-break:keep-all}
+.para-gap{height:10px}
+.highlight-row{background:linear-gradient(135deg,#fffae0,#fff7cc);border-left:4px solid #d4a000;padding:10px 16px;border-radius:0 8px 8px 0;margin:12px 0;font-size:14px;font-weight:700;color:#5a3000;line-height:1.8}
+.print-bar{position:fixed;top:0;left:0;right:0;background:#1a0a30;color:#f0e8ff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;font-size:13px;z-index:999}
+.print-btn{background:linear-gradient(135deg,#b87fff,#8844dd);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:700;cursor:pointer}
+.char-info{font-size:12px;color:#a090c0}
 @media print{
+  .print-bar{display:none}
   .cover{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  body{background:#fff}
-  .body-wrap{padding:20px}
+  body{background:#fff;padding-top:0}
+  .sec-title{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .box-theory,.box-apply,.highlight-row{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .body-wrap{padding:20px 28px 40px}
 }
-@media(max-width:480px){.body-wrap{padding:24px 16px 60px}}
+@media(max-width:480px){.body-wrap,.toc-wrap{padding:24px 16px 60px}.toc-list{grid-template-columns:1fr}}
+body{padding-top:48px}
 </style>
 </head><body>
+<div class="print-bar">
+  <span>📄 <strong>${name} 선생님</strong> 사주 50페이지 통합 보고서 &nbsp;<span class="char-info">${charCount}자</span></span>
+  <button class="print-btn" onclick="window.print()">🖨️ 인쇄 / PDF 저장</button>
+</div>
 <div class="cover">
-  <div class="cover-eyebrow">사주마루 AI 스튜디오</div>
-  <div class="cover-title">사주원리 & AI 분석<br>통합 보고서</div>
+  <div class="cover-eyebrow">사주마루 AI 스튜디오 · 사주원리+AI 통합 보고서</div>
+  <div class="cover-title">四柱命理(사주명리)<br>종합 분석 보고서</div>
   <div class="cover-name">${name} 선생님</div>
   <div class="cover-meta">${m.year||""}년 ${m.month||""}월 ${m.day||""}일 ${m.calNote||""} · ${m.gender||""} · ${m.timeStr||""}</div>
-  <div class="cover-date">생성일: ${new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'})}</div>
+  <div class="cover-date">생성일: ${new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'})} · 총 ${charCount}자</div>
+</div>
+<div class="toc-wrap">
+  <div class="toc-title">📋 목차</div>
+  <ul class="toc-list">
+    <li>1. 인사말 & 보고서 소개</li>
+    <li>2. 사주원국(四柱八字) 완전 해설</li>
+    <li>3. 天干(천간) 원리와 분석</li>
+    <li>4. 地支(지지) 원리와 분석</li>
+    <li>5. 五行(오행) 원리와 분석</li>
+    <li>6. 日干(일간) 성향·기질 심층 분석</li>
+    <li>7. 十星(십성) 원리와 구성 분석</li>
+    <li>8. 十二運星(12운성) 원리와 적용</li>
+    <li>9. 神殺(신살)·空亡(공망) 원리와 분석</li>
+    <li>10. 平生運(평생운) 흐름</li>
+    <li>11. 大運(대운) 원리와 10년 주기 분석</li>
+    <li>12. 歲運(세운) 원리와 2026년 분석</li>
+    <li>13. 2026년 월별 운세 상세 분석</li>
+    <li>14. 연애운·결혼운 심층 분석</li>
+    <li>15. 재물운 심층 분석</li>
+    <li>16. 직업·명예운 심층 분석</li>
+    <li>17. 건강운 심층 분석</li>
+    <li>18. 開運法(개운법) & 행운 정보</li>
+    <li>19. 거주지·이사 방향 완전 분석</li>
+    <li>20. 마무리 — 인생 전체 조언</li>
+  </ul>
 </div>
 <div class="body-wrap">
-  <div class="report-text">${fullReport50Text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+  ${bodyHtml}
 </div>
 </body></html>`;
   const win=window.open('','_blank');
@@ -2121,46 +2235,56 @@ async function generate50Report(){
   const prompt=`당신은 30년 경력의 사주명리학 전문가이자 작가입니다.
 아래 참고자료와 사주 계산 데이터를 바탕으로 【사주원리와 AI 분석을 통합한 자연스러운 산문 형식의 50페이지 보고서】를 작성해 주세요.
 
-규칙:
-- 고객 호칭: "${name} 선생님"
-- 모든 내용은 자연스러운 완성된 문장(산문체)으로 작성. 불릿포인트(-)나 단순 나열 최소화.
-- 각 섹션에서 먼저 사주원리(원칙·개념)를 1~2문장으로 설명한 뒤, 즉시 "${name} 선생님의 명식"에 적용하는 방식으로 전개.
-- 따뜻하고 전문적이며 희망적인 어조. 과학적·근거 있는 표현.
-- 각 섹션 제목 앞에 이모지+번호+제목 표시, 그 아래 본문 작성.
-- 전체 50페이지(한 페이지 ≈ 500자) = 약 25,000자 분량 완성. 각 섹션 지정 분량 반드시 준수.
+═══════════════════════════════════════
+【절대 규칙 — 반드시 준수】
+═══════════════════════════════════════
+1. 고객 호칭: "${name} 선생님" (이름 없이 "선생님"만 사용 금지)
+2. 모든 내용은 완성된 문장(산문체)으로 작성. 단순 나열(-) 최소화.
+3. 각 섹션마다 반드시 두 파트로 구성:
+   【사주원리 해설】 — 해당 섹션 개념의 원리를 지정 분량만큼 풀어서 설명 (독자가 처음 보아도 이해할 수 있게)
+   【명식 적용】 — 위 원리를 "${name} 선생님의 실제 사주 데이터"에 직접 적용하여 분석
+4. 한자는 반드시 漢字(한글음) 형식으로 표기 (예: 甲(갑), 木(목), 比肩(비견))
+5. 중요한 핵심 내용은 "⭐" 기호로 시작하는 별도 문장으로 강조
+6. 전문 용어 뒤에 쉬운 풀이 추가 (예: 得令(득령) — 태어난 계절에 힘을 받는 상태)
+7. 각 섹션 제목 형식: "숫자. 이모지 제목 (X페이지)"
+8. 분량 규칙: 각 섹션 지정 글자수의 90%~110% 범위 내에서 작성. 총 25,000자 이상 필수.
+9. 어조: 따뜻하고 전문적이며 희망적. 의뢰인이 자신의 사주를 긍정적으로 이해하도록.
+10. 각 섹션 끝에 빈 줄 하나 추가.
 
-══════════════════════════════════════
-【사전 계산된 사주 데이터 — 반드시 인용】
-══════════════════════════════════════
+═══════════════════════════════════════
+【사전 계산된 사주 데이터 — 반드시 정확히 인용】
+═══════════════════════════════════════
 의뢰인: ${name} / ${m.gender||""} / ${m.year||""}년 ${m.month||""}월 ${m.day||""}일 ${m.calNote||""} (${ganji}) / ${m.timeStr||""}
 신청 항목: ${selectedItems}
 
 ${sajuJson}
 
-══════════════════════════════════════
+═══════════════════════════════════════
 ${STEMS_REF}
 
-══════════════════════════════════════
+═══════════════════════════════════════
 ${SIPSUNG_REF}
 
-══════════════════════════════════════
+═══════════════════════════════════════
 ${SHINSAL_REF}
 
-══════════════════════════════════════
+═══════════════════════════════════════
 ${OHANG_PRINCIPLE}
 
-══════════════════════════════════════
+═══════════════════════════════════════
 ${YUNSUNG_PRINCIPLE}
 
-══════════════════════════════════════
+═══════════════════════════════════════
 ${ISA_SHINSAL_REF}
 
-══════════════════════════════════════
-【보고서 구성 — 아래 19개 섹션 순서대로 빠짐없이 작성】
-══════════════════════════════════════
+═══════════════════════════════════════
+【보고서 구성 — 아래 20개 섹션 순서대로 빠짐없이 작성】
+총 50페이지 = 25,000자. 각 섹션 지정 분량 반드시 준수.
+═══════════════════════════════════════
 ${SECTIONS_50.join('\n\n')}
 
-지금 바로 1번 섹션부터 시작하여 19번 섹션까지 완성된 50페이지 보고서를 작성해 주세요.`;
+지금 바로 1번 섹션부터 시작하여 20번 섹션까지 완성된 50페이지 보고서를 작성해 주세요.
+각 섹션마다 【사주원리 해설】과 【명식 적용】 파트를 반드시 포함하십시오.`;
 
   try{
     await sampleCap(prompt,{
