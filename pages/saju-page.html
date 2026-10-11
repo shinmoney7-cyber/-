@@ -2091,10 +2091,10 @@ function reportTextToHtml(raw){
     const el=esc(line);
     // 섹션 제목 판별: 숫자. 이모지 또는 숫자. 텍스트
     if(/^\d{1,2}\.\s+[^\s]/.test(line.trim())&&line.trim().length>4){
-      if(inBox){out+=`</div>`;inBox=null;}
+      if(inBox){out+=`</p></div>`;inBox=null;}
       out+=`<h2 class="sec-title">${el}</h2>`;
     } else if(/【사주원리 해설/.test(line)||/사주원리 해설 파트/.test(line)||/\[사주원리/.test(line)){
-      if(inBox){out+=`</div>`;inBox=null;}
+      if(inBox){out+=`</p></div>`;inBox=null;}
       out+=`<div class="box-theory"><div class="box-label">📐 사주원리 해설</div><p class="bp">`;
       inBox='theory';
     } else if(/【명식 (직접 )?적용/.test(line)||/\[명식 적용/.test(line)){
