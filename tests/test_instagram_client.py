@@ -61,7 +61,9 @@ class TestNextScheduledTimestamp:
     def test_different_hours_give_different_results(self):
         ts9 = next_scheduled_timestamp(hour=9)
         ts10 = next_scheduled_timestamp(hour=10)
-        assert ts10 > ts9 or abs(ts10 - ts9) == 3600
+        diff = abs(ts10 - ts9)
+        # 같은 날이면 1시간(3600초), 한쪽이 자정을 넘기면 23시간 차이
+        assert diff == 3600 or diff == 23 * 3600
 
 
 class TestMockInstagramClient:
