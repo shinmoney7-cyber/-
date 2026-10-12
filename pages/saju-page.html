@@ -31,20 +31,40 @@
   --green:#2a8a50;--red:#cc2244;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;background:var(--bg);color:var(--fg);font-family:var(--fbody);line-height:1.65}
-body{padding:0 16px;padding-block:0}
-.app-header{text-align:center;padding:32px 0 20px;border-bottom:1px solid var(--border)}
-.eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
-.app-header h1{font-family:var(--fdisp);font-size:clamp(22px,4vw,34px);font-weight:900;text-wrap:balance}
-.app-header h1 em{color:var(--gold);font-style:normal}
-.app-header p{margin-top:7px;color:var(--fg2);font-size:13px}
-.tabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
-.tabs::-webkit-scrollbar{display:none}
-.tab-btn{flex:1;min-width:80px;padding:12px 10px;border:none;background:transparent;color:var(--fg2);font-family:var(--fbody);font-size:13px;font-weight:600;cursor:pointer;border-bottom:2.5px solid transparent;white-space:nowrap;transition:all .15s}
-.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
-.tab-btn:hover{color:var(--fg)}
-.tab-panel{display:none;max-width:640px;margin:0 auto;padding:24px 0 64px}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--fg);font-family:var(--fbody);line-height:1.65}
+body{display:flex;flex-direction:column;padding:0}
+/* ── 앱 헤더 ── */
+.app-header{display:flex;align-items:center;gap:10px;padding:10px 16px;padding-top:calc(10px + env(safe-area-inset-top,0px));background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0}
+.app-header-logo{font-size:22px;line-height:1}
+.app-header-text{}
+.app-header-text h1{font-family:var(--fdisp);font-size:17px;font-weight:900;line-height:1.2}
+.app-header-text h1 em{color:var(--gold);font-style:normal}
+.app-header-text p{font-size:10px;color:var(--fg2);margin-top:1px}
+.eyebrow{display:none}
+/* ── 탭 (숨김 — 바텀 네비로 대체) ── */
+.tabs{display:none}
+.tab-btn{display:none}
+/* ── 콘텐츠 스크롤 영역 ── */
+.app-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 16px}
+.tab-panel{display:none;max-width:640px;margin:0 auto;padding:20px 0 24px}
 .tab-panel.active{display:block}
+/* ── 바텀 네비 ── */
+.bottom-nav{display:grid;grid-template-columns:repeat(5,1fr);background:var(--bg2);border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom,0px);flex-shrink:0}
+.bnav-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:8px 4px 10px;border:none;background:transparent;color:var(--fg3);font-family:var(--fbody);font-size:10px;font-weight:600;cursor:pointer;transition:color .15s;min-width:0}
+.bnav-btn .bi{font-size:20px;line-height:1}
+.bnav-btn.active{color:var(--accent)}
+.bnav-btn:hover{color:var(--fg)}
+/* ── 더보기 바텀 시트 ── */
+.more-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100;opacity:0;pointer-events:none;transition:opacity .2s}
+.more-backdrop.open{opacity:1;pointer-events:auto}
+.more-sheet{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:12px 16px calc(16px + env(safe-area-inset-bottom,0px));z-index:101;transform:translateY(100%);transition:transform .25s cubic-bezier(.4,0,.2,1)}
+.more-sheet.open{transform:translateY(0)}
+.more-sheet-handle{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 16px}
+.more-sheet-title{font-size:12px;font-weight:700;color:var(--fg3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+.more-sheet-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.more-sheet-item{display:flex;align-items:center;gap:10px;background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;cursor:pointer;transition:border-color .15s;font-size:13px;font-weight:600}
+.more-sheet-item:hover{border-color:var(--border2)}
+.more-sheet-item span.mi{font-size:20px}
 .section-title{font-family:var(--fdisp);font-size:17px;font-weight:700;margin-bottom:16px}
 .field{margin-bottom:14px}
 .field label{display:block;font-size:11px;font-weight:700;color:var(--fg2);margin-bottom:5px;letter-spacing:.05em;text-transform:uppercase}
@@ -288,12 +308,14 @@ body{padding:0 16px;padding-block:0}
 
 <!-- 헤더 -->
 <div class="app-header">
-  <div class="eyebrow">✦ AI 명리 분석 시스템 ✦</div>
-  <h1><em>사주마루</em> AI 스튜디오</h1>
-  <p>분석 · 쇼츠 생성 · 비즈니스 관리</p>
+  <div class="app-header-logo">🔮</div>
+  <div class="app-header-text">
+    <h1><em>사주마루</em> AI 스튜디오</h1>
+    <p>AI 명리 분석 · 쇼츠 생성 · 비즈니스 관리</p>
+  </div>
 </div>
 
-<!-- 탭 -->
+<!-- 탭 (바텀 네비로 대체됨 — 기능상 유지) -->
 <div class="tabs">
   <button class="tab-btn active" onclick="switchTab('analyze')">🔮 AI 분석</button>
   <button class="tab-btn" onclick="switchTab('simple')">📋 간단본</button>
@@ -304,6 +326,9 @@ body{padding:0 16px;padding-block:0}
   <button class="tab-btn" onclick="switchTab('theory')">📐 사주원리</button>
   <button class="tab-btn" onclick="switchTab('adcopy')">📢 홍보문구</button>
 </div>
+
+<!-- 콘텐츠 영역 시작 -->
+<div class="app-content" id="appContent">
 
 <!-- ══════════════════════════════════════
      TAB 1: AI 분석
@@ -1061,6 +1086,7 @@ let lastSajuMeta=null;
 })();
 
 // ─── 탭 전환 ─────────────────────────────────────────────────────────────
+const BNAV_TABS=["analyze","simple","hanja","shorts"];
 function switchTab(name){
   const ids=["analyze","simple","hanja","cheol","shorts","biz","theory","adcopy"];
   document.querySelectorAll(".tab-btn").forEach((b,i)=>{
@@ -1069,6 +1095,27 @@ function switchTab(name){
   document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active"));
   const el=document.getElementById("tab-"+name);
   if(el) el.classList.add("active");
+  // 바텀 네비 업데이트
+  document.querySelectorAll(".bnav-btn").forEach(b=>b.classList.remove("active"));
+  const bnav=document.getElementById("bnav-"+name);
+  if(bnav) bnav.classList.add("active");
+  else{
+    const moreBtn=document.getElementById("bnav-more");
+    if(moreBtn) moreBtn.classList.add("active");
+  }
+  // 스크롤 맨 위로
+  const ac=document.getElementById("appContent");
+  if(ac) ac.scrollTop=0;
+}
+
+// ─── 더보기 시트 ─────────────────────────────────────────────────────────
+function openMore(){
+  document.getElementById("moreBackdrop").classList.add("open");
+  document.getElementById("moreSheet").classList.add("open");
+}
+function closeMore(){
+  document.getElementById("moreBackdrop").classList.remove("open");
+  document.getElementById("moreSheet").classList.remove("open");
 }
 
 // ─── 메뉴 그리드 ─────────────────────────────────────────────────────────
@@ -4814,3 +4861,45 @@ function copyAllPlatform(id){
 </div>
 
 </div><!-- /#tab-theory -->
+
+</div><!-- /#appContent -->
+
+<!-- 바텀 네비 -->
+<nav class="bottom-nav">
+  <button class="bnav-btn active" id="bnav-analyze" onclick="switchTab('analyze')">
+    <span class="bi">🔮</span><span>분석</span>
+  </button>
+  <button class="bnav-btn" id="bnav-simple" onclick="switchTab('simple')">
+    <span class="bi">📋</span><span>간단본</span>
+  </button>
+  <button class="bnav-btn" id="bnav-hanja" onclick="switchTab('hanja')">
+    <span class="bi">🔡</span><span>한자</span>
+  </button>
+  <button class="bnav-btn" id="bnav-shorts" onclick="switchTab('shorts')">
+    <span class="bi">🎬</span><span>쇼츠</span>
+  </button>
+  <button class="bnav-btn" id="bnav-more" onclick="openMore()">
+    <span class="bi">☰</span><span>더보기</span>
+  </button>
+</nav>
+
+<!-- 더보기 바텀 시트 -->
+<div class="more-backdrop" id="moreBackdrop" onclick="closeMore()"></div>
+<div class="more-sheet" id="moreSheet">
+  <div class="more-sheet-handle"></div>
+  <div class="more-sheet-title">더 보기</div>
+  <div class="more-sheet-grid">
+    <div class="more-sheet-item" onclick="switchTab('cheol');closeMore()">
+      <span class="mi">🏛️</span><span>철학원 풀이</span>
+    </div>
+    <div class="more-sheet-item" onclick="switchTab('biz');closeMore()">
+      <span class="mi">💼</span><span>비즈니스</span>
+    </div>
+    <div class="more-sheet-item" onclick="switchTab('theory');closeMore()">
+      <span class="mi">📐</span><span>사주원리</span>
+    </div>
+    <div class="more-sheet-item" onclick="switchTab('adcopy');closeMore()">
+      <span class="mi">📢</span><span>홍보문구</span>
+    </div>
+  </div>
+</div>
