@@ -1,4 +1,5 @@
-<title>사주마루 AI 스튜디오</title>
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>사주마루 스튜디오</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;600;700&display=swap">
 <style>
 :root{
@@ -31,46 +32,31 @@
   --green:#2a8a50;--red:#cc2244;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--fg);font-family:var(--fbody);line-height:1.65}
-body{display:flex;flex-direction:column;padding:0}
-/* ── 앱 헤더 ── */
-.app-header{display:flex;align-items:center;gap:10px;padding:10px 16px;padding-top:calc(10px + env(safe-area-inset-top,0px));background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0}
-.app-header-logo{font-size:22px;line-height:1}
-.app-header-text{}
-.app-header-text h1{font-family:var(--fdisp);font-size:17px;font-weight:900;line-height:1.2}
-.app-header-text h1 em{color:var(--gold);font-style:normal}
-.app-header-text p{font-size:10px;color:var(--fg2);margin-top:1px}
-.eyebrow{display:none}
-/* ── 탭 (숨김 — 바텀 네비로 대체) ── */
-.tabs{display:none}
-.tab-btn{display:none}
-/* ── 콘텐츠 스크롤 영역 ── */
-.app-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 16px}
-.tab-panel{display:none;max-width:640px;margin:0 auto;padding:20px 0 24px}
-.tab-panel.active{display:block}
-/* ── 바텀 네비 ── */
-.bottom-nav{display:grid;grid-template-columns:repeat(5,1fr);background:var(--bg2);border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom,0px);flex-shrink:0}
-.bnav-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:8px 4px 10px;border:none;background:transparent;color:var(--fg3);font-family:var(--fbody);font-size:10px;font-weight:600;cursor:pointer;transition:color .15s;min-width:0}
-.bnav-btn .bi{font-size:20px;line-height:1}
-.bnav-btn.active{color:var(--accent)}
-.bnav-btn:hover{color:var(--fg)}
-/* ── 더보기 바텀 시트 ── */
-.more-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100;opacity:0;pointer-events:none;transition:opacity .2s}
-.more-backdrop.open{opacity:1;pointer-events:auto}
-.more-sheet{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--border);padding:12px 16px calc(16px + env(safe-area-inset-bottom,0px));z-index:101;transform:translateY(100%);transition:transform .25s cubic-bezier(.4,0,.2,1)}
-.more-sheet.open{transform:translateY(0)}
-.more-sheet-handle{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 16px}
-.more-sheet-title{font-size:12px;font-weight:700;color:var(--fg3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
-.more-sheet-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.more-sheet-item{display:flex;align-items:center;gap:10px;background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;cursor:pointer;transition:border-color .15s;font-size:13px;font-weight:600}
-.more-sheet-item:hover{border-color:var(--border2)}
-.more-sheet-item span.mi{font-size:20px}
-.section-title{font-family:var(--fdisp);font-size:17px;font-weight:700;margin-bottom:16px}
-.field{margin-bottom:14px}
-.field label{display:block;font-size:11px;font-weight:700;color:var(--fg2);margin-bottom:5px;letter-spacing:.05em;text-transform:uppercase}
+html,body{background:var(--bg);color:var(--fg);font-family:var(--fbody);line-height:1.65}
+body{padding:0 16px;padding-block:0;font-size:16px}
+.app-header{text-align:center;padding:32px 0 20px;border-bottom:1px solid var(--border)}
+.eyebrow{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.app-header h1{font-family:var(--fdisp);font-size:clamp(26px,5vw,38px);font-weight:900;text-wrap:balance}
+.app-header h1 em{color:var(--gold);font-style:normal}
+.app-header p{margin-top:7px;color:var(--fg2);font-size:15px}
+/* section anchor nav */
+.section-nav{position:sticky;top:0;z-index:100;display:flex;background:var(--bg2);border-bottom:2px solid var(--border);overflow-x:auto;scrollbar-width:none;gap:0}
+.section-nav::-webkit-scrollbar{display:none}
+.sec-btn{flex:1;min-width:70px;padding:13px 8px;border:none;background:transparent;color:var(--fg2);font-family:var(--fbody);font-size:13px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:all .15s;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:4px}
+.sec-btn:hover{color:var(--fg);background:color-mix(in srgb,var(--accent) 8%,transparent)}
+.sec-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+/* section dividers */
+.sec-section{max-width:640px;margin:0 auto;padding:32px 0 64px;scroll-margin-top:52px}
+.sec-divider{border:none;border-top:2px solid var(--border);margin:0;max-width:640px;margin-inline:auto}
+.sec-heading{font-family:var(--fdisp);font-size:22px;font-weight:900;color:var(--fg);margin-bottom:24px;padding-bottom:12px;border-bottom:2px solid var(--border2);display:flex;align-items:center;gap:10px}
+/* old tab compat */
+.tab-panel{display:block;max-width:640px;margin:0 auto;padding:32px 0 64px}
+.section-title{font-family:var(--fdisp);font-size:20px;font-weight:700;margin-bottom:18px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:13px;font-weight:700;color:var(--fg2);margin-bottom:6px;letter-spacing:.04em;text-transform:uppercase}
 .field input,.field select,.field textarea{
-  width:100%;padding:10px 13px;background:var(--card);border:1.5px solid var(--border);
-  border-radius:10px;color:var(--fg);font-family:var(--fbody);font-size:14px;
+  width:100%;padding:12px 14px;background:var(--card);border:1.5px solid var(--border);
+  border-radius:10px;color:var(--fg);font-family:var(--fbody);font-size:16px;
   outline:none;transition:border .15s;-webkit-appearance:none;appearance:none
 }
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent)}
@@ -78,34 +64,34 @@ body{display:flex;flex-direction:column;padding:0}
 .field textarea{resize:vertical;min-height:90px}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .row3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px}
-.hint{font-size:11px;color:var(--fg3);margin-top:4px}
+.hint{font-size:13px;color:var(--fg3);margin-top:5px}
 .check-row{display:flex;align-items:center;gap:8px}
-.check-row input[type=checkbox]{width:15px;height:15px;accent-color:var(--accent)}
-.steps{display:flex;justify-content:center;margin:20px auto;background:var(--bg2);border-radius:999px;padding:4px;max-width:300px}
-.step-dot{flex:1;text-align:center;padding:7px 0;border-radius:999px;font-size:12px;font-weight:700;color:var(--fg3);transition:all .2s}
+.check-row input[type=checkbox]{width:17px;height:17px;accent-color:var(--accent)}
+.steps{display:flex;justify-content:center;margin:20px auto;background:var(--bg2);border-radius:999px;padding:4px;max-width:320px}
+.step-dot{flex:1;text-align:center;padding:8px 0;border-radius:999px;font-size:14px;font-weight:700;color:var(--fg3);transition:all .2s}
 .step-dot.active{background:var(--accent);color:#fff}
 .step-dot.done{color:var(--accent)}
 .menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
 .menu-item{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;cursor:pointer;transition:all .15s;display:flex;align-items:flex-start;gap:8px}
 .menu-item:hover{border-color:var(--border2)}
 .menu-item.selected{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--card))}
-.menu-item input[type=checkbox]{width:14px;height:14px;margin-top:2px;flex-shrink:0;accent-color:var(--accent)}
-.mi-name{font-size:12px;font-weight:700;line-height:1.3}
-.mi-price{font-size:11px;color:var(--gold2);font-weight:600;margin-top:2px}
-.mi-free{font-size:10px;background:var(--green);color:#042;border-radius:4px;padding:1px 4px;font-weight:700;margin-left:3px}
-.sel-total{background:var(--bg2);border-radius:10px;padding:12px 16px;margin-top:12px;display:flex;justify-content:space-between;align-items:center;font-size:13px}
-.sel-total .price{font-size:17px;font-weight:800;color:var(--gold)}
+.menu-item input[type=checkbox]{width:16px;height:16px;margin-top:2px;flex-shrink:0;accent-color:var(--accent)}
+.mi-name{font-size:14px;font-weight:700;line-height:1.3}
+.mi-price{font-size:13px;color:var(--gold2);font-weight:600;margin-top:2px}
+.mi-free{font-size:14px;background:var(--green);color:#042;border-radius:4px;padding:1px 4px;font-weight:700;margin-left:3px}
+.sel-total{background:var(--bg2);border-radius:10px;padding:14px 16px;margin-top:12px;display:flex;justify-content:space-between;align-items:center;font-size:15px}
+.sel-total .price{font-size:19px;font-weight:800;color:var(--gold)}
 .report-type{display:flex;gap:8px;margin:16px 0}
-.rt-btn{flex:1;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:12px;text-align:center;cursor:pointer;transition:all .15s;font-size:12px;font-weight:700}
+.rt-btn{flex:1;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:12px;text-align:center;cursor:pointer;transition:all .15s;font-size:14px;font-weight:700}
 .rt-btn:hover{border-color:var(--border2)}
 .rt-btn.selected{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 10%,var(--card))}
-.rt-btn .rt-pages{font-size:18px;font-weight:900;color:var(--gold);display:block;margin-bottom:3px}
+.rt-btn .rt-pages{font-size:20px;font-weight:900;color:var(--gold);display:block;margin-bottom:3px}
 .img-upload-zone{border:2px dashed var(--border2);border-radius:12px;padding:18px;text-align:center;cursor:pointer;transition:border .15s;margin-top:6px;position:relative}
 .img-upload-zone:hover{border-color:var(--accent)}
 .img-upload-zone input[type=file]{display:none}
 .img-preview{width:72px;height:72px;border-radius:50%;object-fit:cover;margin:0 auto 8px;display:block;border:2px solid var(--accent)}
-.img-hint{font-size:12px;color:var(--fg2)}
-.btn{display:block;width:100%;padding:13px;border-radius:11px;border:none;font-family:var(--fbody);font-size:14px;font-weight:700;cursor:pointer;transition:opacity .15s;text-align:center}
+.img-hint{font-size:14px;color:var(--fg2)}
+.btn{display:block;width:100%;padding:15px;border-radius:11px;border:none;font-family:var(--fbody);font-size:16px;font-weight:700;cursor:pointer;transition:opacity .15s;text-align:center}
 .btn:hover{opacity:.88}
 .btn-primary{background:linear-gradient(135deg,var(--accent),#8844dd);color:#fff}
 .btn-outline{background:transparent;border:1.5px solid var(--border2);color:var(--fg)}
@@ -119,7 +105,7 @@ body{display:flex;flex-direction:column;padding:0}
 .result-head{background:linear-gradient(135deg,#2a1a50,#1a0a38);padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px}
 .result-head img{width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);flex-shrink:0}
 .rh-info .rh-name{font-family:var(--fdisp);font-size:17px;font-weight:700}
-.rh-info .rh-meta{font-size:12px;color:var(--fg2);margin-top:4px}
+.rh-info .rh-meta{font-size:14px;color:var(--fg2);margin-top:4px}
 .result-body{padding:20px;font-size:14px;line-height:1.9;white-space:pre-line;color:var(--fg);max-height:65vh;overflow-y:auto}
 .loading{text-align:center;padding:48px 0}
 .spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 14px}
@@ -131,17 +117,17 @@ body{display:flex;flex-direction:column;padding:0}
 .stype-btn:hover{border-color:var(--border2)}
 .stype-btn.selected{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--card))}
 .stype-btn .st-e{font-size:22px;display:block;margin-bottom:4px}
-.stype-btn .st-n{font-size:12px;font-weight:700}
+.stype-btn .st-n{font-size:14px;font-weight:700}
 .shorts-result{background:var(--card);border:1.5px solid var(--border2);border-radius:14px;padding:20px;font-size:14px;line-height:1.9;white-space:pre-line;min-height:120px;max-height:70vh;overflow-y:auto;margin-top:14px}
 .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
 .stat-card{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:14px 10px;text-align:center}
 .stat-card .sv{font-size:20px;font-weight:800;color:var(--gold);font-variant-numeric:tabular-nums;white-space:nowrap}
-.stat-card .sl{font-size:11px;color:var(--fg2);margin-top:3px}
+.stat-card .sl{font-size:13px;color:var(--fg2);margin-top:3px}
 .slider-wrap{margin-bottom:14px}
-.slider-wrap .slabel{display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:var(--fg2);margin-bottom:5px}
+.slider-wrap .slabel{display:flex;justify-content:space-between;font-size:14px;font-weight:700;color:var(--fg2);margin-bottom:5px}
 .slider-wrap input[type=range]{width:100%;accent-color:var(--accent)}
 .platform-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
-.plat-btn{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:10px;text-align:center;cursor:pointer;transition:all .15s;font-size:12px;font-weight:700}
+.plat-btn{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:10px;text-align:center;cursor:pointer;transition:all .15s;font-size:14px;font-weight:700}
 .plat-btn:hover{border-color:var(--border2)}
 .plat-btn.selected{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--card))}
 .ad-result{background:var(--card);border:1.5px solid var(--border2);border-radius:14px;padding:20px;font-size:14px;line-height:1.9;white-space:pre-line;min-height:80px;margin-top:14px}
@@ -149,21 +135,21 @@ body{display:flex;flex-direction:column;padding:0}
 .chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
 .chart-card{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:12px}
 .chart-card.wide{grid-column:1/-1}
-.chart-title{font-size:11px;font-weight:700;color:var(--fg2);margin-bottom:8px;text-align:center;letter-spacing:.05em;text-transform:uppercase}
+.chart-title{font-size:13px;font-weight:700;color:var(--fg2);margin-bottom:8px;text-align:center;letter-spacing:.05em;text-transform:uppercase}
 .chart-legend{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;justify-content:center}
-.chart-legend span{font-size:10px;display:flex;align-items:center;gap:3px}
+.chart-legend span{font-size:12px;display:flex;align-items:center;gap:3px}
 .chart-legend b{width:9px;height:9px;border-radius:2px;display:inline-block;flex-shrink:0}
 .batch-list{display:flex;flex-direction:column;gap:10px;margin-top:14px}
 .batch-item{background:var(--card);border:1.5px solid var(--border2);border-radius:12px;overflow:hidden}
 .batch-head{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg2);border-bottom:1px solid var(--border)}
 .batch-plat{font-size:13px;font-weight:700;color:var(--accent)}
 .batch-body{padding:14px;font-size:13px;line-height:1.8;white-space:pre-line;max-height:260px;overflow-y:auto}
-.today-topic{background:var(--bg2);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--fg2);display:flex;align-items:center;gap:8px}
+.today-topic{background:var(--bg2);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:14px;color:var(--fg2);display:flex;align-items:center;gap:8px}
 .today-topic b{color:var(--gold)}
 .chip-group{display:flex;flex-direction:column;gap:7px}
 .chip-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.chip-head{font-size:10px;font-weight:700;color:var(--fg3);letter-spacing:.04em;min-width:28px;white-space:nowrap}
-.chip{display:inline-flex;align-items:center;padding:5px 10px;border-radius:20px;font-size:12px;font-weight:600;background:var(--card);border:1.5px solid var(--border);color:var(--fg2);cursor:pointer;transition:all .15s;user-select:none}
+.chip-head{font-size:12px;font-weight:700;color:var(--fg3);letter-spacing:.04em;min-width:28px;white-space:nowrap}
+.chip{display:inline-flex;align-items:center;padding:5px 10px;border-radius:20px;font-size:14px;font-weight:600;background:var(--card);border:1.5px solid var(--border);color:var(--fg2);cursor:pointer;transition:all .15s;user-select:none}
 .chip:hover{border-color:var(--border2);color:var(--fg)}
 .chip.on{background:color-mix(in srgb,var(--accent) 15%,var(--card));border-color:var(--accent);color:var(--accent)}
 /* ── 보고서 섹션 ── */
@@ -171,37 +157,37 @@ body{display:flex;flex-direction:column;padding:0}
 .rpt-sec:last-child{border-bottom:none}
 .rpt-sec-title{font-size:13px;font-weight:700;color:var(--accent);border-left:3px solid var(--accent);padding-left:9px;margin-bottom:12px;letter-spacing:.03em}
 .theory-inline{margin-top:20px;background:color-mix(in srgb,var(--gold) 5%,var(--bg2));border:1px solid color-mix(in srgb,var(--gold) 25%,var(--border));border-radius:12px;padding:16px 18px}
-.ti-loading{font-size:12px;color:var(--fg3);padding:6px 0;font-style:italic;display:flex;align-items:center;gap:6px}
+.ti-loading{font-size:14px;color:var(--fg3);padding:6px 0;font-style:italic;display:flex;align-items:center;gap:6px}
 .ti-loading::before{content:"📐";font-style:normal}
-.ti-label{font-size:12px;font-weight:800;color:var(--gold);letter-spacing:.08em;margin-bottom:12px;display:flex;align-items:center;gap:6px;text-transform:uppercase}
+.ti-label{font-size:14px;font-weight:800;color:var(--gold);letter-spacing:.08em;margin-bottom:12px;display:flex;align-items:center;gap:6px;text-transform:uppercase}
 .ti-label::before{content:"📐";font-size:14px}
 .ti-label::after{content:"";flex:1;height:1.5px;background:color-mix(in srgb,var(--gold) 30%,transparent)}
 .ti-body{font-size:13.5px;line-height:1.95;color:var(--fg2)}
 .ti-p{margin:0 0 10px}
 .ti-critical{background:color-mix(in srgb,var(--gold) 10%,var(--card));border-left:3px solid var(--gold);padding:8px 12px;border-radius:0 8px 8px 0;margin:10px 0;font-size:13px;font-weight:600;color:var(--fg);line-height:1.7}
 .ti-bold{font-weight:800;color:var(--fg);text-decoration:underline;text-underline-offset:3px;text-decoration-color:color-mix(in srgb,var(--accent) 50%,transparent)}
-.ti-note{font-size:12px;color:var(--fg3);font-style:italic;display:inline-block;margin-left:2px}
+.ti-note{font-size:14px;color:var(--fg3);font-style:italic;display:inline-block;margin-left:2px}
 /* 사주 원국표 */
 .saju-tbl{width:100%;border-collapse:collapse;font-size:13px}
 .saju-tbl th,.saju-tbl td{border:1px solid var(--border);text-align:center;padding:8px 4px}
-.saju-tbl th{background:var(--bg3);color:var(--fg2);font-weight:600;font-size:11px}
+.saju-tbl th{background:var(--bg3);color:var(--fg2);font-weight:600;font-size:13px}
 .saju-tbl .gan{font-size:18px;font-weight:700;font-family:var(--fdisp)}
 .saju-tbl .ji{font-size:18px;font-weight:700;font-family:var(--fdisp)}
-.saju-tbl .jjg{font-size:10px;color:var(--fg3)}
+.saju-tbl .jjg{font-size:12px;color:var(--fg3)}
 .oh-목{color:#4ade80}.oh-화{color:#f87171}.oh-토{color:#fbbf24}.oh-금{color:#e2e8f0}.oh-수{color:#60a5fa}
 /* 오행 가로 분포 */
 .ohang-wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .ohang-wrap svg{flex-shrink:0}
-.ohang-legend{display:flex;flex-direction:column;gap:7px;font-size:12px}
+.ohang-legend{display:flex;flex-direction:column;gap:7px;font-size:14px}
 .ohang-legend-row{display:flex;align-items:center;gap:7px}
 .ohang-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
 /* 십성 바 (가로) */
 .sip10-list{display:flex;flex-direction:column;gap:7px}
 .sip10-row{display:flex;align-items:center;gap:8px}
-.sip10-lbl{width:52px;font-size:11px;color:var(--fg2);text-align:right;flex-shrink:0}
+.sip10-lbl{width:52px;font-size:13px;color:var(--fg2);text-align:right;flex-shrink:0}
 /* ── 한자이름 탭 ── */
 .hanja-syl-block{margin-bottom:20px}
-.hanja-syl-label{font-size:12px;font-weight:800;color:var(--fg2);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.hanja-syl-label{font-size:14px;font-weight:800;color:var(--fg2);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px}
 .hanja-syl-label .syl-char{font-family:var(--fdisp);font-size:22px;font-weight:900;color:var(--fg)}
 .hanja-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:7px}
 .hj-card{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:8px 6px;text-align:center;cursor:pointer;transition:all .15s;user-select:none}
@@ -215,12 +201,12 @@ body{display:flex;flex-direction:column;padding:0}
 .hanja-stats-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
 .hj-stat{text-align:center;background:var(--bg2);border-radius:8px;padding:8px 14px}
 .hj-stat-n{font-size:18px;font-weight:800;color:var(--accent)}
-.hj-stat-l{font-size:10px;color:var(--fg3);margin-top:2px}
+.hj-stat-l{font-size:12px;color:var(--fg3);margin-top:2px}
 .hanja-syl-meanings{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
-.hm-row{display:flex;align-items:center;gap:10px;font-size:12px}
+.hm-row{display:flex;align-items:center;gap:10px;font-size:14px}
 .hm-char{font-family:var(--fdisp);font-size:20px;font-weight:700;color:var(--fg);width:24px;text-align:center;flex-shrink:0}
 .hm-mean{color:var(--fg2)}
-.hm-oh{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:700}
+.hm-oh{font-size:12px;padding:2px 7px;border-radius:10px;font-weight:700}
 .hm-oh-목{background:rgba(74,222,128,.15);color:#4ade80}
 .hm-oh-화{background:rgba(248,113,113,.15);color:#f87171}
 .hm-oh-토{background:rgba(251,191,36,.15);color:#fbbf24}
@@ -233,11 +219,11 @@ body{display:flex;flex-direction:column;padding:0}
 .cheol-body{padding:18px;font-size:14px;line-height:1.95;white-space:pre-line;color:var(--fg);max-height:70vh;overflow-y:auto}
 /* ── 간단본 ── */
 .simple-result{background:var(--card);border:1.5px solid var(--border2);border-radius:14px;padding:20px;font-size:14px;line-height:1.9;white-space:pre-line;margin-top:14px;min-height:100px;max-height:70vh;overflow-y:auto}
-.simple-notice{background:var(--bg2);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--fg2);margin-bottom:14px;line-height:1.6}
+.simple-notice{background:var(--bg2);border-radius:10px;padding:10px 14px;font-size:14px;color:var(--fg2);margin-bottom:14px;line-height:1.6}
 .simple-notice b{color:var(--accent)}
 .sip10-track{flex:1;background:var(--bg3);border-radius:4px;height:8px}
 .sip10-fill{height:100%;border-radius:4px;transition:width .4s}
-.sip10-cnt{width:18px;font-size:11px;color:var(--fg3);flex-shrink:0}
+.sip10-cnt{width:18px;font-size:13px;color:var(--fg3);flex-shrink:0}
 /* 대운 타임라인 */
 .dw-list{display:flex;flex-direction:column}
 .dw-item{display:flex;gap:10px;align-items:stretch}
@@ -245,60 +231,60 @@ body{display:flex;flex-direction:column;padding:0}
 .dw-dot{width:9px;height:9px;border-radius:50%;background:var(--accent);margin-top:5px;flex-shrink:0}
 .dw-conn{flex:1;width:2px;background:var(--border);margin:2px 0}
 .dw-body{padding-bottom:16px;flex:1}
-.dw-age{font-size:10px;color:var(--fg3);margin-bottom:2px}
+.dw-age{font-size:12px;color:var(--fg3);margin-bottom:2px}
 .dw-stem{font-size:15px;font-weight:700;font-family:var(--fdisp);margin-bottom:3px}
 .dw-tag{display:inline-block;font-size:9px;padding:1px 6px;border-radius:9px;margin-left:5px;vertical-align:middle}
 .dw-up{background:rgba(92,230,133,.15);color:#5ce685}
 .dw-flat{background:rgba(245,200,66,.15);color:#f5c842}
 .dw-down{background:rgba(255,85,119,.15);color:#ff5577}
-.dw-desc{font-size:12px;color:var(--fg2)}
+.dw-desc{font-size:14px;color:var(--fg2)}
 /* 신살 배지 */
 .sal-list{display:flex;flex-wrap:wrap;gap:8px}
-.sal-badge{background:var(--bg3);border:1px solid var(--border);border-radius:18px;padding:5px 12px;font-size:12px}
+.sal-badge{background:var(--bg3);border:1px solid var(--border);border-radius:18px;padding:5px 12px;font-size:14px}
 .sal-badge strong{color:var(--accent);margin-right:4px}
 /* 개운법 */
 .gae-list{display:flex;flex-direction:column;gap:9px}
 .gae-item{display:flex;gap:10px;align-items:flex-start}
 .gae-icon{font-size:17px;flex-shrink:0;margin-top:1px}
-.gae-body{font-size:12px;color:var(--fg2)}
+.gae-body{font-size:14px;color:var(--fg2)}
 .gae-body strong{color:var(--fg)}
 /* 분석 내용 텍스트 */
 .narrative{padding:0;font-size:13.5px;line-height:1.9;white-space:pre-line;color:var(--fg);max-height:70vh;overflow-y:auto}
 /* 이사 신살 */
 .isa-sal-wrap{margin-top:14px}
-.isa-sal-title{font-size:11px;font-weight:700;color:var(--fg2);margin-bottom:8px;letter-spacing:.04em;text-transform:uppercase}
+.isa-sal-title{font-size:13px;font-weight:700;color:var(--fg2);margin-bottom:8px;letter-spacing:.04em;text-transform:uppercase}
 .isa-sal-list{display:flex;flex-direction:column;gap:6px}
 .isa-sal-row{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:8px}
 /* 4대 귀인 조견표 */
 .guiin-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}
 .guiin-card{background:var(--bg3);border:1.5px solid var(--border);border-radius:10px;padding:9px 11px;transition:all .15s}
 .guiin-card.has{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 8%,var(--card));box-shadow:0 0 10px color-mix(in srgb,var(--gold) 15%,transparent)}
-.guiin-title{font-size:10px;font-weight:700;color:var(--fg2);letter-spacing:.03em;margin-bottom:3px}
+.guiin-title{font-size:12px;font-weight:700;color:var(--fg2);letter-spacing:.03em;margin-bottom:3px}
 .guiin-card.has .guiin-title{color:var(--gold)}
 .guiin-ji{font-family:var(--fdisp);font-size:17px;font-weight:700;color:var(--fg);line-height:1.2;margin-bottom:2px}
 .guiin-desc{font-size:9.5px;color:var(--fg3);line-height:1.4}
-.guiin-badge{display:inline-block;padding:2px 7px;border-radius:8px;font-size:10px;font-weight:700;margin-top:5px}
+.guiin-badge{display:inline-block;padding:2px 7px;border-radius:8px;font-size:12px;font-weight:700;margin-top:5px}
 .guiin-yes{background:rgba(245,200,66,.18);color:var(--gold)}
 .guiin-no{background:var(--bg2);color:var(--fg3)}
 /* 경도보정/야자시 배지 */
-.adj-note{display:inline-flex;align-items:center;gap:4px;background:color-mix(in srgb,var(--blue) 10%,var(--card));border:1px solid color-mix(in srgb,var(--blue) 25%,transparent);border-radius:6px;padding:3px 8px;font-size:11px;color:var(--blue);font-weight:600;margin-top:5px}
+.adj-note{display:inline-flex;align-items:center;gap:4px;background:color-mix(in srgb,var(--blue) 10%,var(--card));border:1px solid color-mix(in srgb,var(--blue) 25%,transparent);border-radius:6px;padding:3px 8px;font-size:13px;color:var(--blue);font-weight:600;margin-top:5px}
 .isa-sal-row.lv-절대금지{background:rgba(255,85,119,.1);border:1px solid rgba(255,85,119,.3)}
 .isa-sal-row.lv-경고{background:rgba(245,200,66,.08);border:1px solid rgba(245,200,66,.25)}
 .isa-sal-row.lv-주의{background:rgba(126,184,255,.07);border:1px solid rgba(126,184,255,.2)}
-.isa-sal-name{font-size:12px;font-weight:700;min-width:52px;flex-shrink:0}
-.isa-sal-dir{font-size:11px;padding:1px 7px;border-radius:10px;font-weight:700;flex-shrink:0;align-self:flex-start;margin-top:1px}
+.isa-sal-name{font-size:14px;font-weight:700;min-width:52px;flex-shrink:0}
+.isa-sal-dir{font-size:13px;padding:1px 7px;border-radius:10px;font-weight:700;flex-shrink:0;align-self:flex-start;margin-top:1px}
 .lv-절대금지 .isa-sal-dir{background:rgba(255,85,119,.2);color:#ff5577}
 .lv-경고 .isa-sal-dir{background:rgba(245,200,66,.2);color:#f5c842}
 .lv-주의 .isa-sal-dir{background:rgba(126,184,255,.2);color:#7eb8ff}
-.isa-sal-desc{font-size:11px;color:var(--fg2);flex:1}
+.isa-sal-desc{font-size:13px;color:var(--fg2);flex:1}
 /* 이사 방향 나침반 */
 .isa-wrap{display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap}
 .isa-compass-box{flex-shrink:0}
-.isa-info{flex:1;min-width:180px;font-size:12px}
-.isa-current{background:var(--bg3);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:var(--fg2)}
+.isa-info{flex:1;min-width:180px;font-size:14px}
+.isa-current{background:var(--bg3);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:14px;color:var(--fg2)}
 .isa-dir-list{display:flex;flex-direction:column;gap:6px}
 .isa-dir-row{display:flex;align-items:center;gap:7px}
-.isa-dir-badge{width:34px;text-align:center;font-size:11px;font-weight:700;padding:2px 0;border-radius:5px;flex-shrink:0}
+.isa-dir-badge{width:34px;text-align:center;font-size:13px;font-weight:700;padding:2px 0;border-radius:5px;flex-shrink:0}
 .isa-gil{background:rgba(92,230,133,.18);color:#5ce685;border:1px solid rgba(92,230,133,.4)}
 .isa-흉{background:rgba(255,85,119,.18);color:#ff5577;border:1px solid rgba(255,85,119,.4)}
 .isa-중{background:rgba(100,100,120,.2);color:var(--fg3);border:1px solid var(--border)}
@@ -308,33 +294,30 @@ body{display:flex;flex-direction:column;padding:0}
 
 <!-- 헤더 -->
 <div class="app-header">
-  <div class="app-header-logo">🔮</div>
-  <div class="app-header-text">
-    <h1><em>사주마루</em> AI 스튜디오</h1>
-    <p>AI 명리 분석 · 쇼츠 생성 · 비즈니스 관리</p>
+  <div class="eyebrow">✦ 명리 분석 시스템 ✦</div>
+  <h1><em>사주마루</em> 스튜디오</h1>
+  <p>사주분석 · 간단본 · 사주원리 · 한자이름 · 철학원풀이</p>
+  <div style="display:inline-flex;align-items:center;gap:8px;margin-top:14px;background:color-mix(in srgb,var(--green) 12%,var(--bg2));border:1.5px solid color-mix(in srgb,var(--green) 40%,transparent);border-radius:10px;padding:8px 16px">
+    <span style="font-size:18px">✅</span>
+    <span style="font-size:14px;font-weight:700;color:var(--green)">기질·성향 분석 <strong style="font-size:16px">무료</strong> 제공</span>
+    <span style="font-size:12px;color:var(--fg3)">· 추가 항목 선택 가능</span>
   </div>
-  <a href="saju-consumer.html" style="font-size:10px;color:var(--fg3);text-decoration:none;border:1px solid var(--border);border-radius:6px;padding:3px 8px;white-space:nowrap;flex-shrink:0">소비자 ↗</a>
 </div>
 
-<!-- 탭 (바텀 네비로 대체됨 — 기능상 유지) -->
-<div class="tabs">
-  <button class="tab-btn active" onclick="switchTab('analyze')">🔮 AI 분석</button>
-  <button class="tab-btn" onclick="switchTab('simple')">📋 간단본</button>
-  <button class="tab-btn" onclick="switchTab('hanja')">🔡 한자이름</button>
-  <button class="tab-btn" onclick="switchTab('cheol')">🏛️ 철학원 풀이</button>
-  <button class="tab-btn" onclick="switchTab('shorts')">🎬 쇼츠 생성</button>
-  <button class="tab-btn" onclick="switchTab('biz')">💼 비즈니스</button>
-  <button class="tab-btn" onclick="switchTab('theory')">📐 사주원리</button>
-  <button class="tab-btn" onclick="switchTab('adcopy')">📢 홍보문구</button>
-</div>
-
-<!-- 콘텐츠 영역 시작 -->
-<div class="app-content" id="appContent">
+<!-- 섹션 앵커 네비 -->
+<nav class="section-nav" id="sectionNav">
+  <a class="sec-btn active" href="#sec-analyze">🔮 분석</a>
+  <a class="sec-btn" href="#sec-simple">📋 간단본</a>
+  <a class="sec-btn" href="#sec-theory">📐 사주원리</a>
+  <a class="sec-btn" href="#sec-hanja">🔡 한자이름</a>
+  <a class="sec-btn" href="#sec-cheol">🏛️ 철학원</a>
+</nav>
 
 <!-- ══════════════════════════════════════
-     TAB 1: AI 분석
+     섹션 1: 사주 분석
 ══════════════════════════════════════ -->
-<div class="tab-panel active" id="tab-analyze">
+<div class="tab-panel" id="tab-analyze" data-sec="analyze">
+<div id="sec-analyze" style="scroll-margin-top:56px"></div>
   <div class="steps" id="stepBar">
     <div class="step-dot active" id="s1">① 정보</div>
     <div class="step-dot" id="s2">② 항목</div>
@@ -438,13 +421,24 @@ body{display:flex;flex-direction:column;padding:0}
       <input type="text" id="iRegion" placeholder="예: 서울 강남구, 부산 해운대구, 경기 성남시">
       <div class="hint">이사 방향 분석에 활용됩니다</div>
     </div>
-    <div class="field" id="imgUploadField">
-      <label>얼굴 사진 (관상 분석 포함)</label>
-      <div class="img-upload-zone" id="imgZone" onclick="document.getElementById('imgFile').click()">
-        <input type="file" id="imgFile" accept="image/*" onchange="onImageSelect(event)">
-        <img id="imgPreview" class="img-preview" hidden>
-        <div class="img-hint" id="imgHint">📸 사진 업로드 시 관상 분석 추가<br><small style="opacity:.7">선택사항 · 클릭하여 업로드</small></div>
+    <!-- 연락처 정보 -->
+    <div style="border-top:1px solid var(--border);margin:20px 0 16px;padding-top:16px">
+      <div style="font-size:13px;font-weight:800;color:var(--fg2);margin-bottom:12px;text-transform:uppercase;letter-spacing:.05em">📬 결과 받을 연락처 <span style="font-size:12px;font-weight:400;text-transform:none;color:var(--fg3)">(선택 — 분석 결과 전송에 활용)</span></div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>이메일</label>
+        <input type="email" id="iEmail" placeholder="example@email.com">
       </div>
+      <div class="field">
+        <label>연락처 (문자)</label>
+        <input type="tel" id="iPhone" placeholder="010-0000-0000">
+      </div>
+    </div>
+    <div class="field">
+      <label>카카오톡 ID</label>
+      <input type="text" id="iKakao" placeholder="카카오톡 아이디 또는 오픈채팅 링크">
+      <div class="hint">분석 완료 시 카카오톡으로 결과를 전달해 드립니다</div>
     </div>
     <div id="step1Error" hidden style="background:rgba(255,85,119,.12);border:1px solid var(--red);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--red);margin-bottom:10px"></div>
     <button class="btn btn-primary" onclick="goStep2()">다음 → 항목 선택</button>
@@ -470,7 +464,7 @@ body{display:flex;flex-direction:column;padding:0}
     </div>
     <div class="btn-row">
       <button class="btn btn-outline" onclick="goStep1()">← 이전</button>
-      <button class="btn btn-gold" id="btnAnalyze" onclick="startAnalysis()" disabled>✨ AI 분석 시작</button>
+      <button class="btn btn-gold" id="btnAnalyze" onclick="startAnalysis()" disabled>✨ 분석 시작</button>
     </div>
   </div>
 
@@ -487,7 +481,7 @@ body{display:flex;flex-direction:column;padding:0}
         <button class="btn btn-outline" onclick="restart()">← 다시 분석</button>
         <button class="btn btn-primary" id="copyBtn" onclick="copyResult()">📋 전체 복사</button>
       </div>
-      <button class="btn btn-gold" id="btn50p" style="width:100%;margin-top:8px" onclick="generate50Report()">📄 四柱命理(사주명리) 풀이 + AI 분석 종합 보고서 생성 (35,000자+)</button>
+      <button class="btn btn-gold" id="btn50p" style="width:100%;margin-top:8px" onclick="generate50Report()">📄 四柱命理(사주명리) 풀이 + 분석 종합 보고서 생성 (35,000자+)</button>
       <div id="report50Progress" hidden style="margin-top:8px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px">
         <div style="display:flex;align-items:center;gap:10px">
           <div class="spinner" style="width:20px;height:20px;border-width:2px;flex-shrink:0"></div>
@@ -501,331 +495,6 @@ body{display:flex;flex-direction:column;padding:0}
       <button id="btn50pOpen" hidden class="btn btn-outline" style="width:100%;margin-top:6px" onclick="open50Report()">📂 완성된 종합 보고서 열기 (인쇄/PDF 저장 가능)</button>
     </div>
   </div>
-</div>
-
-<!-- ══════════════════════════════════════
-     TAB 2: 쇼츠 생성
-══════════════════════════════════════ -->
-<div class="tab-panel" id="tab-shorts">
-  <div class="section-title">🎬 쇼츠 스크립트 자동 생성</div>
-  <div style="font-size:12px;font-weight:700;color:var(--fg2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">스크립트 유형</div>
-  <div class="stype-grid">
-    <div class="stype-btn selected" data-stype="warning" onclick="selectStype(this)">
-      <span class="st-e">⚠️</span><span class="st-n">경고형</span>
-    </div>
-    <div class="stype-btn" data-stype="money" onclick="selectStype(this)">
-      <span class="st-e">💰</span><span class="st-n">재물운</span>
-    </div>
-    <div class="stype-btn" data-stype="couple" onclick="selectStype(this)">
-      <span class="st-e">💑</span><span class="st-n">궁합</span>
-    </div>
-    <div class="stype-btn" data-stype="year2026" onclick="selectStype(this)">
-      <span class="st-e">🗓️</span><span class="st-n">2026년 예언</span>
-    </div>
-    <div class="stype-btn" data-stype="card" onclick="selectStype(this)">
-      <span class="st-e">🃏</span><span class="st-n">인스타 카드</span>
-    </div>
-    <div class="stype-btn" data-stype="name" onclick="selectStype(this)">
-      <span class="st-e">🔠</span><span class="st-n">이름·한자</span>
-    </div>
-  </div>
-  <!-- ── 유형별 입력 패널 ── -->
-
-  <!-- 공통 패널: 경고형/재물운/year2026/인스타카드/이름한자 -->
-  <div id="shortsCommonFields">
-    <!-- 이름·한자 전용 -->
-    <div id="stypeNameField" hidden class="field" style="margin-bottom:10px">
-      <label>분석할 이름</label>
-      <input type="text" id="shortNameInput" placeholder="예: 김민준, 이서연" maxlength="20">
-      <div class="hint">이름의 한자 의미·획수·오행 분석에 활용됩니다</div>
-    </div>
-    <!-- 인스타 카드 전용 -->
-    <div id="stypeCardField" hidden class="field" style="margin-bottom:10px">
-      <label>카드뉴스 주제 (선택)</label>
-      <input type="text" id="shortCardTopic" placeholder="예: 2026 띠별 재물운, 일간별 성격 특징">
-    </div>
-    <div class="field">
-      <label>추가 설정 <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--fg3)">(복수 선택 가능)</span></label>
-      <div class="chip-group" id="chipExtra">
-        <div class="chip-row"><span class="chip-head">생년</span>
-          <span class="chip" data-g="birth" onclick="toggleChip(this)">1960년대생</span>
-          <span class="chip" data-g="birth" onclick="toggleChip(this)">1970년대생</span>
-          <span class="chip" data-g="birth" onclick="toggleChip(this)">1980년대생</span>
-          <span class="chip" data-g="birth" onclick="toggleChip(this)">1990년대생</span>
-          <span class="chip" data-g="birth" onclick="toggleChip(this)">2000년대생</span>
-        </div>
-        <div class="chip-row"><span class="chip-head">성별</span>
-          <span class="chip" data-g="gender" onclick="toggleChip(this)">여성</span>
-          <span class="chip" data-g="gender" onclick="toggleChip(this)">남성</span>
-        </div>
-        <div class="chip-row"><span class="chip-head">일간</span>
-          <span class="chip" data-g="stem" onclick="toggleChip(this)">갑목</span>
-          <span class="chip" data-g="stem" onclick="toggleChip(this)">을목</span>
-          <span class="chip" data-g="stem" onclick="toggleChip(this)">병화</span>
-          <span class="chip" data-g="stem" onclick="toggleChip(this)">정화</span>
-          <span class="chip" data-g="stem" onclick="toggleChip(this)">무토</span>
-          <span class="chip" data-g="stem" onclick="toggleChip(this)">기토</span>
-          <span class="chip" data-g="stem" onclick="toggleChip(this)">경금</span>
-          <span class="chip" data-g="stem" onclick="toggleChip(this)">신금</span>
-          <span class="chip" data-g="stem" onclick="toggleChip(this)">임수</span>
-          <span class="chip" data-g="stem" onclick="toggleChip(this)">계수</span>
-        </div>
-        <div class="chip-row"><span class="chip-head">중심</span>
-          <span class="chip" data-g="focus_type" onclick="toggleChip(this)">재물·직장운</span>
-          <span class="chip" data-g="focus_type" onclick="toggleChip(this)">연애·결혼운</span>
-          <span class="chip" data-g="focus_type" onclick="toggleChip(this)">건강운</span>
-          <span class="chip" data-g="focus_type" onclick="toggleChip(this)">평생운</span>
-          <span class="chip" data-g="focus_type" onclick="toggleChip(this)">사업·창업운</span>
-        </div>
-      </div>
-    </div>
-    <div class="field">
-      <label>특별 강조 포인트 <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--fg3)">(복수 선택 가능)</span></label>
-      <div class="chip-group" id="chipFocus">
-        <div class="chip-row">
-          <span class="chip" onclick="toggleChip(this)">2026년 상반기 기회</span>
-          <span class="chip" onclick="toggleChip(this)">이직·창업 적기</span>
-          <span class="chip" onclick="toggleChip(this)">재회 가능성</span>
-          <span class="chip" onclick="toggleChip(this)">승진·명예운</span>
-          <span class="chip" onclick="toggleChip(this)">결혼 시기</span>
-          <span class="chip" onclick="toggleChip(this)">재물 상승 시기</span>
-          <span class="chip" onclick="toggleChip(this)">건강 주의 시기</span>
-          <span class="chip" onclick="toggleChip(this)">해외·이동 운</span>
-          <span class="chip" onclick="toggleChip(this)">도화살 발현</span>
-          <span class="chip" onclick="toggleChip(this)">사업 파트너 운</span>
-          <span class="chip" onclick="toggleChip(this)">이별·이혼 시기</span>
-          <span class="chip" onclick="toggleChip(this)">자녀 인연</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 궁합 전용 패널 -->
-  <div id="shortsCoupleFields" hidden>
-    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:16px;margin-bottom:10px">
-      <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:12px;letter-spacing:.04em">👨 남성 생년월일시</div>
-      <div class="row3">
-        <div class="field" style="margin-bottom:8px">
-          <label>생년</label>
-          <input type="number" id="cMaleYear" placeholder="1990" min="1900" max="2010" style="text-align:center">
-        </div>
-        <div class="field" style="margin-bottom:8px">
-          <label>월</label>
-          <select id="cMaleMonth">
-            <option value="">월</option>
-            <option>1</option><option>2</option><option>3</option><option>4</option>
-            <option>5</option><option>6</option><option>7</option><option>8</option>
-            <option>9</option><option>10</option><option>11</option><option>12</option>
-          </select>
-        </div>
-        <div class="field" style="margin-bottom:8px">
-          <label>일</label>
-          <select id="cMaleDay">
-            <option value="">일</option>
-            <script>for(let i=1;i<=31;i++)document.write(`<option>${i}</option>`)</script>
-          </select>
-        </div>
-      </div>
-      <div class="row2">
-        <div class="field" style="margin-bottom:0">
-          <label>태어난 시간</label>
-          <select id="cMaleTime">
-            <option value="모름">모름</option>
-            <option value="子시(23-01)">子시(23~01시)</option>
-            <option value="丑시(01-03)">丑시(01~03시)</option>
-            <option value="寅시(03-05)">寅시(03~05시)</option>
-            <option value="卯시(05-07)">卯시(05~07시)</option>
-            <option value="辰시(07-09)">辰시(07~09시)</option>
-            <option value="巳시(09-11)">巳시(09~11시)</option>
-            <option value="午시(11-13)">午시(11~13시)</option>
-            <option value="未시(13-15)">未시(13~15시)</option>
-            <option value="申시(15-17)">申시(15~17시)</option>
-            <option value="酉시(17-19)">酉시(17~19시)</option>
-            <option value="戌시(19-21)">戌시(19~21시)</option>
-            <option value="亥시(21-23)">亥시(21~23시)</option>
-          </select>
-        </div>
-        <div class="field" style="margin-bottom:0">
-          <label>양력/음력</label>
-          <select id="cMaleCal">
-            <option value="양력">양력</option>
-            <option value="음력">음력</option>
-            <option value="음력윤달">음력 윤달</option>
-          </select>
-        </div>
-      </div>
-    </div>
-    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:16px;margin-bottom:10px">
-      <div style="font-size:12px;font-weight:700;color:#f5c842;margin-bottom:12px;letter-spacing:.04em">👩 여성 생년월일시</div>
-      <div class="row3">
-        <div class="field" style="margin-bottom:8px">
-          <label>생년</label>
-          <input type="number" id="cFemYear" placeholder="1993" min="1900" max="2010" style="text-align:center">
-        </div>
-        <div class="field" style="margin-bottom:8px">
-          <label>월</label>
-          <select id="cFemMonth">
-            <option value="">월</option>
-            <option>1</option><option>2</option><option>3</option><option>4</option>
-            <option>5</option><option>6</option><option>7</option><option>8</option>
-            <option>9</option><option>10</option><option>11</option><option>12</option>
-          </select>
-        </div>
-        <div class="field" style="margin-bottom:8px">
-          <label>일</label>
-          <select id="cFemDay">
-            <option value="">일</option>
-            <script>for(let i=1;i<=31;i++)document.write(`<option>${i}</option>`)</script>
-          </select>
-        </div>
-      </div>
-      <div class="row2">
-        <div class="field" style="margin-bottom:0">
-          <label>태어난 시간</label>
-          <select id="cFemTime">
-            <option value="모름">모름</option>
-            <option value="子시(23-01)">子시(23~01시)</option>
-            <option value="丑시(01-03)">丑시(01~03시)</option>
-            <option value="寅시(03-05)">寅시(03~05시)</option>
-            <option value="卯시(05-07)">卯시(05~07시)</option>
-            <option value="辰시(07-09)">辰시(07~09시)</option>
-            <option value="巳시(09-11)">巳시(09~11시)</option>
-            <option value="午시(11-13)">午시(11~13시)</option>
-            <option value="未시(13-15)">未시(13~15시)</option>
-            <option value="申시(15-17)">申시(15~17시)</option>
-            <option value="酉시(17-19)">酉시(17~19시)</option>
-            <option value="戌시(19-21)">戌시(19~21시)</option>
-            <option value="亥시(21-23)">亥시(21~23시)</option>
-          </select>
-        </div>
-        <div class="field" style="margin-bottom:0">
-          <label>양력/음력</label>
-          <select id="cFemCal">
-            <option value="양력">양력</option>
-            <option value="음력">음력</option>
-            <option value="음력윤달">음력 윤달</option>
-          </select>
-        </div>
-      </div>
-    </div>
-    <div class="field">
-      <label>분석 포인트 (선택)</label>
-      <div class="chip-group">
-        <div class="chip-row">
-          <span class="chip" onclick="toggleChip(this)">결혼 가능성</span>
-          <span class="chip" onclick="toggleChip(this)">오행 궁합</span>
-          <span class="chip" onclick="toggleChip(this)">일간 궁합</span>
-          <span class="chip" onclick="toggleChip(this)">12지지 삼합·반합</span>
-          <span class="chip" onclick="toggleChip(this)">재회 가능성</span>
-          <span class="chip" onclick="toggleChip(this)">갈등 요소</span>
-          <span class="chip" onclick="toggleChip(this)">결혼 적령기</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <button class="btn btn-primary" id="shortsBtn" onclick="generateShorts()">🎬 스크립트 생성</button>
-  <div class="shorts-result" id="shortsResult" hidden></div>
-  <div id="shortsCopyRow" hidden style="margin-top:10px">
-    <button class="btn btn-outline" onclick="copyShorts()">📋 스크립트 복사</button>
-  </div>
-
-  <div class="divider"></div>
-
-  <div class="section-title" style="font-size:15px">🌅 일일 배치 생성</div>
-  <div style="font-size:12px;color:var(--fg2);margin-bottom:10px">오늘 날짜 기반으로 유튜브·인스타·틱톡 3플랫폼 스크립트를 한번에 자동 생성합니다</div>
-  <div style="font-size:11px;color:var(--fg3);margin-bottom:6px">오늘의 주제 선택 <span style="color:var(--accent)">(최대 3개 · 날짜 기반 자동 선택됨)</span></div>
-  <div class="chip-group" id="chipTopics" style="margin-bottom:12px">
-    <div class="chip-row" style="flex-wrap:wrap;gap:6px" id="topicChipRow"></div>
-  </div>
-  <div class="field">
-    <label>보조 정보 <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--fg3)">(선택)</span></label>
-    <div class="chip-group" id="chipBatch">
-      <div class="chip-row">
-        <span class="chip" onclick="toggleChip(this)">1970년대생</span>
-        <span class="chip" onclick="toggleChip(this)">1980년대생</span>
-        <span class="chip" onclick="toggleChip(this)">1990년대생</span>
-        <span class="chip" onclick="toggleChip(this)">여성 중심</span>
-        <span class="chip" onclick="toggleChip(this)">남성 중심</span>
-        <span class="chip" onclick="toggleChip(this)">도화살 있는 사람</span>
-        <span class="chip" onclick="toggleChip(this)">역마살 있는 사람</span>
-        <span class="chip" onclick="toggleChip(this)">2026년 1월 특집</span>
-        <span class="chip" onclick="toggleChip(this)">신년 첫 콘텐츠</span>
-        <span class="chip" onclick="toggleChip(this)">트렌드 운세</span>
-      </div>
-    </div>
-  </div>
-  <button class="btn btn-gold" id="batchBtn" onclick="generateDailyBatch()">🌅 3플랫폼 스크립트 배치 생성</button>
-  <div id="batchResultList" class="batch-list" hidden></div>
-</div>
-
-<!-- ══════════════════════════════════════
-     TAB 3: 비즈니스
-══════════════════════════════════════ -->
-<div class="tab-panel" id="tab-biz">
-  <div class="section-title">💼 비즈니스 대시보드</div>
-
-  <!-- 수익 통계 -->
-  <div class="stats-row">
-    <div class="stat-card">
-      <div class="sv" id="statDaily">0</div>
-      <div class="sl">오늘 주문</div>
-    </div>
-    <div class="stat-card">
-      <div class="sv" id="statMonthly">0</div>
-      <div class="sl">이달 주문</div>
-    </div>
-    <div class="stat-card">
-      <div class="sv" id="statRevenue">₩0</div>
-      <div class="sl">이달 예상 수익</div>
-    </div>
-  </div>
-
-  <!-- 수익 시뮬레이터 -->
-  <div class="section-title" style="font-size:15px">📊 수익 시뮬레이터</div>
-  <div class="slider-wrap">
-    <div class="slabel"><span>일 평균 주문 수</span><span id="slOrderVal" style="color:var(--gold)">5건</span></div>
-    <input type="range" id="slOrder" min="1" max="50" value="5" oninput="calcRevenue()">
-  </div>
-  <div class="slider-wrap">
-    <div class="slabel"><span>평균 주문 단가</span><span id="slPriceVal" style="color:var(--gold)">₩18,000</span></div>
-    <input type="range" id="slPrice" min="10000" max="50000" step="1000" value="18000" oninput="calcRevenue()">
-  </div>
-  <div style="background:var(--card);border:1.5px solid var(--border2);border-radius:12px;padding:18px;text-align:center;margin-bottom:20px">
-    <div style="font-size:13px;color:var(--fg2);margin-bottom:6px">월 예상 수익</div>
-    <div id="revenueResult" style="font-size:28px;font-weight:900;color:var(--gold);font-variant-numeric:tabular-nums">₩2,700,000</div>
-    <div id="revenueBreak" style="font-size:11px;color:var(--fg3);margin-top:6px">5건 × ₩18,000 × 30일</div>
-  </div>
-
-  <div class="divider"></div>
-
-  <!-- 광고 문구 생성기 -->
-  <div class="section-title" style="font-size:15px">📣 광고 문구 생성기</div>
-  <div class="platform-grid">
-    <div class="plat-btn selected" data-plat="daangn" onclick="selectPlat(this)">🥕 당근마켓</div>
-    <div class="plat-btn" data-plat="insta" onclick="selectPlat(this)">📸 인스타그램</div>
-    <div class="plat-btn" data-plat="kakao" onclick="selectPlat(this)">💛 카카오채널</div>
-    <div class="plat-btn" data-plat="youtube" onclick="selectPlat(this)">▶ 유튜브 커뮤니티</div>
-  </div>
-  <div class="field">
-    <label>강조할 상품 / 특징</label>
-    <input type="text" id="adProduct" placeholder="예: 연애운 + 궁합 / 2026년 신년운세 특가">
-  </div>
-  <button class="btn btn-green" id="adBtn" onclick="generateAd()">📣 광고 문구 생성</button>
-  <div class="ad-result" id="adResult" hidden></div>
-  <div id="adCopyRow" hidden style="margin-top:10px">
-    <button class="btn btn-outline" onclick="copyAd()">📋 광고 문구 복사</button>
-  </div>
-
-  <div class="divider"></div>
-
-  <!-- 주문 트래커 -->
-  <div class="section-title" style="font-size:15px">📝 오늘 주문 현황</div>
-  <div style="display:flex;gap:8px;margin-bottom:12px">
-    <input type="text" id="orderInput" placeholder="고객명 / 상품" style="flex:1;padding:10px 13px;background:var(--card);border:1.5px solid var(--border);border-radius:10px;color:var(--fg);font-family:var(--fbody);font-size:14px;outline:none" onkeydown="if(event.key==='Enter')addOrder()">
-    <button onclick="addOrder()" style="padding:10px 16px;background:var(--accent);border:none;border-radius:10px;color:#fff;font-weight:700;cursor:pointer">추가</button>
-  </div>
-  <div id="orderList" style="display:flex;flex-direction:column;gap:6px"></div>
 </div>
 
 <script>
@@ -1086,38 +755,34 @@ let lastSajuMeta=null;
   calcRevenue();
 })();
 
-// ─── 탭 전환 ─────────────────────────────────────────────────────────────
-const BNAV_TABS=["analyze","simple","hanja","shorts"];
+// ─── 섹션 스크롤 (구 탭 전환 대체) ──────────────────────────────────────
 function switchTab(name){
-  const ids=["analyze","simple","hanja","cheol","shorts","biz","theory","adcopy"];
-  document.querySelectorAll(".tab-btn").forEach((b,i)=>{
-    b.classList.toggle("active", ids[i]===name);
+  // map old tab names to new section anchors
+  const secMap={analyze:"sec-analyze",simple:"sec-simple",hanja:"sec-hanja",cheol:"sec-cheol",theory:"sec-theory"};
+  const secId=secMap[name]||("sec-"+name);
+  const el=document.getElementById(secId)||document.getElementById("tab-"+name);
+  if(el) el.scrollIntoView({behavior:"smooth",block:"start"});
+  // update nav highlight
+  document.querySelectorAll(".sec-btn").forEach(b=>{
+    b.classList.toggle("active",b.getAttribute("href")==="#"+secId);
   });
-  document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active"));
-  const el=document.getElementById("tab-"+name);
-  if(el) el.classList.add("active");
-  // 바텀 네비 업데이트
-  document.querySelectorAll(".bnav-btn").forEach(b=>b.classList.remove("active"));
-  const bnav=document.getElementById("bnav-"+name);
-  if(bnav) bnav.classList.add("active");
-  else{
-    const moreBtn=document.getElementById("bnav-more");
-    if(moreBtn) moreBtn.classList.add("active");
+  if(name==="theory") refreshTheoryTab();
+}
+// ─── 섹션 nav 스크롤 추적 ────────────────────────────────────────────────
+(function initSecNav(){
+  const secs=["sec-analyze","sec-simple","sec-theory","sec-hanja","sec-cheol"];
+  function onScroll(){
+    let active=secs[0];
+    secs.forEach(id=>{
+      const el=document.getElementById(id);
+      if(el&&el.getBoundingClientRect().top<=80) active=id;
+    });
+    document.querySelectorAll(".sec-btn").forEach(b=>{
+      b.classList.toggle("active",b.getAttribute("href")==="#"+active);
+    });
   }
-  // 스크롤 맨 위로
-  const ac=document.getElementById("appContent");
-  if(ac) ac.scrollTop=0;
-}
-
-// ─── 더보기 시트 ─────────────────────────────────────────────────────────
-function openMore(){
-  document.getElementById("moreBackdrop").classList.add("open");
-  document.getElementById("moreSheet").classList.add("open");
-}
-function closeMore(){
-  document.getElementById("moreBackdrop").classList.remove("open");
-  document.getElementById("moreSheet").classList.remove("open");
-}
+  window.addEventListener("scroll",onScroll,{passive:true});
+})();
 
 // ─── 메뉴 그리드 ─────────────────────────────────────────────────────────
 (function buildMenu(){
@@ -1228,7 +893,7 @@ async function startAnalysis(){
   const rawTimeStr=unknown?"시간 미상":`${hour}시 ${min}분`;
 
   if(!sampleCap){
-    showError("AI 분석 서비스를 불러올 수 없습니다.<br>claude.ai 로그인 후 다시 시도해 주세요.");
+    showError("분석 서비스를 불러올 수 없습니다.<br>claude.ai 로그인 후 다시 시도해 주세요.");
     return;
   }
 
@@ -1371,9 +1036,9 @@ ${sections.join('\n\n')}
         <div class="rpt-sec-title">⑦ 핵심 개운법(開運法)</div>
         <div id="gaewoonWrap"><div style="font-size:12px;color:var(--fg3)">⏳ 계산 중...</div></div>
       </div>
-      <!-- ⑧ AI 상세 분석 -->
+      <!-- ⑧ 상세 분석 -->
       <div class="rpt-sec">
-        <div class="rpt-sec-title">⑧ AI 상세 분석 보고서</div>
+        <div class="rpt-sec-title">⑧ 상세 분석 보고서</div>
         <div class="narrative" id="mainResult">${fullResultText||''}</div>
       </div>
       <!-- ⑨ 거주지·이사 방향 -->
@@ -1431,8 +1096,10 @@ function selectStype(el){
   document.getElementById("shortsCoupleFields").hidden=!isCouple;
   const nameField=document.getElementById("stypeNameField");
   const cardField=document.getElementById("stypeCardField");
+  const moneyField=document.getElementById("stypeMoneyField");
   if(nameField) nameField.hidden=selectedStype!=="name";
   if(cardField) cardField.hidden=selectedStype!=="card";
+  if(moneyField) moneyField.hidden=selectedStype!=="money";
 }
 
 const STYPE_PROMPTS={
@@ -1459,7 +1126,7 @@ const STYPE_PROMPTS={
 
 async function generateShorts(){
   if(!sampleCap){
-    alert("AI 서비스를 불러올 수 없습니다. claude.ai 로그인 후 다시 시도하세요.");
+    alert("서비스를 불러올 수 없습니다. claude.ai 로그인 후 다시 시도하세요.");
     return;
   }
   const btn=document.getElementById("shortsBtn");
@@ -1505,6 +1172,25 @@ ${couplePoints?"분석 포인트: "+couplePoints:""}
   } else {
     const extra=getChipValues("chipExtra").join(" / ");
     const focus=getChipValues("chipFocus").join(" / ");
+    const birthCityChip=Array.from(document.querySelectorAll('[data-g="birthCity"].active')).map(c=>c.textContent)[0]||"";
+    const birthCityInput=(document.getElementById("shortsBirthCityInput")?.value?.trim()||"");
+    const birthCity=birthCityInput||birthCityChip;
+    // 생년월일시
+    const bYear=document.getElementById("sBirthYear")?.value?.trim()||"";
+    const bMonth=document.getElementById("sBirthMonth")?.value||"";
+    const bDay=document.getElementById("sBirthDay")?.value?.trim()||"";
+    const bHour=document.getElementById("sBirthHour")?.value?.trim()||"";
+    const bMin=document.getElementById("sBirthMin")?.value?.trim()||"";
+    const bGender=document.getElementById("sBirthGender")?.value||"";
+    const bLunar=document.getElementById("sBirthLunar")?.checked;
+    const bNoTime=document.getElementById("sBirthNoTime")?.checked;
+    let birthInfo="";
+    if(bYear){
+      const calStr=bLunar?"음력":"양력";
+      const dateStr=`${bYear}년${bMonth?bMonth+"월":""}${bDay?bDay+"일":""}`;
+      const timeStr=bNoTime?"시간모름":(bHour?(bHour+"시"+(bMin?bMin+"분":"")):"");
+      birthInfo=`생년월일시: ${calStr} ${dateStr}${timeStr?" "+timeStr:""}${bGender?" ("+bGender+")":""}`;
+    }
     let basePrompt=STYPE_PROMPTS[selectedStype];
     if(selectedStype==="name"){
       const nameVal=document.getElementById("shortNameInput")?.value?.trim()||"";
@@ -1514,7 +1200,17 @@ ${couplePoints?"분석 포인트: "+couplePoints:""}
       const topicVal=document.getElementById("shortCardTopic")?.value?.trim()||"";
       if(topicVal) basePrompt=`🃏 "${topicVal}" 주제의 인스타그램 카드뉴스 텍스트를 작성해 주세요.\n형식: 카드 5~7장 분량의 짧은 텍스트 (각 카드당 1~2문장)\n첫 장: 시선 끄는 문구 / 마지막 장: CTA\n톤: 깔끔하고 감성적. 한국어.`;
     }
+    if(selectedStype==="money"){
+      const chipYears=Array.from(document.querySelectorAll('[data-g="moneyYear"].active')).map(c=>c.textContent);
+      const inputYear=(document.getElementById("shortMoneyYearInput")?.value?.trim()||"");
+      const allYears=[...chipYears, ...(inputYear?[inputYear]:[])];
+      if(allYears.length>0){
+        basePrompt=`💰 ${allYears.join("·")} 재물운 유튜브 쇼츠 스크립트를 작성해 주세요.\n형식: 0-3초 부러움 훅 → 3-50초 본문 (${allYears.join("·")} 재물운 비결) → 50-60초 CTA\n톤: 희망적이고 구체적인 수치와 시기 언급. 해당 연도(${allYears.join(", ")})의 운세 흐름을 구체적으로 반영. 한국어.`;
+      }
+    }
     prompt=`${basePrompt}
+${birthInfo}
+${birthCity?"출생지: "+birthCity:""}
 ${extra?"추가 정보: "+extra:""}
 ${focus?"강조 포인트: "+focus:""}
 
@@ -1574,7 +1270,7 @@ const PLAT_PROMPTS={
 };
 
 async function generateAd(){
-  if(!sampleCap){alert("AI 서비스 불가. claude.ai 로그인 필요.");return;}
+  if(!sampleCap){alert("서비스 불가. claude.ai 로그인 필요.");return;}
   const btn=document.getElementById("adBtn");
   btn.disabled=true; btn.textContent="생성 중...";
   const product=document.getElementById("adProduct").value.trim()||"사주 분석";
@@ -1584,7 +1280,7 @@ async function generateAd(){
 
   const prompt=`${PLAT_PROMPTS[selectedPlat]}
 강조할 상품/특징: ${product}
-서비스명: 사주마루 (AI 사주 분석)
+서비스명: 사주마루 (사주 분석)
 CTA: 프로필 링크 클릭 또는 채널 메시지
 한국어로 작성.`;
 
@@ -1781,6 +1477,11 @@ ${regionNote} / ${corrNote} / ${yajaNote}
     renderIsaSection(d.isa||null, region);
     // Generate personalized theory explanations (non-blocking)
     generatePersonalizedTheory(d, name, gender, year, month, day, timeStr).catch(()=>{});
+    // Auto-chain: fill and trigger 간단본 + 철학원 풀이
+    setTimeout(()=>{
+      generateSimple().catch(()=>{});
+      generateCheol().catch(()=>{});
+    }, 200);
   }catch(e){
     const seed=(year*month*day)%97;
     renderOhangSection({목:1+(seed%3),화:seed%3,토:1+((seed*3)%2),금:1+(seed%2),수:(seed*7)%3},"오행 기반 분석");
@@ -1788,7 +1489,7 @@ ${regionNote} / ${corrNote} / ${yajaNote}
     renderMonthlyLine2(Array.from({length:12},(_,i)=>55+Math.round(Math.sin((i+seed)*0.6)*30)));
     ["sajuTableWrap","daewoonWrap","shinsalWrap","gaewoonWrap"].forEach(id=>{
       const el=document.getElementById(id);
-      if(el) el.innerHTML=`<div style="font-size:12px;color:var(--fg3)">데이터 로드 실패 — AI 상세 분석을 참고하세요</div>`;
+      if(el) el.innerHTML=`<div style="font-size:12px;color:var(--fg3)">데이터 로드 실패 — 상세 분석을 참고하세요</div>`;
     });
   }
 }
@@ -1858,6 +1559,84 @@ function theoryMarkdownToHtml(text){
     .replace(/→\s*\(쉽게:\s*([^)]+)\)/g,'<span class="ti-note">→ (쉽게: $1)</span>')
     .replace(/\n{2,}/g,'</p><p class="ti-p">').replace(/\n/g,'<br>')
     .replace(/^(.)/,'<p class="ti-p">$1').replace(/$/, '</p>');
+}
+
+const OH_COLORS_TH={목:"#5ce685",화:"#ff5577",토:"#f5c842",금:"#a0b8d0",수:"#7eb8ff"};
+function getOhColorTh(oh){return OH_COLORS_TH[(oh||"").slice(0,1)]||"var(--fg)";}
+function getHanjaTh(str){return str?str[0]:"";}
+
+function refreshTheoryTab(){
+  const d=lastSajuData;
+  const hasSaju=!!(d&&d.saju&&d.saju.il);
+  const bannerEl=document.getElementById("theoryPersonBanner");
+  const noEl=document.getElementById("theoryNoBanner");
+  if(bannerEl) bannerEl.hidden=!hasSaju;
+  if(noEl) noEl.hidden=hasSaju;
+  if(!hasSaju){renderTheoryDiagram(null);return;}
+  const s=d.saju;
+  const pillars=[
+    {label:"년주",gan:s.nyeon?.gan||"",ji:s.nyeon?.ji||"",ganOh:s.nyeon?.ganOh||""},
+    {label:"월주",gan:s.wol?.gan||"",ji:s.wol?.ji||"",ganOh:s.wol?.ganOh||""},
+    {label:"일주",gan:s.il?.gan||"",ji:s.il?.ji||"",ganOh:s.il?.ganOh||"",isMe:true},
+    {label:"시주",gan:s.si?.gan||"",ji:s.si?.ji||"",ganOh:s.si?.ganOh||""},
+  ];
+  const pillarsEl=document.getElementById("theoryPersonPillars");
+  if(pillarsEl){
+    pillarsEl.innerHTML=pillars.map(p=>{
+      const sc=getHanjaTh(p.gan),bc=getHanjaTh(p.ji),oc=getOhColorTh(p.ganOh);
+      const bdr=p.isMe?"2px solid var(--gold)":"1px solid var(--border2)";
+      return `<div style="background:var(--card);border:${bdr};border-radius:8px;padding:4px 8px;text-align:center;min-width:46px">
+        <div style="font-size:9px;color:var(--fg3);font-weight:700;letter-spacing:.05em">${p.label}${p.isMe?"<br><span style='color:var(--gold)'>나</span>":""}</div>
+        <div style="font-size:17px;font-weight:900;color:${oc};line-height:1.15">${sc}</div>
+        <div style="font-size:17px;font-weight:900;color:var(--fg2);line-height:1.15">${bc}</div>
+      </div>`;
+    }).join("");
+  }
+  const metaEl=document.getElementById("theoryPersonMeta");
+  if(metaEl){
+    const parts=[];
+    if(d.name) parts.push(d.name+"님");
+    if(d.gender) parts.push(d.gender);
+    if(d.ilju_name) parts.push("일주: "+d.ilju_name);
+    metaEl.textContent=parts.join("  ·  ");
+  }
+  renderTheoryDiagram(pillars);
+  const myStemHanja=pillars.map(p=>getHanjaTh(p.gan)).filter(Boolean);
+  document.querySelectorAll(".stem-card").forEach(card=>{
+    const h=card.querySelector(".stem-hanja");
+    const ch=h?h.textContent.trim()[0]:"";
+    card.classList.toggle("my-stem",myStemHanja.includes(ch));
+  });
+  const myBranchHanja=pillars.map(p=>getHanjaTh(p.ji)).filter(Boolean);
+  document.querySelectorAll(".branch-card").forEach(card=>{
+    const h=card.querySelector(".branch-hanja");
+    const ch=h?h.textContent.trim()[0]:"";
+    card.classList.toggle("my-branch",myBranchHanja.includes(ch));
+  });
+}
+
+function renderTheoryDiagram(pillars){
+  const el=document.getElementById("theoryPillarDiagram");
+  if(!el) return;
+  const data=pillars||[
+    {label:"년주",gan:"庚(경)",ji:"午(오)",ganOh:"금"},
+    {label:"월주",gan:"甲(갑)",ji:"申(신)",ganOh:"목"},
+    {label:"일주",gan:"壬(임)",ji:"子(자)",ganOh:"수",isMe:true},
+    {label:"시주",gan:"壬(임)",ji:"子(자)",ganOh:"수"},
+  ];
+  const isExample=!pillars;
+  const badge=isExample?`<div style="font-size:10px;color:var(--fg3);text-align:center;margin-bottom:6px;padding:4px 8px;background:var(--card);border-radius:6px;display:inline-block">예시 사주 (분석 후 실제 사주로 교체됩니다)</div><br>`:""
+  el.innerHTML=badge+`<div class="saju-pillars">`+data.map(p=>{
+    const sc=getHanjaTh(p.gan),bc=getHanjaTh(p.ji),oc=getOhColorTh(p.ganOh);
+    const lblBg=p.isMe?"var(--gold2)":"var(--bg3)";
+    const lblFg=p.isMe?"#fff":"var(--fg2)";
+    const bdr=p.isMe?"var(--gold)":"var(--border2)";
+    return `<div class="pillar" style="border-color:${bdr}">
+      <div class="pillar-label" style="background:${lblBg};color:${lblFg}">${p.label}${p.isMe?` <span style="font-size:9px">(나)</span>`:""}</div>
+      <div class="pillar-stem" style="color:${oc}">${sc}</div>
+      <div class="pillar-branch">${bc}</div>
+    </div>`;
+  }).join("")+`</div>`;
 }
 
 const OH_COLORS={"목":"#4ade80","화":"#f87171","토":"#fbbf24","금":"#e2e8f0","수":"#60a5fa"};
@@ -2006,10 +1785,10 @@ function renderShinsalFull(d){
       </div>`).join("")}
     </div>`;
   }
-  // ── AI 계산 신살 배지
+  // ── 자동 계산 신살 배지
   const arr=d.shinsal||[];
   if(arr.length){
-    html+=`<div style="font-size:11px;font-weight:700;color:var(--fg2);margin:14px 0 8px;letter-spacing:.04em">⚡ AI 계산 신살(神殺)</div>
+    html+=`<div style="font-size:11px;font-weight:700;color:var(--fg2);margin:14px 0 8px;letter-spacing:.04em">⚡ 자동 계산 신살(神殺)</div>
       <div class="sal-list">${arr.map(s=>`<div class="sal-badge"><strong>${s.name}</strong>${s.desc||""}</div>`).join("")}</div>`;
   }
   wrap.innerHTML=html||`<div style="font-size:12px;color:var(--fg3)">신살 데이터 없음</div>`;
@@ -2717,7 +2496,7 @@ body{padding-top:48px}
   <button class="print-btn" onclick="window.print()">🖨️ 인쇄 / PDF 저장</button>
 </div>
 <div class="cover">
-  <div class="cover-eyebrow">사주마루 AI 스튜디오 · 사주원리+AI 통합 보고서</div>
+  <div class="cover-eyebrow">사주마루 스튜디오 · 사주원리 통합 보고서</div>
   <div class="cover-title">四柱命理(사주명리)<br>종합 분석 보고서</div>
   <div class="cover-name">${name} 선생님</div>
   <div class="cover-meta">${m.year||""}년 ${m.month||""}월 ${m.day||""}일 ${m.calNote||""} · ${m.gender||""} · ${m.timeStr||""}</div>
@@ -2752,12 +2531,12 @@ body{padding-top:48px}
   ${bodyHtml}
 </div>
 <div class="contact-footer">
-  <div class="contact-footer-title">📞 사주마루 AI 스튜디오 — 상담 문의</div>
+  <div class="contact-footer-title">📞 사주마루 스튜디오 — 상담 문의</div>
   <div class="contact-links">
-    <a href="${CONTACT_LINK_URL}" target="_blank" class="contact-link">🔗 사주마루 AI 스튜디오</a>
+    <a href="${CONTACT_LINK_URL}" target="_blank" class="contact-link">🔗 사주마루 스튜디오</a>
     <a href="${CONTACT_CHANNEL_URL}" target="_blank" class="contact-link">💬 카카오 채널 문의</a>
   </div>
-  <div class="contact-note">본 보고서는 사주마루 AI 스튜디오에서 생성되었습니다.<br>무단 복제 및 배포를 금합니다.</div>
+  <div class="contact-note">본 보고서는 사주마루 스튜디오에서 생성되었습니다.<br>무단 복제 및 배포를 금합니다.</div>
 </div>
 </body></html>`;
   const win=window.open('','_blank');
@@ -2770,7 +2549,7 @@ body{padding-top:48px}
 }
 
 async function generate50Report(){
-  if(!sampleCap){alert("AI 서비스 불가. claude.ai 로그인 필요.");return;}
+  if(!sampleCap){alert("서비스 불가. claude.ai 로그인 필요.");return;}
   const btn=document.getElementById("btn50p");
   const prog=document.getElementById("report50Progress");
   const countEl=document.getElementById("report50CharCount");
@@ -2880,7 +2659,7 @@ ${SECTIONS_50.slice(11).join('\n\n')}
     openBtn.hidden=false;
     open50Report();
   }catch(e){
-    btn.textContent="📄 四柱命理(사주명리) 풀이 + AI 분석 종합 보고서 생성 (35,000자+)";
+    btn.textContent="📄 四柱命理(사주명리) 풀이 + 분석 종합 보고서 생성 (35,000자+)";
     btn.disabled=false;
     prog.hidden=true;
     alert("오류 발생: "+(e?.message||"알 수 없는 오류")+"\n다시 시도해 주세요.");
@@ -3011,7 +2790,7 @@ function getTodayTopicIndices(){
 })();
 
 async function generateDailyBatch(){
-  if(!sampleCap){alert("AI 서비스를 불러올 수 없습니다. claude.ai 로그인 후 다시 시도하세요.");return;}
+  if(!sampleCap){alert("서비스를 불러올 수 없습니다. claude.ai 로그인 후 다시 시도하세요.");return;}
   const btn=document.getElementById("batchBtn");
   btn.disabled=true; btn.textContent="생성 중...";
   const rl=document.getElementById("batchResultList");
@@ -3131,7 +2910,7 @@ const HANJA_DB={
  '사':[{h:'士',m:'선비',s:3,o:'화'},{h:'思',m:'생각할',s:9,o:'화'},{h:'師',m:'스승',s:10,o:'수'},{h:'絲',m:'실',s:12,o:'목'}],
  '산':[{h:'山',m:'산',s:3,o:'토'},{h:'珊',m:'산호',s:10,o:'토'}],
  '상':[{h:'相',m:'서로·재상',s:9,o:'목'},{h:'祥',m:'상서로울',s:11,o:'토'},{h:'尙',m:'오히려·숭상할',s:8,o:'화'},{h:'商',m:'헤아릴·장사',s:11,o:'금'},{h:'想',m:'생각할',s:13,o:'화'}],
- '서':[{h:'書',m:'글·책',s:10,o:'목'},{h:'序',m:'차례·서문',s:7,o:'목'},{h:'瑞',m:'상서로울·서기',s:14,o:'토'},{h:'西',m:'서쪽',s:6,o:'금'},{h:'舒',m:'펼·느긋할',s:12,o:'목'},{h:'徐',m:'천천할·성씨',s:10,o:'수'}],
+ '서':[{h:'書',m:'글·책',s:10,o:'목'},{h:'序',m:'차례·서문',s:7,o:'목'},{h:'瑞',m:'상서로울·서기',s:14,o:'토'},{h:'西',m:'서쪽',s:6,o:'금'},{h:'舒',m:'펼·느긋할',s:12,o:'목'}],
  '선':[{h:'仙',m:'신선',s:5,o:'목'},{h:'善',m:'착할',s:12,o:'토'},{h:'宣',m:'베풀·발표할',s:9,o:'화'},{h:'先',m:'먼저',s:6,o:'금'},{h:'鮮',m:'신선할·고울',s:17,o:'수'}],
  '성':[{h:'成',m:'이룰',s:7,o:'금'},{h:'盛',m:'성할·왕성할',s:12,o:'화'},{h:'星',m:'별',s:9,o:'화'},{h:'誠',m:'정성',s:14,o:'화'},{h:'聖',m:'성인·신성할',s:13,o:'화'},{h:'城',m:'성',s:10,o:'토'}],
  '소':[{h:'昭',m:'밝을',s:9,o:'화'},{h:'素',m:'흴·본바탕',s:10,o:'금'},{h:'小',m:'작을',s:3,o:'수'},{h:'蕭',m:'쑥·쓸쓸할',s:19,o:'목'}],
@@ -3140,7 +2919,7 @@ const HANJA_DB={
  '숙':[{h:'淑',m:'맑을·착할',s:12,o:'수'},{h:'肅',m:'엄숙할',s:13,o:'금'}],
  '승':[{h:'承',m:'이을·받들',s:8,o:'수'},{h:'昇',m:'오를',s:8,o:'화'},{h:'勝',m:'이길',s:12,o:'화'}],
  '시':[{h:'時',m:'때',s:10,o:'화'},{h:'詩',m:'시·운문',s:13,o:'화'},{h:'施',m:'베풀',s:9,o:'화'}],
- '신':[{h:'信',m:'믿을',s:9,o:'목'},{h:'新',m:'새로울',s:13,o:'금'},{h:'身',m:'몸',s:7,o:'금'},{h:'申',m:'아홉째지지·성씨',s:5,o:'토'},{h:'辛',m:'매울·성씨',s:7,o:'금'}],
+ '신':[{h:'信',m:'믿을',s:9,o:'목'},{h:'新',m:'새로울',s:13,o:'금'},{h:'身',m:'몸',s:7,o:'금'}],
  '아':[{h:'雅',m:'아담할·우아할',s:12,o:'목'},{h:'兒',m:'아이',s:8,o:'화'}],
  '안':[{h:'安',m:'편안할',s:6,o:'목'},{h:'晏',m:'늦을·편안할',s:10,o:'화'},{h:'岸',m:'언덕',s:8,o:'토'}],
  '애':[{h:'愛',m:'사랑',s:13,o:'화'}],
@@ -3150,7 +2929,7 @@ const HANJA_DB={
  '엽':[{h:'燁',m:'불빛·환할',s:16,o:'화'},{h:'曄',m:'빛날',s:16,o:'화'}],
  '영':[{h:'永',m:'길·영원',s:5,o:'수'},{h:'英',m:'꽃부리·뛰어날',s:11,o:'목'},{h:'榮',m:'꽃필·영화',s:14,o:'목'},{h:'瑛',m:'아름다운옥',s:14,o:'토'},{h:'泳',m:'헤엄칠',s:9,o:'수'},{h:'令',m:'명령·하여금',s:5,o:'화'}],
  '예':[{h:'藝',m:'재주·기예',s:21,o:'목'},{h:'叡',m:'슬기로울',s:16,o:'화'},{h:'禮',m:'예도·예절',s:18,o:'화'},{h:'睿',m:'슬기로울',s:14,o:'화'}],
- '오':[{h:'五',m:'다섯',s:4,o:'토'},{h:'吾',m:'나·우리',s:7,o:'토'},{h:'梧',m:'오동나무',s:11,o:'목'},{h:'吳',m:'성씨·크게부를',s:7,o:'화'},{h:'悟',m:'깨달을',s:11,o:'화'}],
+ '오':[{h:'五',m:'다섯',s:4,o:'토'},{h:'吾',m:'나·우리',s:7,o:'토'},{h:'梧',m:'오동나무',s:11,o:'목'}],
  '용':[{h:'勇',m:'용감할',s:9,o:'수'},{h:'龍',m:'용',s:16,o:'토'},{h:'溶',m:'녹을·흐를',s:14,o:'수'},{h:'庸',m:'떳떳할',s:11,o:'토'}],
  '우':[{h:'宇',m:'집·우주',s:6,o:'수'},{h:'雨',m:'비',s:8,o:'수'},{h:'佑',m:'도울',s:7,o:'화'},{h:'禹',m:'우임금',s:9,o:'수'},{h:'旴',m:'해돋을',s:8,o:'화'}],
  '웅':[{h:'雄',m:'수컷·영웅',s:12,o:'화'}],
@@ -3166,7 +2945,7 @@ const HANJA_DB={
  '재':[{h:'在',m:'있을',s:6,o:'토'},{h:'才',m:'재주',s:3,o:'목'},{h:'財',m:'재물',s:10,o:'금'},{h:'宰',m:'재상·다스릴',s:10,o:'목'}],
  '전':[{h:'典',m:'법전·모범',s:8,o:'화'},{h:'全',m:'온전할',s:6,o:'금'},{h:'田',m:'밭',s:5,o:'토'},{h:'珍',m:'보배',s:10,o:'토'}],
  '정':[{h:'定',m:'정할·고요할',s:8,o:'수'},{h:'貞',m:'곧을·정숙할',s:9,o:'화'},{h:'晶',m:'밝을·빛날',s:12,o:'화'},{h:'精',m:'정기·순수할',s:14,o:'목'},{h:'淨',m:'맑을',s:12,o:'수'},{h:'丁',m:'넷째천간',s:2,o:'화'}],
- '조':[{h:'照',m:'비칠·빛날',s:13,o:'화'},{h:'朝',m:'아침·나라',s:12,o:'목'},{h:'助',m:'도울',s:7,o:'화'},{h:'早',m:'이를',s:6,o:'화'},{h:'趙',m:'성씨·빠를',s:14,o:'화'},{h:'曺',m:'성씨',s:11,o:'화'}],
+ '조':[{h:'照',m:'비칠·빛날',s:13,o:'화'},{h:'朝',m:'아침·나라',s:12,o:'목'},{h:'助',m:'도울',s:7,o:'화'},{h:'早',m:'이를',s:6,o:'화'}],
  '종':[{h:'宗',m:'마루·으뜸',s:8,o:'수'},{h:'鍾',m:'쇠북·모일',s:17,o:'금'},{h:'從',m:'따를·좇을',s:11,o:'화'}],
  '주':[{h:'朱',m:'붉을',s:6,o:'화'},{h:'珠',m:'구슬',s:11,o:'수'},{h:'周',m:'두루·주나라',s:8,o:'화'},{h:'株',m:'그루·주식',s:10,o:'목'}],
  '준':[{h:'俊',m:'준걸·뛰어날',s:9,o:'화'},{h:'準',m:'준할·법도',s:13,o:'수'},{h:'竣',m:'마칠',s:12,o:'목'},{h:'濬',m:'깊을·파낼',s:18,o:'수'},{h:'埈',m:'높을',s:10,o:'토'}],
@@ -3195,32 +2974,6 @@ const HANJA_DB={
  '훈':[{h:'訓',m:'가르칠',s:10,o:'화'},{h:'薰',m:'향기로울',s:20,o:'목'},{h:'熏',m:'연기·향기',s:14,o:'화'}],
  '휘':[{h:'輝',m:'빛날',s:15,o:'화'},{h:'徽',m:'아름다울',s:17,o:'화'},{h:'揮',m:'휘두를',s:12,o:'화'}],
  '희':[{h:'希',m:'바랄',s:7,o:'화'},{h:'喜',m:'기쁠',s:12,o:'화'},{h:'熙',m:'빛날·화할',s:14,o:'화'},{h:'曦',m:'햇빛',s:20,o:'화'},{h:'姬',m:'아름다운여자',s:10,o:'화'}],
- '구':[{h:'具',m:'갖출·성씨',s:8,o:'목'},{h:'九',m:'아홉',s:2,o:'화'},{h:'邱',m:'언덕',s:8,o:'토'},{h:'球',m:'공',s:12,o:'토'},{h:'珣',m:'아름다운옥',s:10,o:'토'}],
- '권':[{h:'權',m:'권세·성씨',s:22,o:'목'},{h:'卷',m:'두루마리',s:8,o:'화'},{h:'勸',m:'권할·힘쓸',s:20,o:'화'},{h:'券',m:'문서·표',s:8,o:'화'}],
- '김':[{h:'金',m:'쇠·금·성씨',s:8,o:'금'}],
- '나':[{h:'那',m:'어찌·편안할',s:7,o:'화'},{h:'娜',m:'아리따울',s:10,o:'화'},{h:'羅',m:'그물·벌일',s:20,o:'수'},{h:'蘿',m:'덩굴식물',s:24,o:'목'}],
- '노':[{h:'盧',m:'밥그릇·성씨',s:16,o:'화'},{h:'路',m:'길',s:13,o:'화'},{h:'露',m:'이슬',s:21,o:'수'},{h:'老',m:'늙을',s:6,o:'화'}],
- '다':[{h:'多',m:'많을',s:6,o:'토'},{h:'茶',m:'차',s:10,o:'목'},{h:'達',m:'통달할·이를',s:13,o:'목'},{h:'丹',m:'붉을·단심',s:4,o:'화'}],
- '라':[{h:'羅',m:'그물·성씨',s:20,o:'수'},{h:'璃',m:'아름다운옥·유리',s:16,o:'토'},{h:'蘿',m:'덩굴풀',s:24,o:'목'},{h:'懶',m:'게으를',s:19,o:'수'}],
- '류':[{h:'柳',m:'버드나무·성씨',s:9,o:'목'},{h:'流',m:'흐를',s:10,o:'수'},{h:'琉',m:'유리·아름다운돌',s:11,o:'토'},{h:'劉',m:'성씨·죽일',s:15,o:'금'}],
- '마':[{h:'馬',m:'말',s:10,o:'토'},{h:'瑪',m:'마노·아름다운옥',s:14,o:'토'},{h:'摩',m:'닦을·갈',s:15,o:'화'},{h:'魔',m:'귀신',s:21,o:'화'}],
- '문':[{h:'文',m:'글·문장',s:4,o:'수'},{h:'汶',m:'물이름',s:8,o:'수'},{h:'紋',m:'무늬',s:10,o:'목'},{h:'珻',m:'아름다운옥',s:10,o:'토'}],
- '박':[{h:'朴',m:'순박할·성씨',s:6,o:'목'},{h:'博',m:'넓을·박식',s:12,o:'화'},{h:'珀',m:'호박·아름다운돌',s:10,o:'토'},{h:'璞',m:'옥돌·순박할',s:17,o:'토'}],
- '배':[{h:'裵',m:'성씨',s:14,o:'화'},{h:'培',m:'북돋울',s:11,o:'토'},{h:'配',m:'짝·어울릴',s:10,o:'화'},{h:'倍',m:'곱·갑절',s:10,o:'토'}],
- '백':[{h:'白',m:'흰·성씨',s:5,o:'금'},{h:'百',m:'일백',s:6,o:'화'},{h:'栢',m:'잣나무',s:10,o:'목'},{h:'伯',m:'맏이·우두머리',s:7,o:'화'}],
- '보':[{h:'普',m:'넓을·고루',s:12,o:'화'},{h:'寶',m:'보배',s:20,o:'금'},{h:'輔',m:'도울',s:14,o:'목'},{h:'甫',m:'클·처음',s:7,o:'화'}],
- '손':[{h:'孫',m:'손자·성씨',s:10,o:'목'},{h:'遜',m:'겸손할·낮출',s:14,o:'목'},{h:'巽',m:'공손할·동남',s:12,o:'목'}],
- '송':[{h:'宋',m:'송나라·성씨',s:7,o:'수'},{h:'松',m:'소나무',s:8,o:'목'},{h:'誦',m:'외울',s:14,o:'화'},{h:'頌',m:'기릴',s:13,o:'화'}],
- '심':[{h:'沈',m:'잠길·성씨',s:8,o:'수'},{h:'心',m:'마음',s:4,o:'화'},{h:'深',m:'깊을',s:12,o:'수'},{h:'尋',m:'찾을',s:12,o:'수'}],
- '이':[{h:'李',m:'오얏나무·성씨',s:7,o:'목'},{h:'理',m:'다스릴·이치',s:12,o:'화'},{h:'利',m:'이로울',s:7,o:'금'},{h:'怡',m:'기쁠·화할',s:9,o:'화'}],
- '장':[{h:'張',m:'베풀·성씨',s:11,o:'목'},{h:'章',m:'글·빛날',s:11,o:'목'},{h:'藏',m:'감출·쌓을',s:17,o:'화'},{h:'壯',m:'씩씩할',s:7,o:'토'},{h:'莊',m:'엄숙할·장원',s:11,o:'목'}],
- '최':[{h:'崔',m:'높은산·성씨',s:11,o:'토'},{h:'最',m:'가장·으뜸',s:12,o:'화'}],
- '허':[{h:'許',m:'허락할·성씨',s:11,o:'금'},{h:'虛',m:'빌·비어있을',s:12,o:'수'},{h:'墟',m:'빈터',s:15,o:'토'}],
- '황':[{h:'黃',m:'누를·성씨',s:12,o:'토'},{h:'煌',m:'빛날',s:13,o:'화'},{h:'晃',m:'밝을·빛날',s:10,o:'화'},{h:'璜',m:'반원형패옥',s:17,o:'토'}],
- '곽':[{h:'郭',m:'성곽·성씨',s:15,o:'목'},{h:'廓',m:'넓을·성곽',s:14,o:'목'}],
- '차':[{h:'車',m:'수레·성씨',s:7,o:'토'},{h:'次',m:'버금·차례',s:6,o:'금'},{h:'茶',m:'차',s:10,o:'목'},{h:'借',m:'빌릴',s:10,o:'화'}],
- '방':[{h:'方',m:'방향·모',s:4,o:'토'},{h:'芳',m:'꽃다울',s:8,o:'목'},{h:'邦',m:'나라',s:7,o:'화'},{h:'昞',m:'빛날',s:9,o:'화'},{h:'房',m:'방·집',s:8,o:'화'}],
- '공':[{h:'孔',m:'구멍·성씨',s:4,o:'목'},{h:'功',m:'공로',s:5,o:'화'},{h:'恭',m:'공손할',s:10,o:'화'},{h:'共',m:'함께',s:6,o:'화'}],
 };
 
 const OH_COLOR={'목':'hm-oh-목','화':'hm-oh-화','토':'hm-oh-토','금':'hm-oh-금','수':'hm-oh-수'};
@@ -3319,7 +3072,7 @@ function applyHanjaToForm(){
   if(name&&!document.getElementById("iName").value) document.getElementById("iName").value=name;
   if(name&&!document.getElementById("cheolName").value) document.getElementById("cheolName").value=name;
   if(name&&!document.getElementById("simName").value) document.getElementById("simName").value=name;
-  alert("한자이름이 적용되었습니다!\n이제 AI 분석 또는 철학원 풀이 탭에서 분석을 시작하세요.");
+  alert("한자이름이 적용되었습니다!\n이제 분석 또는 철학원 풀이 탭에서 분석을 시작하세요.");
   switchTab("analyze");
 }
 
@@ -3400,16 +3153,16 @@ function copySimple(){
 async function generateCheol(){
   const sampleCap=await getCap("sample");
   if(!sampleCap){showSampleError("cheol");return;}
-  const name=document.getElementById("cheolName").value.trim();
-  const hanja=document.getElementById("cheolHanja").value.trim();
-  const gender=document.getElementById("cheolGender").value;
-  const cal=document.getElementById("cheolCal").value;
-  const year=document.getElementById("cheolYear").value;
-  const month=document.getElementById("cheolMonth").value;
-  const day=document.getElementById("cheolDay").value;
-  const unknown=document.getElementById("cheolUnknown").checked;
-  const hour=unknown?"모름":(document.getElementById("cheolHour").value||"");
-  const min=document.getElementById("cheolMin").value;
+  const name=document.getElementById("cheolName").value.trim()||document.getElementById("iName")?.value.trim()||"";
+  const hanja=document.getElementById("cheolHanja").value.trim()||document.getElementById("iHanjaName")?.value.trim()||"";
+  const gender=document.getElementById("cheolGender").value||document.getElementById("iGender")?.value||"여성";
+  const cal=document.getElementById("cheolCal").value||document.getElementById("iCal")?.value||"양력";
+  const year=document.getElementById("cheolYear").value||document.getElementById("iYear")?.value||"";
+  const month=document.getElementById("cheolMonth").value||document.getElementById("iMonth")?.value||"";
+  const day=document.getElementById("cheolDay").value||document.getElementById("iDay")?.value||"";
+  const unknown=document.getElementById("cheolUnknown")?.checked||document.getElementById("iUnknownTime")?.checked||false;
+  const hour=unknown?"모름":(document.getElementById("cheolHour").value||document.getElementById("iHour")?.value||"");
+  const min=document.getElementById("cheolMin").value||document.getElementById("iMin")?.value||"";
   const depth=document.getElementById("cheolDepth").value;
   if(!year||!month||!day){alert("생년월일을 입력해주세요.");return;}
 
@@ -3511,7 +3264,7 @@ ${hanja?`
 function showSampleError(which){
   const msgs={simple:"simpleLoading",cheol:"cheolLoading"};
   const el=document.getElementById(msgs[which]);
-  if(el) el.innerHTML='<p style="color:var(--red)">AI 기능을 사용하려면 Claude 계정에 로그인하세요.</p>';
+  if(el) el.innerHTML='<p style="color:var(--red)">기능을 사용하려면 Claude 계정에 로그인하세요.</p>';
 }
 
 async function getCap(name){
@@ -3525,11 +3278,20 @@ function copyCheol(){
 }
 </script>
 
+<hr class="sec-divider">
 <!-- ══════════════════════════════════════
-     TAB 4: 사주원리
+     섹션 3: 사주원리
 ══════════════════════════════════════ -->
 <div class="tab-panel" id="tab-theory">
-<div style="background:color-mix(in srgb,var(--gold) 8%,var(--bg2));border:1px solid color-mix(in srgb,var(--gold) 30%,var(--border));border-radius:12px;padding:14px 16px;margin-bottom:20px;font-size:13px;line-height:1.7;color:var(--fg2)">
+<div id="sec-theory" style="scroll-margin-top:56px"></div>
+<!-- 분석 완료 배너 (lastSajuData 있을 때만 표시) -->
+<div id="theoryPersonBanner" hidden style="background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 15%,var(--bg2)),color-mix(in srgb,var(--gold) 8%,var(--bg2)));border:1.5px solid var(--accent);border-radius:14px;padding:14px 16px;margin-bottom:16px">
+  <div style="font-size:13px;font-weight:800;color:var(--accent);margin-bottom:4px" id="theoryPersonTitle">🔮 분석 완료 — 나의 사주로 표시 중</div>
+  <div id="theoryPersonPillars" style="display:flex;gap:6px;margin:10px 0 6px;flex-wrap:wrap"></div>
+  <div id="theoryPersonMeta" style="font-size:11px;color:var(--fg3)"></div>
+</div>
+<!-- 분석 전 안내 -->
+<div id="theoryNoBanner" style="background:color-mix(in srgb,var(--gold) 8%,var(--bg2));border:1px solid color-mix(in srgb,var(--gold) 30%,var(--border));border-radius:12px;padding:14px 16px;margin-bottom:20px;font-size:13px;line-height:1.7;color:var(--fg2)">
   <strong style="color:var(--gold)">📐 맞춤 원리 해설</strong>은 분석 결과 탭에서 각 섹션 바로 아래에 자동 생성됩니다.<br>
   <span style="color:var(--fg3);font-size:12px">이 탭은 사주 기초 이론 참고표입니다 — 합충형파해·천간지지·12운성·십성 기본 원리를 확인하세요.</span>
 </div>
@@ -3580,70 +3342,16 @@ function copyCheol(){
 .legend-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
 .legend-item{display:flex;align-items:center;gap:4px;font-size:11px}
 .legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.my-stem{outline:2.5px solid var(--gold)!important;outline-offset:-1px;box-shadow:0 0 10px color-mix(in srgb,var(--gold) 40%,transparent)!important}
+.my-branch{outline:2.5px solid var(--gold)!important;outline-offset:-1px;box-shadow:0 0 10px color-mix(in srgb,var(--gold) 40%,transparent)!important}
 </style>
 
 <!-- ─── 1. 사주 구성 과정 ─────────────────── -->
 <div class="theory-section" id="th-saju">
   <div class="theory-title">① 사주팔자(四柱八字) 구성 과정 <span class="theory-sub">— 생년월일시 → 8글자</span></div>
 
-  <div class="flow-wrap">
-  <svg viewBox="0 0 620 200" style="width:100%;max-width:620px;display:block;margin:0 auto" font-family="'Noto Sans KR',sans-serif">
-    <!-- 생년월일시 박스 -->
-    <rect x="10" y="70" width="100" height="60" rx="10" fill="#2a1a50" stroke="#b87fff" stroke-width="1.5"/>
-    <text x="60" y="93" text-anchor="middle" fill="#f0e8ff" font-size="10" font-weight="700">생년월일시</text>
-    <text x="60" y="110" text-anchor="middle" fill="#a090c0" font-size="9">1990.08.15 子시</text>
-    <text x="60" y="124" text-anchor="middle" fill="#a090c0" font-size="9">남 · 양력</text>
-    <!-- 화살표 -->
-    <path d="M112 100 L140 100" stroke="#b87fff" stroke-width="2" marker-end="url(#arr)"/>
-    <defs>
-      <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-        <path d="M0,0 L6,3 L0,6 Z" fill="#b87fff"/>
-      </marker>
-    </defs>
-    <!-- 절기 달력 박스 -->
-    <rect x="142" y="60" width="90" height="80" rx="10" fill="#1a1040" stroke="#f5c842" stroke-width="1.5"/>
-    <text x="187" y="85" text-anchor="middle" fill="#f5c842" font-size="10" font-weight="800">절기 달력</text>
-    <text x="187" y="102" text-anchor="middle" fill="#a090c0" font-size="9">24절기 기준</text>
-    <text x="187" y="116" text-anchor="middle" fill="#a090c0" font-size="9">월주 결정</text>
-    <text x="187" y="130" text-anchor="middle" fill="#5ce685" font-size="9">만세력 참조</text>
-    <!-- 화살표 -->
-    <path d="M234 100 L262 100" stroke="#b87fff" stroke-width="2" marker-end="url(#arr)"/>
-    <!-- 사주팔자 4기둥 -->
-    <rect x="264" y="10" width="60" height="180" rx="10" fill="#1c1050" stroke="#ff5577" stroke-width="1.5"/>
-    <text x="294" y="32" text-anchor="middle" fill="#ff7799" font-size="9" font-weight="800">년주(年柱)</text>
-    <text x="294" y="75" text-anchor="middle" fill="#f5c842" font-size="28" font-weight="900">庚</text>
-    <line x1="274" y1="100" x2="314" y2="100" stroke="#333" stroke-width="1"/>
-    <text x="294" y="140" text-anchor="middle" fill="#7eb8ff" font-size="28" font-weight="900">午</text>
-    <text x="294" y="178" text-anchor="middle" fill="#ff7799" font-size="9">1990년</text>
-
-    <rect x="332" y="10" width="60" height="180" rx="10" fill="#1c1050" stroke="#5ce685" stroke-width="1.5"/>
-    <text x="362" y="32" text-anchor="middle" fill="#5ce685" font-size="9" font-weight="800">월주(月柱)</text>
-    <text x="362" y="75" text-anchor="middle" fill="#5ce685" font-size="28" font-weight="900">甲</text>
-    <line x1="342" y1="100" x2="372" y2="100" stroke="#333" stroke-width="1"/>
-    <text x="362" y="140" text-anchor="middle" fill="#5ce685" font-size="28" font-weight="900">申</text>
-    <text x="362" y="178" text-anchor="middle" fill="#5ce685" font-size="9">8월</text>
-
-    <rect x="400" y="10" width="60" height="180" rx="10" fill="#1c1050" stroke="#f5c842" stroke-width="1.5"/>
-    <text x="430" y="32" text-anchor="middle" fill="#f5c842" font-size="9" font-weight="800">일주(日柱)</text>
-    <text x="430" y="75" text-anchor="middle" fill="#f5c842" font-size="28" font-weight="900">壬</text>
-    <line x1="410" y1="100" x2="450" y2="100" stroke="#333" stroke-width="1"/>
-    <text x="430" y="140" text-anchor="middle" fill="#7eb8ff" font-size="28" font-weight="900">子</text>
-    <text x="430" y="178" text-anchor="middle" fill="#f5c842" font-size="9">15일</text>
-
-    <rect x="468" y="10" width="60" height="180" rx="10" fill="#1c1050" stroke="#b87fff" stroke-width="1.5"/>
-    <text x="498" y="32" text-anchor="middle" fill="#b87fff" font-size="9" font-weight="800">시주(時柱)</text>
-    <text x="498" y="75" text-anchor="middle" fill="#7eb8ff" font-size="28" font-weight="900">壬</text>
-    <line x1="478" y1="100" x2="518" y2="100" stroke="#333" stroke-width="1"/>
-    <text x="498" y="140" text-anchor="middle" fill="#7eb8ff" font-size="28" font-weight="900">子</text>
-    <text x="498" y="178" text-anchor="middle" fill="#b87fff" font-size="9">子시(23~01)</text>
-
-    <!-- 레이블 -->
-    <text x="294" y="50" text-anchor="middle" fill="#a090c0" font-size="8">천간↑</text>
-    <text x="294" y="165" text-anchor="middle" fill="#a090c0" font-size="8">↓지지</text>
-    <!-- = 8글자 -->
-    <text x="540" y="96" fill="#f5c842" font-size="11" font-weight="800">= 8자</text>
-    <text x="540" y="112" fill="#a090c0" font-size="9">사주팔자</text>
-  </svg>
+  <div id="theoryPillarDiagram" class="flow-wrap">
+  <!-- JS가 동적으로 채움 (분석 전: 예시, 분석 후: 실제 사주) -->
   </div>
 
   <div class="highlight-box">
@@ -4346,7 +4054,7 @@ function copyCheol(){
     </tbody>
   </table>
   </div>
-  <p style="font-size:11px;color:var(--fg3);margin-top:8px">* 나머지 30개 일주(甲午~癸亥)는 앱 내 AI 분석으로 상세 확인 가능</p>
+  <p style="font-size:11px;color:var(--fg3);margin-top:8px">* 나머지 30개 일주(甲午~癸亥)는 앱 내 분석으로 상세 확인 가능</p>
 </div>
 
 <!-- ══ 공망표 ══ -->
@@ -4398,313 +4106,14 @@ function copyCheol(){
 
 </div>
 
+<hr class="sec-divider">
 <!-- ══════════════════════════════════════
-     TAB 5: 홍보문구
-══════════════════════════════════════ -->
-<div class="tab-panel" id="tab-adcopy">
-<style>
-.adcopy-intro{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:24px;font-size:13px;color:var(--fg2);line-height:1.7}
-.adcopy-platform{margin-bottom:36px}
-.adcopy-platform-title{font-family:var(--fdisp);font-size:16px;font-weight:800;color:var(--gold);margin-bottom:14px;padding:10px 14px;border-radius:10px;background:var(--card2);border-left:4px solid var(--gold);display:flex;align-items:center;gap:8px}
-.adcopy-list{display:flex;flex-direction:column;gap:8px}
-.adcopy-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px;transition:border-color .15s}
-.adcopy-item:hover{border-color:var(--border2)}
-.adcopy-num{font-size:10px;font-weight:800;color:var(--accent);min-width:22px;padding-top:2px;opacity:.7}
-.adcopy-text{flex:1;font-size:13px;color:var(--fg);line-height:1.7;word-break:keep-all}
-.adcopy-copy{background:none;border:1.5px solid var(--border2);border-radius:7px;color:var(--fg2);font-size:11px;font-weight:700;cursor:pointer;padding:4px 10px;white-space:nowrap;flex-shrink:0;transition:all .15s}
-.adcopy-copy:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
-.adcopy-copy.copied{background:var(--green);color:#fff;border-color:var(--green)}
-.adcopy-all-btn{width:100%;background:var(--card2);border:1.5px dashed var(--border2);border-radius:10px;color:var(--fg2);font-size:12px;font-weight:700;cursor:pointer;padding:10px;margin-bottom:14px;transition:all .15s}
-.adcopy-all-btn:hover{border-color:var(--accent);color:var(--accent)}
-</style>
-
-<div class="adcopy-intro">
-  📢 <strong>플랫폼별 홍보문구 100개</strong> — 각 문구를 클릭해 복사하세요.<br>
-  홈페이지·카카오채널 주소가 포함된 문구는 실제 링크로 교체 후 사용하세요.
-</div>
-
-<!-- 당근마켓 -->
-<div class="adcopy-platform">
-  <div class="adcopy-platform-title">🥕 당근마켓 (30개)</div>
-  <button class="adcopy-all-btn" onclick="copyAllPlatform('daangn')">📋 당근마켓 전체 복사</button>
-  <div class="adcopy-list" id="daangn">
-    <div class="adcopy-item"><span class="adcopy-num">01</span><span class="adcopy-text">우리 동네 사주명리 전문가! 사주마루 AI로 2026년 대운·세운 완전 분석 받아보세요 🔮</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">02</span><span class="adcopy-text">[사주 상담] AI와 전통 명리학의 만남 — 생년월일시 4개만 알면 35,000자 종합 보고서 생성!</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">03</span><span class="adcopy-text">신년 사주 예약 받습니다 ✨ 직업·연애·재물·건강 한 번에 — 사주마루 AI 스튜디오</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">04</span><span class="adcopy-text">2026년 운세가 걱정되세요? AI가 대운부터 월별 운세까지 정확하게 분석해드립니다 🌟</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">05</span><span class="adcopy-text">비대면 사주 상담 가능! 카카오채널로 문의주시면 바로 안내해드려요 💬 사주마루 AI 스튜디오</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">06</span><span class="adcopy-text">결혼·취업·이사 고민 중이세요? 사주로 최적의 타이밍을 알아보세요 📅 사주마루 AI</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">07</span><span class="adcopy-text">대화 나누듯 편하게 — 사주 처음이신 분도 쉽게 이해할 수 있는 설명으로 풀어드려요 😊</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">08</span><span class="adcopy-text">직장 이직 타이밍, 사업 시작 시기 — 사주마루 AI가 내 사주로 정확히 짚어드립니다 📊</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">09</span><span class="adcopy-text">자녀 사주도 봐드려요! 아이의 타고난 기질과 적성, 사주명리학으로 파악하세요 👶</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">10</span><span class="adcopy-text">궁합 보고 싶은 분! 두 사람의 사주를 비교해 상생·상극 관계 분석해드립니다 💑</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">11</span><span class="adcopy-text">이사 방향·시기도 사주로 정하세요! 동서남북 길방위 완전 분석 제공 🏠 사주마루</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">12</span><span class="adcopy-text">재물운이 언제 터질지 궁금하세요? 사주 원국의 財星(재성)으로 재물 흐름을 봅니다 💰</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">13</span><span class="adcopy-text">건강 주의해야 할 시기, 미리 알면 준비할 수 있어요 — 사주마루 AI 건강운 분석 💚</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">14</span><span class="adcopy-text">30년 전통 사주명리학 + 최신 AI — 더 정확하고 더 자세한 사주 분석 받아보세요 ⭐</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">15</span><span class="adcopy-text">지금 당장 무료 체험! 기본 사주 구성(사주팔자) 자동 계산 및 오행 분석 제공 🎁</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">16</span><span class="adcopy-text">사주를 처음 접하시는 분도 OK! 어려운 용어 없이 일상 언어로 쉽게 설명해드려요 📖</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">17</span><span class="adcopy-text">갑오년·을미년·병신년... 내가 태어난 해의 의미를 사주명리학으로 완전히 풀어드립니다</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">18</span><span class="adcopy-text">사주마루 AI — 오늘의 운세부터 평생운까지 한 번에! 35,000자 종합 분석 보고서 제공</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">19</span><span class="adcopy-text">분기별 정기 상담 받아보세요! 봄·여름·가을·겨울 계절 운세 변화를 미리 준비해요 🍃</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">20</span><span class="adcopy-text">우리 동네 사주 상담사를 찾고 계신가요? 사주마루 AI로 언제 어디서나 분석 가능해요 🌟</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">21</span><span class="adcopy-text">사주마루 AI 스튜디오 — 생년월일시만 입력하면 35,000자 종합 보고서 자동 생성! 무료로 시작해보세요</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">22</span><span class="adcopy-text">AI가 사주팔자를 분석하는 시대! 사주마루 AI 스튜디오에서 내 사주 원국(命式)을 자동 계산해드려요</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">23</span><span class="adcopy-text">사주 보고서 1부에 20개 항목 완전 수록 — 대운·세운·월운·직업·재물·건강·개운법까지 한 번에 🔮</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">24</span><span class="adcopy-text">사주마루 AI 스튜디오는 30년 명리학 데이터 기반 — 간지·오행·십성·신살 원리를 AI가 직접 풀이해드려요</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">25</span><span class="adcopy-text">2026년 丙午년 연간 운세 + 월별 상세 분석까지 — 사주마루 AI로 올 한 해를 완벽하게 준비하세요 📅</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">26</span><span class="adcopy-text">사주마루 AI = 사주 원리 교육 + 개인 운세 분석 2가지를 한 앱에서! 배우면서 내 사주도 이해해요</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">27</span><span class="adcopy-text">인쇄·PDF 저장도 되는 35,000자 사주 보고서 — 가족·친구에게 선물로도 좋아요 🎁 사주마루 AI</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">28</span><span class="adcopy-text">甲乙丙丁戊己庚辛壬癸 10천간 × 子丑寅卯辰巳午未申酉戌亥 12지지 — 내 사주를 사주마루 AI로 자동 계산</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">29</span><span class="adcopy-text">어려운 한자도 사주마루 AI가 쉽게 설명 — 처음 보는 분도 사주 보고서를 100% 이해할 수 있어요</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">30</span><span class="adcopy-text">내 사주에 맞는 행운 색깔·음식·방향·직업 추천까지! 사주마루 AI 개운법 분석 지금 바로 시작하세요 ✨</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-  </div>
-</div>
-
-<!-- 인스타그램 -->
-<div class="adcopy-platform">
-  <div class="adcopy-platform-title">📸 인스타그램 (30개)</div>
-  <button class="adcopy-all-btn" onclick="copyAllPlatform('insta')">📋 인스타그램 전체 복사</button>
-  <div class="adcopy-list" id="insta">
-    <div class="adcopy-item"><span class="adcopy-num">01</span><span class="adcopy-text">✨ 당신의 四柱(사주)가 말하는 2026년은? AI가 풀어드리는 나만의 운세 이야기<br>#사주마루 #사주명리 #2026운세 #AI사주 #운세스타그램</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">02</span><span class="adcopy-text">🌙 甲木(갑목) 일간이라면 주목! 2026년 丙午년의 에너지는 당신에게 이런 의미입니다<br>#갑목일간 #사주공부 #사주명리학 #일간분석</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">03</span><span class="adcopy-text">💫 生年月日時(생년월일시) 4가지로 알 수 있는 것들 — 재물운·연애운·직업운·건강운 한 번에<br>#사주상담 #운세 #사주마루 #명리학</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">04</span><span class="adcopy-text">🔮 사주마루 AI에서 35,000자 종합 보고서 받아보세요 ✨ 내 사주의 모든 것<br>#사주보고서 #명리학 #AI운세 #사주분석</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">05</span><span class="adcopy-text">🌟 대운(大運)이 바뀌는 해, 인생의 큰 전환점이 옵니다 — 내 대운 전환 시기 확인하기<br>#대운 #사주운세 #인생전환 #10년주기</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">06</span><span class="adcopy-text">💑 우리 궁합은? 두 사람의 사주로 보는 상생·상극 완전 분석<br>#궁합 #사주궁합 #커플사주 #결혼운</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">07</span><span class="adcopy-text">📅 2026년 월별 운세 상세 분석 🗓️ 1월~12월 매월 길흉 예측 + 행동 가이드<br>#2026운세 #월별운세 #사주달력 #운세다이어리</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">08</span><span class="adcopy-text">🌸 결혼하기 좋은 해? 취업 최적 시기? 사주로 답을 찾아보세요<br>#결혼운 #취업운 #사주상담 #인생타이밍</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">09</span><span class="adcopy-text">💰 재물운이 터지는 시기, 사주로 미리 알 수 있습니다 — 財星(재성) 완전 분석<br>#재물운 #돈운 #사주재물 #부자사주</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">10</span><span class="adcopy-text">🌿 내 타고난 기질과 적성, 사주명리학으로 보는 나의 본질<br>#일간분석 #타고난성격 #사주심리 #MBTI대신사주</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">11</span><span class="adcopy-text">⭐ 사주를 처음 접하는 분도 OK! 어려운 한자 없이 쉽게 이해하는 사주 이야기<br>#사주입문 #사주기초 #명리학입문 #운세입문</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">12</span><span class="adcopy-text">🔥 2026년 주의할 달 TOP3 vs 기회의 달 TOP3 — 사주마루 AI 분석<br>#운세달력 #길월 #흉월 #2026운세</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">13</span><span class="adcopy-text">🏠 이사 가기 좋은 방향은? 吉方位(길방위) 사주 분석으로 찾는 나의 행운 방향<br>#이사운 #행운방향 #풍수사주 #이사방위</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">14</span><span class="adcopy-text">🌙 사주팔자(四柱八字)란 무엇인가? 쉽게 이해하는 동양 철학 5,000년의 지혜<br>#사주입문 #동양철학 #명리학 #사주팔자</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">15</span><span class="adcopy-text">💫 개운법(開運法) 알고 계세요? 내 약한 오행을 보완하는 색깔·음식·방향 총정리<br>#개운법 #행운아이템 #사주개운 #오행보완</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">16</span><span class="adcopy-text">🌟 신살(神殺) 도화살·역마살·화개살 내 사주에 있나요? 신살 완전 분석<br>#신살 #도화살 #역마살 #화개살</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">17</span><span class="adcopy-text">📊 五行(오행) 균형이 내 인생의 균형 — 나의 오행 비율 분석으로 보는 강점과 약점<br>#오행 #사주오행 #균형 #자기이해</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">18</span><span class="adcopy-text">✨ AI가 분석하는 나의 十星(십성) — 비견·겁재·식신·상관·편재·정재... 내 사주의 구성은?<br>#십성 #사주기초 #사주구성 #명식</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">19</span><span class="adcopy-text">🔮 사주를 알면 인생이 보인다 — 사주마루 AI 스튜디오에서 나만의 이야기를 찾아보세요<br>#사주마루 #AI사주 #사주명리 #인생이야기</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">20</span><span class="adcopy-text">🌸 팔로우하고 매주 사주 정보 받아가세요! 甲乙丙丁戊己庚辛壬癸 — 일간별 2026년 운세<br>#사주팔로우 #운세스타그램 #사주마루 #일간운세</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">21</span><span class="adcopy-text">🤖 사주마루 AI 스튜디오 — 생년월일시만 입력하면 35,000자 종합 보고서 자동 생성! ✨<br>#사주마루AI #AI사주보고서 #사주종합분석 #사주보고서</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">22</span><span class="adcopy-text">📊 20개 항목 완전 분석 — 사주원리·오행·일간·십성·신살·대운·세운·월운·연애·재물·직업·건강·개운법<br>#20항목분석 #완전분석 #사주마루 #사주보고서</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">23</span><span class="adcopy-text">🖨️ 인쇄·PDF 저장 가능한 나만의 사주 보고서 📄 부모님·연인·친구에게 특별한 선물로!<br>#사주선물 #사주보고서선물 #사주마루 #사주PDF</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">24</span><span class="adcopy-text">🔮 2026년 丙午년 — 병화(丙火)의 해가 나의 사주에 미치는 영향 완전 분석<br>#2026년운세 #병오년 #丙午년 #사주마루AI</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">25</span><span class="adcopy-text">📐 사주원리 학습 탭에서 오행·천간·지지·합충·신살 도표를 한눈에 — 사주마루 AI의 특별 기능<br>#사주공부 #사주원리 #사주마루기능 #명리학학습</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">26</span><span class="adcopy-text">🌟 사주마루 AI = 어려운 漢字(한자) → 쉬운 우리말로 풀이 ✅ 처음 보는 분도 100% 이해 가능<br>#한자풀이 #사주쉽게 #사주입문 #사주마루</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">27</span><span class="adcopy-text">✨ 사주 분석 + 쇼츠 스크립트 자동 생성 + 비즈니스 사주까지 — 사주마루 AI 3-in-1 앱<br>#사주마루AI #사주앱 #사주쇼츠 #비즈니스사주</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">28</span><span class="adcopy-text">💫 내 행운 색깔·음식·방향·직업을 사주로 추천받았어요 🎯 사주마루 AI 개운법 분석 결과<br>#개운법 #행운색깔 #사주마루개운 #행운음식</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">29</span><span class="adcopy-text">📱 모바일에서도 완벽하게 — 사주마루 AI 스튜디오는 어디서나 바로 사용 가능해요<br>#모바일사주 #사주앱 #사주마루모바일 #AI운세</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">30</span><span class="adcopy-text">🔮 저장하고 나중에 봐도 OK! 사주마루 AI 종합 보고서는 PDF로 저장해두고 언제든 다시 볼 수 있어요<br>#사주PDF저장 #사주보관 #사주마루 #운세저장</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-  </div>
-</div>
-
-<!-- 카카오채널 -->
-<div class="adcopy-platform">
-  <div class="adcopy-platform-title">💬 카카오채널 (30개)</div>
-  <button class="adcopy-all-btn" onclick="copyAllPlatform('kakao')">📋 카카오채널 전체 복사</button>
-  <div class="adcopy-list" id="kakao">
-    <div class="adcopy-item"><span class="adcopy-num">01</span><span class="adcopy-text">안녕하세요! 사주마루 AI 스튜디오입니다 🌟 채널 추가하시면 2026년 신년 운세 분석 먼저 받으실 수 있어요!</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">02</span><span class="adcopy-text">고민 있으세요? 💬 지금 채널로 생년월일시 보내주시면 바로 기본 사주 분석 해드릴게요!</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">03</span><span class="adcopy-text">[채널 친구 이벤트] 지금 추가하시면 사주 오행 무료 분석 쿠폰 드립니다 🎁 놓치지 마세요!</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">04</span><span class="adcopy-text">취업·이직·결혼·이사 — 중요한 결정 앞에서 사주의 도움을 받아보세요 📞 지금 문의하기</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">05</span><span class="adcopy-text">AI 사주 분석이 처음이신가요? 걱정 마세요, 쉽고 자세하게 설명해드립니다 😊 지금 채널 추가!</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">06</span><span class="adcopy-text">2026년 내 운세 어떻게 될까요? 지금 채널 추가하고 무료 기초 분석 받아가세요 ✨</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">07</span><span class="adcopy-text">🔮 사주마루 AI 스튜디오 — 30년 명리학 경험이 담긴 AI 분석으로 더 정확하게, 더 자세하게</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">08</span><span class="adcopy-text">월별 운세 알고 싶으신가요? 35,000자 종합 보고서에 1월~12월 상세 분석 포함! 📅 지금 문의</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">09</span><span class="adcopy-text">궁합·결혼운 문의 많이 주시는데요 💑 두 분 생년월일시 주시면 상세 분석해드립니다!</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">10</span><span class="adcopy-text">채널 알림 받고 매주 업데이트되는 운세 정보 먼저 확인하세요 🔔 지금 추가하기!</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">11</span><span class="adcopy-text">재물운 언제 오나요? 💰 사주 원국의 재성 흐름으로 재물 시기를 정확히 짚어드려요</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">12</span><span class="adcopy-text">건강 주의 시기 미리 아시면 예방할 수 있어요 💚 사주마루 AI 건강운 분석 서비스</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">13</span><span class="adcopy-text">아이 사주 궁금하신가요? 👶 자녀의 타고난 기질과 적성, 명리학으로 보는 진로 분석</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">14</span><span class="adcopy-text">이사 방향 고민이세요? 🏠 길방위(吉方位) 분석으로 가장 좋은 방향과 시기 알려드려요</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">15</span><span class="adcopy-text">상담 후기 보고 오셨나요? 감사합니다 🙏 저희와 함께 2026년을 더 잘 준비하세요!</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">16</span><span class="adcopy-text">지금 당장 문의하기! 생년월일시 알려주시면 5분 내 기본 분석 결과 보내드립니다 ⚡</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">17</span><span class="adcopy-text">사주 보고서가 너무 어렵다고요? 걱정 마세요! 처음 접하는 분도 이해할 수 있게 쉽게 설명해드려요 📖</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">18</span><span class="adcopy-text">정기 상담 패키지로 분기별·연간 운세 관리 받아보세요 📊 단골 고객 특별 혜택 있어요!</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">19</span><span class="adcopy-text">연인·부부 궁합부터 직장 동료 궁합까지 — 관계의 비밀을 사주로 풀어보세요 💑</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">20</span><span class="adcopy-text">친구에게도 알려주세요! 채널 공유하시면 특별 혜택 드립니다 🎉 사주마루 AI 스튜디오</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">21</span><span class="adcopy-text">🤖 사주마루 AI 스튜디오 새로운 기능 안내! 생년월일시 입력 → 35,000자 AI 종합 보고서 자동 생성</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">22</span><span class="adcopy-text">📄 보고서 20개 항목 완전 수록: ①사주원국 ②음양 ③오행 ④일간 ⑤십성 ⑥12운성 ⑦신살 ⑧대운 ⑨세운 ⑩월별운세 등</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">23</span><span class="adcopy-text">✅ 사주마루 AI는 어려운 한자도 쉽게 풀이 — 漢字(한글음) 형식으로 처음 접하는 분도 이해 OK!</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">24</span><span class="adcopy-text">🖨️ 완성된 보고서 인쇄·PDF 저장 가능! 상담 자료로, 가족 선물로 활용하세요 📋</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">25</span><span class="adcopy-text">📐 사주원리 학습 탭 운영 중! 오행·천간·지지·합충·신살 도표를 무료로 공부하세요 📚</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">26</span><span class="adcopy-text">2026년 丙午년 특집! 병화의 해가 내 사주에 미치는 영향을 사주마루 AI가 완전 분석해드려요 🔥</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">27</span><span class="adcopy-text">🎯 개운법(開運法) 분석 포함 — 내 약한 오행을 보완하는 행운 색깔·음식·방향·직업까지 추천!</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">28</span><span class="adcopy-text">사주마루 AI 쇼츠 기능도 있어요! 사주 기반 유튜브·인스타·틱톡 스크립트 자동 생성 📹</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">29</span><span class="adcopy-text">💼 비즈니스 사주 분석도 가능 — 창업·투자·사업 운세를 사주로 분석하는 전용 탭 운영 중</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">30</span><span class="adcopy-text">사주마루 AI 스튜디오 채널 친구 추가하고 최신 업데이트·이벤트 소식 가장 먼저 받아가세요 🔔</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-  </div>
-</div>
-
-<!-- 유튜브 -->
-<div class="adcopy-platform">
-  <div class="adcopy-platform-title">▶️ 유튜브 (30개)</div>
-  <button class="adcopy-all-btn" onclick="copyYtAll()">📋 유튜브 전체 복사</button>
-  <div id="yt-grid" class="yt-grid"></div>
-</div>
-<style>
-.yt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:4px}
-.yt-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color .15s;display:flex;flex-direction:column}
-.yt-card:hover{border-color:var(--border2)}
-.yt-thumb{height:120px;display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0}
-.yt-thumb-icon{font-size:34px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.4))}
-.yt-badge{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.72);color:#fff;font-size:9px;font-weight:800;padding:3px 7px;border-radius:5px;letter-spacing:.04em;text-transform:uppercase}
-.yt-num{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.72);color:#fff;font-size:10px;font-weight:800;padding:3px 7px;border-radius:5px}
-.yt-info{padding:12px;display:flex;flex-direction:column;gap:6px;flex:1}
-.yt-title{font-size:13px;font-weight:700;color:var(--fg);line-height:1.55;word-break:keep-all;flex:1}
-.yt-channel{font-size:11px;color:var(--fg3);display:flex;align-items:center;gap:4px}
-.yt-channel::before{content:"";width:14px;height:14px;border-radius:50%;background:#ff0000;display:inline-block;flex-shrink:0}
-.yt-copy-btn{width:100%;background:none;border:1.5px solid var(--border2);border-radius:7px;color:var(--fg2);font-size:11px;font-weight:700;cursor:pointer;padding:6px;transition:all .15s;margin-top:2px}
-.yt-copy-btn:hover{background:#ff0000;color:#fff;border-color:#ff0000}
-.yt-copy-btn.copied{background:var(--green);color:#fff;border-color:var(--green)}
-@media(max-width:480px){.yt-grid{grid-template-columns:1fr 1fr}}
-</style>
-<script>
-(function(){
-const YT=[
- {cat:'입문',icon:'🔮',grad:'135deg,#3d1277,#8833cc',title:'[사주 입문 1편] 사주팔자(四柱八字)가 뭔가요? 5분 만에 이해하는 사주명리학 기초 | 사주마루'},
- {cat:'일간',icon:'🌳',grad:'135deg,#1a5232,#2ecc71',title:'甲木(갑목) 일간 완전 분석 — 2026년 丙午년 대운·세운 흐름과 주의점 | 사주마루 AI'},
- {cat:'신살',icon:'🌸',grad:'135deg,#7d1435,#e84393',title:'내 사주에 도화살(桃花殺) 있다면? 도화살의 진짜 의미와 연애운 분석법 | 사주마루'},
- {cat:'오행',icon:'🌿',grad:'135deg,#145a32,#27ae60',title:'五行(오행) 木火土金水 완전 이해 — 나의 오행 비율로 보는 성격과 운명 | 사주마루'},
- {cat:'2026운세',icon:'🐍',grad:'135deg,#154360,#2471a3',title:'2026년 12띠별 운세 총정리 🐍 사주마루 AI가 분석하는 쥐·소·범·토끼... 12띠 상세 운세'},
- {cat:'대운',icon:'⚡',grad:'135deg,#1a237e,#3f51b5',title:'대운(大運)이 바뀌는 해가 왜 인생 전환점인가? — 10년 대운의 비밀 완전 정복 | 사주마루'},
- {cat:'십성',icon:'⭐',grad:'135deg,#4a148c,#7b1fa2',title:'十星(십성) 완전 정리 — 비견·겁재·식신·상관·편재·정재·편관·정관·편인·정인 의미와 작용'},
- {cat:'궁합',icon:'💑',grad:'135deg,#880e4f,#e91e8c',title:'궁합 보는 법 완전 정복 — 상생·상극·원진·귀문 사주로 보는 진짜 궁합 | 사주마루'},
- {cat:'재물',icon:'💰',grad:'135deg,#6d4c00,#f9a825',title:'재물운이 터지는 사주 구조는? — 財星(재성)·食傷(식상)으로 보는 부자 사주 분석'},
- {cat:'직업',icon:'💼',grad:'135deg,#004d40,#00897b',title:'사주로 직업 찾는 법 — 내 일간과 십성으로 보는 천직(天職) 분석 | 사주마루 AI'},
- {cat:'12운성',icon:'🔄',grad:'135deg,#0d47a1,#1976d2',title:'十二運星(12운성) 완전 이해 — 장생·목욕·관대·건록·제왕·쇠·병·사·묘·절·태·양 뜻과 적용'},
- {cat:'신살총정리',icon:'⚔️',grad:'135deg,#b71c1c,#e53935',title:'神殺(신살) 총정리 — 도화살·역마살·화개살·겁살·망신살·백호대살 내 사주에 있나요?'},
- {cat:'개운법',icon:'🌅',grad:'135deg,#bf360c,#f4511e',title:'開運法(개운법) 실전편 — 내 약한 오행 보완하는 색깔·음식·직업·방향 완전 정리 | 사주마루'},
- {cat:'건강',icon:'💚',grad:'135deg,#1b5e20,#43a047',title:'사주로 보는 건강 — 五臟(오장)과 오행의 관계, 건강 주의 시기 예측법 | 사주마루'},
- {cat:'월운',icon:'📅',grad:'135deg,#01579b,#039be5',title:'2026년 월별 운세 완전 분석 — 1월부터 12월까지 길월·흉월 총정리 | 사주마루 AI'},
- {cat:'일주',icon:'📖',grad:'135deg,#37474f,#607d8b',title:'일주(日柱) 60갑자 완전 분석 — 甲子·乙丑·丙寅... 내 일주는 어떤 의미인가? | 사주마루'},
- {cat:'이사방향',icon:'🏠',grad:'135deg,#4e342e,#8d6e63',title:'사주로 이사 방향 정하는 법 — 吉方位(길방위) 완전 이해와 실전 적용 | 사주마루'},
- {cat:'창업',icon:'🚀',grad:'135deg,#e65100,#fb8c00',title:'사업 시작 타이밍을 사주로? — 창업에 유리한 사주 구조와 시기 분석법 | 사주마루'},
- {cat:'결혼',icon:'💍',grad:'135deg,#ad1457,#e91e63',title:'부부 관계 사주로 보기 — 일간·배우자궁·관성으로 보는 결혼운의 비밀 | 사주마루'},
- {cat:'AI사주',icon:'🤖',grad:'135deg,#1a237e,#7c4dff',title:'AI + 사주명리학의 만남 — 사주마루 AI 스튜디오 사용법 완전 가이드 (구독·알림 설정 필수!)'},
- {cat:'일간',icon:'🌿',grad:'135deg,#2e7d32,#66bb6a',title:'乙木(을목) 일간 2026년 완전 분석 — 음의 나무가 맞이하는 丙午년의 의미'},
- {cat:'일간',icon:'🔥',grad:'135deg,#b71c1c,#ef5350',title:'丙火(병화) 일간 2026년 완전 분석 — 불의 기운이 폭발하는 丙午년, 기회인가 위기인가?'},
- {cat:'합충',icon:'⚡',grad:'135deg,#4527a0,#7e57c2',title:'天干合·地支冲 완전 이해 — 合(합)과 冲(충)이 사주에 미치는 영향과 실전 적용'},
- {cat:'공망',icon:'🌀',grad:'135deg,#263238,#546e7a',title:'공망(空亡)이란? — 내 사주의 빈자리를 알아야 인생이 보인다 | 공망 완전 정복'},
- {cat:'세운',icon:'🗓️',grad:'135deg,#006064,#00acc1',title:'세운(歲運) 분석법 — 매년 바뀌는 에너지를 사주에 적용하는 방법 | 사주마루 AI'},
- {cat:'재물심화',icon:'💎',grad:'135deg,#5d4037,#a1887f',title:'부자 사주 vs 가난한 사주 — 재물운을 결정하는 진짜 요소들 완전 분석'},
- {cat:'연애운',icon:'❤️',grad:'135deg,#c62828,#ef5350',title:'연애운 완전 분석 — 언제 좋은 인연이 오는지 사주로 정확하게 알 수 있다'},
- {cat:'입문',icon:'📚',grad:'135deg,#4527a0,#9c27b0',title:'사주 보는 법 step by step — 초보자도 할 수 있는 나의 명식(命式) 읽기'},
- {cat:'오행심화',icon:'🌊',grad:'135deg,#0277bd,#29b6f6',title:'내 사주에 없는 오행 — 결핍 오행이 인생에 미치는 영향과 실전 보완법'},
- {cat:'종합',icon:'🎯',grad:'135deg,#1a0a30,#7b2fff',title:'2026년 사주마루 AI 종합 운세 — 내 사주로 보는 올 한 해 완전 분석 (35,000자 보고서 공개)'},
-];
-const grid=document.getElementById('yt-grid');
-YT.forEach((v,i)=>{
-  const n=String(i+1).padStart(2,'0');
-  const card=document.createElement('div');
-  card.className='yt-card';
-  card.innerHTML=`
-    <div class="yt-thumb" style="background:linear-gradient(${v.grad})">
-      <div class="yt-thumb-icon">${v.icon}</div>
-      <div class="yt-badge">${v.cat}</div>
-      <div class="yt-num">${n}</div>
-    </div>
-    <div class="yt-info">
-      <div class="yt-title">${v.title}</div>
-      <div class="yt-channel">사주마루 AI 스튜디오</div>
-      <button class="yt-copy-btn" onclick="copyYtCard(this,'${v.title.replace(/'/g,"\\'")}')">📋 제목 복사</button>
-    </div>`;
-  grid.appendChild(card);
-});
-})();
-function copyYtCard(btn,text){
-  navigator.clipboard.writeText(text).catch(()=>{
-    const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
-  });
-  btn.textContent='✅ 복사됨';btn.classList.add('copied');
-  setTimeout(()=>{btn.textContent='📋 제목 복사';btn.classList.remove('copied');},1800);
-}
-function copyYtAll(){
-  const titles=Array.from(document.querySelectorAll('#yt-grid .yt-title')).map((el,i)=>`${i+1}. ${el.textContent}`).join('\n\n');
-  navigator.clipboard.writeText(titles);
-  event.target.textContent='✅ 전체 복사 완료!';
-  setTimeout(()=>{event.target.textContent='📋 유튜브 전체 복사';},2000);
-}
-</script>
-
-<!-- 커뮤니티 -->
-<div class="adcopy-platform">
-  <div class="adcopy-platform-title">🌐 커뮤니티 (30개)</div>
-  <button class="adcopy-all-btn" onclick="copyAllPlatform('community')">📋 커뮤니티 전체 복사</button>
-  <div class="adcopy-list" id="community">
-    <div class="adcopy-item"><span class="adcopy-num">01</span><span class="adcopy-text">사주 공부 처음 시작하는 분들 모여요! 사주마루 AI로 내 사주부터 분석해보고 함께 공부해요 🌟</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">02</span><span class="adcopy-text">[질문] 甲木 일간인데 2026년 丙午년이 기쁨이 될까요, 걱정이 될까요? 같이 토론해봐요</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">03</span><span class="adcopy-text">사주마루 AI 사용 후기 공유해요! 35,000자 보고서 받아보신 분 소감이 궁금합니다 📝</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">04</span><span class="adcopy-text">오행 균형이 맞지 않을 때 개운법 어떻게 하세요? 실전 경험 나눠주세요 💫</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">05</span><span class="adcopy-text">도화살 있으신 분들 경험담 들어보고 싶어요 — 정말 이성에게 인기 있나요? 😄</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">06</span><span class="adcopy-text">사주로 직업 정한 분 계세요? 명리학적 근거로 찾은 천직(天職) 경험담 공유해요 💼</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">07</span><span class="adcopy-text">대운 전환 경험담 — 대운이 바뀌던 해 정말 인생이 달라지셨나요? 이야기 나눠요 🔄</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">08</span><span class="adcopy-text">[초보자 정리] 天干(천간)·地支(지지)·十星(십성) 쉽게 이해하는 법 — 사주마루 활용 꿀팁</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">09</span><span class="adcopy-text">AI 사주 분석 vs 전통 사주 상담 — 어떤 게 더 정확하고 유용할까요? 의견 나눠요</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">10</span><span class="adcopy-text">2026년 運勢(운세) 미리 보기 — 각자 사주 기반 올해 흐름 공유해봐요 📅 사주마루 활용</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">11</span><span class="adcopy-text">신살(神殺) 복합으로 있는 분들 경험담 — 역마살+도화살 함께 있으면 어떤가요? 🌀</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">12</span><span class="adcopy-text">사주로 건강 관리 실전 팁 — 木 오행 약한 분이 건강 지키는 법 같이 연구해요 💚</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">13</span><span class="adcopy-text">이사 방향 사주로 정하신 분 있나요? 실제 효과 있었는지 후기 들어보고 싶어요 🏠</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">14</span><span class="adcopy-text">궁합 보고 결혼하신 분들 — 사주 궁합과 실제 결혼 생활이 맞았나요? 솔직 후기 💑</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">15</span><span class="adcopy-text">사주마루 AI 스튜디오 꿀팁 공유방 🔮 더 정확한 분석을 위한 팁 알려주세요!</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">16</span><span class="adcopy-text">재물운 터진 경험 — 사주에서 예고된 시기에 정말 재물이 왔나요? 성공 사례 공유 💰</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">17</span><span class="adcopy-text">十二運星(12운성) 공부 모임 — 장생부터 양까지 같이 공부해요 📚 사주마루 AI 활용법</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">18</span><span class="adcopy-text">타고난 기질 vs 환경의 영향 — 사주가 정말 성격을 결정할까요? 철학적 토론 🤔</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">19</span><span class="adcopy-text">사주 상담 경험 공유 — 사주마루 AI 보고서 받고 삶이 달라진 이야기 들어주세요 🌟</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">20</span><span class="adcopy-text">사주 공부 1년 후기 — 명리학 배우면서 나 자신이 얼마나 변했는지 이야기해요 🌱</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">21</span><span class="adcopy-text">사주마루 AI 스튜디오 써보신 분? 35,000자 AI 보고서 후기 공유해주세요! 저는 대운 분석이 정말 정확했어요</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">22</span><span class="adcopy-text">[사주마루 AI 활용법] 생년월일시 입력 → 사주팔자 자동계산 → 35,000자 종합 보고서까지 한 번에!</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">23</span><span class="adcopy-text">사주마루 AI 보고서에 2026년 丙午년 월별 운세가 1월~12월 상세하게 나온다고요? 직접 확인해봤어요</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">24</span><span class="adcopy-text">사주원리 탭에서 오행·천간·지지 도표 공부하고 내 보고서 보니까 이해가 훨씬 잘 됐어요 👍 사주마루 AI</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">25</span><span class="adcopy-text">사주마루 AI로 개운법 받았는데 행운 색깔·음식·방향까지 추천해줘요! 실천해보신 분 효과 있었나요?</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">26</span><span class="adcopy-text">사주마루 AI 보고서 PDF로 저장해서 가족들한테 선물했어요 🎁 어머니가 너무 좋아하셨어요</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">27</span><span class="adcopy-text">사주마루 AI의 十二運星(12운성) 분석이 너무 자세해서 놀랐어요 — 장생·목욕 등 각 운성별 의미까지!</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">28</span><span class="adcopy-text">사주마루 AI에서 쇼츠 스크립트도 자동 생성된다고요? 유튜브·인스타·틱톡용 사주 콘텐츠 만들기 좋겠다</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">29</span><span class="adcopy-text">비즈니스 사주 탭에서 창업 타이밍도 분석해준다니 — 사업 준비 중인 분들에게 사주마루 AI 강추해요 💼</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-    <div class="adcopy-item"><span class="adcopy-num">30</span><span class="adcopy-text">사주마루 AI 모두에게 추천! 입문자부터 명리학 공부하는 분까지 — 원리+분석+개운법 한 번에 해결 🌟</span><button class="adcopy-copy" onclick="copyAdcopy(this)">복사</button></div>
-  </div>
-</div>
-
-<script>
-function copyAdcopy(btn){
-  const text=btn.previousElementSibling.innerText;
-  navigator.clipboard.writeText(text).then(()=>{
-    btn.textContent="✅ 복사됨";
-    btn.classList.add("copied");
-    setTimeout(()=>{btn.textContent="복사";btn.classList.remove("copied");},1800);
-  }).catch(()=>{
-    const ta=document.createElement("textarea");
-    ta.value=text;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand("copy");
-    document.body.removeChild(ta);
-    btn.textContent="✅ 복사됨";
-    btn.classList.add("copied");
-    setTimeout(()=>{btn.textContent="복사";btn.classList.remove("copied");},1800);
-  });
-}
-function copyAllPlatform(id){
-  const items=document.querySelectorAll(`#${id} .adcopy-text`);
-  const all=[...items].map((el,i)=>`${i+1}. ${el.innerText}`).join("\n\n");
-  navigator.clipboard.writeText(all).then(()=>{
-    const btn=event.target;
-    btn.textContent="✅ 전체 복사 완료!";
-    setTimeout(()=>{btn.textContent=btn.textContent.replace("✅ 전체 복사 완료!","📋 "+id.charAt(0).toUpperCase()+id.slice(1)+" 전체 복사");},2000);
-  });
-}
-</script>
-</div>
-
-</div><!-- /#tab-adcopy -->
-
-<!-- ══════════════════════════════════════
-     TAB: 사주마루 간단본
+     섹션 2: 간단본
 ══════════════════════════════════════ -->
 <div class="tab-panel" id="tab-simple">
+<div id="sec-simple" style="scroll-margin-top:56px"></div>
   <div class="section-title">📋 사주마루 간단본</div>
-  <div class="simple-notice"><b>사주마루 간단본</b>은 AI 분석 탭의 생년월일·성별·이름 정보를 그대로 활용합니다.<br>먼저 <b>🔮 AI 분석 탭 → Step 1</b>에서 정보를 입력한 후 여기서 간단본을 생성하세요.</div>
+  <div class="simple-notice"><b>사주마루 간단본</b>은 위 분석 섹션의 생년월일·성별·이름 정보를 그대로 활용합니다.<br>위 <b>🔮 분석 → Step 1</b>에서 정보를 먼저 입력해 주세요.</div>
 
   <div class="field">
     <label>이름 (직접 입력 가능)</label>
@@ -4756,17 +4165,19 @@ function copyAllPlatform(id){
   </div>
 </div>
 
+<hr class="sec-divider">
 <!-- ══════════════════════════════════════
-     TAB: 한자이름
+     섹션 4: 한자이름
 ══════════════════════════════════════ -->
 <div class="tab-panel" id="tab-hanja">
+<div id="sec-hanja" style="scroll-margin-top:56px"></div>
   <div class="section-title">🔡 한자이름 찾기</div>
   <p style="font-size:13px;color:var(--fg2);margin-bottom:16px">한글 이름을 입력하면 음절별 한자를 고를 수 있습니다. 성(姓)은 한자가 정해져 있어 이름 부분만 선택합니다.</p>
 
   <div class="field">
     <label>한글 이름</label>
     <div style="display:flex;gap:8px">
-      <input type="text" id="hanjaNameInput" placeholder="예: 홍민준" maxlength="5" style="flex:1">
+      <input type="text" id="hanjaNameInput" placeholder="예: 홍민준" maxlength="5" style="flex:1" oninput="onHanjaInput(this.value)">
       <button class="btn btn-primary" onclick="buildHanjaPicker()" style="width:auto;padding:10px 18px;white-space:nowrap">🔍 찾기</button>
     </div>
   </div>
@@ -4778,7 +4189,7 @@ function copyAllPlatform(id){
     <div class="hanja-stats-row" id="hanjaStatsRow"></div>
     <div class="hanja-syl-meanings" id="hanjaMeanings"></div>
     <div style="display:flex;gap:8px">
-      <button class="btn btn-gold" onclick="applyHanjaToForm()" style="flex:1">✅ AI 분석에 적용</button>
+      <button class="btn btn-gold" onclick="applyHanjaToForm()" style="flex:1">✅ 분석에 적용</button>
       <button class="btn btn-outline" onclick="resetHanjaPicker()" style="width:auto;padding:10px 14px">↺ 초기화</button>
     </div>
   </div>
@@ -4796,10 +4207,12 @@ function copyAllPlatform(id){
   </div>
 </div>
 
+<hr class="sec-divider">
 <!-- ══════════════════════════════════════
-     TAB: 철학원 풀이
+     섹션 5: 철학원 풀이
 ══════════════════════════════════════ -->
 <div class="tab-panel" id="tab-cheol">
+<div id="sec-cheol" style="scroll-margin-top:56px"></div>
   <div class="section-title">🏛️ 철학원 풀이</div>
   <div class="simple-notice">전통 철학원 방식의 사주 풀이입니다. <b>이름·한자이름</b>을 포함해 사주명식과 성명학을 함께 분석합니다.<br>格局·用神·十星 기반의 전통 명리학 문체로 작성됩니다.</div>
 
@@ -4861,46 +4274,5 @@ function copyAllPlatform(id){
   </div>
 </div>
 
-</div><!-- /#tab-theory -->
 
-</div><!-- /#appContent -->
-
-<!-- 바텀 네비 -->
-<nav class="bottom-nav">
-  <button class="bnav-btn active" id="bnav-analyze" onclick="switchTab('analyze')">
-    <span class="bi">🔮</span><span>분석</span>
-  </button>
-  <button class="bnav-btn" id="bnav-simple" onclick="switchTab('simple')">
-    <span class="bi">📋</span><span>간단본</span>
-  </button>
-  <button class="bnav-btn" id="bnav-hanja" onclick="switchTab('hanja')">
-    <span class="bi">🔡</span><span>한자</span>
-  </button>
-  <button class="bnav-btn" id="bnav-shorts" onclick="switchTab('shorts')">
-    <span class="bi">🎬</span><span>쇼츠</span>
-  </button>
-  <button class="bnav-btn" id="bnav-more" onclick="openMore()">
-    <span class="bi">☰</span><span>더보기</span>
-  </button>
-</nav>
-
-<!-- 더보기 바텀 시트 -->
-<div class="more-backdrop" id="moreBackdrop" onclick="closeMore()"></div>
-<div class="more-sheet" id="moreSheet">
-  <div class="more-sheet-handle"></div>
-  <div class="more-sheet-title">더 보기</div>
-  <div class="more-sheet-grid">
-    <div class="more-sheet-item" onclick="switchTab('cheol');closeMore()">
-      <span class="mi">🏛️</span><span>철학원 풀이</span>
-    </div>
-    <div class="more-sheet-item" onclick="switchTab('biz');closeMore()">
-      <span class="mi">💼</span><span>비즈니스</span>
-    </div>
-    <div class="more-sheet-item" onclick="switchTab('theory');closeMore()">
-      <span class="mi">📐</span><span>사주원리</span>
-    </div>
-    <div class="more-sheet-item" onclick="switchTab('adcopy');closeMore()">
-      <span class="mi">📢</span><span>홍보문구</span>
-    </div>
-  </div>
-</div>
+</body></html>
