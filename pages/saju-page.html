@@ -35,7 +35,7 @@
 html,body{background:var(--bg);color:var(--fg);font-family:var(--fbody);line-height:1.65}
 body{padding:0 16px;padding-block:0;font-size:16px}
 .app-header{text-align:center;padding:32px 0 20px;border-bottom:1px solid var(--border)}
-.eyebrow{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.eyebrow{font-size:clamp(26px,5vw,38px);letter-spacing:.04em;text-transform:none;color:var(--accent);font-weight:900;margin-bottom:4px}
 .app-header h1{font-family:var(--fdisp);font-size:clamp(26px,5vw,38px);font-weight:900;text-wrap:balance}
 .app-header h1 em{color:var(--gold);font-style:normal}
 .app-header p{margin-top:7px;color:var(--fg2);font-size:15px}
@@ -296,7 +296,6 @@ body{padding:0 16px;padding-block:0;font-size:16px}
 <div class="app-header">
   <div class="eyebrow">✦ 명리 분석 시스템 ✦</div>
   <h1><em>사주마루</em> 스튜디오</h1>
-  <p>사주분석 · 간단본 · 사주원리 · 한자이름 · 철학원풀이</p>
   <div style="display:inline-flex;align-items:center;gap:8px;margin-top:14px;background:color-mix(in srgb,var(--green) 12%,var(--bg2));border:1.5px solid color-mix(in srgb,var(--green) 40%,transparent);border-radius:10px;padding:8px 16px">
     <span style="font-size:18px">✅</span>
     <span style="font-size:14px;font-weight:700;color:var(--green)">기질·성향 분석 <strong style="font-size:16px">무료</strong> 제공</span>
@@ -304,14 +303,6 @@ body{padding:0 16px;padding-block:0;font-size:16px}
   </div>
 </div>
 
-<!-- 섹션 앵커 네비 -->
-<nav class="section-nav" id="sectionNav">
-  <a class="sec-btn active" href="#sec-analyze">🔮 분석</a>
-  <a class="sec-btn" href="#sec-simple">📋 간단본</a>
-  <a class="sec-btn" href="#sec-theory">📐 사주원리</a>
-  <a class="sec-btn" href="#sec-hanja">🔡 한자이름</a>
-  <a class="sec-btn" href="#sec-cheol">🏛️ 철학원</a>
-</nav>
 
 <!-- ══════════════════════════════════════
      섹션 1: 사주 분석
