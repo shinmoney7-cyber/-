@@ -4866,20 +4866,8 @@ function copyAllPlatform(id){
 </div><!-- /#appContent -->
 
 <!-- 바텀 네비 -->
-<nav class="bottom-nav">
-  <button class="bnav-btn active" id="bnav-analyze" onclick="switchTab('analyze')">
-    <span class="bi">🔮</span><span>분석</span>
-  </button>
-  <button class="bnav-btn" id="bnav-simple" onclick="switchTab('simple')">
-    <span class="bi">📋</span><span>간단본</span>
-  </button>
-  <button class="bnav-btn" id="bnav-hanja" onclick="switchTab('hanja')">
-    <span class="bi">🔡</span><span>한자</span>
-  </button>
-  <button class="bnav-btn" id="bnav-shorts" onclick="switchTab('shorts')">
-    <span class="bi">🎬</span><span>쇼츠</span>
-  </button>
-  <button class="bnav-btn" id="bnav-more" onclick="openMore()">
+<nav class="bottom-nav" style="grid-template-columns:1fr">
+  <button class="bnav-btn active" id="bnav-more" onclick="openMore()">
     <span class="bi">☰</span><span>더보기</span>
   </button>
 </nav>
