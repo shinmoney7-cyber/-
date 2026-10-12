@@ -1,0 +1,46 @@
+name: TikTok 사주마루 콘텐츠 자동 생성
+
+on:
+  schedule:
+    - cron: '0 0 * * 1'   # 매주 월요일 오전 9시 KST (UTC 00:00)
+  workflow_dispatch:
+    inputs:
+      content_type:
+        description: '콘텐츠 유형 (weekly_saju / daily_tip / promotion)'
+        required: false
+        default: 'weekly_saju'
+
+jobs:
+  generate-and-post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install anthropic requests Pillow
+
+      - name: Generate TikTok content (script + image)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CONTENT_TYPE: ${{ github.event.inputs.content_type || 'weekly_saju' }}
+        run: python scripts/tiktok_generate.py
+
+      - name: Post to TikTok draft
+        env:
+          TIKTOK_CLIENT_KEY: ${{ secrets.TIKTOK_CLIENT_KEY }}
+          TIKTOK_CLIENT_SECRET: ${{ secrets.TIKTOK_CLIENT_SECRET }}
+          TIKTOK_REFRESH_TOKEN: ${{ secrets.TIKTOK_REFRESH_TOKEN }}
+        run: python scripts/tiktok_post.py
+
+      - name: Send notification email
+        env:
+          GMAIL_USER: shinmoney7@gmail.com
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+        run: python scripts/tiktok_notify.py
