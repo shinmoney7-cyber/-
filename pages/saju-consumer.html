@@ -1,4 +1,4 @@
-<title>사주마루</title>
+<title>사주마루 명리분석 신청</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;600;700&display=swap">
 <style>
 :root{
@@ -7,7 +7,7 @@
   --border:rgba(180,130,255,.18);--border2:rgba(180,130,255,.32);
   --fg:#f0e8ff;--fg2:#a090c0;--fg3:#6a5a8a;
   --accent:#b87fff;--gold:#f5c842;--gold2:#c8991a;
-  --red:#ff5577;--green:#5ce685;--blue:#7eb8ff;
+  --red:#ff5577;--green:#5ce685;
   --fdisp:'Noto Serif KR',Georgia,serif;
   --fbody:'Noto Sans KR','Malgun Gothic',sans-serif;
   color-scheme:dark;
@@ -34,35 +34,39 @@
 html,body{height:100%;background:var(--bg);color:var(--fg);font-family:var(--fbody);line-height:1.65}
 body{display:flex;flex-direction:column;padding:0;overflow:hidden}
 
-/* ── 스크롤 래퍼 ── */
 .app-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .inner{max-width:600px;margin:0 auto;padding:0 16px}
 
-/* ── 히어로 헤더 ── */
+/* ── 히어로 ── */
 .hero{
   text-align:center;
-  padding:44px 16px 36px;
-  padding-top:calc(44px + env(safe-area-inset-top,0px));
+  padding:36px 16px 28px;
+  padding-top:calc(36px + env(safe-area-inset-top,0px));
   background:linear-gradient(180deg,var(--bg2) 0%,transparent 100%);
   border-bottom:1px solid var(--border);
+  position:relative;
 }
-.hero-logo{font-size:40px;line-height:1;margin-right:10px;vertical-align:middle;display:inline}
-.hero-brand{font-family:var(--fdisp);font-size:36px;font-weight:900;letter-spacing:-.01em;line-height:1.1}
+/* ── 페이지 스위처 ── */
+.page-switcher{display:inline-flex;background:var(--bg3);border-radius:999px;padding:4px;gap:4px;margin-bottom:16px}
+.psw-tab{padding:8px 20px;border-radius:999px;font-size:14px;font-weight:700;text-decoration:none;transition:all .2s;cursor:pointer;border:none;font-family:var(--fbody)}
+.psw-tab.active{background:var(--accent);color:#fff;box-shadow:0 2px 10px rgba(184,127,255,.4)}
+.psw-tab.inactive{background:transparent;color:var(--fg3)}
+.psw-tab.inactive:hover{color:var(--fg2);background:rgba(255,255,255,.06)}
+.hero-brand{font-family:var(--fdisp);font-size:36px;font-weight:900;letter-spacing:-.01em;line-height:1.15}
 .hero-brand em{color:var(--gold);font-style:normal}
-
-.hero-tagline{font-size:16px;color:var(--fg3);margin-top:14px;letter-spacing:.02em}
-.seller-badge{display:inline-block;font-size:12px;color:var(--fg3);text-decoration:none;border:1px solid var(--border);border-radius:8px;padding:4px 12px;margin-bottom:14px}
-.seller-badge:hover{color:var(--fg2);border-color:var(--border2)}
+.hero-logo{font-size:38px;line-height:1;margin-right:8px;vertical-align:middle;display:inline}
+.hero-tagline{font-size:14px;color:var(--fg3);margin-top:10px}
+.hero-badge{display:inline-block;background:color-mix(in srgb,var(--accent) 15%,var(--bg2));color:var(--accent);font-size:12px;font-weight:700;border-radius:20px;padding:3px 12px;margin-top:8px;border:1px solid rgba(184,127,255,.3)}
 
 /* ── 스텝 바 ── */
 .steps{display:flex;justify-content:center;margin:22px auto;background:var(--bg2);border-radius:999px;padding:5px;max-width:360px}
-.step-dot{flex:1;text-align:center;padding:11px 0;border-radius:999px;font-size:16px;font-weight:700;color:var(--fg3);transition:all .2s}
+.step-dot{flex:1;text-align:center;padding:10px 0;border-radius:999px;font-size:15px;font-weight:700;color:var(--fg3);transition:all .2s}
 .step-dot.active{background:var(--accent);color:#fff}
 .step-dot.done{color:var(--accent)}
 
 /* ── 폼 ── */
 .field{margin-bottom:18px}
-.field label{display:block;font-size:14px;font-weight:700;color:var(--fg2);margin-bottom:7px;letter-spacing:.02em}
+.field label{display:block;font-size:14px;font-weight:700;color:var(--fg2);margin-bottom:7px}
 .field input,.field select,.field textarea{
   width:100%;padding:13px 16px;background:var(--card);border:1.5px solid var(--border);
   border-radius:12px;color:var(--fg);font-family:var(--fbody);font-size:16px;
@@ -70,6 +74,7 @@ body{display:flex;flex-direction:column;padding:0;overflow:hidden}
 }
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent)}
 .field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 0l6 8 6-8z' fill='%23a090c0'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.field textarea{resize:vertical;min-height:80px;line-height:1.6}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .row3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px}
 .hint{font-size:13px;color:var(--fg3);margin-top:5px}
@@ -83,9 +88,11 @@ body{display:flex;flex-direction:column;padding:0;overflow:hidden}
 .btn-primary{background:linear-gradient(135deg,var(--accent),#8844dd);color:#fff}
 .btn-outline{background:transparent;border:1.5px solid var(--border2);color:var(--fg)}
 .btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a0800}
+.btn-row{display:flex;gap:8px;margin-top:12px}
+.btn-row .btn{flex:1;margin-top:0}
 
-/* ── 선택 카드 ── */
-.choice-title{font-size:13px;font-weight:700;color:var(--fg2);text-align:center;margin-bottom:16px;letter-spacing:.05em}
+/* ── 서비스 선택 카드 ── */
+.choice-title{font-size:15px;font-weight:700;color:var(--fg2);text-align:center;margin-bottom:16px}
 .choice-grid{display:flex;flex-direction:column;gap:12px;margin-bottom:16px}
 .choice-card{
   background:var(--card);border:2px solid var(--border);border-radius:16px;
@@ -95,83 +102,49 @@ body{display:flex;flex-direction:column;padding:0;overflow:hidden}
 .choice-card:hover{border-color:var(--border2);background:var(--card2)}
 .choice-card.selected{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--card))}
 .choice-icon{font-size:32px;flex-shrink:0;width:48px;text-align:center}
-.choice-info{}
 .choice-name{font-family:var(--fdisp);font-size:17px;font-weight:800;color:var(--fg);margin-bottom:3px}
-.choice-desc{font-size:12px;color:var(--fg2);line-height:1.5}
-.choice-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:8px;margin-left:6px;vertical-align:middle}
-.badge-free{background:rgba(92,230,133,.2);color:var(--green)}
-.badge-ai{background:rgba(184,127,255,.2);color:var(--accent)}
+.choice-desc{font-size:13px;color:var(--fg2);line-height:1.5}
+.choice-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:8px;margin-left:6px;vertical-align:middle;background:rgba(184,127,255,.2);color:var(--accent)}
 
-/* ── 로딩 ── */
-.loading{text-align:center;padding:48px 0}
-.spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 14px}
-@keyframes spin{to{transform:rotate(360deg)}}
-.loading p{color:var(--fg2);font-size:13px;line-height:1.7}
-
-/* ── 결과 ── */
-.result-wrap{background:var(--card);border:1.5px solid var(--border2);border-radius:14px;overflow:hidden;margin-bottom:12px;margin-top:14px}
-.result-head{background:linear-gradient(135deg,#2a1a50,#1a0a38);padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.result-head-name{font-family:var(--fdisp);font-size:15px;font-weight:700;color:var(--gold)}
-.copy-btn{padding:4px 12px;font-size:11px;font-weight:700;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:6px;color:#fff;cursor:pointer}
-.result-body{padding:18px;font-size:14px;line-height:1.95;white-space:pre-line;color:var(--fg);max-height:62vh;overflow-y:auto}
-.btn-row{display:flex;gap:8px;margin-top:12px}
-.btn-row .btn{flex:1;margin-top:0}
+/* ── 신청 완료 ── */
+.complete-wrap{text-align:center;padding:32px 16px}
+.complete-icon{font-size:64px;margin-bottom:20px}
+.complete-title{font-family:var(--fdisp);font-size:24px;font-weight:900;color:var(--gold);margin-bottom:12px}
+.complete-msg{font-size:15px;color:var(--fg2);line-height:1.8;margin-bottom:24px}
+.complete-card{background:var(--card);border:1.5px solid var(--border2);border-radius:14px;padding:18px 20px;text-align:left;margin-bottom:20px}
+.complete-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:14px}
+.complete-row:last-child{border-bottom:none}
+.complete-row .lbl{color:var(--fg3);font-weight:600}
+.complete-row .val{color:var(--fg);font-weight:700;text-align:right;max-width:60%}
+.appl-no{font-size:13px;color:var(--fg3);margin-top:16px}
 
 /* ── 에러 ── */
-.error-box{background:rgba(255,85,119,.1);border:1.5px solid rgba(255,85,119,.4);border-radius:10px;padding:14px;color:var(--red);font-size:13px;margin:14px 0}
+.error-box{background:rgba(255,85,119,.1);border:1.5px solid rgba(255,85,119,.4);border-radius:10px;padding:14px;color:var(--red);font-size:13px;margin:10px 0}
 
-/* ── 스튜디오 링크 ── */
-.studio-link{text-align:center;padding:20px 0 16px;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
-.studio-link a{font-size:11px;color:var(--fg3);text-decoration:none;border:1px solid var(--border);border-radius:6px;padding:4px 12px}
-.studio-link a:hover{color:var(--fg2)}
-
-/* ── 사주원리 탭 ── */
-.theory-wrap{margin-top:14px}
-.theory-section{margin-bottom:24px}
-.theory-ttl{font-family:var(--fdisp);font-size:15px;font-weight:800;color:var(--gold);margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--border)}
-.ohang-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:8px}
-.ohang-card{border-radius:10px;padding:10px 6px;text-align:center}
-.ohang-hanja{font-size:22px;font-weight:900;display:block;line-height:1.1}
-.ohang-hangul{font-size:11px;font-weight:700;display:block;margin:3px 0}
-.ohang-desc{font-size:9px;line-height:1.4;opacity:.85}
-.stem-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:8px}
-.stem-card{border-radius:8px;padding:8px 4px;text-align:center;border:1.5px solid transparent}
-.stem-hanja{font-size:18px;font-weight:900;display:block}
-.stem-kor{font-size:10px;font-weight:700;display:block;margin:2px 0}
-.stem-attr{font-size:9px;opacity:.8;line-height:1.3}
-.branch-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-bottom:8px}
-.branch-card{border-radius:8px;padding:7px 3px;text-align:center;border:1.5px solid transparent}
-.branch-hanja{font-size:16px;font-weight:900;display:block}
-.branch-kor{font-size:9px;font-weight:700;display:block;margin:1px 0}
-.branch-attr{font-size:8.5px;opacity:.8;line-height:1.2}
-.sipsung-table{width:100%;border-collapse:collapse;font-size:11px;overflow-x:auto;display:block}
-.sipsung-table th{background:var(--card2);padding:7px;text-align:center;font-weight:700;border:1px solid var(--border)}
-.sipsung-table td{padding:7px;border:1px solid var(--border);text-align:center;vertical-align:top;line-height:1.4}
-.highlight-box{background:color-mix(in srgb,var(--gold) 8%,var(--bg2));border:1px solid color-mix(in srgb,var(--gold) 25%,var(--border));border-radius:10px;padding:12px 14px;font-size:12px;line-height:1.7;color:var(--fg2);margin-top:8px}
-.flow-wrap{overflow-x:auto;margin-bottom:10px}
-.saju-pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:10px 0}
-.pillar{border-radius:10px;overflow:hidden;border:1.5px solid var(--border2)}
-.pillar-label{text-align:center;font-size:9px;font-weight:700;padding:5px;background:var(--bg3);letter-spacing:.04em}
-.pillar-stem{text-align:center;font-size:24px;font-weight:900;padding:12px 6px;border-bottom:1px solid var(--border);font-family:var(--fdisp)}
-.pillar-branch{text-align:center;font-size:24px;font-weight:900;padding:12px 6px;font-family:var(--fdisp)}
+/* ── 로딩 ── */
+.spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite;margin:32px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 
 <!-- ── 히어로 ── -->
 <div class="hero">
-  <a href="https://claude.ai/artifact/MqnXf8FMHzM6KmovxJAwmf" target="_blank" class="seller-badge">⚙️ 판매자용</a>
+  <div class="page-switcher">
+    <span class="psw-tab active">👤 소비자용</span>
+    <a href="https://claude.ai/artifact/MqnXf8FMHzM6KmovxJAwmf" target="_blank" class="psw-tab inactive">⚙️ 판매자용</a>
+  </div>
   <div class="hero-brand"><span class="hero-logo">🔮</span><em>사주마루</em> 명리분석</div>
   <div class="hero-tagline">전통 사주명리학 기반 · 생년월일시 입력</div>
+  <div class="hero-badge">📋 분석 신청</div>
 </div>
 
-<!-- ── 스크롤 래퍼 ── -->
 <div class="app-scroll" id="appScroll">
 <div class="inner">
 
 <!-- ── 스텝 바 ── -->
 <div class="steps" id="stepBar" style="margin-top:20px">
   <div class="step-dot active" id="s1">① 정보</div>
-  <div class="step-dot" id="s2">② 항목</div>
-  <div class="step-dot" id="s3">③ 결과</div>
+  <div class="step-dot" id="s2">② 서비스</div>
+  <div class="step-dot" id="s3">③ 완료</div>
 </div>
 
 <!-- ══ STEP 1 ══ -->
@@ -179,6 +152,11 @@ body{display:flex;flex-direction:column;padding:0;overflow:hidden}
   <div class="field">
     <label>이름 <span style="font-weight:400;color:var(--fg3)">(한글)</span></label>
     <input type="text" id="iName" placeholder="홍길동">
+  </div>
+  <div class="field">
+    <label>연락처 <span style="font-weight:400;color:var(--fg3)">(전화·카카오·이메일)</span></label>
+    <input type="text" id="iContact" placeholder="010-0000-0000 또는 카카오 ID">
+    <div class="hint">결과 전달을 위해 필요합니다</div>
   </div>
   <div class="row2">
     <div class="field">
@@ -211,154 +189,116 @@ body{display:flex;flex-direction:column;padding:0;overflow:hidden}
     </div>
   </div>
   <div class="field">
-    <label>출생지 <span style="font-weight:400;color:var(--fg3)">(경도보정 · 선택)</span></label>
+    <label>출생지 <span style="font-weight:400;color:var(--fg3)">(선택)</span></label>
     <select id="iCity">
-      <option value="">미선택 (보정 없음)</option>
+      <option value="">미선택</option>
       <optgroup label="수도권">
-        <option value="서울">서울 (+32분)</option>
-        <option value="인천">인천 (+33분)</option>
-        <option value="수원">수원 (+32분)</option>
-        <option value="부천">부천 (+33분)</option>
+        <option value="서울">서울</option><option value="인천">인천</option>
+        <option value="수원">수원</option><option value="부천">부천</option>
       </optgroup>
       <optgroup label="충청">
-        <option value="대전">대전 (+30분)</option>
-        <option value="청주">청주 (+30분)</option>
+        <option value="대전">대전</option><option value="청주">청주</option>
       </optgroup>
       <optgroup label="경상">
-        <option value="부산">부산 (+24분)</option>
-        <option value="대구">대구 (+26분)</option>
-        <option value="울산">울산 (+23분)</option>
-        <option value="경주">경주 (+26분)</option>
+        <option value="부산">부산</option><option value="대구">대구</option>
+        <option value="울산">울산</option><option value="경주">경주</option>
       </optgroup>
       <optgroup label="전라">
-        <option value="광주">광주 (+33분)</option>
-        <option value="전주">전주 (+31분)</option>
-        <option value="목포">목포 (+35분)</option>
+        <option value="광주">광주</option><option value="전주">전주</option><option value="목포">목포</option>
       </optgroup>
       <optgroup label="강원">
-        <option value="춘천">춘천 (+29분)</option>
-        <option value="강릉">강릉 (+25분)</option>
+        <option value="춘천">춘천</option><option value="강릉">강릉</option>
       </optgroup>
       <optgroup label="제주">
-        <option value="제주">제주 (+34분)</option>
-        <option value="서귀포">서귀포 (+34분)</option>
+        <option value="제주">제주</option><option value="서귀포">서귀포</option>
       </optgroup>
     </select>
-    <div class="hint">표준시(KST)는 동경 135° 기준 — 실제 출생지 경도로 보정합니다</div>
   </div>
   <div class="field">
     <label>한자이름 <span style="font-weight:400;color:var(--fg3)">(선택)</span></label>
     <input type="text" id="iHanjaName" placeholder="洪吉童">
-    <div class="hint">입력 시 성명학·획수·오행 분석이 포함됩니다</div>
+    <div class="hint">입력 시 성명학·획수·오행 분석 포함</div>
   </div>
   <div class="field">
     <label>현재 거주지 <span style="font-weight:400;color:var(--fg3)">(선택)</span></label>
     <input type="text" id="iAddress" placeholder="예: 서울 강남구, 부산 해운대구">
   </div>
-  <div id="step1Error" hidden style="background:rgba(255,85,119,.12);border:1px solid var(--red);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--red);margin-bottom:10px"></div>
-  <button class="btn btn-primary" onclick="goStep2()">다음 → 항목 선택</button>
+  <div id="step1Error" hidden class="error-box"></div>
+  <button class="btn btn-primary" onclick="goStep2()">다음 → 서비스 선택</button>
   <div style="height:24px"></div>
 </div>
 
 <!-- ══ STEP 2 ══ -->
 <div id="step2" hidden>
-  <p class="choice-title">분석 유형을 선택하세요</p>
-  <div class="choice-grid">
-    <div class="choice-card" onclick="runAnalysis('full')">
+  <p class="choice-title">원하시는 분석 서비스를 선택하세요</p>
+  <div class="choice-grid" id="choiceGrid">
+    <div class="choice-card" data-svc="분석(종합)" onclick="selectSvc(this)">
       <div class="choice-icon">🔮</div>
-      <div class="choice-info">
-        <div class="choice-name">분석<span class="choice-badge badge-ai">종합</span></div>
+      <div>
+        <div class="choice-name">분석<span class="choice-badge">종합</span></div>
         <div class="choice-desc">사주 명식, 오행, 성격, 재물·직업·연애운, 2026년 월별운 · 약 20섹션 전체 보고서</div>
       </div>
     </div>
-    <div class="choice-card" onclick="runAnalysis('theory')">
+    <div class="choice-card" data-svc="사주원리(맞춤해설)" onclick="selectSvc(this)">
       <div class="choice-icon">📐</div>
-      <div class="choice-info">
-        <div class="choice-name">사주원리<span class="choice-badge badge-ai">맞춤 해설</span></div>
-        <div class="choice-desc">내 사주의 천간·지지·오행·십성·신살을 명리학 원리로 풀어드립니다</div>
+      <div>
+        <div class="choice-name">사주원리<span class="choice-badge">맞춤 해설</span></div>
+        <div class="choice-desc">천간·지지·오행·십성·신살을 명리학 원리로 개인 맞춤 해설</div>
       </div>
     </div>
-    <div class="choice-card" onclick="runAnalysis('simple')">
+    <div class="choice-card" data-svc="간단본(요약)" onclick="selectSvc(this)">
       <div class="choice-icon">📋</div>
-      <div class="choice-info">
-        <div class="choice-name">간단본<span class="choice-badge badge-free">빠름</span></div>
-        <div class="choice-desc">성격·재물·연애·직업·2026년 핵심 요약 · 2,500~3,500자 간단 풀이</div>
+      <div>
+        <div class="choice-name">간단본<span class="choice-badge">요약</span></div>
+        <div class="choice-desc">성격·재물·연애·직업·2026년 핵심 요약 풀이</div>
       </div>
     </div>
   </div>
-  <div class="btn-row">
-    <button class="btn btn-outline" onclick="goStep1()">← 이전</button>
+  <div class="field" style="margin-top:4px">
+    <label>요청사항 <span style="font-weight:400;color:var(--fg3)">(선택)</span></label>
+    <textarea id="iNotes" placeholder="특별히 알고 싶은 점이나 요청사항을 적어주세요"></textarea>
+  </div>
+  <div id="step2Error" hidden class="error-box"></div>
+  <button class="btn btn-gold" id="submitBtn" onclick="submitAppl()" disabled>신청하기</button>
+  <div class="btn-row" style="margin-top:8px">
+    <button class="btn btn-outline" onclick="goStep1Back()">← 이전</button>
   </div>
   <div style="height:24px"></div>
 </div>
 
-<!-- ══ STEP 3 ══ -->
+<!-- ══ STEP 3 — 완료 ══ -->
 <div id="step3" hidden>
-  <div id="loadingView" class="loading">
+  <div id="loadingView" style="text-align:center;padding:48px 0">
     <div class="spinner"></div>
-    <p id="loadingMsg">사주를 분석 중입니다…<br>잠시만 기다려 주세요.</p>
+    <p style="color:var(--fg2);font-size:14px">신청 중…</p>
+  </div>
+  <div id="completeView" hidden class="complete-wrap">
+    <div class="complete-icon">✅</div>
+    <div class="complete-title">신청이 완료되었습니다</div>
+    <div class="complete-msg">분석 결과는 입력하신 연락처로<br>빠른 시일 내에 전달드립니다.</div>
+    <div class="complete-card" id="summaryCard"></div>
+    <div class="appl-no" id="applNo"></div>
+    <button class="btn btn-outline" style="margin-top:20px" onclick="resetAll()">새 신청</button>
   </div>
   <div id="errorView" hidden></div>
-  <div id="resultView" hidden>
-    <div class="result-wrap">
-      <div class="result-head">
-        <span class="result-head-name" id="resultTitle">분석 결과</span>
-        <button class="copy-btn" onclick="copyResult()">📋 복사</button>
-      </div>
-      <div class="result-body" id="resultBody"></div>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-outline" onclick="goStep2()">← 다시 선택</button>
-      <button class="btn btn-primary" onclick="goStep1()">새 분석</button>
-    </div>
-  </div>
   <div style="height:24px"></div>
 </div>
-
-
 
 </div><!-- /.inner -->
 </div><!-- /.app-scroll -->
 
 <script>
-// ─── 상수 ────────────────────────────────────────────────────────────────
 const GC=["갑","을","병","정","무","기","경","신","임","계"];
 const GJ=["자","축","인","묘","진","사","오","미","신","유","술","해"];
 function getGanji(y){return GC[(y-4)%10]+GJ[(y-4)%12]+"년";}
 
-const CITY_CORR={
-  서울:32,인천:33,수원:32,부천:33,
-  대전:30,청주:30,
-  부산:24,대구:26,울산:23,경주:26,
-  광주:33,전주:31,목포:35,
-  춘천:29,강릉:25,
-  제주:34,서귀포:34
-};
+let dbCap=null;
+let selectedSvc="";
 
-function calcAdjustedTime(hour,min,city,unknown){
-  if(unknown) return{adjHour:null,adjMin:null,adjNote:""};
-  let h=hour||0, m=min||0;
-  const notes=[];
-  const corr=CITY_CORR[city]||0;
-  if(corr){
-    let tot=h*60+m+corr;
-    if(tot>=1440) tot-=1440;
-    h=Math.floor(tot/60); m=tot%60;
-    notes.push(city+"경도보정");
-  }
-  return{adjHour:h, adjMin:m, adjNote:notes.join("·")};
-}
-
-// ─── 상태 ────────────────────────────────────────────────────────────────
-let sampleCap=null;
-let fullResultText='';
-
-// ─── 초기화 ──────────────────────────────────────────────────────────────
 (async function init(){
-  try{ sampleCap=await window.claude?.use("sample"); }catch(e){}
+  try{ dbCap=await window.claude?.use("db"); }catch(e){}
 })();
 
-// ─── 유틸 ────────────────────────────────────────────────────────────────
 function v(id){return (document.getElementById(id)||{}).value||"";}
 function show(id){const el=document.getElementById(id);if(el)el.hidden=false;}
 function hide(id){const el=document.getElementById(id);if(el)el.hidden=true;}
@@ -379,182 +319,89 @@ function scrollTop(){
   if(el) el.scrollTop=0;
 }
 
-// ─── 스텝 이동 ───────────────────────────────────────────────────────────
-function goStep1(){
+function selectSvc(card){
+  document.querySelectorAll(".choice-card").forEach(c=>c.classList.remove("selected"));
+  card.classList.add("selected");
+  selectedSvc=card.dataset.svc;
+  document.getElementById("submitBtn").disabled=false;
+}
+
+function goStep1Back(){
   show("step1");hide("step2");hide("step3");setStep(1);scrollTop();
 }
+
 function goStep2(){
+  const name=v("iName"), contact=v("iContact");
   const year=parseInt(v("iYear")),month=parseInt(v("iMonth")),day=parseInt(v("iDay"));
   const errEl=document.getElementById("step1Error");
   errEl.hidden=true;
-  if(!year||!month||!day){
-    errEl.textContent="⚠️ 생년월일(년/월/일)을 모두 입력해 주세요.";
-    errEl.hidden=false;
-    return;
-  }
+  if(!name){errEl.textContent="⚠️ 이름을 입력해 주세요.";errEl.hidden=false;return;}
+  if(!contact){errEl.textContent="⚠️ 연락처를 입력해 주세요.";errEl.hidden=false;return;}
+  if(!year||!month||!day){errEl.textContent="⚠️ 생년월일(년/월/일)을 모두 입력해 주세요.";errEl.hidden=false;return;}
   hide("step1");show("step2");hide("step3");setStep(2);scrollTop();
 }
 
-// ─── 분석 실행 ───────────────────────────────────────────────────────────
-async function runAnalysis(type){
-  hide("step1");hide("step2");show("step3");setStep(3);scrollTop();
-  show("loadingView");hide("errorView");hide("resultView");
-
-  if(!sampleCap){
-    hide("loadingView");
-    show("errorView");
-    document.getElementById("errorView").innerHTML='<div class="error-box">서비스를 불러올 수 없습니다.<br>claude.ai 로그인 후 다시 시도해 주세요.</div>';
+async function submitAppl(){
+  if(!selectedSvc){
+    document.getElementById("step2Error").textContent="⚠️ 서비스를 선택해 주세요.";
+    document.getElementById("step2Error").hidden=false;
     return;
   }
+  hide("step2");show("step3");setStep(3);scrollTop();
+  show("loadingView");hide("completeView");hide("errorView");
 
-  const name=v("iName")||"의뢰인";
+  const name=v("iName"), contact=v("iContact"), gender=v("iGender");
+  const cal=v("iCal"), year=parseInt(v("iYear")), month=parseInt(v("iMonth")), day=parseInt(v("iDay"));
+  const unknown=document.getElementById("iUnknownTime").checked;
+  const hour=unknown?"모름":(v("iHour")||"미입력");
+  const min=unknown?"모름":(v("iMin")||"0");
+  const city=v("iCity")||"미선택";
   const hanja=v("iHanjaName");
   const address=v("iAddress");
-  const gender=v("iGender");
-  const cal=v("iCal");
-  const year=parseInt(v("iYear")),month=parseInt(v("iMonth")),day=parseInt(v("iDay"));
-  const unknown=document.getElementById("iUnknownTime").checked;
-  const hour=unknown?null:(parseInt(v("iHour"))||null);
-  const min=unknown?null:(parseInt(v("iMin"))||0);
-  const city=v("iCity");
-  const {adjHour,adjMin,adjNote}=calcAdjustedTime(hour,min,city,unknown);
+  const notes=v("iNotes");
   const ganji=getGanji(year);
-  const calNote=cal==="음력"?"(음력)":"(양력)";
-  const timeStr=unknown?"시간 미상":(adjHour!==null?`${adjHour}시 ${adjMin}분${adjNote?" ["+adjNote+"]":""}`:"-");
-  const nameStr=name+(hanja?`(${hanja})`:"");
-  const addrStr=address?`\n거주지: ${address}`:""`;
+  const applId="SJ"+Date.now().toString(36).toUpperCase();
+  const createdAt=new Date().toLocaleString("ko-KR");
 
-  const body=document.getElementById("resultBody");
-  body.textContent="";
-
-  let prompt="";
-
-  if(type==="simple"){
-    document.getElementById("resultTitle").textContent=`📋 ${nameStr} — 간단 사주 풀이`;
-    document.getElementById("loadingMsg").textContent="간단 사주 풀이 중… 1~2분 소요됩니다.";
-    prompt=`당신은 35년 경력의 전통 사주명리학 전문가입니다. 아래 정보로 간단본 풀이를 작성해주세요.
-
-【의뢰인 정보】
-이름: ${nameStr} / 성별: ${gender}
-생년월일: ${cal} ${year}년 ${month}월 ${day}일 (${ganji}) / 시간: ${timeStr}${addrStr}
-
-【작성 요령】
-- 반말 금지, 격식체로 작성 / 총 2,500~3,500자 목표 / 한자 병기 필수
-- 아래 7개 항목을 반드시 포함:
-
-1. 📜 명식 개요 — 사주팔자 구성 요약, 일간 오행, 신강/신약 판단 (300자)
-2. 🌟 기질과 성격 — 타고난 성향, 강점, 약점 (400자)
-3. 💰 재물운 — 재물을 모으는 방식, 적합한 재테크 방향 (300자)
-4. 💼 직업·명예운 — 어울리는 직종 5개 이상, 사회운 흐름 (300자)
-5. 💝 연애·결혼운 — 이성 인연, 배우자 유형, 결혼 시기 (300자)
-6. 🗓️ 2026년 운세 — 丙午年 대운·세운 적용, 올해의 키워드 3가지 (400자)
-7. ✨ 개운법·총평 — 용신 오행 기반 개운법, 인생 핵심 조언 (300자)
-
-각 항목 제목(번호+이모지+제목)을 반드시 포함하고 내용을 충실하게 작성하세요.`;
-  } else if(type==="theory"){
-    document.getElementById("resultTitle").textContent=`📐 ${nameStr} — 사주원리 해설`;
-    document.getElementById("loadingMsg").textContent="사주원리 분석 중… 2~3분 소요됩니다.";
-    prompt=`당신은 35년 경력의 사주명리학 전문가입니다. 아래 의뢰인의 사주를 먼저 계산한 뒤, 명리학 원리를 일반인이 이해할 수 있도록 맞춤 해설해 주세요.
-
-【의뢰인 정보】
-이름: ${nameStr} / 성별: ${gender}
-생년월일: ${cal} ${year}년 ${month}월 ${day}일 (${ganji}) / 시간: ${timeStr}${addrStr}
-
-【출력 구조】
-1. 🏛️ 사주팔자(四柱八字) 명식표
-   - 년주·월주·일주·시주 천간(天干)+지지(地支) 한자로 표기 (예: 甲午 / 丁卯 / 壬子 / 壬子)
-   - 각 글자의 음양오행 설명
-   - 일간(나 자신)이 어떤 기운인지 쉬운 말로 설명
-
-2. 🌊 오행(五行) 분포와 해석
-   - 목·화·토·금·수 개수 세기
-   - 강한 오행과 약한 오행 해석 (내 성격·운명에 미치는 영향)
-   - 용신(用神)·기신(忌神) 설명
-
-3. ⚡ 십성(十星) — 나와 주변의 관계
-   - 내 사주에 등장하는 십성 분석
-   - 비겁·식상·재성·관성·인성 중 강한 것과 약한 것
-   - 내 삶에 미치는 의미를 쉬운 말로
-
-4. 🔮 신살(神殺) 확인
-   - 도화살·역마살·천을귀인·문창귀인 등 유무
-   - 있는 신살의 의미와 발현 방식
-
-5. 📅 2026년 丙午年 해설
-   - 병오년이 내 사주와 어떻게 상호작용하는지
-   - 합·충·형·파·해 관계 설명
-   - 올해 가장 주목할 오행·십성
-
-한자는 반드시 한글 병기 (예: 甲木(갑목)), 어려운 용어는 괄호로 쉬운 풀이 달아주세요.`;
-  } else {
-    // full analysis
-    document.getElementById("resultTitle").textContent=`🔮 ${nameStr} — 종합 사주 분석`;
-    document.getElementById("loadingMsg").textContent="종합 사주 분석 중… 3~5분 소요됩니다.\n창을 닫지 마세요.";
-    prompt=`당신은 30년 경력의 사주명리학 전문가입니다. 아래 의뢰인의 종합 사주 분석 보고서(약 20페이지)를 작성해 주세요.
-
-【고객 정보】
-성함: ${nameStr} / 성별: ${gender}
-생년월일: ${cal} ${year}년 ${month}월 ${day}일 (${ganji}) / 시간: ${timeStr}${addrStr}
-
-【사전 계산 — 먼저 계산 후 모든 섹션에 인용】
-- 사주 명식: 년주·월주·일주·시주 천간+지지
-- 오행 분포: 목·화·토·금·수 개수, 용신·희신·기신
-- 십성·12운성·신살·공망 계산
-- 2026년 월별 운 강도 계산
-- 대운 핵심 시기: 가장 풀리는 10년 + 최고의 1년
-
-【보고서 — 아래 순서대로 빠짐없이 작성】
-
-1. 📜 인사말 & 사주 소개 (1페이지)
-   - ${nameStr} 선생님 호칭, 이 보고서 활용법
-2. 🌟 사주 명식(四柱八字) 분석표 (2페이지)
-   - 년주/월주/일주/시주 표, 음양오행, 공망
-3. 🌊 오행 분포 & 상생상극 (2페이지)
-   - 오행 개수, 용신·희신·기신, 상생상극 설명
-4. 💎 일간 성향·기질 (3페이지)
-   - 성격과 기질, 대인관계, 재능과 직업, 건강
-5. 🌙 평생운 (2페이지)
-   - 타고난 운의 전체 흐름, 인생 3단계, 황금기
-6. 💝 연애운·결혼운 (2페이지)
-   - 연애 스타일, 배우자 유형, 궁합, 결혼 시기
-7. 💰 재물운 (2페이지)
-   - 재물 취득 방식, 사업 vs 직장, 부유해지는 시기
-8. 🌿 건강운 (2페이지)
-   - 취약한 장기·부위, 주의 시기, 관리법
-9. 🚀 직업·명예운 (2페이지)
-   - 적합한 직종 10가지+, 승진 시기, 행운의 방향
-10. 📅 2026년 월별 운세 (3페이지)
-    - 1월~12월 각각: 운 강도, 핵심 키워드 2개, 조언
-    - 가장 주목할 시기 / 가장 조심할 시기
-11. ✨ 마무리 조언 & 행운 정보 (1페이지)
-    - 행운의 색상·방향·숫자, 인생 핵심 조언
-
-【작성 원칙】
-- 호칭: "${nameStr} 선생님" / 어조: 따뜻하고 전문적이며 희망적
-- 사주 명식·오행·상생상극을 각 섹션에 구체적으로 인용
-- 실생활 적용 가능한 구체적 시기·날짜·방향·숫자 포함
-- 한자 병기 필수 (예: 甲木(갑목)) / 각 섹션 이모지+번호+제목 포함`;
-  }
+  const data={
+    applId, name, contact, gender,
+    calendar:cal, year, month, day, ganji,
+    hour, min, city, hanja, address,
+    service:selectedSvc, notes, createdAt,
+    status:"접수"
+  };
 
   try{
-    await sampleCap(prompt,{
-      modelTier:"complex",
-      onText({text}){
-        fullResultText=text;
-        body.textContent=text;
-      }
-    });
+    if(dbCap){
+      await dbCap.doc("applications/"+applId).set(data);
+    }
     hide("loadingView");
-    show("resultView");
+    show("completeView");
+    document.getElementById("summaryCard").innerHTML=`
+      <div class="complete-row"><span class="lbl">이름</span><span class="val">${name}${hanja?" ("+hanja+")":""}</span></div>
+      <div class="complete-row"><span class="lbl">연락처</span><span class="val">${contact}</span></div>
+      <div class="complete-row"><span class="lbl">생년월일</span><span class="val">${cal} ${year}.${String(month).padStart(2,"0")}.${String(day).padStart(2,"0")} (${ganji})</span></div>
+      <div class="complete-row"><span class="lbl">출생시간</span><span class="val">${unknown?"모름":hour+"시 "+min+"분"}</span></div>
+      <div class="complete-row"><span class="lbl">서비스</span><span class="val" style="color:var(--accent)">${selectedSvc}</span></div>
+      ${notes?`<div class="complete-row"><span class="lbl">요청사항</span><span class="val">${notes}</span></div>`:""}
+    `;
+    document.getElementById("applNo").textContent="신청번호: "+applId;
   }catch(e){
     hide("loadingView");
     show("errorView");
-    document.getElementById("errorView").innerHTML=`<div class="error-box">오류: ${e.message||"분석에 실패했습니다."}<br><br><button class="btn btn-outline" onclick="goStep2()" style="width:auto;padding:8px 20px;margin-top:8px">← 다시 선택</button></div>`;
+    document.getElementById("errorView").innerHTML=`<div class="error-box">오류가 발생했습니다: ${e.message||"잠시 후 다시 시도해 주세요."}<br><br><button class="btn btn-outline" onclick="goStep2()" style="width:auto;padding:8px 20px;margin-top:8px">← 다시 선택</button></div>`;
   }
 }
 
-function copyResult(){
-  navigator.clipboard?.writeText(fullResultText||document.getElementById("resultBody")?.textContent||"")
-    .then(()=>alert("복사되었습니다!")).catch(()=>{});
+function resetAll(){
+  selectedSvc="";
+  document.querySelectorAll(".choice-card").forEach(c=>c.classList.remove("selected"));
+  document.getElementById("submitBtn").disabled=true;
+  ["iName","iContact","iHanjaName","iAddress","iNotes","iHour","iMin","iYear","iMonth","iDay"].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.value="";
+  });
+  document.getElementById("iUnknownTime").checked=false;
+  show("step1");hide("step2");hide("step3");setStep(1);scrollTop();
 }
 </script>
