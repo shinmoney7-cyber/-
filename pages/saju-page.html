@@ -1,4 +1,10 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}
+/* auto-info-card */
+.auto-info-card{background:color-mix(in srgb,var(--accent) 8%,var(--bg2));border:1px solid color-mix(in srgb,var(--accent) 25%,transparent);border-radius:12px;padding:12px 16px;margin-bottom:18px;font-size:13px;color:var(--fg2);display:flex;align-items:center;gap:10px}
+.auto-info-card .aic-icon{font-size:18px;flex-shrink:0}
+.auto-info-card .aic-text{flex:1}
+.auto-info-card .aic-val{font-weight:700;color:var(--fg);font-size:14px;margin-top:2px}
+</style></head><body>
 <title>사주마루 스튜디오</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;600;700&display=swap">
 <style>
@@ -759,6 +765,30 @@ function switchTab(name){
   });
   if(name==="theory") refreshTheoryTab();
 }
+// ─── 기본정보 → 하위 섹션 자동 동기화 ──────────────────────────────────────
+function syncSubSections(){
+  const g=id=>document.getElementById(id);
+  const fv=id=>g(id)?.value||"";
+  const pairs=[["simName","iName"],["simHanja","iHanjaName"],["simYear","iYear"],["simMonth","iMonth"],["simDay","iDay"],["simHour","iHour"],["simMin","iMin"],
+               ["cheolName","iName"],["cheolHanja","iHanjaName"],["cheolYear","iYear"],["cheolMonth","iMonth"],["cheolDay","iDay"],["cheolHour","iHour"],["cheolMin","iMin"]];
+  pairs.forEach(([t,s])=>{const te=g(t);const sv=fv(s);if(te)te.value=sv;});
+  ["simGender","cheolGender"].forEach(id=>{const e=g(id);if(e)e.value=fv("iGender");});
+  ["simCal","cheolCal"].forEach(id=>{const e=g(id);if(e)e.value=fv("iCal");});
+  const unk=g("iUnknownTime")?.checked||false;
+  ["simUnknown","cheolUnknown"].forEach(id=>{const e=g(id);if(e)e.checked=unk;});
+  const name=fv("iName"),year=fv("iYear"),month=fv("iMonth"),day=fv("iDay"),gender=fv("iGender");
+  const label=name?`${name} · ${gender} · ${year}년 ${month}월 ${day}일`:"기본 정보를 먼저 입력해 주세요";
+  ["simAutoVal","cheolAutoVal"].forEach(id=>{const e=g(id);if(e)e.textContent=label;});
+}
+(function initAutoSync(){
+  ["iName","iYear","iMonth","iDay","iHour","iMin","iHanjaName"].forEach(id=>{
+    document.getElementById(id)?.addEventListener("input",syncSubSections);
+  });
+  ["iGender","iCal"].forEach(id=>{
+    document.getElementById(id)?.addEventListener("change",syncSubSections);
+  });
+  document.getElementById("iUnknownTime")?.addEventListener("change",syncSubSections);
+})();
 // ─── 섹션 nav 스크롤 추적 ────────────────────────────────────────────────
 (function initSecNav(){
   const secs=["sec-analyze","sec-simple","sec-theory","sec-hanja","sec-cheol"];
@@ -1468,7 +1498,8 @@ ${regionNote} / ${corrNote} / ${yajaNote}
     renderIsaSection(d.isa||null, region);
     // Generate personalized theory explanations (non-blocking)
     generatePersonalizedTheory(d, name, gender, year, month, day, timeStr).catch(()=>{});
-    // Auto-chain: fill and trigger 간단본 + 철학원 풀이
+    // Auto-chain: sync fields then trigger 간단본 + 철학원 풀이
+    syncSubSections();
     setTimeout(()=>{
       generateSimple().catch(()=>{});
       generateCheol().catch(()=>{});
@@ -3428,39 +3459,23 @@ function copyCheol(){
   <div class="section-title">📋 사주마루 간단본</div>
   <div class="simple-notice"><b>사주마루 간단본</b>은 위 분석 섹션의 생년월일·성별·이름 정보를 그대로 활용합니다.<br>위 <b>🔮 분석 → Step 1</b>에서 정보를 먼저 입력해 주세요.</div>
 
-  <div class="field">
-    <label>이름 (직접 입력 가능)</label>
-    <input type="text" id="simName" placeholder="홍길동">
+  <div hidden aria-hidden="true">
+    <input type="text" id="simName">
+    <input type="text" id="simHanja">
+    <select id="simGender"><option value="여성">여성</option><option value="남성">남성</option></select>
+    <select id="simCal"><option value="양력">양력</option><option value="음력">음력</option></select>
+    <input type="number" id="simYear">
+    <input type="text" id="simMonth">
+    <input type="text" id="simDay">
+    <input type="number" id="simHour">
+    <input type="number" id="simMin">
+    <input type="checkbox" id="simUnknown">
   </div>
-  <div class="field">
-    <label>한자이름 (선택)</label>
-    <input type="text" id="simHanja" placeholder="洪吉童">
-  </div>
-  <div class="row2">
-    <div class="field">
-      <label>성별</label>
-      <select id="simGender"><option value="여성">여성</option><option value="남성">남성</option></select>
+  <div class="auto-info-card">
+    <div class="aic-icon">✅</div>
+    <div class="aic-text">위 기본 정보가 자동으로 적용됩니다
+      <div class="aic-val" id="simAutoVal">—</div>
     </div>
-    <div class="field">
-      <label>양력 / 음력</label>
-      <select id="simCal"><option value="양력">양력</option><option value="음력">음력</option></select>
-    </div>
-  </div>
-  <div class="field">
-    <label>생년월일</label>
-    <div class="row3">
-      <input type="number" id="simYear" placeholder="1990" min="1920" max="2015">
-      <input type="text" inputmode="numeric" id="simMonth" placeholder="월" maxlength="2">
-      <input type="text" inputmode="numeric" id="simDay" placeholder="일" maxlength="2">
-    </div>
-  </div>
-  <div class="field">
-    <label>출생 시간</label>
-    <div class="row2">
-      <input type="number" id="simHour" placeholder="시 (0~23)" min="0" max="23">
-      <input type="number" id="simMin" placeholder="분 (0~59)" min="0" max="59">
-    </div>
-    <div class="hint"><label class="check-row" style="display:inline-flex"><input type="checkbox" id="simUnknown"> 출생 시간 모름</label></div>
   </div>
 
   <button class="btn btn-primary" id="btnSimple" onclick="generateSimple()">📋 간단 사주 보기</button>
@@ -3529,47 +3544,24 @@ function copyCheol(){
   <div class="section-title">🏛️ 철학원 풀이</div>
   <div class="simple-notice">전통 철학원 방식의 사주 풀이입니다. <b>이름·한자이름</b>을 포함해 사주명식과 성명학을 함께 분석합니다.<br>格局·用神·十星 기반의 전통 명리학 문체로 작성됩니다.</div>
 
-  <div class="field">
-    <label>이름 (한글)</label>
-    <input type="text" id="cheolName" placeholder="홍길동">
+  <div hidden aria-hidden="true">
+    <input type="text" id="cheolName">
+    <input type="text" id="cheolHanja">
+    <select id="cheolGender"><option value="여성">여성</option><option value="남성">남성</option></select>
+    <select id="cheolCal"><option value="양력">양력</option><option value="음력">음력</option></select>
+    <input type="number" id="cheolYear">
+    <input type="text" id="cheolMonth">
+    <input type="text" id="cheolDay">
+    <input type="number" id="cheolHour">
+    <input type="number" id="cheolMin">
+    <input type="checkbox" id="cheolUnknown">
+    <select id="cheolDepth"><option value="brief">간단</option><option value="full" selected>심층</option></select>
   </div>
-  <div class="field">
-    <label>한자이름 (선택 — 더 정밀한 성명학 분석)</label>
-    <input type="text" id="cheolHanja" placeholder="洪吉童">
-  </div>
-  <div class="row2">
-    <div class="field">
-      <label>성별</label>
-      <select id="cheolGender"><option value="여성">여성</option><option value="남성">남성</option></select>
+  <div class="auto-info-card">
+    <div class="aic-icon">✅</div>
+    <div class="aic-text">위 기본 정보가 자동으로 적용됩니다
+      <div class="aic-val" id="cheolAutoVal">—</div>
     </div>
-    <div class="field">
-      <label>양력 / 음력</label>
-      <select id="cheolCal"><option value="양력">양력</option><option value="음력">음력</option></select>
-    </div>
-  </div>
-  <div class="field">
-    <label>생년월일</label>
-    <div class="row3">
-      <input type="number" id="cheolYear" placeholder="1990" min="1920" max="2015">
-      <input type="text" inputmode="numeric" id="cheolMonth" placeholder="월" maxlength="2">
-      <input type="text" inputmode="numeric" id="cheolDay" placeholder="일" maxlength="2">
-    </div>
-  </div>
-  <div class="field">
-    <label>출생 시간</label>
-    <div class="row2">
-      <input type="number" id="cheolHour" placeholder="시 (0~23)" min="0" max="23">
-      <input type="number" id="cheolMin" placeholder="분 (0~59)" min="0" max="59">
-    </div>
-    <div class="hint"><label class="check-row" style="display:inline-flex"><input type="checkbox" id="cheolUnknown"> 출생 시간 모름</label></div>
-  </div>
-
-  <div class="field">
-    <label>풀이 깊이</label>
-    <select id="cheolDepth">
-      <option value="brief">간단 풀이 (3,000자·3~5분)</option>
-      <option value="full" selected>심층 풀이 (8,000자·8~12분)</option>
-    </select>
   </div>
 
   <button class="btn btn-primary" id="btnCheol" onclick="generateCheol()">🏛️ 철학원 풀이 시작</button>
