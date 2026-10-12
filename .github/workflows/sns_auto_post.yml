@@ -1,0 +1,106 @@
+name: 사주마루 SNS 전체 자동 포스팅
+
+on:
+  schedule:
+    - cron: '0 0 * * 1'  # 매주 월요일 오전 9시 KST
+  workflow_dispatch:
+    inputs:
+      content_type:
+        description: '콘텐츠 유형 (weekly_saju / daily_tip / promotion)'
+        required: false
+        default: 'weekly_saju'
+      platforms:
+        description: '게시할 플랫폼 (all / youtube / instagram / facebook / naver / tiktok)'
+        required: false
+        default: 'all'
+
+jobs:
+  generate-and-post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install anthropic requests Pillow
+          sudo apt-get install -y ffmpeg fonts-noto-cjk
+
+      - name: 1. 콘텐츠 생성 (Claude AI + 이미지 카드)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CONTENT_TYPE: ${{ github.event.inputs.content_type || 'weekly_saju' }}
+        run: python scripts/sns_content_gen.py
+
+      - name: 2. TikTok 드래프트 게시
+        if: ${{ github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'tiktok' || github.event.inputs.platforms == '' }}
+        env:
+          TIKTOK_CLIENT_KEY: ${{ secrets.TIKTOK_CLIENT_KEY }}
+          TIKTOK_CLIENT_SECRET: ${{ secrets.TIKTOK_CLIENT_SECRET }}
+          TIKTOK_REFRESH_TOKEN: ${{ secrets.TIKTOK_REFRESH_TOKEN }}
+        run: |
+          # sns_output/meta.json → tiktok_output/meta.json 심링크
+          mkdir -p scripts/tiktok_output
+          cp scripts/sns_output/meta.json scripts/tiktok_output/meta.json
+          python scripts/tiktok_post.py
+
+      - name: 3. YouTube 쇼츠 업로드
+        if: ${{ github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'youtube' || github.event.inputs.platforms == '' }}
+        env:
+          YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
+          YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+        run: python scripts/post_youtube.py
+
+      - name: 4. Instagram 게시
+        if: ${{ github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'instagram' || github.event.inputs.platforms == '' }}
+        env:
+          INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
+          INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
+          IMAGE_HOST_URL: ${{ secrets.IMAGE_HOST_URL }}
+        run: python scripts/post_instagram.py
+
+      - name: 5. Facebook 게시
+        if: ${{ github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'facebook' || github.event.inputs.platforms == '' }}
+        env:
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          FACEBOOK_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_PAGE_ACCESS_TOKEN }}
+          IMAGE_HOST_URL: ${{ secrets.IMAGE_HOST_URL }}
+        run: python scripts/post_facebook.py
+
+      - name: 6. 네이버 블로그 게시
+        if: ${{ github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'naver' || github.event.inputs.platforms == '' }}
+        env:
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+          NAVER_ACCESS_TOKEN: ${{ secrets.NAVER_ACCESS_TOKEN }}
+          NAVER_REFRESH_TOKEN: ${{ secrets.NAVER_REFRESH_TOKEN }}
+        run: python scripts/post_naver_blog.py
+
+      - name: 7. 네이버 클립 가이드 이메일
+        if: ${{ github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'naver' || github.event.inputs.platforms == '' }}
+        env:
+          GMAIL_USER: shinmoney7@gmail.com
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+        run: python scripts/post_naver_clip.py
+
+      - name: 8. 통합 결과 알림 이메일
+        if: always()
+        env:
+          GMAIL_USER: shinmoney7@gmail.com
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+        run: python scripts/sns_notify.py
+
+      - name: 생성된 파일 아티팩트 저장
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sns-content-${{ github.run_number }}
+          path: scripts/sns_output/
+          retention-days: 7
