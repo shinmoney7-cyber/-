@@ -23,7 +23,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install playwright pypdf anthropic
+          pip install playwright pypdf anthropic requests
           playwright install chromium
           playwright install-deps chromium
 
