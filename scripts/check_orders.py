@@ -6,6 +6,9 @@ import imaplib, email, os, re, sys
 from email.header import decode_header
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).parent))
+from sms_notify import send_sms
+
 # .env 자동 로드
 _env = Path(__file__).parent / ".env"
 if _env.exists():
@@ -186,6 +189,7 @@ def run():
             if fl_res.get("success"):
                 ai_note = "AI분석메일 발송" if ai_res.get("success") else "AI분석 스킵"
                 print(f"  ✅ {order['product']} → FL완료 + {ai_note} [{dm}: {dc}]: {fl_res.get('url')}")
+                send_sms(f"[사주마루] 주문접수 {order['product']} · {dm}")
             else:
                 print(f"  ❌ {order['product']} → FL실패: {fl_res.get('error')}")
                 all_ok = False

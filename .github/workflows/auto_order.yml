@@ -34,10 +34,17 @@ jobs:
           FL_ID: "${{ secrets.FL_ID }}"
           FL_PW: "${{ secrets.FL_PW }}"
           ANTHROPIC_API_KEY: "${{ secrets.ANTHROPIC_API_KEY }}"
+          SOLAPI_API_KEY: "${{ secrets.SOLAPI_API_KEY }}"
+          SOLAPI_API_SECRET: "${{ secrets.SOLAPI_API_SECRET }}"
+          NOTIFY_PHONE: "${{ secrets.NOTIFY_PHONE }}"
         run: python scripts/check_orders.py
 
       - name: Deliver FL PDFs to customers
         env:
           GMAIL_USER: shinmoney7@gmail.com
           GMAIL_APP_PASSWORD: "${{ secrets.GMAIL_APP_PASSWORD }}"
+          SOLAPI_API_KEY: "${{ secrets.SOLAPI_API_KEY }}"
+          SOLAPI_API_SECRET: "${{ secrets.SOLAPI_API_SECRET }}"
+          SOLAPI_FROM: "${{ secrets.NOTIFY_PHONE }}"
+          NOTIFY_PHONE: "${{ secrets.NOTIFY_PHONE }}"
         run: python scripts/deliver_pdf.py
