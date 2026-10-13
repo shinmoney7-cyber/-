@@ -154,9 +154,17 @@ body{display:flex;flex-direction:column;padding:0;overflow:hidden}
     <input type="text" id="iName" placeholder="홍길동">
   </div>
   <div class="field">
-    <label>연락처 <span style="font-weight:400;color:var(--fg3)">(전화·카카오·이메일)</span></label>
+    <label>연락처</label>
     <input type="text" id="iContact" placeholder="010-0000-0000 또는 카카오 ID">
-    <div class="hint">결과 전달을 위해 필요합니다</div>
+  </div>
+  <div class="field">
+    <label>결과 받을 곳</label>
+    <select id="iContactMethod">
+      <option value="문자(SMS)">📱 문자 (SMS)</option>
+      <option value="카카오톡">💬 카카오톡</option>
+      <option value="이메일">📧 이메일</option>
+    </select>
+    <div class="hint">위 연락처로 결과를 전달해 드립니다</div>
   </div>
   <div class="row2">
     <div class="field">
@@ -276,6 +284,11 @@ body{display:flex;flex-direction:column;padding:0;overflow:hidden}
     <div class="complete-icon">✅</div>
     <div class="complete-title">신청이 완료되었습니다</div>
     <div class="complete-msg">분석 결과는 입력하신 연락처로<br>빠른 시일 내에 전달드립니다.</div>
+    <div style="background:var(--gold3,rgba(212,168,67,.12));border:1.5px solid rgba(212,168,67,.35);border-radius:12px;padding:14px 18px;margin-bottom:16px;text-align:left">
+      <div style="font-size:12px;font-weight:700;color:var(--gold);letter-spacing:.08em;margin-bottom:8px">💳 입금 계좌</div>
+      <div style="font-size:16px;font-weight:700;color:var(--fg);letter-spacing:.04em">신한은행 133-000-695010</div>
+      <div style="font-size:12px;color:var(--fg2);margin-top:4px">입금 후 신청이 처리됩니다</div>
+    </div>
     <div class="complete-card" id="summaryCard"></div>
     <div class="appl-no" id="applNo"></div>
     <button class="btn btn-outline" style="margin-top:20px" onclick="resetAll()">새 신청</button>
@@ -350,7 +363,7 @@ async function submitAppl(){
   hide("step2");show("step3");setStep(3);scrollTop();
   show("loadingView");hide("completeView");hide("errorView");
 
-  const name=v("iName"), contact=v("iContact"), gender=v("iGender");
+  const name=v("iName"), contact=v("iContact"), contactMethod=v("iContactMethod"), gender=v("iGender");
   const cal=v("iCal"), year=parseInt(v("iYear")), month=parseInt(v("iMonth")), day=parseInt(v("iDay"));
   const unknown=document.getElementById("iUnknownTime").checked;
   const hour=unknown?"모름":(v("iHour")||"미입력");
@@ -364,7 +377,7 @@ async function submitAppl(){
   const createdAt=new Date().toLocaleString("ko-KR");
 
   const data={
-    applId, name, contact, gender,
+    applId, name, contact, contactMethod, gender,
     calendar:cal, year, month, day, ganji,
     hour, min, city, hanja, address,
     service:selectedSvc, notes, createdAt,
@@ -380,6 +393,7 @@ async function submitAppl(){
     document.getElementById("summaryCard").innerHTML=`
       <div class="complete-row"><span class="lbl">이름</span><span class="val">${name}${hanja?" ("+hanja+")":""}</span></div>
       <div class="complete-row"><span class="lbl">연락처</span><span class="val">${contact}</span></div>
+      <div class="complete-row"><span class="lbl">수신 방법</span><span class="val">${contactMethod}</span></div>
       <div class="complete-row"><span class="lbl">생년월일</span><span class="val">${cal} ${year}.${String(month).padStart(2,"0")}.${String(day).padStart(2,"0")} (${ganji})</span></div>
       <div class="complete-row"><span class="lbl">출생시간</span><span class="val">${unknown?"모름":hour+"시 "+min+"분"}</span></div>
       <div class="complete-row"><span class="lbl">서비스</span><span class="val" style="color:var(--accent)">${selectedSvc}</span></div>
@@ -397,7 +411,7 @@ function resetAll(){
   selectedSvc="";
   document.querySelectorAll(".choice-card").forEach(c=>c.classList.remove("selected"));
   document.getElementById("submitBtn").disabled=true;
-  ["iName","iContact","iHanjaName","iAddress","iNotes","iHour","iMin","iYear","iMonth","iDay"].forEach(id=>{
+  ["iName","iContact","iHanjaName","iAddress","iNotes","iHour","iMin","iYear","iMonth","iDay","iContactMethod"].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.value="";
   });
