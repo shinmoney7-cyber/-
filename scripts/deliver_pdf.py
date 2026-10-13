@@ -11,6 +11,9 @@ from email import encoders
 from pathlib import Path
 import tempfile
 
+sys.path.insert(0, str(Path(__file__).parent))
+from sms_notify import send_sms
+
 # .env 로드
 _env = Path(__file__).parent / ".env"
 if _env.exists():
@@ -211,6 +214,10 @@ def _email_pdf(to_addr, name, pdf_bytes, pdf_name, subject_hint):
             srv.login(GMAIL_USER, GMAIL_APP_PASSWORD)
             srv.sendmail(GMAIL_USER, to_addr, msg.as_string())
         print(f"  ✅ {name}님 → {to_addr} 이메일 전송 완료")
+<<<<<<< HEAD
+        send_sms(f"[사주마루] {name}님 PDF 발송완료 → {to_addr}")
+=======
+>>>>>>> origin/main
         return True
     except Exception as e:
         print(f"  ❌ 이메일 전송 실패: {e}")
@@ -247,6 +254,10 @@ def _notify_operator(name, method, contact, pdf_bytes, pdf_name):
             srv.login(GMAIL_USER, GMAIL_APP_PASSWORD)
             srv.sendmail(GMAIL_USER, OPERATOR_EMAIL, msg.as_string())
         print(f"  📬 운영자 알림 발송 ({method}: {contact})")
+<<<<<<< HEAD
+        send_sms(f"[사주마루] {name}님 {method}전달 필요 · {contact}")
+=======
+>>>>>>> origin/main
         return True
     except Exception as e:
         print(f"  ❌ 운영자 알림 실패: {e}")

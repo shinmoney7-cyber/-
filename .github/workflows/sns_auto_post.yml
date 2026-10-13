@@ -2,22 +2,22 @@ name: 사주마루 SNS 전체 자동 포스팅
 
 on:
   schedule:
-    - cron: '0 0 * * 1'  # 매주 월요일 오전 9시 KST
+    - cron: '0 0 * * *'  # 매일 오전 9시 KST (UTC 00:00)
   workflow_dispatch:
     inputs:
       content_type:
-        description: '콘텐츠 유형 (weekly_saju / daily_tip / promotion)'
+        description: '콘텐츠 유형 (daily_saju / weekly_saju / promotion)'
         required: false
-        default: 'weekly_saju'
+        default: 'daily_saju'
       platforms:
-        description: '게시할 플랫폼 (all / youtube / instagram / facebook / naver / tiktok)'
+        description: '게시할 플랫폼 (all / instagram / facebook / threads / kakao / band / naver / tiktok / youtube)'
         required: false
         default: 'all'
 
 jobs:
   generate-and-post:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
 
     steps:
       - uses: actions/checkout@v4
@@ -35,47 +35,50 @@ jobs:
       - name: 1. 콘텐츠 생성 (Claude AI + 이미지 카드)
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          CONTENT_TYPE: ${{ github.event.inputs.content_type || 'weekly_saju' }}
+          CONTENT_TYPE: ${{ github.event.inputs.content_type || 'daily_saju' }}
         run: python scripts/sns_content_gen.py
 
-      - name: 2. TikTok 드래프트 게시
-        if: ${{ github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'tiktok' || github.event.inputs.platforms == '' }}
-        env:
-          TIKTOK_CLIENT_KEY: ${{ secrets.TIKTOK_CLIENT_KEY }}
-          TIKTOK_CLIENT_SECRET: ${{ secrets.TIKTOK_CLIENT_SECRET }}
-          TIKTOK_REFRESH_TOKEN: ${{ secrets.TIKTOK_REFRESH_TOKEN }}
-        run: |
-          # sns_output/meta.json → tiktok_output/meta.json 심링크
-          mkdir -p scripts/tiktok_output
-          cp scripts/sns_output/meta.json scripts/tiktok_output/meta.json
-          python scripts/tiktok_post.py
-
-      - name: 3. YouTube 쇼츠 업로드
-        if: ${{ github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'youtube' || github.event.inputs.platforms == '' }}
-        env:
-          YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
-          YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
-          YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
-        run: python scripts/post_youtube.py
-
-      - name: 4. Instagram 게시
-        if: ${{ github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'instagram' || github.event.inputs.platforms == '' }}
+      - name: 2. Instagram 게시
+        if: ${{ github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'instagram' || github.event.inputs.platforms == '' || !github.event.inputs.platforms }}
         env:
           INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
           INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
           IMAGE_HOST_URL: ${{ secrets.IMAGE_HOST_URL }}
         run: python scripts/post_instagram.py
 
-      - name: 5. Facebook 게시
-        if: ${{ github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'facebook' || github.event.inputs.platforms == '' }}
+      - name: 3. Facebook 게시
+        if: ${{ github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'facebook' || github.event.inputs.platforms == '' || !github.event.inputs.platforms }}
         env:
           FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
           FACEBOOK_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_PAGE_ACCESS_TOKEN }}
           IMAGE_HOST_URL: ${{ secrets.IMAGE_HOST_URL }}
         run: python scripts/post_facebook.py
 
-      - name: 6. 네이버 블로그 게시
-        if: ${{ github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'naver' || github.event.inputs.platforms == '' }}
+      - name: 4. Threads 게시
+        if: ${{ github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'threads' || github.event.inputs.platforms == '' || !github.event.inputs.platforms }}
+        env:
+          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+          THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
+          IMAGE_HOST_URL: ${{ secrets.IMAGE_HOST_URL }}
+        run: python scripts/post_threads.py
+
+      - name: 5. 카카오채널 소식 게시
+        if: ${{ github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'kakao' || github.event.inputs.platforms == '' || !github.event.inputs.platforms }}
+        env:
+          KAKAO_REST_API_KEY: ${{ secrets.KAKAO_REST_API_KEY }}
+          KAKAO_CHANNEL_ID: ${{ secrets.KAKAO_CHANNEL_ID }}
+          KAKAO_ACCESS_TOKEN: ${{ secrets.KAKAO_ACCESS_TOKEN }}
+        run: python scripts/post_kakao.py
+
+      - name: 6. 밴드 게시
+        if: ${{ github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'band' || github.event.inputs.platforms == '' || !github.event.inputs.platforms }}
+        env:
+          BAND_ACCESS_TOKEN: ${{ secrets.BAND_ACCESS_TOKEN }}
+          BAND_KEY: ${{ secrets.BAND_KEY }}
+        run: python scripts/post_band.py
+
+      - name: 7. 네이버 블로그 게시
+        if: ${{ github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'naver' || github.event.inputs.platforms == '' || !github.event.inputs.platforms }}
         env:
           NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
           NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
@@ -83,14 +86,18 @@ jobs:
           NAVER_REFRESH_TOKEN: ${{ secrets.NAVER_REFRESH_TOKEN }}
         run: python scripts/post_naver_blog.py
 
-      - name: 7. 네이버 클립 가이드 이메일
-        if: ${{ github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'naver' || github.event.inputs.platforms == '' }}
+      - name: 8. TikTok 드래프트 게시
+        if: ${{ github.event.inputs.platforms == 'all' || github.event.inputs.platforms == 'tiktok' || github.event.inputs.platforms == '' || !github.event.inputs.platforms }}
         env:
-          GMAIL_USER: shinmoney7@gmail.com
-          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
-        run: python scripts/post_naver_clip.py
+          TIKTOK_CLIENT_KEY: ${{ secrets.TIKTOK_CLIENT_KEY }}
+          TIKTOK_CLIENT_SECRET: ${{ secrets.TIKTOK_CLIENT_SECRET }}
+          TIKTOK_REFRESH_TOKEN: ${{ secrets.TIKTOK_REFRESH_TOKEN }}
+        run: |
+          mkdir -p scripts/tiktok_output
+          cp scripts/sns_output/meta.json scripts/tiktok_output/meta.json
+          python scripts/tiktok_post.py
 
-      - name: 8. 통합 결과 알림 이메일
+      - name: 9. 통합 결과 알림 이메일
         if: always()
         env:
           GMAIL_USER: shinmoney7@gmail.com

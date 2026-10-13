@@ -8,13 +8,15 @@ import datetime
 import anthropic
 from PIL import Image, ImageDraw, ImageFont
 
-CONTENT_TYPE = os.environ.get("CONTENT_TYPE", "weekly_saju")
+CONTENT_TYPE = os.environ.get("CONTENT_TYPE", "daily_saju")
 TODAY = datetime.date.today()
 WEEK = TODAY.isocalendar()[1]
+WEEKDAYS = ["월요일","화요일","수요일","목요일","금요일","토요일","일요일"]
+TODAY_KR = f"{TODAY.strftime('%m월 %d일')} {WEEKDAYS[TODAY.weekday()]}"
 
 client = anthropic.Anthropic()
 
-PROMPT = f"""이번 주({TODAY.strftime('%m월 %d일')} 시작) 사주마루 AI SNS 콘텐츠를 플랫폼별로 작성해줘.
+PROMPT = f"""오늘({TODAY_KR}) 사주마루 AI SNS 일일 콘텐츠를 플랫폼별로 작성해줘.
 
 JSON 형식으로 반환:
 {{
