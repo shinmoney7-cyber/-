@@ -1,0 +1,866 @@
+<title>사주마루 광고 문구</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;600;700&display=swap">
+<style>
+:root{
+  --bg:#0f0c1a;--bg2:#18142e;--bg3:#211c3a;
+  --card:#1c1830;--border:rgba(180,130,255,.18);
+  --fg:#f0e8ff;--fg2:#a090c0;--fg3:#6a5a8a;
+  --accent:#b87fff;--gold:#f5c842;
+  --green:#4ade80;--red:#f87171;
+  --f:'Noto Sans KR','Malgun Gothic',sans-serif;
+  color-scheme:dark;
+}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]){
+  --bg:#f6f3ff;--bg2:#ede8ff;--bg3:#ddd4ff;
+  --card:#fff;--border:rgba(120,60,200,.15);
+  --fg:#1a0a30;--fg2:#5a3a8a;--fg3:#9070b8;
+  --accent:#7b2fff;--gold:#b08800;
+  --green:#16a34a;--red:#dc2626;
+  color-scheme:light;
+}}
+:root[data-theme="dark"]{--bg:#0f0c1a;--bg2:#18142e;--bg3:#211c3a;--card:#1c1830;--border:rgba(180,130,255,.18);--fg:#f0e8ff;--fg2:#a090c0;--fg3:#6a5a8a;--accent:#b87fff;--gold:#f5c842;--green:#4ade80;--red:#f87171;}
+:root[data-theme="light"]{--bg:#f6f3ff;--bg2:#ede8ff;--bg3:#ddd4ff;--card:#fff;--border:rgba(120,60,200,.15);--fg:#1a0a30;--fg2:#5a3a8a;--fg3:#9070b8;--accent:#7b2fff;--gold:#b08800;--green:#16a34a;--red:#dc2626;}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--bg);color:var(--fg);font-family:var(--f);line-height:1.6}
+body{padding:0 0 60px}
+
+.header{background:linear-gradient(135deg,var(--bg2),var(--bg3));border-bottom:1px solid var(--border);padding:28px 20px 24px;text-align:center}
+.header h1{font-size:22px;font-weight:700;color:var(--accent);margin-bottom:6px}
+.header p{font-size:13px;color:var(--fg2)}
+
+.tabs{display:flex;overflow-x:auto;gap:0;border-bottom:2px solid var(--border);padding:0 16px;background:var(--bg2);-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:12px 16px;font-size:13px;font-weight:700;color:var(--fg3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;transition:color .2s,border-color .2s;font-family:var(--f)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+.content{max-width:640px;margin:0 auto;padding:20px 16px}
+
+.panel{display:none}
+.panel.active{display:block}
+
+.platform-badge{display:inline-flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;color:var(--accent);margin-bottom:16px;letter-spacing:.04em}
+
+.copy-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:16px}
+.copy-card__header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);gap:12px}
+.copy-card__label{font-size:12px;font-weight:700;color:var(--fg2);letter-spacing:.06em}
+.copy-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;background:var(--accent);color:#fff;font-size:12px;font-weight:700;border:none;cursor:pointer;font-family:var(--f);transition:opacity .15s;white-space:nowrap;flex-shrink:0}
+.copy-btn:active{opacity:.75}
+.copy-btn.copied{background:var(--green);color:#000}
+.copy-card__body{padding:16px;font-size:14px;color:var(--fg);white-space:pre-wrap;line-height:1.75;word-break:keep-all}
+
+.tip{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--fg2);margin-bottom:16px;line-height:1.7}
+.tip strong{color:var(--gold)}
+
+.char-count{font-size:11px;color:var(--fg3);margin-top:4px;padding:0 16px 12px}
+
+.copy-all-btn{width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#7b2fff);color:#fff;font-size:15px;font-weight:700;border:none;cursor:pointer;font-family:var(--f);margin-top:8px;transition:opacity .15s}
+.copy-all-btn:active{opacity:.8}
+
+.link-box{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:16px}
+.link-box span{font-size:12px;color:var(--fg2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* 유료광고 탭 전용 */
+.adspec{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:12px}
+.adspec dt{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.06em;margin-bottom:4px}
+.adspec dd{font-size:12px;color:var(--fg2);margin:0}
+.section-title{font-size:14px;font-weight:700;color:var(--fg2);margin:24px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+</style>
+
+<div class="header">
+  <h1>🔮 사주마루 광고 문구</h1>
+  <p>플랫폼별 홍보 문구 — 버튼 하나로 복사</p>
+</div>
+
+<div class="tabs" id="tabs">
+  <button class="tab active" onclick="switchTab(0)">📸 인스타그램</button>
+  <button class="tab" onclick="switchTab(1)">💬 카카오톡</button>
+  <button class="tab" onclick="switchTab(2)">📘 페이스북</button>
+  <button class="tab" onclick="switchTab(3)">📝 네이버블로그</button>
+  <button class="tab" onclick="switchTab(4)">🎵 틱톡/릴스</button>
+  <button class="tab" onclick="switchTab(5)">✉️ 문자SMS</button>
+  <button class="tab" onclick="switchTab(6)">🎴 밴드</button>
+  <button class="tab" onclick="switchTab(7)">💰 유료광고</button>
+</div>
+
+<div class="content">
+
+<!-- ─── 인스타그램 ─── -->
+<div class="panel active" id="panel-0">
+  <div class="platform-badge">📸 인스타그램 / 스레드</div>
+
+  <div class="tip"><strong>💡 팁:</strong> 이미지나 릴스와 함께 올리면 효과적. 해시태그는 댓글에 따로 달아도 좋아.</div>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">버전 A — 감성형</span>
+      <button class="copy-btn" onclick="copyText(this,'ig-a')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="ig-a">✨ 당신의 사주, 이렇게 봐본 적 있나요?
+
+생년월일 하나로 지금 내 운의 흐름을 읽어드려요.
+과장 없이, 있는 그대로.
+
+📌 연애운 · 사업운 · 재회운 · 수능운
+💰 13,000원부터 시작
+
+👇 아래 링크에서 바로 신청
+https://shinmoney7-cyber.github.io/-/saju-page.html
+
+#사주 #사주마루 #운세 #명리학 #연애운 #사업운 #오늘의운세 #사주풀이 #재회운 #수능운세</div>
+    <div class="char-count" id="cnt-ig-a"></div>
+  </div>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">버전 B — 후킹형</span>
+      <button class="copy-btn" onclick="copyText(this,'ig-b')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="ig-b">🚨 이 사람 만나면 안 됩니다.
+
+사주로 보이는 것들이 있어요.
+지금 연애 중이라면, 꼭 한 번 확인해보세요.
+
+✅ 이런 사람 만나지 마라 13,000원
+✅ 연애운·재회운 분석
+✅ 당일 결과 발송
+
+👉 링크 클릭 → 신청 완료
+https://shinmoney7-cyber.github.io/-/saju-page.html
+
+#사주 #사주마루 #연애사주 #궁합 #이런사람만나지마라 #재회운 #운세 #사주풀이</div>
+    <div class="char-count" id="cnt-ig-b"></div>
+  </div>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">버전 C — 수능/입시 타겟</span>
+      <button class="copy-btn" onclick="copyText(this,'ig-c')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="ig-c">📚 수능 앞두고 불안한가요?
+
+사주로 보는 집중력·시험운·합격 타이밍
+중요한 날, 기운을 알고 준비하세요.
+
+💫 수능·입시운 분석 22,000원
+📲 결과는 문자·카카오톡으로 바로 전달
+
+https://shinmoney7-cyber.github.io/-/saju-page.html
+
+#수능사주 #입시운 #수능운세 #사주마루 #합격기원 #수험생 #사주</div>
+    <div class="char-count" id="cnt-ig-c"></div>
+  </div>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">버전 D — 도화살/매력운 타겟</span>
+      <button class="copy-btn" onclick="copyText(this,'ig-d')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="ig-d">🌸 나한테 왜 이렇게 사람이 몰릴까?
+
+혹시 도화살 있는 거 아닌지 사주로 확인해봤어요.
+
+도화살 — 이성을 끌어당기는 기운
+타고난 매력·인기운이 어디서 나오는지
+그걸 어떻게 써야 하는지 알려드려요.
+
+💎 도화살 전문분석 39,000원
+📲 결과 바로 전달
+
+👇 신청은 여기서
+https://shinmoney7-cyber.github.io/-/saju-page.html
+
+#도화살 #이성운 #매력운 #사주마루 #사주 #운세 #연애운 #도화살사주</div>
+    <div class="char-count" id="cnt-ig-d"></div>
+  </div>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">버전 E — 재회운 집중</span>
+      <button class="copy-btn" onclick="copyText(this,'ig-e')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="ig-e">💔 헤어진 그 사람... 다시 만날 수 있을까요?
+
+미련이 남는다면 사주로 한 번 봐보세요.
+
+• 재회 가능성이 있는지
+• 그 사람이 다시 연락할 타이밍
+• 내가 먼저 가도 되는 시기
+
+💫 재회운 분석 22,000원
+결과는 문자나 카카오톡으로 바로 드려요.
+
+https://shinmoney7-cyber.github.io/-/saju-page.html
+
+#재회운 #재회사주 #헤어진남자 #헤어진여자 #사주마루 #연애사주 #사주 #운세</div>
+    <div class="char-count" id="cnt-ig-e"></div>
+  </div>
+</div>
+
+<!-- ─── 카카오톡 ─── -->
+<div class="panel" id="panel-1">
+  <div class="platform-badge">💬 카카오톡 / 단톡방</div>
+
+  <div class="tip"><strong>💡 팁:</strong> 단톡방이나 카카오스토리에 붙여 넣기 좋은 짧고 친근한 형태.</div>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">버전 A — 일상 공유형</span>
+      <button class="copy-btn" onclick="copyText(this,'kt-a')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="kt-a">여러분 혹시 사주 궁금하신 분 계세요? 🔮
+
+요즘 사주마루에서 봤는데 진짜 신기할 정도로 맞더라고요ㅋㅋ
+생년월일만 넣으면 되고 가격도 부담 없어요~
+
+연애운, 사업운, 재회운, 수능운 등 다 있어요
+👇 여기서 신청하면 돼요
+
+https://shinmoney7-cyber.github.io/-/saju-page.html</div>
+    <div class="char-count" id="cnt-kt-a"></div>
+  </div>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">버전 B — 직접 홍보형</span>
+      <button class="copy-btn" onclick="copyText(this,'kt-b')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="kt-b">🔮 사주마루 명리분석 안내드립니다
+
+정통 만세력 기반으로 정성껏 풀이해드려요.
+
+📌 서비스 종류
+• 연애운 / 재회운
+• 사업운
+• 수능·입시운
+• 이혼·결별운
+• 도화살 전문분석
+• 이런 사람 만나지 마라
+
+💰 13,000원~39,000원
+📲 문자·카카오톡·이메일로 결과 전달
+
+신청 링크 👇
+https://shinmoney7-cyber.github.io/-/saju-page.html
+
+궁금하신 분은 편하게 연락 주세요 😊</div>
+    <div class="char-count" id="cnt-kt-b"></div>
+  </div>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">버전 C — 지인 추천형</span>
+      <button class="copy-btn" onclick="copyText(this,'kt-c')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="kt-c">oo야 나 요즘 사주 봤는데 진짜 신기해서 공유해~
+
+사주마루라는 곳인데 문자나 카톡으로 결과 보내줘서 편하더라
+가격도 1만 3천원부터라 부담 없고!
+
+연애, 재회, 사업, 수능 다 된대
+너도 한번 해봐 👇
+https://shinmoney7-cyber.github.io/-/saju-page.html</div>
+    <div class="char-count" id="cnt-kt-c"></div>
+  </div>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">버전 D — 사업자/직장인 타겟</span>
+      <button class="copy-btn" onclick="copyText(this,'kt-d')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="kt-d">💼 사업 시작하거나 이직 고민 중이신 분께
+
+사주로 보는 내 사업 타이밍·흐름 분석입니다.
+
+✔ 지금이 시작할 때인가, 기다릴 때인가
+✔ 파트너 선택 기운
+✔ 올해 재물운 흐름
+
+사주마루 사업운 분석 — 22,000원
+📲 결과 문자·카카오톡 전달
+
+https://shinmoney7-cyber.github.io/-/saju-page.html</div>
+    <div class="char-count" id="cnt-kt-d"></div>
+  </div>
+</div>
+
+<!-- ─── 페이스북 ─── -->
+<div class="panel" id="panel-2">
+  <div class="platform-badge">📘 페이스북</div>
+
+  <div class="tip"><strong>💡 팁:</strong> 페이스북은 긴 글도 잘 읽혀요. 개인 타임라인·그룹 모두 활용 가능.</div>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">버전 A — 스토리텔링형</span>
+      <button class="copy-btn" onclick="copyText(this,'fb-a')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="fb-a">🔮 사주, 한 번쯤 제대로 봐보고 싶지 않으셨나요?
+
+막연하게 "올해 운이 어떻지?"가 아니라,
+지금 내 상황에서 꼭 필요한 걸 짚어드리는 분석입니다.
+
+연애 중인 분이라면 → 상대방 기운이 나와 맞는지
+사업 고민 중이라면 → 지금이 맞는 타이밍인지
+시험을 앞두고 있다면 → 집중력과 합격 기운이 어떤지
+
+과장 없이 있는 그대로, 정성을 담아 분석해드립니다.
+
+📌 사주마루 서비스
+✔ 연애운 · 재회운
+✔ 사업운
+✔ 수능 · 입시운
+✔ 도화살 전문분석
+✔ 이런 사람 만나지 마라
+✔ 이혼 · 결별운
+
+💰 가격: 13,000원~39,000원
+📲 결과: 문자 / 카카오톡 / 이메일 중 선택
+
+👇 신청은 아래 링크에서
+https://shinmoney7-cyber.github.io/-/saju-page.html
+
+입금 확인 후 순서대로 정성껏 보내드립니다 🙏</div>
+    <div class="char-count" id="cnt-fb-a"></div>
+  </div>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">버전 B — 공감/질문형</span>
+      <button class="copy-btn" onclick="copyText(this,'fb-b')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="fb-b">이런 고민 해본 적 있으세요?
+
+"이 사람이 진짜 내 인연인지 모르겠어"
+"사업을 해야 하나, 말아야 하나"
+"수능이 두 달 남았는데 너무 불안해"
+
+사주가 모든 걸 결정해준다고는 생각하지 않아요.
+하지만 지금 내 운의 흐름이 어디로 향하는지 아는 것,
+그게 결정에 도움이 되더라고요.
+
+사주마루는 정통 만세력 기반으로
+한 분 한 분 직접 풀이해드리는 서비스예요.
+AI 자동 답변 아닙니다.
+
+📌 연애운 · 재회운 · 사업운 · 수능운
+📌 도화살 · 이런 사람 만나지 마라 · 이혼·결별운
+
+💰 13,000원부터
+📲 문자·카카오톡·이메일로 결과 전달
+
+👉 https://shinmoney7-cyber.github.io/-/saju-page.html
+
+궁금하신 분들 댓글이나 메시지로 물어봐도 괜찮아요 😊</div>
+    <div class="char-count" id="cnt-fb-b"></div>
+  </div>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">버전 C — 그룹 공지용 (짧은 버전)</span>
+      <button class="copy-btn" onclick="copyText(this,'fb-c')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="fb-c">🔮 [사주마루 명리분석 서비스 안내]
+
+정통 만세력 기반 사주 풀이 서비스입니다.
+
+▶ 연애운 / 재회운 / 사업운 / 수능·입시운
+▶ 이혼·결별운 / 도화살 전문분석
+▶ 이런 사람 만나지 마라
+
+가격: 13,000원 ~ 39,000원
+결과: 문자, 카카오톡, 이메일 중 선택 가능
+처리: 입금 확인 후 순서대로 발송
+
+신청 링크 👇
+https://shinmoney7-cyber.github.io/-/saju-page.html</div>
+    <div class="char-count" id="cnt-fb-c"></div>
+  </div>
+</div>
+
+<!-- ─── 네이버 블로그 ─── -->
+<div class="panel" id="panel-3">
+  <div class="platform-badge">📝 네이버 블로그 / 카페</div>
+
+  <div class="tip"><strong>💡 팁:</strong> 제목에 검색 키워드 넣는 게 핵심. 아래 제목 예시도 참고해봐.</div>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">추천 제목 예시 (복사해서 사용)</span>
+      <button class="copy-btn" onclick="copyText(this,'nb-title')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="nb-title">2026년 내 연애운 사주로 보는 법 | 사주마루 명리분석 후기
+---
+사주로 보는 수능 합격 타이밍 | 입시운 분석 추천
+---
+이 사람과 결혼해도 될까? 사주 궁합 분석 | 사주마루
+---
+사업 시작 타이밍 언제가 좋을까 | 사업운 사주풀이
+---
+도화살 있는 사람 특징 | 매력운 타고난 사주
+---
+재회 가능성 사주로 보는 법 | 헤어진 그 사람 다시 만날까</div>
+  </div>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">본문 (포스팅용)</span>
+      <button class="copy-btn" onclick="copyText(this,'nb-body')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="nb-body">안녕하세요 🙋
+
+오늘은 제가 최근에 이용해본 사주 분석 서비스를 소개해드릴게요.
+사주마루라는 곳인데, 정통 만세력 기반 명리 분석으로 진짜 정성껏 풀이해주시더라고요.
+
+▶ 사주마루 서비스 종류
+
+1️⃣ 연애운 — 지금 연애 흐름과 상대방과의 기운
+2️⃣ 재회운 — 헤어진 그 사람과 다시 이어질지
+3️⃣ 사업운 — 사업 시작·확장 타이밍
+4️⃣ 수능·입시운 — 중요한 시험 앞 기운과 타이밍
+5️⃣ 이혼·결별운 — 관계 정리 흐름 파악
+6️⃣ 도화살 전문분석 — 이성을 끄는 기운 분석
+7️⃣ 이런 사람 만나지 마라 — 나와 안 맞는 인연 특징
+
+▶ 가격
+
+가장 저렴한 항목은 13,000원부터 시작해요.
+부담 없이 궁금한 것 하나씩 신청해볼 수 있어서 좋았어요.
+
+▶ 결과 전달 방법
+
+문자(SMS), 카카오톡, 이메일 중에서 편한 방법 선택 가능!
+
+▶ 신청 방법
+
+아래 링크에서 이름·생년월일·원하는 서비스 선택하면 끝이에요.
+
+👉 사주마루 신청 바로가기
+https://shinmoney7-cyber.github.io/-/saju-page.html
+
+입금 확인 후 순서대로 정성껏 분석해서 보내주신다고 하니,
+급하지 않으신 분들 도전해보세요 😊
+
+#사주 #사주마루 #운세 #명리학 #연애운 #사업운 #재회운 #수능운세 #사주풀이 #오늘의운세</div>
+    <div class="char-count" id="cnt-nb-body"></div>
+  </div>
+</div>
+
+<!-- ─── 틱톡/릴스 ─── -->
+<div class="panel" id="panel-4">
+  <div class="platform-badge">🎵 틱톡 / 인스타 릴스</div>
+
+  <div class="tip"><strong>💡 팁:</strong> 영상 자막이나 댓글 고정용. 짧고 임팩트 있게!</div>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">영상 자막 스크립트 A — 서비스 소개</span>
+      <button class="copy-btn" onclick="copyText(this,'tt-script')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="tt-script">[장면 1]
+"사주로 이런 것도 봐요?"
+
+[장면 2]
+연애운 · 재회운 · 사업운
+수능운 · 도화살 분석
+
+[장면 3]
+"이런 사람 만나지 마라"
+— 나와 안 맞는 인연 특징 분석
+
+[장면 4]
+13,000원부터
+문자·카톡으로 바로 받아보세요
+
+[CTA]
+👇 프로필 링크에서 신청</div>
+  </div>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">영상 자막 스크립트 B — 재회운 집중</span>
+      <button class="copy-btn" onclick="copyText(this,'tt-script-b')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="tt-script-b">[장면 1]
+"헤어진 그 사람...
+다시 연락 올까요?"
+
+[장면 2]
+재회 가능성
+그 사람이 돌아올 타이밍
+내가 먼저 연락해도 되는 시기
+
+[장면 3]
+사주마루 재회운 분석
+22,000원 | 결과 당일 카톡 전송
+
+[CTA]
+👇 프로필 링크 눌러봐</div>
+  </div>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">영상 자막 스크립트 C — 도화살 후킹</span>
+      <button class="copy-btn" onclick="copyText(this,'tt-script-c')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="tt-script-c">[장면 1]
+"왜 나한테 이성이 자꾸 붙을까?"
+
+[장면 2]
+도화살 — 타고난 매력 기운
+
+[장면 3]
+내 도화살 있는지 없는지
+사주에 다 나와 있어요
+
+[장면 4]
+사주마루 도화살 분석
+39,000원
+
+[CTA]
+링크에서 신청↗</div>
+  </div>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">댓글 고정용 (영문 포함)</span>
+      <button class="copy-btn" onclick="copyText(this,'tt-comment')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="tt-comment">🔮 사주마루 명리분석
+연애운 · 재회운 · 사업운 · 수능운
+13,000원~39,000원 | 당일 결과 전송
+👉 https://shinmoney7-cyber.github.io/-/saju-page.html
+
+#사주 #운세 #연애운 #사주마루 #재회운 #사업운 #수능 #명리학 #saju #korean #fortune</div>
+    <div class="char-count" id="cnt-tt-comment"></div>
+  </div>
+</div>
+
+<!-- ─── 문자 SMS ─── -->
+<div class="panel" id="panel-5">
+  <div class="platform-badge">✉️ 문자 SMS</div>
+
+  <div class="tip"><strong>💡 팁:</strong> SMS는 80바이트(한글 40자) 단위로 요금이 달라져요. 짧을수록 좋아요.</div>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">단문 (가장 짧게)</span>
+      <button class="copy-btn" onclick="copyText(this,'sms-short')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="sms-short">🔮사주마루 명리분석
+연애운·사업운·재회운·수능운
+13,000원~, 결과 문자전송
+👉 bit.ly/사주마루 (링크 교체)</div>
+    <div class="char-count" id="cnt-sms-short"></div>
+  </div>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">장문 (지인 발송용)</span>
+      <button class="copy-btn" onclick="copyText(this,'sms-long')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="sms-long">안녕하세요! 사주마루 명리분석입니다 🔮
+
+생년월일로 지금 내 운의 흐름을 알아보세요.
+연애운·재회운·사업운·수능운 등 분석해드려요.
+13,000원부터 / 문자·카카오톡으로 결과 전달
+
+신청 👉 https://shinmoney7-cyber.github.io/-/saju-page.html</div>
+    <div class="char-count" id="cnt-sms-long"></div>
+  </div>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">재회운 타겟 단문</span>
+      <button class="copy-btn" onclick="copyText(this,'sms-reunion')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="sms-reunion">헤어진 그 사람, 다시 올까요?
+🔮사주마루 재회운 분석
+22,000원 | 결과 문자 당일 전송
+👉 https://shinmoney7-cyber.github.io/-/saju-page.html</div>
+    <div class="char-count" id="cnt-sms-reunion"></div>
+  </div>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">수능 시즌 타겟</span>
+      <button class="copy-btn" onclick="copyText(this,'sms-suneung')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="sms-suneung">📚수능·입시 앞둔 수험생 여러분
+사주로 보는 시험운·합격 타이밍
+사주마루 입시운 분석 22,000원
+👉 https://shinmoney7-cyber.github.io/-/saju-page.html</div>
+    <div class="char-count" id="cnt-sms-suneung"></div>
+  </div>
+</div>
+
+<!-- ─── 밴드 ─── -->
+<div class="panel" id="panel-6">
+  <div class="platform-badge">🎴 밴드 / 카카오스토리</div>
+
+  <div class="tip"><strong>💡 팁:</strong> 밴드는 커뮤니티 성격이 강하니 진정성 있는 글이 더 잘 먹혀요.</div>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">버전 A — 밴드 공지/홍보글</span>
+      <button class="copy-btn" onclick="copyText(this,'band-a')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="band-a">안녕하세요 여러분 😊
+
+오늘 사주마루 명리분석 서비스를 소개해드릴게요.
+정통 만세력 기반으로 한 분 한 분 정성껏 풀이해드리는 서비스예요.
+
+🔮 분석 종류
+• 연애운 (지금 연애 흐름)
+• 재회운 (헤어진 상대와의 인연)
+• 사업운 (사업 타이밍·흐름)
+• 수능·입시운 (시험 앞 기운)
+• 이혼·결별운
+• 도화살 전문분석
+• 이런 사람 만나지 마라
+
+💰 13,000원 ~ 39,000원
+📱 결과: 문자·카카오톡·이메일 선택
+
+궁금하신 분들 아래 링크에서 편하게 신청해보세요~
+https://shinmoney7-cyber.github.io/-/saju-page.html
+
+감사합니다 🙏</div>
+    <div class="char-count" id="cnt-band-a"></div>
+  </div>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">버전 B — 카카오스토리/중장년 타겟</span>
+      <button class="copy-btn" onclick="copyText(this,'band-b')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="band-b">안녕하세요~
+
+요즘 고민이 많으신 분들, 사주마루 한번 이용해 보세요.
+정통 만세력으로 운의 흐름을 짚어드리는 서비스입니다.
+
+생년월일만 알면 돼요. 어렵지 않아요 😊
+
+✨ 이런 분들께 추천드려요
+
+👉 연애·결혼·이혼 고민 중인 분
+👉 사업이나 이직 결정을 앞둔 분
+👉 자녀 수능을 앞두고 불안하신 분
+👉 헤어진 후 재회를 기다리는 분
+
+💰 가격은 13,000원부터라 부담도 없어요.
+결과는 문자나 카카오톡으로 바로 드려요.
+
+신청 링크예요 👇
+https://shinmoney7-cyber.github.io/-/saju-page.html
+
+주변에 고민 있는 분 계시면 공유해 주셔도 좋아요 🙏</div>
+    <div class="char-count" id="cnt-band-b"></div>
+  </div>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">버전 C — 짧은 홍보 포스트</span>
+      <button class="copy-btn" onclick="copyText(this,'band-c')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="band-c">🔮 사주마루 명리분석 서비스
+
+연애운 · 재회운 · 사업운 · 수능운
+도화살 분석 · 이런 사람 만나지 마라
+이혼·결별운 분석
+
+💰 13,000원 ~ 39,000원
+📱 결과: 문자 · 카카오톡 · 이메일
+
+신청 → https://shinmoney7-cyber.github.io/-/saju-page.html</div>
+    <div class="char-count" id="cnt-band-c"></div>
+  </div>
+</div>
+
+<!-- ─── 유료광고 ─── -->
+<div class="panel" id="panel-7">
+  <div class="platform-badge">💰 유료광고 — Meta / Google</div>
+
+  <div class="tip"><strong>💡 팁:</strong> 유료 광고는 헤드라인이 핵심. A/B 테스트로 여러 문구를 돌려보는 게 좋아.</div>
+
+  <p class="section-title">📘 Meta Ads (페이스북 · 인스타그램 광고)</p>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">Meta — 헤드라인 모음</span>
+      <button class="copy-btn" onclick="copyText(this,'meta-headline')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="meta-headline">이 사람 만나면 안 됩니다 — 사주마루
+헤어진 그 사람, 다시 올까요?
+수능 D-30, 사주로 확인하는 합격 기운
+사업 지금 시작해도 될까? 사주운 확인
+도화살 있는지 사주로 알아보세요
+13,000원으로 시작하는 명리분석
+당신의 연애운, 한번 제대로 봐볼까요?
+오늘부터 바뀌는 내 사주 흐름</div>
+  </div>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">Meta — 광고 본문 A (연애타겟)</span>
+      <button class="copy-btn" onclick="copyText(this,'meta-body-a')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="meta-body-a">지금 이 사람이 내 진짜 인연인지 모르겠다면,
+사주로 한 번 확인해보세요.
+
+연애운 · 재회운 · 궁합 분석
+정통 만세력 기반 / 결과 당일 전송
+
+13,000원부터 시작
+→ 신청 링크에서 바로 가능</div>
+    <div class="char-count" id="cnt-meta-body-a"></div>
+  </div>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">Meta — 광고 본문 B (재회타겟)</span>
+      <button class="copy-btn" onclick="copyText(this,'meta-body-b')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="meta-body-b">헤어진 후 계속 생각나는 그 사람.
+다시 만날 수 있는지, 사주에 답이 있어요.
+
+재회 가능성 · 돌아올 타이밍 · 연락 시기
+사주마루 재회운 분석 — 22,000원
+결과 당일 카카오톡 전송</div>
+    <div class="char-count" id="cnt-meta-body-b"></div>
+  </div>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">Meta — 광고 본문 C (사업타겟)</span>
+      <button class="copy-btn" onclick="copyText(this,'meta-body-c')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="meta-body-c">사업 시작을 앞두고 있나요?
+타이밍이 맞는지, 파트너 기운이 좋은지
+사주로 확인해보세요.
+
+사주마루 사업운 분석 — 22,000원
+지금 내 재물·사업 흐름 파악하기
+→ 문자·카카오톡으로 결과 전달</div>
+    <div class="char-count" id="cnt-meta-body-c"></div>
+  </div>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">Meta — CTA 버튼 텍스트 예시</span>
+      <button class="copy-btn" onclick="copyText(this,'meta-cta')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="meta-cta">지금 신청하기
+결과 받아보기
+운세 확인하기
+내 사주 보러가기
+신청하면 오늘 결과 도착</div>
+  </div>
+
+  <p class="section-title">🔍 Google 검색광고 (키워드 광고)</p>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">Google — 반응형 검색광고 헤드라인 (최대 30자)</span>
+      <button class="copy-btn" onclick="copyText(this,'google-headline')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="google-headline">사주마루 명리분석
+연애운 사주 풀이 전문
+재회운 당일 결과 발송
+수능운 사주 분석
+도화살 전문 명리사
+13,000원 사주 분석
+사업운 타이밍 확인
+이혼·결별운 사주 풀이
+오늘 신청 오늘 결과
+정통 만세력 기반 분석</div>
+  </div>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">Google — 설명문구 (최대 90자 × 2개)</span>
+      <button class="copy-btn" onclick="copyText(this,'google-desc')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="google-desc">설명1:
+정통 만세력 기반 명리분석. 연애운·재회운·사업운·수능운. 13,000원부터. 결과 문자·카카오톡 전달.
+
+설명2:
+이런 사람 만나지 마라 · 도화살 전문분석 · 이혼·결별운. 당일 결과 발송. 지금 신청하세요.</div>
+  </div>
+
+  <div class="copy-card">
+    <div class="copy-card__header">
+      <span class="copy-card__label">Google — 추천 키워드 목록</span>
+      <button class="copy-btn" onclick="copyText(this,'google-kw')">복사하기</button>
+    </div>
+    <div class="copy-card__body" id="google-kw">[정확일치 / 핵심 키워드]
+사주풀이
+연애운 사주
+재회운 사주
+사업운 사주
+수능운 사주
+도화살 사주
+사주 명리분석
+
+[구문일치 / 확장]
+사주 연애운 보는 곳
+재회 가능성 사주
+사주로 보는 사업 타이밍
+수능 합격 사주
+이혼 사주 상담
+도화살 있는 사주
+
+[제외 키워드]
+무료
+공짜
+점집
+타로</div>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<script>
+var LINK='https://shinmoney7-cyber.github.io/-/saju-page.html';
+
+function switchTab(idx){
+  document.querySelectorAll('.tab').forEach(function(t,i){t.classList.toggle('active',i===idx);});
+  document.querySelectorAll('.panel').forEach(function(p,i){p.classList.toggle('active',i===idx);});
+}
+
+function copyText(btn,id){
+  var el=document.getElementById(id);
+  if(!el)return;
+  var txt=el.textContent||el.innerText;
+  navigator.clipboard&&navigator.clipboard.writeText(txt.trim()).then(function(){
+    btn.textContent='✓ 복사됨!';
+    btn.classList.add('copied');
+    setTimeout(function(){btn.textContent='복사하기';btn.classList.remove('copied');},2000);
+  }).catch(function(){
+    var ta=document.createElement('textarea');
+    ta.value=txt.trim();
+    ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy');btn.textContent='✓ 복사됨!';btn.classList.add('copied');setTimeout(function(){btn.textContent='복사하기';btn.classList.remove('copied');},2000);}catch(e){}
+    document.body.removeChild(ta);
+  });
+}
+
+function showCounts(){
+  var ids=['ig-a','ig-b','ig-c','ig-d','ig-e',
+           'kt-a','kt-b','kt-c','kt-d',
+           'fb-a','fb-b','fb-c',
+           'nb-body','tt-comment',
+           'sms-short','sms-long','sms-reunion','sms-suneung',
+           'band-a','band-b','band-c',
+           'meta-body-a','meta-body-b','meta-body-c'];
+  ids.forEach(function(id){
+    var el=document.getElementById(id);
+    var cnt=document.getElementById('cnt-'+id);
+    if(el&&cnt){
+      var len=(el.textContent||el.innerText).trim().length;
+      cnt.textContent=len+'자';
+    }
+  });
+}
+showCounts();
+</script>
