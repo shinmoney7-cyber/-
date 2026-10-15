@@ -58,3 +58,26 @@
   충분한지
 - 다이소몰/올리브영/쿠팡 검색 결과 페이지가 캡차·봇 차단 없이 RPA로 접근 가능한지
 - 쿠팡 이름-매칭의 실제 정확도 (상위 1개 자동 적용이 실무에서 얼마나 틀리는지)
+
+## 영상 생성 (Higgsfield / TopView)
+
+이 프로젝트를 만든 환경에서는 두 API 모두 네트워크 정책으로 막혀 있어서 실제 호출로
+검증하지 못했다. 형식은 각 사의 공식 패키지 소스를 기준으로 맞췄다.
+
+- **Higgsfield** — 공식 `higgsfield-client` 0.2.0 SDK 기준: 베이스 URL
+  `https://api.higgsfield.ai`, `Authorization: Key {key}:{secret}`, `POST /{model}` →
+  `request_id`, `GET /requests/{id}/status` 폴링(`queued`/`in_progress`/`completed`/
+  `failed`/`nsfw`/`canceled`). **미검증:** 기본 모델 `higgsfield-ai/dop/standard`의
+  요청 본문 필드(`image_url`, `prompt`, `duration`)와 완료 응답의 영상 URL 위치
+  (`video.url`로 가정, `videos[0].url`도 허용). 첫 `--live` 실행이 400을 내면
+  Higgsfield 대시보드의 API 문서에서 해당 모델 스키마를 확인하고
+  `video/higgsfield.py`의 `submit()` 본문을 고칠 것. 다른 모델은
+  `HIGGSFIELD_VIDEO_MODEL`로 바꾼다.
+- **TopView** — 공식 `topview-ai-mcp` 패키지 기준: `Topview-Uid` +
+  `Authorization: Bearer`, 업로드(`/v1/upload/credential` → S3 PUT →
+  `/v1/upload/check`)로 `fileId`를 얻은 뒤 `/v2/common_task/image2video/task/submit`
+  (`firstFrameFileId`, `model`, `prompt`, `aspectRatio`, `duration`) → `.../task/query`
+  폴링. 모델별 허용 길이가 다르다(`Topview Pro`는 5/10초). URL 썸네일은 내려받아 다시
+  업로드한다.
+- **HIX AI** — 공개 개발자 API가 없다(2026-10 기준). API가 생기면 `video/` 아래에
+  같은 인터페이스(`prepare_image`/`submit`/`status`/`wait`)로 클라이언트를 추가하면 된다.

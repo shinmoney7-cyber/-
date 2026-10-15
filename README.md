@@ -85,6 +85,38 @@ python -m shopping_shorts_sync script select --product-id harujin-vacuum-01 \
 JSON 파일이라 직접 열어서 수정하면 된다. 수정 후에는 `script select`를 다시 실행해서
 반영한다.
 
+## 영상 생성
+
+선택된 대본(`script select`)을 바탕으로 쇼핑 숏츠 영상을 만든다. AIDA 4단계
+(주의/흥미/욕망/행동)마다 상품 썸네일을 움직이는 9:16 이미지→영상 클립을 1개씩,
+총 4개 생성한다(기본 5초씩 ≈ 20초). 4개 씬은 한 번에 제출되어 공급자 쪽에서 병렬로
+렌더링된다.
+
+| 공급자 | 방식 | 필요한 키 |
+|---|---|---|
+| `higgsfield` (기본) | Higgsfield 플랫폼 API (`higgsfield-ai/dop/standard`) | `HIGGSFIELD_API_KEY`, `HIGGSFIELD_API_SECRET` |
+| `topview` | TopView 오픈 API (Image-to-Video V2, `Topview Pro`) | `TOPVIEW_UID`, `TOPVIEW_API_KEY` |
+| `hix` | HIX AI는 공개 개발자 API가 없음 → hix.ai에 붙여넣을 프롬프트 팩(`.md`/`.json`)만 생성 | 없음 |
+
+```bash
+# dry-run (기본): 목 클라이언트, 크레딧 차감 없음
+python -m shopping_shorts_sync video generate --product-id harujin-vacuum-01 \
+  --input data/products.example.json --provider topview
+
+# 실제 생성 (크레딧 차감!) -> data/videos/<product_id>/01-attention.mp4 ... 에 저장
+python -m shopping_shorts_sync video generate --product-id harujin-vacuum-01 \
+  --input data/products.example.json --provider higgsfield --live
+
+# HIX AI용 프롬프트 팩 -> data/videos/<product_id>/hix_prompts.md
+python -m shopping_shorts_sync video generate --product-id harujin-vacuum-01 \
+  --input data/products.example.json --provider hix
+```
+
+결과(씬별 요청 ID, 영상 URL, 로컬 경로, 오류)는 `data/state.json`의 `video_clips`에
+기록된다. 클립 4개를 하나로 합치고 자막/TTS를 얹는 편집(CapCut/Vrew 등)은 이 도구
+범위 밖이다. 첫 `--live` 실행 전에 [docs/CALIBRATION.md](docs/CALIBRATION.md)의
+"영상 생성" 항목을 확인할 것.
+
 ## 입력 파일 형식
 
 `data/products.example.json` / `data/products.example.csv` 참고. 각 상품은
