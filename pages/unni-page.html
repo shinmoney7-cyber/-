@@ -139,6 +139,15 @@ img{max-width:100%}
 .usp-card b{font-size:14px;font-weight:800;color:var(--fg);display:block;margin-bottom:5px}
 .usp-card p{font-size:13px;color:var(--fg2);line-height:1.55}
 
+/* ── 재회운 spotlight ── */
+.jaehoe-spot{background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 8%,var(--bg)),color-mix(in srgb,var(--lilac) 10%,var(--bg)));border:1.5px solid color-mix(in srgb,var(--accent) 30%,transparent);border-radius:18px;padding:20px 18px;margin-bottom:24px;text-align:center}
+.jae-tag{display:inline-block;background:linear-gradient(135deg,var(--accent),var(--lilac));color:#fff;font-size:12px;font-weight:800;padding:4px 12px;border-radius:999px;margin-bottom:12px;letter-spacing:.04em}
+.jae-title{font-family:var(--fdisp);font-size:19px;font-weight:900;color:var(--fg);margin-bottom:8px;text-wrap:balance;line-height:1.4}
+.jae-desc{font-size:14px;color:var(--fg2);line-height:1.65;margin-bottom:14px}
+.jae-list{list-style:none;text-align:left;margin:0 auto 16px;max-width:300px;display:flex;flex-direction:column;gap:8px}
+.jae-list li{font-size:14px;color:var(--fg2)}
+.jae-note{font-size:12px;color:var(--fg3);margin-top:6px}
+
 /* 반응형 */
 @media(max-width:400px){
   .menu-grid{grid-template-columns:1fr 1fr}
@@ -188,6 +197,26 @@ img{max-width:100%}
       <p>표면적인 운세가 아닌 사주 원국부터 흐름까지 깊이 있게 분석해드려요</p>
     </div>
   </div>
+
+  <!-- 재회운 특집 -->
+  <div class="jaehoe-spot">
+    <div class="jae-tag">🌹 지금 특집</div>
+    <div class="jae-title">그 사람, 다시 만날 수 있을까요?</div>
+    <div class="jae-desc">
+      헤어진 후에도 지워지지 않는 사람이 있다면,<br>
+      사주에 재회 운명이 적혀 있을 수 있어요 💌
+    </div>
+    <ul class="jae-list">
+      <li>💕 재회 가능성과 구체적인 시기</li>
+      <li>💭 전 연인의 현재 마음 상태</li>
+      <li>🌿 재회를 위해 내가 지금 해야 할 것</li>
+      <li>🔮 이 인연이 나에게 좋은 인연인지 여부</li>
+    </ul>
+    <button class="btn btn-primary" style="max-width:280px;margin:0 auto;display:block" onclick="quickSelectJaehoe()">🌹 재회운 바로 신청</button>
+    <p class="jae-note">₩18,000 · 1~2일 내 발송 · 1회 추가 질문 무료</p>
+  </div>
+
+  <div class="divider"></div>
 
   <!-- 폼 영역 -->
   <div id="orderForm">
@@ -375,6 +404,12 @@ let selected = new Set();
 let deliveryMode = 'email';
 
 // 메뉴 그리드 렌더
+function quickSelectJaehoe(){
+  const idx = SERVICES.findIndex(s => s.name === '재회운');
+  if(idx >= 0){ selected.add(idx); renderMenu(); updateTotal(); }
+  document.getElementById('panelStep1').scrollIntoView({behavior:'smooth'});
+}
+
 function renderMenu(){
   const g = document.getElementById('menuGrid');
   g.innerHTML = '';
