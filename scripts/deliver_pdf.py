@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Fortune LAB PDF 수신 → 커버 교체(사주톡톡→사주보는 언니) → 고객 전달
+Fortune LAB PDF 수신 → 커버 교체(사주톡톡→사주마루) → 고객 전달
 """
 import imaplib, email, os, re, smtplib, sys, subprocess
 from email.header import decode_header
@@ -97,12 +97,12 @@ def extract_name_from_email(msg):
 
 def find_customer_delivery(mail, customer_name):
     """
-    '[사주보는 언니]' 주문 이메일에서 해당 고객의 전달 방법·연락처 조회
+    '[사주마루]' 주문 이메일에서 해당 고객의 전달 방법·연락처 조회
     Returns: {"method": str, "contact": str, "name": str} or None
     """
     try:
-        # 제목에 [사주보는 언니]가 있는 이메일 검색
-        _, ids = mail.search(None, 'SUBJECT "[사주보는 언니]"')
+        # 제목에 [사주마루]가 있는 이메일 검색
+        _, ids = mail.search(None, 'SUBJECT "[사주마루]"')
     except Exception:
         return None
 
@@ -187,17 +187,17 @@ def send_to_customer(customer_info, pdf_bytes, pdf_name, subject_hint=""):
 
 def _email_pdf(to_addr, name, pdf_bytes, pdf_name, subject_hint):
     msg = MIMEMultipart("mixed")
-    msg["Subject"] = f"[사주보는 언니] {name}님 분석 결과" + (f" - {subject_hint}" if subject_hint else "")
+    msg["Subject"] = f"[사주마루] {name}님 분석 결과" + (f" - {subject_hint}" if subject_hint else "")
     msg["From"]    = GMAIL_USER
     msg["To"]      = to_addr
 
     html = f"""<html><body style="font-family:'Malgun Gothic',sans-serif;max-width:640px;margin:0 auto;padding:24px;">
 <div style="background:#f9f6ff;border-radius:16px;padding:32px;text-align:center;">
-  <h1 style="color:#6b21a8;font-size:22px;margin:0 0 12px;">✨ 사주보는 언니 분석 결과</h1>
+  <h1 style="color:#6b21a8;font-size:22px;margin:0 0 12px;">✨ 사주마루 분석 결과</h1>
   <p style="color:#555;font-size:15px;margin:0 0 8px;">{name}님의 사주 분석 결과를 첨부드립니다.</p>
   <p style="color:#888;font-size:13px;margin:0;">첨부 PDF 파일을 확인해 주세요.</p>
   <hr style="margin:24px 0;border:none;border-top:1px solid #e0d8ff;">
-  <p style="color:#aaa;font-size:12px;margin:0;">사주보는 언니 · 정통 만세력 기반 명리분석</p>
+  <p style="color:#aaa;font-size:12px;margin:0;">사주마루 · 정통 만세력 기반 명리분석</p>
 </div></body></html>"""
 
     msg.attach(MIMEText(html, "html", "utf-8"))
@@ -206,7 +206,7 @@ def _email_pdf(to_addr, name, pdf_bytes, pdf_name, subject_hint):
     att.set_payload(pdf_bytes)
     encoders.encode_base64(att)
     safe_name = re.sub(r'[^\w가-힣.\-]', '_', name)
-    att.add_header("Content-Disposition", f'attachment; filename="{safe_name}_사주보는 언니.pdf"')
+    att.add_header("Content-Disposition", f'attachment; filename="{safe_name}_사주마루.pdf"')
     msg.attach(att)
 
     try:
@@ -214,7 +214,7 @@ def _email_pdf(to_addr, name, pdf_bytes, pdf_name, subject_hint):
             srv.login(GMAIL_USER, GMAIL_APP_PASSWORD)
             srv.sendmail(GMAIL_USER, to_addr, msg.as_string())
         print(f"  ✅ {name}님 → {to_addr} 이메일 전송 완료")
-        send_sms(f"[사주보는 언니] {name}님 PDF 발송완료 → {to_addr}")
+        send_sms(f"[사주마루] {name}님 PDF 발송완료 → {to_addr}")
         return True
     except Exception as e:
         print(f"  ❌ 이메일 전송 실패: {e}")
@@ -224,7 +224,7 @@ def _email_pdf(to_addr, name, pdf_bytes, pdf_name, subject_hint):
 def _notify_operator(name, method, contact, pdf_bytes, pdf_name):
     """이메일 외 수단(SMS, 카카오) → 운영자에게 알림 + PDF 첨부"""
     msg = MIMEMultipart("mixed")
-    msg["Subject"] = f"[사주보는 언니 전달 필요] {name}님 · {method} ({contact})"
+    msg["Subject"] = f"[사주마루 전달 필요] {name}님 · {method} ({contact})"
     msg["From"]    = GMAIL_USER
     msg["To"]      = OPERATOR_EMAIL
 
@@ -243,7 +243,7 @@ def _notify_operator(name, method, contact, pdf_bytes, pdf_name):
     att.set_payload(pdf_bytes)
     encoders.encode_base64(att)
     safe_name = re.sub(r'[^\w가-힣.\-]', '_', name)
-    att.add_header("Content-Disposition", f'attachment; filename="{safe_name}_사주보는 언니.pdf"')
+    att.add_header("Content-Disposition", f'attachment; filename="{safe_name}_사주마루.pdf"')
     msg.attach(att)
 
     try:
@@ -251,7 +251,7 @@ def _notify_operator(name, method, contact, pdf_bytes, pdf_name):
             srv.login(GMAIL_USER, GMAIL_APP_PASSWORD)
             srv.sendmail(GMAIL_USER, OPERATOR_EMAIL, msg.as_string())
         print(f"  📬 운영자 알림 발송 ({method}: {contact})")
-        send_sms(f"[사주보는 언니] {name}님 {method}전달 필요 · {contact}")
+        send_sms(f"[사주마루] {name}님 {method}전달 필요 · {contact}")
         return True
     except Exception as e:
         print(f"  ❌ 운영자 알림 실패: {e}")
@@ -261,7 +261,7 @@ def _notify_operator(name, method, contact, pdf_bytes, pdf_name):
 def send_to_operator_as_fallback(name, pdf_bytes, reason=""):
     """고객 정보 매칭 실패 → 운영자에게 원본 전달"""
     msg = MIMEMultipart("mixed")
-    msg["Subject"] = f"[사주보는 언니 PDF 처리] {name or '?'} - 수동 전달 필요 {reason}"
+    msg["Subject"] = f"[사주마루 PDF 처리] {name or '?'} - 수동 전달 필요 {reason}"
     msg["From"]    = GMAIL_USER
     msg["To"]      = OPERATOR_EMAIL
 
@@ -272,7 +272,7 @@ def send_to_operator_as_fallback(name, pdf_bytes, reason=""):
     att.set_payload(pdf_bytes)
     encoders.encode_base64(att)
     safe_name = re.sub(r'[^\w가-힣.\-]', '_', name or "result")
-    att.add_header("Content-Disposition", f'attachment; filename="{safe_name}_사주보는 언니.pdf"')
+    att.add_header("Content-Disposition", f'attachment; filename="{safe_name}_사주마루.pdf"')
     msg.attach(att)
 
     try:
@@ -317,8 +317,8 @@ def run():
         sender  = parsed.get("From", "")
         subject = decode_str(parsed.get("Subject", ""))
 
-        # [사주보는 언니] 우리 자신의 메일은 건너뜀
-        if "[사주보는 언니]" in subject:
+        # [사주마루] 우리 자신의 메일은 건너뜀
+        if "[사주마루]" in subject:
             continue
 
         if is_fl_email(sender, subject):
