@@ -238,6 +238,78 @@ def script_select(product_id, candidate_id, input_path, script_file):
 
 
 @cli.group()
+def video():
+    """Shopping-short video generation from the selected AIDA script.
+
+    One image-to-video clip per AIDA stage (attention/interest/desire/action),
+    animated from the product thumbnail. Providers: higgsfield, topview (real
+    APIs) and hix (no public API -- exports a prompt pack for hix.ai).
+    """
+
+
+@video.command("generate")
+@click.option("--product-id", required=True)
+@click.option("--input", "input_path", required=True, type=click.Path(exists=True), help="Product list file.")
+@click.option("--provider", type=click.Choice(["higgsfield", "topview", "hix"]), default=None, help="Defaults to VIDEO_PROVIDER.")
+@click.option("--duration", type=int, default=None, help="Seconds per scene clip. Defaults to VIDEO_DURATION.")
+@click.option("--live/--dry-run", "live", default=False, help="--live calls the real API and spends credits.")
+@click.option("--download/--no-download", "download", default=True, help="Save finished clips under VIDEO_OUTPUT_DIR.")
+@click.option("--file", "script_file", type=click.Path(exists=True), default=None)
+def video_generate(product_id, input_path, provider, duration, live, download, script_file):
+    from .video.base import VideoApiError
+    from .video.hix import export_hix_pack
+    from .video.pipeline import build_video_client, generate_product_video
+    from .video.prompt import build_scenes
+
+    config = load_config()
+    _setup_logging(config)
+    provider = provider or config.video_provider
+    duration = duration or config.video_duration
+
+    products = {p.id: p for p in load_products(input_path)}
+    product = products.get(product_id)
+    if product is None:
+        raise click.ClickException(f"product {product_id!r} not found in {input_path}")
+
+    script_set = load_script_set(script_file or default_script_path(product_id))
+    if script_set.selected_id is None:
+        raise click.ClickException(
+            f"no script selected for {product_id!r} -- run `script select` first"
+        )
+    candidate = script_set.get_candidate(script_set.selected_id)
+
+    if provider == "hix":
+        md_path = export_hix_pack(
+            product, candidate.id, build_scenes(product, candidate), duration, config.video_output_dir
+        )
+        click.echo(f"HIX AI has no public API -- prompt pack written to {md_path}")
+        return
+
+    try:
+        client = build_video_client(config, provider, live)
+        clips, error = generate_product_video(
+            product,
+            candidate,
+            client,
+            duration,
+            download_dir=config.video_output_dir if (download and live) else None,
+        )
+    except (VideoApiError, OSError) as e:
+        raise click.ClickException(str(e))
+
+    state = StateStore(config.state_file_path)
+    state.record_video(product, provider if live else f"{provider}(mock)", candidate.id, clips, error)
+    state.save()
+
+    click.echo(f"-- video generate ({provider}, {'live' if live else 'dry-run'}) --")
+    for clip in clips:
+        target = clip["local_path"] or clip["video_url"] or clip["error"]
+        click.echo(f"  [{clip['status']}] {clip['stage']}: {target}")
+    if error:
+        raise click.ClickException(f"some scenes failed: {error}")
+
+
+@cli.group()
 def state():
     """Inspect or reset the local sync state file."""
 

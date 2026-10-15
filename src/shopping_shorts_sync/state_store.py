@@ -29,6 +29,11 @@ class ProductState:
     selected_script_id: int | None = None
     script_text: str | None = None
     script_applied_at: str | None = None
+    video_provider: str | None = None
+    video_script_id: int | None = None
+    video_clips: list[dict] | None = None
+    video_generated_at: str | None = None
+    video_error: str | None = None
 
 
 class StateStore:
@@ -113,6 +118,16 @@ class StateStore:
         state.selected_script_id = candidate_id
         state.script_text = script_text
         state.script_applied_at = _utcnow_iso()
+
+    def record_video(self, product: Product, provider: str, script_id: int, clips: list[dict], error: str | None) -> None:
+        """Stores the per-scene clips from `video generate`. Kept separate from
+        ``status``/``last_error`` so it never masks the Coupang/Inpock state."""
+        state = self._products.setdefault(product.id, ProductState(coupang_url=product.coupang_url))
+        state.video_provider = provider
+        state.video_script_id = script_id
+        state.video_clips = clips
+        state.video_generated_at = _utcnow_iso()
+        state.video_error = error
 
     def reset(self, product_id: str) -> bool:
         return self._products.pop(product_id, None) is not None
