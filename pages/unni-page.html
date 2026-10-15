@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>사주보는 언니</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;600;700&display=swap">
+<style>
+/* ── 토큰 (라이트: 따뜻한 핑크/로즈) ── */
+:root{
+  --bg:#fff5f8;--bg2:#ffedf3;--bg3:#ffd6e5;
+  --card:#ffffff;--card2:#fff0f5;
+  --border:rgba(220,90,130,.18);--border2:rgba(220,90,130,.35);
+  --fg:#3a1525;--fg2:#9a4060;--fg3:#c880a0;
+  --accent:#e0527a;--accent2:#c03060;
+  --gold:#e07030;--gold2:#b05020;
+  --pink:#f76fa0;--rose:#fda8c0;--lilac:#c890e0;
+  --green:#2a8a50;--red:#cc2244;
+  --fdisp:'Noto Serif KR',Georgia,serif;
+  --fbody:'Noto Sans KR','Malgun Gothic',sans-serif;
+  color-scheme:light;
+}
+@media(prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#1a0a12;--bg2:#230f18;--bg3:#2e1520;
+    --card:#281020;--card2:#321825;
+    --border:rgba(240,120,160,.18);--border2:rgba(240,120,160,.35);
+    --fg:#ffe0ec;--fg2:#e090b0;--fg3:#b06080;
+    --accent:#f07090;--accent2:#d05070;
+    --gold:#f09050;--gold2:#c06030;
+    --pink:#f090b8;--rose:#e07090;--lilac:#c090e0;
+    --green:#5ce685;--red:#ff7799;color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1a0a12;--bg2:#230f18;--bg3:#2e1520;
+  --card:#281020;--card2:#321825;
+  --border:rgba(240,120,160,.18);--border2:rgba(240,120,160,.35);
+  --fg:#ffe0ec;--fg2:#e090b0;--fg3:#b06080;
+  --accent:#f07090;--accent2:#d05070;
+  --gold:#f09050;--gold2:#c06030;
+  --pink:#f090b8;--rose:#e07090;--lilac:#c090e0;
+  --green:#5ce685;--red:#ff7799;color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--fg);font-family:var(--fbody);line-height:1.65}
+body{padding-inline:16px;padding-top:env(safe-area-inset-top,0px);padding-bottom:calc(env(safe-area-inset-bottom,0px) + 24px);font-size:16px}
+img{max-width:100%}
+
+/* ── 헤더 ── */
+.app-header{text-align:center;padding:36px 0 24px;position:relative}
+.header-deco{font-size:38px;margin-bottom:6px;display:block}
+.brand-name{font-family:var(--fdisp);font-size:clamp(28px,7vw,44px);font-weight:900;color:var(--accent);letter-spacing:-.01em;text-wrap:balance}
+.brand-name span{color:var(--lilac)}
+.brand-tagline{margin-top:8px;font-size:15px;color:var(--fg2);line-height:1.5}
+.header-divider{width:48px;height:3px;background:linear-gradient(90deg,var(--accent),var(--lilac));border-radius:2px;margin:14px auto 0}
+
+/* ── 배너 ── */
+.event-banner{background:linear-gradient(135deg,var(--accent),var(--lilac));color:#fff;text-align:center;padding:11px 16px;font-size:14px;font-weight:700;letter-spacing:.01em;border-radius:12px;margin-bottom:20px}
+.event-banner b{font-size:15px}
+
+/* ── 섹션 ── */
+.main-wrap{max-width:640px;margin:0 auto}
+.section-title{font-family:var(--fdisp);font-size:20px;font-weight:700;margin-bottom:16px;color:var(--fg);display:flex;align-items:center;gap:8px}
+.section-title .s-icon{font-size:20px}
+.divider{height:1px;background:var(--border);margin:28px 0}
+
+/* ── 서비스 카드 ── */
+.menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:8px;margin-bottom:12px}
+.menu-item{background:var(--card);border:2px solid var(--border);border-radius:14px;padding:13px 12px;cursor:pointer;transition:all .15s;display:flex;align-items:flex-start;gap:8px;user-select:none}
+.menu-item:hover{border-color:var(--border2);background:var(--card2)}
+.menu-item.selected{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--card))}
+.menu-item input[type=checkbox]{width:16px;height:16px;margin-top:2px;flex-shrink:0;accent-color:var(--accent)}
+.mi-emoji{font-size:17px;line-height:1;flex-shrink:0;margin-top:2px}
+.mi-info{flex:1;min-width:0}
+.mi-name{font-size:14px;font-weight:700;line-height:1.3;color:var(--fg)}
+.mi-price{font-size:13px;color:var(--gold);font-weight:600;margin-top:3px}
+.sel-total{background:var(--bg2);border:1.5px solid var(--border2);border-radius:12px;padding:14px 16px;margin-top:10px;display:flex;justify-content:space-between;align-items:center;font-size:15px}
+.sel-total .price{font-size:19px;font-weight:800;color:var(--accent)}
+
+/* ── 폼 필드 ── */
+.field{margin-bottom:14px}
+.field label{display:block;font-size:13px;font-weight:700;color:var(--fg2);margin-bottom:6px;letter-spacing:.03em}
+.field input,.field select,.field textarea{
+  width:100%;padding:12px 14px;background:var(--card);border:1.5px solid var(--border);
+  border-radius:10px;color:var(--fg);font-family:var(--fbody);font-size:16px;
+  outline:none;transition:border .15s;-webkit-appearance:none;appearance:none
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent)}
+.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 0l6 8 6-8z' fill='%23c880a0'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+.field textarea{resize:vertical;min-height:80px}
+.hint{font-size:13px;color:var(--fg3);margin-top:5px;line-height:1.5}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px}
+
+/* ── 전달 방법 ── */
+.delivery-tabs{display:flex;gap:8px;margin-bottom:14px}
+.del-tab{flex:1;background:var(--card);border:2px solid var(--border);border-radius:12px;padding:12px;text-align:center;cursor:pointer;transition:all .15s;font-size:14px;font-weight:700;color:var(--fg2)}
+.del-tab.active{border-color:var(--accent);color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,var(--card))}
+.del-tab .dt-icon{font-size:22px;display:block;margin-bottom:4px}
+.delivery-detail{display:none}
+.delivery-detail.show{display:block}
+
+/* ── 버튼 ── */
+.btn{display:block;width:100%;padding:16px;border-radius:14px;border:none;font-family:var(--fbody);font-size:16px;font-weight:700;cursor:pointer;transition:opacity .15s;text-align:center}
+.btn:hover{opacity:.88}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--lilac));color:#fff}
+.btn-outline{background:transparent;border:1.5px solid var(--border2);color:var(--fg)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* ── 완료 화면 ── */
+.done-wrap{text-align:center;padding:48px 16px;display:none}
+.done-wrap.show{display:block}
+.done-icon{font-size:56px;margin-bottom:16px}
+.done-title{font-family:var(--fdisp);font-size:24px;font-weight:900;color:var(--accent);margin-bottom:10px}
+.done-msg{font-size:15px;color:var(--fg2);line-height:1.7;margin-bottom:24px}
+.done-box{background:var(--card);border:1.5px solid var(--border2);border-radius:14px;padding:18px;margin-bottom:20px;text-align:left}
+.done-box .db-label{font-size:13px;color:var(--fg3);margin-bottom:4px}
+.done-box .db-val{font-size:15px;font-weight:700;color:var(--fg);word-break:break-all}
+
+/* ── 에러 박스 ── */
+.error-box{background:color-mix(in srgb,var(--red) 10%,var(--card));border:1.5px solid color-mix(in srgb,var(--red) 35%,transparent);border-radius:10px;padding:12px 14px;color:var(--red);font-size:13px;margin-bottom:12px;display:none}
+.error-box.show{display:block}
+
+/* ── 하단 안내 ── */
+.footer-note{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;font-size:13px;color:var(--fg2);line-height:1.7;margin-top:24px}
+.footer-note b{color:var(--accent)}
+
+/* ── 단계 표시 ── */
+.steps{display:flex;justify-content:center;gap:6px;margin:16px auto 24px;max-width:240px}
+.step-dot{flex:1;text-align:center;padding:8px 0;border-radius:999px;font-size:14px;font-weight:700;color:var(--fg3);background:var(--bg2);transition:all .2s}
+.step-dot.active{background:var(--accent);color:#fff}
+.step-dot.done{color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--bg2))}
+
+/* ── 장점 카드 ── */
+.usp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px}
+.usp-card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 12px;text-align:center}
+.usp-icon{font-size:26px;display:block;margin-bottom:7px}
+.usp-card b{font-size:14px;font-weight:800;color:var(--fg);display:block;margin-bottom:5px}
+.usp-card p{font-size:13px;color:var(--fg2);line-height:1.55}
+
+/* 반응형 */
+@media(max-width:400px){
+  .menu-grid{grid-template-columns:1fr 1fr}
+  .row3{grid-template-columns:1fr 1fr}
+  .row3 > :first-child{grid-column:1/-1}
+}
+</style>
+</head>
+<body>
+
+<div class="main-wrap">
+
+  <!-- 헤더 -->
+  <header class="app-header">
+    <span class="header-deco">🌸</span>
+    <h1 class="brand-name">사주보는 <span>언니</span></h1>
+    <p class="brand-tagline">솔직하고 따뜻하게 봐드릴게요 💕<br>사주로 내 인생 흐름을 같이 읽어봐요</p>
+    <div class="header-divider"></div>
+  </header>
+
+  <!-- 이벤트 배너 -->
+  <div class="event-banner">
+    🎉 <b>지금 첫 주문 이벤트 중!</b> — 인스타 팔로우 인증 시 10% 할인
+  </div>
+
+  <!-- 장점 카드 -->
+  <div class="usp-grid">
+    <div class="usp-card">
+      <span class="usp-icon">🌸</span>
+      <b>무서운 말 없어요</b>
+      <p>좋은 것만 말하는 게 아닌, 솔직하지만 따뜻하게 — 현실적인 조언으로 함께해요</p>
+    </div>
+    <div class="usp-card">
+      <span class="usp-icon">⚡</span>
+      <b>빠른 배송 1~2일</b>
+      <p>입금 확인 후 1~2일 이내 발송! 급할 땐 말해주세요 😊</p>
+    </div>
+    <div class="usp-card">
+      <span class="usp-icon">💬</span>
+      <b>궁금한 건 바로 물어봐요</b>
+      <p>결과 받고 이해 안 되는 부분은 1회 추가 질문 무료!
+      </p>
+    </div>
+    <div class="usp-card">
+      <span class="usp-icon">📖</span>
+      <b>70페이지 상세 보고서</b>
+      <p>표면적인 운세가 아닌 사주 원국부터 흐름까지 깊이 있게 분석해드려요</p>
+    </div>
+  </div>
+
+  <!-- 폼 영역 -->
+  <div id="orderForm">
+
+    <!-- 단계 표시 -->
+    <div class="steps">
+      <div class="step-dot active" id="step1">1 서비스</div>
+      <div class="step-dot" id="step2">2 정보 입력</div>
+      <div class="step-dot" id="step3">3 완료</div>
+    </div>
+
+    <!-- STEP 1: 서비스 선택 -->
+    <div id="panelStep1">
+      <div class="section-title">
+        <span class="s-icon">✨</span> 어떤 운을 볼까요?
+      </div>
+      <p class="hint" style="margin-bottom:14px">여러 개 선택 가능해요 (각 ₩18,000 / 대운·세운 ₩25,000)</p>
+
+      <div class="menu-grid" id="menuGrid"></div>
+
+      <div class="sel-total">
+        <span>선택한 서비스 <span id="selCount">0</span>개</span>
+        <span class="price" id="selPrice">₩0</span>
+      </div>
+
+      <div class="error-box" id="errStep1">서비스를 1개 이상 선택해주세요 🙏</div>
+
+      <button class="btn btn-primary" style="margin-top:16px" onclick="goStep2()">다음 → 정보 입력</button>
+    </div>
+
+    <!-- STEP 2: 정보 입력 -->
+    <div id="panelStep2" hidden>
+      <div class="section-title">
+        <span class="s-icon">📋</span> 기본 정보
+      </div>
+
+      <div class="field">
+        <label>이름 (실명)</label>
+        <input type="text" id="inpName" placeholder="예) 김지수" autocomplete="name">
+      </div>
+
+      <div class="field">
+        <label>생년월일</label>
+        <div class="row3">
+          <input type="number" id="inpYear" placeholder="1995" min="1900" max="2025">
+          <select id="inpMonth">
+            <option value="">월</option>
+            <script>for(let i=1;i<=12;i++)document.write(`<option value="${i}">${i}월</option>`)</script>
+          </select>
+          <select id="inpDay">
+            <option value="">일</option>
+            <script>for(let i=1;i<=31;i++)document.write(`<option value="${i}">${i}일</option>`)</script>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>성별</label>
+        <select id="inpGender">
+          <option value="">선택</option>
+          <option value="여">여성</option>
+          <option value="남">남성</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>태어난 시간</label>
+        <select id="inpTime">
+          <option value="">모름</option>
+          <option value="자시(23~01시)">자시 (23:00~01:00)</option>
+          <option value="축시(01~03시)">축시 (01:00~03:00)</option>
+          <option value="인시(03~05시)">인시 (03:00~05:00)</option>
+          <option value="묘시(05~07시)">묘시 (05:00~07:00)</option>
+          <option value="진시(07~09시)">진시 (07:00~09:00)</option>
+          <option value="사시(09~11시)">사시 (09:00~11:00)</option>
+          <option value="오시(11~13시)">오시 (11:00~13:00)</option>
+          <option value="미시(13~15시)">미시 (13:00~15:00)</option>
+          <option value="신시(15~17시)">신시 (15:00~17:00)</option>
+          <option value="유시(17~19시)">유시 (17:00~19:00)</option>
+          <option value="술시(19~21시)">술시 (19:00~21:00)</option>
+          <option value="해시(21~23시)">해시 (21:00~23:00)</option>
+        </select>
+        <p class="hint">모르셔도 괜찮아요 — 없어도 잘 봐드려요 😊</p>
+      </div>
+
+      <div class="field">
+        <label>양력 / 음력</label>
+        <select id="inpCal">
+          <option value="양력">양력</option>
+          <option value="음력">음력</option>
+        </select>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section-title">
+        <span class="s-icon">📬</span> 결과 받는 방법
+      </div>
+
+      <div class="delivery-tabs">
+        <div class="del-tab active" id="tabEmail" onclick="setDelivery('email')">
+          <span class="dt-icon">📧</span>이메일
+        </div>
+        <div class="del-tab" id="tabKakao" onclick="setDelivery('kakao')">
+          <span class="dt-icon">💬</span>카카오톡
+        </div>
+      </div>
+
+      <div class="delivery-detail show" id="detailEmail">
+        <div class="field">
+          <label>이메일 주소</label>
+          <input type="email" id="inpEmail" placeholder="your@email.com" autocomplete="email">
+        </div>
+      </div>
+
+      <div class="delivery-detail" id="detailKakao">
+        <div class="field">
+          <label>카카오톡 ID</label>
+          <input type="text" id="inpKakao" placeholder="카카오톡 아이디 입력">
+          <p class="hint">카카오톡 → 더보기 → 설정 → 카카오계정에서 확인하세요</p>
+        </div>
+      </div>
+
+      <div class="field" style="margin-top:8px">
+        <label>추가 요청사항 (선택)</label>
+        <textarea id="inpNote" placeholder="특별히 알고 싶은 것, 현재 상황 등 자유롭게 써주세요 😊"></textarea>
+      </div>
+
+      <div class="error-box" id="errStep2"></div>
+
+      <div style="display:flex;gap:8px;margin-top:4px">
+        <button class="btn btn-outline" style="flex:.4" onclick="goStep1()">← 이전</button>
+        <button class="btn btn-primary" style="flex:1" onclick="submitOrder()">주문 완료 💕</button>
+      </div>
+    </div>
+
+  </div><!-- /orderForm -->
+
+  <!-- 완료 화면 -->
+  <div class="done-wrap" id="doneWrap">
+    <div class="done-icon">🌸</div>
+    <h2 class="done-title">주문이 접수됐어요!</h2>
+    <p class="done-msg">감사해요 💕 열심히 봐드릴게요!<br>보통 <b>1~2일 이내</b>에 결과를 보내드려요.<br>입금 확인 후 발송됩니다.</p>
+    <div class="done-box">
+      <div class="db-label">입금 안내</div>
+      <div class="db-val" id="doneDelivery">—</div>
+    </div>
+    <div class="done-box">
+      <div class="db-label">선택한 서비스</div>
+      <div class="db-val" id="doneServices">—</div>
+    </div>
+    <div class="done-box">
+      <div class="db-label">결제 금액</div>
+      <div class="db-val" id="donePrice" style="color:var(--accent)">—</div>
+    </div>
+    <button class="btn btn-outline" onclick="resetOrder()" style="margin-top:8px">처음으로 돌아가기</button>
+  </div>
+
+  <!-- 안내 -->
+  <div class="footer-note">
+    💌 <b>언니에 대해</b><br>
+    사주를 따뜻하고 솔직하게 풀어드려요. 무서운 말 없이, 현실적인 조언으로 함께해요.<br>
+    인스타그램 팔로우 → <b>링크 클릭</b>하면 할인 코드 받을 수 있어요 🌸
+  </div>
+
+</div><!-- /main-wrap -->
+
+<script>
+const SERVICES = [
+  {name:"연애운",     emoji:"💕", price:18000},
+  {name:"배우자·결혼운",emoji:"💍", price:18000},
+  {name:"재물운",     emoji:"💰", price:18000},
+  {name:"건강운",     emoji:"🍀", price:18000},
+  {name:"대운·세운",  emoji:"🌊", price:25000},
+  {name:"직장운",     emoji:"💼", price:18000},
+  {name:"사업운",     emoji:"🏪", price:18000},
+  {name:"친구·우정운",emoji:"🤝", price:18000},
+  {name:"새해운세",   emoji:"🎍", price:18000},
+  {name:"수능·입시운",emoji:"📚", price:18000},
+  {name:"재회운",     emoji:"🌹", price:18000},
+  {name:"이혼·결별운",emoji:"🍂", price:18000},
+];
+
+let selected = new Set();
+let deliveryMode = 'email';
+
+// 메뉴 그리드 렌더
+function renderMenu(){
+  const g = document.getElementById('menuGrid');
+  g.innerHTML = '';
+  SERVICES.forEach((s,i)=>{
+    const d = document.createElement('div');
+    d.className = 'menu-item' + (selected.has(i) ? ' selected' : '');
+    d.innerHTML = `<input type="checkbox" ${selected.has(i)?'checked':''}>
+      <div>
+        <div class="mi-emoji">${s.emoji}</div>
+      </div>
+      <div class="mi-info">
+        <div class="mi-name">${s.name}</div>
+        <div class="mi-price">₩${s.price.toLocaleString()}</div>
+      </div>`;
+    d.onclick = ()=>{ if(selected.has(i)) selected.delete(i); else selected.add(i); renderMenu(); updateTotal(); };
+    g.appendChild(d);
+  });
+}
+
+function updateTotal(){
+  let total = 0;
+  selected.forEach(i=>total+=SERVICES[i].price);
+  document.getElementById('selCount').textContent = selected.size;
+  document.getElementById('selPrice').textContent = '₩'+total.toLocaleString();
+}
+
+function goStep2(){
+  document.getElementById('errStep1').classList.remove('show');
+  if(selected.size === 0){ document.getElementById('errStep1').classList.add('show'); return; }
+  document.getElementById('panelStep1').hidden = true;
+  document.getElementById('panelStep2').hidden = false;
+  document.getElementById('step1').classList.remove('active'); document.getElementById('step1').classList.add('done');
+  document.getElementById('step2').classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function goStep1(){
+  document.getElementById('panelStep1').hidden = false;
+  document.getElementById('panelStep2').hidden = true;
+  document.getElementById('step1').classList.add('active'); document.getElementById('step1').classList.remove('done');
+  document.getElementById('step2').classList.remove('active');
+  window.scrollTo(0,0);
+}
+
+function setDelivery(mode){
+  deliveryMode = mode;
+  document.getElementById('tabEmail').classList.toggle('active', mode==='email');
+  document.getElementById('tabKakao').classList.toggle('active', mode==='kakao');
+  document.getElementById('detailEmail').classList.toggle('show', mode==='email');
+  document.getElementById('detailKakao').classList.toggle('show', mode==='kakao');
+}
+
+function submitOrder(){
+  const err = document.getElementById('errStep2');
+  err.classList.remove('show'); err.textContent='';
+
+  const name  = document.getElementById('inpName').value.trim();
+  const year  = document.getElementById('inpYear').value.trim();
+  const month = document.getElementById('inpMonth').value;
+  const day   = document.getElementById('inpDay').value;
+  const gender= document.getElementById('inpGender').value;
+  const email = document.getElementById('inpEmail').value.trim();
+  const kakao = document.getElementById('inpKakao').value.trim();
+  const note  = document.getElementById('inpNote').value.trim();
+  const time  = document.getElementById('inpTime').value;
+  const cal   = document.getElementById('inpCal').value;
+
+  if(!name){ err.textContent='이름을 입력해주세요'; err.classList.add('show'); return; }
+  if(!year||!month||!day){ err.textContent='생년월일을 입력해주세요'; err.classList.add('show'); return; }
+  if(!gender){ err.textContent='성별을 선택해주세요'; err.classList.add('show'); return; }
+  if(deliveryMode==='email' && !email){ err.textContent='이메일을 입력해주세요'; err.classList.add('show'); return; }
+  if(deliveryMode==='kakao' && !kakao){ err.textContent='카카오톡 ID를 입력해주세요'; err.classList.add('show'); return; }
+
+  // 완료 화면
+  const services = [...selected].map(i=>SERVICES[i].name).join(', ');
+  let total = 0; selected.forEach(i=>total+=SERVICES[i].price);
+  const delivery = deliveryMode==='email' ? `이메일: ${email}` : `카카오톡: ${kakao}`;
+
+  document.getElementById('doneDelivery').textContent = '토스 또는 카카오페이로 입금 후 주문 정보를 보내주세요 💕';
+  document.getElementById('doneServices').textContent = services;
+  document.getElementById('donePrice').textContent = '₩'+total.toLocaleString();
+
+  document.getElementById('orderForm').style.display='none';
+  document.getElementById('doneWrap').classList.add('show');
+  document.getElementById('step2').classList.remove('active'); document.getElementById('step2').classList.add('done');
+  document.getElementById('step3').classList.add('active');
+  window.scrollTo(0,0);
+
+  // Kakao 링크 열기 (설정 필요)
+  // window.open('https://open.kakao.com/YOUR_LINK','_blank');
+}
+
+function resetOrder(){
+  selected.clear();
+  deliveryMode = 'email';
+  document.getElementById('orderForm').style.display='block';
+  document.getElementById('doneWrap').classList.remove('show');
+  document.getElementById('step1').classList.add('active'); document.getElementById('step1').classList.remove('done');
+  document.getElementById('step2').classList.remove('active','done');
+  document.getElementById('step3').classList.remove('active');
+  document.getElementById('panelStep1').hidden = false;
+  document.getElementById('panelStep2').hidden = true;
+  document.getElementById('detailEmail').classList.add('show');
+  document.getElementById('detailKakao').classList.remove('show');
+  renderMenu(); updateTotal();
+  window.scrollTo(0,0);
+}
+
+// 초기화
+renderMenu();
+updateTotal();
+</script>
+</body>
+</html>
