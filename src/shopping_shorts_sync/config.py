@@ -23,7 +23,7 @@ class Config:
     coupang_api_mode: str
     coupang_batch_size: int
 
-    inpock_email: str
+    inpock_account: str  # Inpock account slug (e.g. "harujin"), set INPOCK_ACCOUNT in .env
     inpock_password: str
     inpock_headless: bool
 
@@ -54,6 +54,7 @@ class Config:
     facebook_api_mode: str  # "mock" | "live"
 
     playwright_chromium_path: str
+    inpock_session_dir: str
     state_file_path: str
     log_level: str
 
@@ -97,7 +98,7 @@ def load_config(env_file: str | None = None) -> Config:
         coupang_secret_key=os.environ.get("COUPANG_SECRET_KEY", ""),
         coupang_api_mode=os.environ.get("COUPANG_API_MODE", "mock"),
         coupang_batch_size=int(os.environ.get("COUPANG_BATCH_SIZE", "50")),
-        inpock_email=os.environ.get("INPOCK_EMAIL", ""),
+        inpock_account=os.environ.get("INPOCK_ACCOUNT") or os.environ.get("INPOCK_EMAIL", ""),
         inpock_password=os.environ.get("INPOCK_PASSWORD", ""),
         inpock_headless=os.environ.get("INPOCK_HEADLESS", "true").strip().lower() in ("1", "true", "yes"),
         naver_client_id=os.environ.get("NAVER_CLIENT_ID", ""),
@@ -130,6 +131,7 @@ def load_config(env_file: str | None = None) -> Config:
         facebook_shinjh_page_access_token=os.environ.get("FACEBOOK_SHINJH_PAGE_ACCESS_TOKEN", ""),
         facebook_api_mode=os.environ.get("FACEBOOK_API_MODE", "mock"),
         playwright_chromium_path=os.environ.get("PLAYWRIGHT_CHROMIUM_PATH", "/opt/pw-browsers/chromium"),
+        inpock_session_dir=os.environ.get("INPOCK_SESSION_DIR", "data/browser_session"),
         state_file_path=os.environ.get("STATE_FILE_PATH", "data/state.json"),
         log_level=os.environ.get("LOG_LEVEL", "INFO"),
     )

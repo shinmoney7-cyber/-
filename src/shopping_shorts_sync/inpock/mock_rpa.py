@@ -17,11 +17,17 @@ class MockInpockRPAClient:
     def login(self) -> None:
         pass
 
-    def sync_card(self, page_slug: str, card: LinkCard, force_create: bool = False) -> str:
+    def sync_card(
+        self,
+        page_slug: str,
+        card: LinkCard,
+        force_create: bool = False,
+        link_id: str | None = None,
+    ) -> tuple[str, str | None]:
         self.synced_cards.append((page_slug, card))
-        return "created"
+        return ("created", None)
 
 
-def sync_product(client, product: Product, deeplink: str) -> str:
+def sync_product(client, product: Product, deeplink: str) -> tuple[str, str | None]:
     card = product_to_card(product, deeplink)
     return client.sync_card(product.target_page, card)

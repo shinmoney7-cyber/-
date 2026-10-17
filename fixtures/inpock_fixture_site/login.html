@@ -1,24 +1,54 @@
 <!--
-  Hand-built approximation of an Inpock-style login form.
-  This is NOT a copy of the real link.inpock.co.kr site (this sandbox's
-  network policy blocks reaching that host, so the real DOM could not be
-  inspected). It exists only so InpockRPAClient's Playwright steps can be
-  exercised structurally. See docs/CALIBRATION.md before trusting selectors
-  against the real site.
+  Fixture that approximates the real link.inpock.co.kr/user/login page.
+
+  REAL FLOW (confirmed from live site):
+  1. Page initially shows an ACCOUNT PICKER listing registered accounts
+     (harujin, shinjh, mom2_store, harunews).
+  2. Clicking an account button reveals the 아이디/비밀번호 form with the
+     아이디 field pre-filled with the chosen account slug.
+  3. User enters only the password, then clicks 로그인.
+  4. Successful submit navigates to /admin/myinpocklink.
+
+  See docs/CALIBRATION.md.
 -->
 <!DOCTYPE html>
 <html lang="ko">
 <head><meta charset="utf-8"><title>로그인</title></head>
 <body>
-  <form id="login-form">
-    <input type="email" name="email" placeholder="이메일">
-    <input type="password" name="password" placeholder="비밀번호">
-    <button type="submit">로그인</button>
-  </form>
+
+  <!-- Account picker (shown first) -->
+  <div id="account-picker">
+    <h2>계정 선택</h2>
+    <ul>
+      <li><button onclick="showLoginForm('harujin')">harujin</button></li>
+      <li><button onclick="showLoginForm('shinjh')">shinjh</button></li>
+      <li><button onclick="showLoginForm('mom2_store')">mom2_store</button></li>
+      <li><button onclick="showLoginForm('harunews')">harunews</button></li>
+    </ul>
+    <a href="#" onclick="showLoginForm(''); return false;">다른 계정으로 로그인하기</a>
+  </div>
+
+  <!-- ID/password form (hidden until an account is selected) -->
+  <div id="login-form-wrapper" style="display:none">
+    <form id="login-form" action="admin.html" method="get">
+      <label>아이디<input type="text" name="id" id="id-input" placeholder="아이디" readonly></label>
+      <label>비밀번호<input type="password" name="password" placeholder="비밀번호"></label>
+      <button type="submit">로그인</button>
+    </form>
+  </div>
+
   <script>
-    document.getElementById('login-form').addEventListener('submit', function (e) {
+    function showLoginForm(account) {
+      document.getElementById('account-picker').style.display = 'none';
+      var wrapper = document.getElementById('login-form-wrapper');
+      wrapper.style.display = 'block';
+      if (account) {
+        document.getElementById('id-input').value = account;
+      }
+    }
+    document.getElementById('login-form').addEventListener('submit', function(e) {
       e.preventDefault();
-      document.body.innerHTML = '<div id="dashboard">대시보드</div>';
+      window.location.href = 'admin.html';
     });
   </script>
 </body>

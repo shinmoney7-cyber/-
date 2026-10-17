@@ -1,0 +1,52 @@
+<!--
+  Fixture that approximates link.inpock.co.kr/admin/menu.
+  - Sidebar nav items switch the visible page section.
+  - Each link card has <a href="/admin/block/link/edit?link_id=XXX"> so
+    InpockRPAClient.get_page_link_map() can discover link IDs.
+  - "링크 추가" button simulates the add-link flow (not fully wired here).
+  See docs/CALIBRATION.md for real-site calibration.
+-->
+<!DOCTYPE html>
+<html lang="ko">
+<head><meta charset="utf-8"><title>관리자</title></head>
+<body>
+  <nav class="sidebar">
+    <a href="#" onclick="showPage('harujin'); return false;">harujin</a>
+    <a href="#" onclick="showPage('shinjh'); return false;">shinjh</a>
+  </nav>
+
+  <div class="admin-content">
+    <!-- harujin page (shown by default) -->
+    <div id="page-harujin" class="page-section">
+      <div class="block-item">
+        <a href="/admin/block/link/edit?link_id=1001"><img src="thumb1.jpg" alt=""></a>
+        <p class="block-title">1. 제품A</p>
+      </div>
+      <div class="block-item">
+        <a href="/admin/block/link/edit?link_id=1002"><img src="thumb2.jpg" alt=""></a>
+        <p class="block-title">2. 제품B</p>
+      </div>
+    </div>
+
+    <!-- shinjh page (hidden by default) -->
+    <div id="page-shinjh" class="page-section" style="display:none">
+      <div class="block-item">
+        <a href="/admin/block/link/edit?link_id=2001"><img src="thumb3.jpg" alt=""></a>
+        <p class="block-title">1. 제품C</p>
+      </div>
+    </div>
+
+    <button id="add-link-btn">링크 추가</button>
+  </div>
+
+  <script>
+    function showPage(slug) {
+      document.querySelectorAll('.page-section').forEach(function(el) {
+        el.style.display = 'none';
+      });
+      var section = document.getElementById('page-' + slug);
+      if (section) section.style.display = 'block';
+    }
+  </script>
+</body>
+</html>

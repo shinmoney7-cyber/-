@@ -24,6 +24,7 @@ class ProductState:
     target_page: str | None = None
     content_hash: str | None = None
     inpock_synced_at: str | None = None
+    inpock_link_id: str | None = None
     status: str = "new"
     last_error: str | None = None
     selected_script_id: int | None = None
@@ -99,12 +100,16 @@ class StateStore:
         current_hash = product.content_hash(state.deeplink, number=number)
         return state.content_hash != current_hash or not state.inpock_synced_at
 
-    def record_inpock_sync(self, product: Product, number: int | None = None) -> None:
+    def record_inpock_sync(
+        self, product: Product, number: int | None = None, link_id: str | None = None
+    ) -> None:
         state = self._products[product.id]
         state.content_hash = product.content_hash(state.deeplink, number=number)
         state.inpock_synced_at = _utcnow_iso()
         state.status = "synced"
         state.last_error = None
+        if link_id:
+            state.inpock_link_id = link_id
 
     def record_inpock_error(self, product: Product, error: str) -> None:
         state = self._products.setdefault(product.id, ProductState(coupang_url=product.coupang_url))
