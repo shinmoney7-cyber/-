@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>사주마루 1:1 맞춤 상담</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;600;700&display=swap">
+<style>
+:root{
+  --bg:#0c0a18;--bg2:#13102a;--bg3:#1c1838;
+  --card:#181430;--card2:#201c3a;
+  --border:rgba(180,130,255,.18);--border2:rgba(180,130,255,.32);
+  --fg:#f0e8ff;--fg2:#a090c0;--fg3:#6a5a8a;
+  --accent:#b87fff;--gold:#f5c842;--gold2:#c8991a;
+  --red:#ff5577;--green:#5ce685;--blue:#7eb8ff;
+  --fdisp:'Noto Serif KR',Georgia,serif;
+  --fbody:'Noto Sans KR','Malgun Gothic',sans-serif;
+  color-scheme:dark;
+}
+@media(prefers-color-scheme:light){
+  :root:not([data-theme="dark"]){
+    --bg:#f4f0ff;--bg2:#ebe4ff;--bg3:#ddd4ff;
+    --card:#fff;--card2:#f8f4ff;
+    --border:rgba(120,60,200,.15);--border2:rgba(120,60,200,.3);
+    --fg:#1a0a30;--fg2:#5a3a8a;--fg3:#9070b8;
+    --accent:#7b2fff;--gold:#b08800;--gold2:#7a6000;
+    --green:#2a8a50;--red:#cc2244;color-scheme:light;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#f4f0ff;--bg2:#ebe4ff;--bg3:#ddd4ff;
+  --card:#fff;--card2:#f8f4ff;
+  --border:rgba(120,60,200,.15);--border2:rgba(120,60,200,.3);
+  --fg:#1a0a30;--fg2:#5a3a8a;--fg3:#9070b8;
+  --accent:#7b2fff;--gold:#b08800;--gold2:#7a6000;
+  --green:#2a8a50;--red:#cc2244;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--fg);font-family:var(--fbody);line-height:1.65}
+body{padding-inline:16px;padding-top:env(safe-area-inset-top,0px);padding-bottom:calc(env(safe-area-inset-bottom,0px)+40px);font-size:16px}
+
+.app-header{text-align:center;padding:32px 0 24px;max-width:640px;margin:0 auto}
+.eyebrow{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px}
+.app-header h1{font-family:var(--fdisp);font-size:clamp(24px,5vw,34px);font-weight:900;text-wrap:balance;line-height:1.3}
+.app-header h1 em{color:var(--gold);font-style:normal}
+.app-header p{margin-top:10px;color:var(--fg2);font-size:15px;line-height:1.6}
+
+.wrap{max-width:640px;margin:0 auto}
+
+/* Process steps */
+.process-bar{display:flex;align-items:center;gap:0;background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px 20px;margin-bottom:28px}
+.ps{flex:1;text-align:center;font-size:13px;color:var(--fg3);position:relative}
+.ps strong{display:block;font-size:11px;font-weight:700;color:var(--fg2);letter-spacing:.05em;margin-top:4px}
+.ps .num{display:inline-flex;width:28px;height:28px;border-radius:50%;background:var(--bg3);border:1.5px solid var(--border);align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--fg2)}
+.ps-arrow{color:var(--fg3);font-size:12px;flex-shrink:0;padding:0 4px}
+
+/* Pricing cards */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:28px}
+@media(max-width:480px){.pricing-grid{grid-template-columns:1fr}}
+.plan-card{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 16px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden}
+.plan-card:hover{border-color:var(--border2);background:var(--card2)}
+.plan-card.selected{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,var(--card))}
+.plan-card.popular::before{content:'인기';position:absolute;top:10px;right:10px;background:var(--gold);color:#000;font-size:10px;font-weight:800;padding:2px 8px;border-radius:999px;letter-spacing:.05em}
+.plan-name{font-size:15px;font-weight:800;color:var(--fg);margin-bottom:6px}
+.plan-price{font-size:26px;font-weight:900;color:var(--accent);letter-spacing:-.02em;line-height:1}
+.plan-price small{font-size:13px;font-weight:400;color:var(--fg3)}
+.plan-feats{list-style:none;margin-top:12px;display:flex;flex-direction:column;gap:6px}
+.plan-feats li{font-size:12px;color:var(--fg2);display:flex;align-items:flex-start;gap:6px}
+.plan-feats li::before{content:'✓';color:var(--green);font-weight:800;flex-shrink:0}
+
+/* Form */
+.form-section{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px 20px;margin-bottom:20px}
+.form-title{font-family:var(--fdisp);font-size:17px;font-weight:700;color:var(--fg);margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12px;font-weight:700;color:var(--fg2);margin-bottom:6px;letter-spacing:.05em;text-transform:uppercase}
+.field label .req{color:var(--red)}
+.field input,.field select,.field textarea{
+  width:100%;padding:12px 14px;background:var(--bg2);border:1.5px solid var(--border);
+  border-radius:10px;color:var(--fg);font-family:var(--fbody);font-size:16px;
+  outline:none;transition:border .15s;-webkit-appearance:none;appearance:none
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent)}
+.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 0l6 8 6-8z' fill='%23a090c0'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+.field textarea{resize:vertical;min-height:110px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hint{font-size:12px;color:var(--fg3);margin-top:5px}
+.radio-group{display:flex;gap:16px;margin-top:8px}
+.radio-group label{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:600;color:var(--fg);cursor:pointer}
+.radio-group input[type=radio]{width:16px;height:16px;accent-color:var(--accent)}
+
+/* Info box */
+.info-box{background:color-mix(in srgb,var(--gold) 8%,var(--bg2));border:1px solid color-mix(in srgb,var(--gold) 30%,transparent);border-radius:12px;padding:14px 16px;margin-bottom:20px}
+.info-box h4{font-size:13px;font-weight:800;color:var(--gold);margin-bottom:6px;letter-spacing:.04em}
+.info-box p{font-size:13px;color:var(--fg2);line-height:1.7}
+
+/* Payment section */
+.payment-box{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px 20px;margin-bottom:20px}
+.payment-title{font-family:var(--fdisp);font-size:17px;font-weight:700;color:var(--fg);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.account-card{background:var(--bg2);border:1.5px solid var(--border2);border-radius:12px;padding:16px;text-align:center;margin-bottom:12px}
+.account-bank{font-size:13px;color:var(--fg3);margin-bottom:4px}
+.account-num{font-size:20px;font-weight:800;color:var(--accent);letter-spacing:.05em;font-variant-numeric:tabular-nums}
+.account-owner{font-size:13px;color:var(--fg2);margin-top:4px}
+.copy-btn{margin-top:10px;padding:8px 20px;background:transparent;border:1.5px solid var(--border2);border-radius:8px;color:var(--fg2);font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent)}
+.toss-btn{display:block;width:100%;padding:14px;background:linear-gradient(135deg,#3a7bd5,#1a5ab0);color:#fff;text-align:center;border-radius:12px;font-size:15px;font-weight:800;text-decoration:none;margin-bottom:12px;transition:opacity .15s}
+.toss-btn:hover{opacity:.88}
+.pay-notes{display:flex;flex-direction:column;gap:6px}
+.pay-note{font-size:13px;color:var(--fg2);display:flex;align-items:flex-start;gap:6px}
+.pay-note::before{content:'✓';color:var(--green);font-weight:800;flex-shrink:0;margin-top:1px}
+
+/* Submit btn */
+.btn-submit{display:block;width:100%;padding:16px;background:linear-gradient(135deg,var(--accent),#7b2fff);color:#fff;border:none;border-radius:14px;font-size:17px;font-weight:800;font-family:var(--fbody);cursor:pointer;transition:all .15s;margin-bottom:24px}
+.btn-submit:hover{opacity:.9;transform:translateY(-1px)}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* Success */
+.success-box{display:none;background:color-mix(in srgb,var(--green) 10%,var(--card));border:1.5px solid color-mix(in srgb,var(--green) 40%,transparent);border-radius:18px;padding:28px 20px;text-align:center;margin-bottom:24px}
+.success-box.show{display:block}
+.success-box h3{font-family:var(--fdisp);font-size:20px;font-weight:900;color:var(--green);margin-bottom:10px}
+.success-box p{font-size:14px;color:var(--fg2);line-height:1.7}
+
+/* Footer nav */
+.footer-nav{display:flex;justify-content:center;gap:12px;padding:20px 0;border-top:1px solid var(--border)}
+.footer-nav a{font-size:13px;color:var(--fg3);text-decoration:none}
+.footer-nav a:hover{color:var(--accent)}
+
+/* Selected plan indicator */
+.sel-indicator{background:var(--bg2);border:1.5px solid var(--border2);border-radius:12px;padding:12px 16px;margin-bottom:20px;display:none;align-items:center;justify-content:space-between}
+.sel-indicator.show{display:flex}
+.sel-indicator .si-name{font-size:14px;font-weight:700;color:var(--fg)}
+.sel-indicator .si-price{font-size:18px;font-weight:800;color:var(--accent)}
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="eyebrow">✦ 프리미엄 서비스 ✦</div>
+  <h1>1:1 <em>맞춤 상담</em></h1>
+  <p>전문 명리사가 직접 분석하는<br>깊이 있는 사주 해석</p>
+</div>
+
+<div class="wrap">
+
+  <!-- 프로세스 -->
+  <div class="process-bar">
+    <div class="ps"><span class="num">1</span><strong>신청서 작성</strong></div>
+    <div class="ps-arrow">›</div>
+    <div class="ps"><span class="num">2</span><strong>결제 확인</strong></div>
+    <div class="ps-arrow">›</div>
+    <div class="ps"><span class="num">3</span><strong>분석 진행</strong></div>
+    <div class="ps-arrow">›</div>
+    <div class="ps"><span class="num">4</span><strong>PDF 발송</strong></div>
+  </div>
+
+  <!-- 플랜 선택 -->
+  <div style="font-family:var(--fdisp);font-size:18px;font-weight:700;margin-bottom:14px;color:var(--fg)">📋 상담 유형 선택</div>
+  <div class="pricing-grid" id="pricingGrid">
+    <div class="plan-card" data-type="기본" data-price="30000">
+      <div class="plan-name">기본 상담</div>
+      <div class="plan-price">30,000<small>원</small></div>
+      <ul class="plan-feats">
+        <li>1개 항목 상세 풀이</li>
+        <li>10페이지 PDF 제공</li>
+        <li>발송: 1~2일</li>
+      </ul>
+    </div>
+    <div class="plan-card popular" data-type="심화" data-price="50000">
+      <div class="plan-name">심화 상담</div>
+      <div class="plan-price">50,000<small>원</small></div>
+      <ul class="plan-feats">
+        <li>3개 항목 상세 풀이</li>
+        <li>20페이지 PDF 제공</li>
+        <li>이메일 Q&amp;A 1회</li>
+        <li>발송: 2~3일</li>
+      </ul>
+    </div>
+    <div class="plan-card" data-type="종합" data-price="80000">
+      <div class="plan-name">종합 상담</div>
+      <div class="plan-price">80,000<small>원</small></div>
+      <ul class="plan-feats">
+        <li>5개 이상 항목</li>
+        <li>30페이지 PDF 제공</li>
+        <li>이메일 Q&amp;A 2회</li>
+        <li>발송: 3~5일</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 선택된 플랜 표시 -->
+  <div class="sel-indicator" id="selIndicator">
+    <span class="si-name" id="selName">—</span>
+    <span class="si-price" id="selPrice">—</span>
+  </div>
+
+  <!-- 안내 박스 -->
+  <div class="info-box">
+    <h4>📌 상담 프로세스</h4>
+    <p>1️⃣ 신청서 작성 → 2️⃣ 결제 확인 (1일 이내) → 3️⃣ 명리 분석 (1~5일) → 4️⃣ PDF 이메일 발송</p>
+  </div>
+
+  <!-- 신청 폼 -->
+  <form id="consultForm">
+    <input type="hidden" id="planType" name="planType">
+    <input type="hidden" id="planPrice" name="planPrice">
+
+    <div class="form-section">
+      <div class="form-title">👤 기본 정보</div>
+
+      <div class="field">
+        <label>이름 <span class="req">*</span></label>
+        <input type="text" id="name" name="name" required placeholder="홍길동">
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label>이메일 <span class="req">*</span></label>
+          <input type="email" id="email" name="email" required placeholder="example@email.com">
+        </div>
+        <div class="field">
+          <label>연락처 <span class="req">*</span></label>
+          <input type="tel" id="phone" name="phone" required placeholder="010-1234-5678">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>성별 <span class="req">*</span></label>
+        <div class="radio-group">
+          <label><input type="radio" name="gender" value="남" required> 남성</label>
+          <label><input type="radio" name="gender" value="여"> 여성</label>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label>생년월일 <span class="req">*</span></label>
+          <input type="date" id="birthdate" name="birthdate" required>
+        </div>
+        <div class="field">
+          <label>양력 / 음력 <span class="req">*</span></label>
+          <select id="calendar" name="calendar" required>
+            <option value="양력">양력</option>
+            <option value="음력">음력</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>출생 시간</label>
+        <input type="time" id="birthtime" name="birthtime" value="12:00">
+        <div class="hint">모르시면 12:00으로 두세요 (자시 생인 경우 별도 기재)</div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-title">🔮 상담 내용</div>
+
+      <div class="field">
+        <label>궁금한 항목 <span class="req">*</span></label>
+        <textarea id="items" name="items" required placeholder="예시:
+• 평생운 (전반적인 인생 흐름과 대운 흐름)
+• 재산운 (투자 타이밍, 재물운 활성 시기)
+• 자식운 (임신 적기, 자녀와의 인연)
+• 취업운 (합격·이직 시기, 적합한 직업군)"></textarea>
+      </div>
+
+      <div class="field">
+        <label>추가 질문 <span style="font-size:11px;font-weight:400;color:var(--fg3)">(선택)</span></label>
+        <textarea id="questions" name="questions" placeholder="특별히 궁금하신 내용을 구체적으로 적어주세요.
+예: 올해 이직을 고민 중인데 하반기가 좋은 시기인가요?"></textarea>
+      </div>
+    </div>
+
+    <button type="submit" class="btn-submit" id="submitBtn">💌 상담 신청하기</button>
+  </form>
+
+  <!-- 결제 안내 -->
+  <div class="payment-box" id="paymentBox">
+    <div class="payment-title">💳 결제 안내</div>
+    <p style="font-size:14px;color:var(--fg2);margin-bottom:16px">신청 후 24시간 이내에 아래 계좌로 입금해 주세요.</p>
+
+    <div class="account-card">
+      <div class="account-bank">토스뱅크</div>
+      <div class="account-num" id="accountNum">1234-5678-9012</div>
+      <div class="account-owner">예금주: 홍길동</div>
+      <button class="copy-btn" onclick="copyAccount()">계좌번호 복사</button>
+    </div>
+
+    <a href="https://toss.me/sajumaru" target="_blank" class="toss-btn">💙 토스로 간편 송금하기</a>
+
+    <div class="pay-notes">
+      <div class="pay-note">입금자명을 신청서의 이름과 동일하게 해주세요.</div>
+      <div class="pay-note">입금 확인 후 이메일로 안내드립니다.</div>
+      <div class="pay-note">분석 완료 시 PDF로 발송해드립니다.</div>
+      <div class="pay-note">환불: 작업 시작 전 100% 환불 가능합니다.</div>
+    </div>
+  </div>
+
+  <!-- 성공 메시지 -->
+  <div class="success-box" id="successBox">
+    <h3>✅ 신청이 완료되었습니다!</h3>
+    <p>입력하신 이메일로 신청 내역을 발송했습니다.<br>24시간 이내 입금 후 확인 메일을 보내주세요.<br><br>감사합니다 ✨</p>
+  </div>
+
+  <div class="footer-nav">
+    <a href="saju-page.html">← 사주마루 홈</a>
+    <a href="unni-page.html">사주보는 언니</a>
+    <a href="hub.html">허브</a>
+  </div>
+</div>
+
+<script>
+const plans = document.querySelectorAll('.plan-card');
+plans.forEach(c => {
+  c.addEventListener('click', () => {
+    plans.forEach(p => p.classList.remove('selected'));
+    c.classList.add('selected');
+    document.getElementById('planType').value = c.dataset.type;
+    document.getElementById('planPrice').value = c.dataset.price;
+    const ind = document.getElementById('selIndicator');
+    document.getElementById('selName').textContent = c.dataset.type + ' 상담';
+    document.getElementById('selPrice').textContent = parseInt(c.dataset.price).toLocaleString() + '원';
+    ind.classList.add('show');
+  });
+});
+
+document.getElementById('consultForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  if (!document.getElementById('planType').value) {
+    alert('상담 유형을 먼저 선택해주세요!');
+    document.getElementById('pricingGrid').scrollIntoView({behavior:'smooth'});
+    return;
+  }
+  const fd = new FormData(this);
+  const d = {};
+  fd.forEach((v, k) => { d[k] = v; });
+
+  const subject = encodeURIComponent('[사주마루] 1:1 상담 신청 — ' + d.name);
+  const body = encodeURIComponent(
+`[상담 신청]
+
+플랜: ${d.planType} 상담 (${parseInt(d.planPrice).toLocaleString()}원)
+
+이름: ${d.name}
+이메일: ${d.email}
+연락처: ${d.phone}
+성별: ${d.gender}
+생년월일: ${d.birthdate} (${d.calendar})
+출생시간: ${d.birthtime}
+
+궁금한 항목:
+${d.items}
+
+추가 질문:
+${d.questions || '없음'}
+
+---
+입금 확인 후 분석을 시작합니다.`
+  );
+
+  window.location.href = `mailto:sajumaru7@gmail.com?subject=${subject}&body=${body}`;
+
+  document.getElementById('submitBtn').disabled = true;
+  const box = document.getElementById('successBox');
+  box.classList.add('show');
+  box.scrollIntoView({behavior:'smooth'});
+  this.reset();
+  plans.forEach(p => p.classList.remove('selected'));
+  document.getElementById('selIndicator').classList.remove('show');
+  setTimeout(() => { document.getElementById('submitBtn').disabled = false; }, 3000);
+});
+
+function copyAccount() {
+  const num = document.getElementById('accountNum').textContent.replace(/\s/g,'');
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(num).then(() => alert('계좌번호가 복사되었습니다!')).catch(() => fallbackCopy(num));
+  } else { fallbackCopy(num); }
+}
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); alert('계좌번호가 복사되었습니다!'); } catch {}
+  document.body.removeChild(ta);
+}
+</script>
+</body>
+</html>
