@@ -314,6 +314,20 @@ body{padding:0 16px;padding-block:0;font-size:16px}
   </div>
 </div>
 
+<!-- 취업운 특집 스포트라이트 -->
+<div style="background:linear-gradient(135deg,rgba(184,127,255,.13),rgba(126,184,255,.09));border:1.5px solid rgba(184,127,255,.35);border-radius:20px;padding:24px 20px;margin:20px auto;max-width:640px;text-align:center">
+  <div style="display:inline-block;background:linear-gradient(135deg,var(--accent),var(--blue));color:#fff;font-size:12px;font-weight:800;padding:4px 14px;border-radius:999px;margin-bottom:14px;letter-spacing:.05em">💼 지금 인기 상담</div>
+  <div style="font-family:var(--fdisp);font-size:clamp(19px,4vw,23px);font-weight:900;color:var(--fg);margin-bottom:10px;text-wrap:balance;line-height:1.4">올해 취업·이직,<br>사주에 답이 있습니다</div>
+  <div style="font-size:14px;color:var(--fg2);line-height:1.75;margin-bottom:18px;max-width:420px;margin-inline:auto">합격이 안 되는 데는 이유가 있어요. 사주 속 <strong style="color:var(--accent)">직업성(職業星)</strong>이 활성화되는 시기를 알면 — 지원 타이밍, 업종 선택, 면접 운이 완전히 달라집니다.</div>
+  <ul style="list-style:none;text-align:left;margin:0 auto 20px;max-width:300px;display:flex;flex-direction:column;gap:10px">
+    <li style="font-size:14px;color:var(--fg2)">💼 내 사주에 맞는 직업군·업종 분석</li>
+    <li style="font-size:14px;color:var(--fg2)">📅 취업·합격운이 터지는 정확한 시기</li>
+    <li style="font-size:14px;color:var(--fg2)">🏢 나와 맞는 회사 규모·문화·조직 유형</li>
+    <li style="font-size:14px;color:var(--fg2)">⚡ 지금 이직해야 할지, 기다려야 할지</li>
+  </ul>
+  <button class="btn btn-primary" style="max-width:280px;margin:0 auto;display:block" onclick="quickSelectChueop()">💼 취업운 분석 시작하기</button>
+  <div style="font-size:12px;color:var(--fg3);margin-top:10px">₩18,000 · 분석 즉시 시작 · 기질 분석 무료 포함</div>
+</div>
 
 <!-- ══════════════════════════════════════
      섹션 1: 사주 분석
@@ -448,6 +462,13 @@ body{padding:0 16px;padding-block:0;font-size:16px}
 
   <!-- STEP 2 -->
   <div id="step2" hidden>
+    <div style="background:linear-gradient(135deg,rgba(184,127,255,.12),rgba(245,200,66,.08));border:1px solid rgba(184,127,255,.3);border-radius:14px;padding:16px 18px;margin-bottom:16px;display:flex;align-items:flex-start;gap:12px">
+      <span style="font-size:24px;flex-shrink:0">🌹</span>
+      <div>
+        <div style="font-family:var(--fdisp);font-size:15px;font-weight:900;color:var(--accent);margin-bottom:4px">재회운 — 다시 만날 수 있을까?</div>
+        <div style="font-size:13px;color:var(--fg2);line-height:1.6">전 연인과의 재회 가능성·시기, 상대방의 현재 마음 상태, 재회를 위해 내가 해야 할 것, 이 인연의 운명적 의미까지 사주로 분석해드립니다.</div>
+      </div>
+    </div>
     <div class="menu-grid" id="menuGrid"></div>
     <div class="sel-total">
       <span>선택 <b id="selCount">0</b>개</span>
@@ -519,6 +540,7 @@ const MENU=[
   {name:"월별운세",            price:22000,  pages:70, focus:"2026년 월별 상세 운세"},
   {name:"수능·입시운",         price:18000,  pages:70, focus:"학업 운·시험 시기·합격 가능성"},
   {name:"재회운",              price:18000,  pages:70, focus:"전 연인 재회 가능성·시기"},
+  {name:"취업운",              price:18000,  pages:70, focus:"취업·이직·합격 시기·직업 유형 분석"},
   {name:"이혼·결별운",         price:18000,  pages:70, focus:"이별·이혼 시기·원인·향후 운"},
   {name:"도화살 전문분석",     price:14900,  pages:70, focus:"도화살 종류·발현 시기·활용법"},
   {name:"이런 사람 만나지 마라",price:13000, pages:70, focus:"피해야 할 인연 유형·특징"},
@@ -863,6 +885,10 @@ async function onImageSelect(e){
   }catch(err){
     hint.textContent="업로드 실패: "+err.message;
   }
+}
+
+function quickSelectChueop(){
+  document.getElementById('sec-analyze').scrollIntoView({behavior:'smooth'});
 }
 
 // ─── 스텝 이동 ───────────────────────────────────────────────────────────
