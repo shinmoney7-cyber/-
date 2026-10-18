@@ -171,6 +171,21 @@ input, select, textarea { font-family: var(--f); }
 .btn-sm { padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border2); background: transparent; color: var(--gold); font-size: 13px; font-weight: 700; font-family: var(--f); cursor: pointer; }
 .btn-sm:hover { background: var(--gold-dim); }
 
+/* ── CONTENT TEMPLATES ── */
+.ct-item {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px; margin-bottom: 10px;
+  cursor: pointer; transition: border-color .15s;
+  position: relative;
+}
+.ct-item:hover { border-color: var(--border2); }
+.ct-item.copied { border-color: var(--green); }
+.ct-title { font-size: 14px; font-weight: 800; color: #F0E8D0; margin-bottom: 4px; }
+.ct-preview { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.ct-copy-hint { font-size: 11px; color: var(--gold); margin-top: 6px; opacity: .7; }
+.ct-item.copied .ct-copy-hint { color: var(--green); }
+.ct-item.copied .ct-copy-hint::before { content: '✓ 복사됨 · '; }
+
 /* ── REVENUE CHART ── */
 .revenue-bar { display: flex; align-items: flex-end; gap: 6px; height: 80px; margin: 12px 0; }
 .rev-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; }
@@ -205,6 +220,7 @@ input, select, textarea { font-family: var(--f); }
     <button class="tab active" onclick="showPanel('dash')">대시보드</button>
     <button class="tab" onclick="showPanel('orders')">주문 목록</button>
     <button class="tab" onclick="showPanel('add')">주문 추가</button>
+    <button class="tab" onclick="showPanel('content')">콘텐츠</button>
     <button class="tab" onclick="showPanel('settings')">설정</button>
   </div>
 
@@ -316,6 +332,191 @@ input, select, textarea { font-family: var(--f); }
         <textarea id="a-memo" placeholder="특이사항, 추가 요청 등"></textarea>
       </div>
       <button class="btn-submit" onclick="addOrder()">주문 추가</button>
+    </div>
+  </div>
+
+  <!-- CONTENT TEMPLATES -->
+  <div class="panel" id="panelContent">
+    <div style="font-size:13px;color:var(--muted);margin-bottom:16px">탭하면 클립보드에 복사됩니다</div>
+
+    <!-- REELS SCRIPTS -->
+    <div class="setting-box">
+      <h3 style="color:var(--gold);margin-bottom:14px">📱 인스타 릴스 대본</h3>
+
+      <div class="ct-item" onclick="copyText(this)" data-copy="[0-3초] 이걸로 50만원 아꼈어요
+[손에 상품 들고 카메라 응시]
+
+[3-7초] 사주 비용 때문에 견적 받았더니 10만원
+[충격 표정]
+
+[7-12초] 사주마루에서 이걸 하나로 끝냈어요
+[상품 화면 보여주기]
+
+[12-15초] 저 이거로 7만원 절약
+[만족 표정 + 상품 클로즈업]">
+        <div class="ct-title">💰 충격 금액형 (15초)</div>
+        <div class="ct-preview">이걸로 ○○만원 아꼈어요 → 견적 비교 → 해결 → 만족</div>
+        <div class="ct-copy-hint">탭하여 복사</div>
+      </div>
+
+      <div class="ct-item" onclick="copyText(this)" data-copy="[0-3초] 와, 이거 저만 몰랐나요?
+[놀란 표정]
+
+[3-8초] 친구가 사주마루에서 PDF 받았다길래
+[대화 장면]
+
+[8-15초] 저도 바로 신청해봤는데 진짜 대박
+[PDF 장면 3컷]
+
+[15-20초] 이거 모르는 분 없으시죠?
+[카메라 보며 웃음]">
+        <div class="ct-title">😮 발견·놀라움형 (20초)</div>
+        <div class="ct-preview">저만 몰랐나요? → 친구 추천 → 나도 해봄 → 대박</div>
+        <div class="ct-copy-hint">탭하여 복사</div>
+      </div>
+
+      <div class="ct-item" onclick="copyText(this)" data-copy="[0-5초] Before: 내 운세가 왜 이런지 몰랐어요
+[답답한 표정]
+
+[5-10초] 사주마루 평생운 PDF 받아봤어요
+[주문 화면]
+
+[10-20초] After: 10년 단위로 내 운세가 다 나와있어요
+[PDF 펼치는 장면 여러 각도]
+
+[20-25초] 믿기지 않죠?
+[만족 표정]">
+        <div class="ct-title">✨ 비포·애프터형 (25초)</div>
+        <div class="ct-preview">Before 문제 → 사주마루 이용 → After 변화</div>
+        <div class="ct-copy-hint">탭하여 복사</div>
+      </div>
+
+      <div class="ct-item" onclick="copyText(this)" data-copy="[0-5초] 취업이 안 돼서 너무 힘들었어요
+[걱정 표정]
+
+[5-10초] 직장운 사주 봤더니 이 시기가 취업 적기래요
+[사주마루 화면]
+
+[10-18초] 면접 준비 더 열심히 했고, 실제로 합격했어요
+[합격 인증 모자이크]
+
+[18-25초] 운을 알면 타이밍을 잡을 수 있어요
+[자신감 표정]">
+        <div class="ct-title">🎯 문제 해결형 (25초)</div>
+        <div class="ct-preview">취업/연애/재물 문제 → 사주로 타이밍 확인 → 성공</div>
+        <div class="ct-copy-hint">탭하여 복사</div>
+      </div>
+
+      <div class="ct-item" onclick="copyText(this)" data-copy="[0-5초] 이거 별로일 줄 알았는데
+[반신반의 표정]
+
+[5-13초] 진짜로 써봤더니
+[사주마루 주문 과정]
+
+[13-20초] PDF 30페이지에 내 인생이 다 나와있어요 완전 대박
+[PDF 넘기는 장면]">
+        <div class="ct-title">🔄 반전형 (20초)</div>
+        <div class="ct-preview">별로일 줄 → 써보니까 → 완전 대박</div>
+        <div class="ct-copy-hint">탭하여 복사</div>
+      </div>
+    </div>
+
+    <!-- HASHTAGS -->
+    <div class="setting-box">
+      <h3 style="color:var(--gold);margin-bottom:14px">#️⃣ 해시태그 묶음</h3>
+
+      <div class="ct-item" onclick="copyText(this)" data-copy="#사주 #사주풀이 #사주마루 #사주보기 #운세 #오늘의운세 #재물운 #연애운 #직장운 #취업운 #평생운 #사주상담 #역술 #무료운세 #사주무료 #인생운세 #운명 #팔자 #명리학 #사주PDF #사주추천 #사주가격 #사주리뷰 #2025운세 #2025사주">
+        <div class="ct-title">사주마루 기본 해시태그 (25개)</div>
+        <div class="ct-preview">#사주 #사주마루 #운세 #오늘의운세 #재물운 …</div>
+        <div class="ct-copy-hint">탭하여 복사</div>
+      </div>
+
+      <div class="ct-item" onclick="copyText(this)" data-copy="#재물운 #돈운 #재테크운세 #부자되는법 #투자운 #사업운 #직장운 #취업운 #이직운 #연봉운 #금전운 #재물사주 #부자사주 #돈모으기운 #재물운사주">
+        <div class="ct-title">재물·직장 특화 해시태그 (15개)</div>
+        <div class="ct-preview">#재물운 #돈운 #재테크운세 #부자되는법 …</div>
+        <div class="ct-copy-hint">탭하여 복사</div>
+      </div>
+
+      <div class="ct-item" onclick="copyText(this)" data-copy="#연애운 #결혼운 #배우자운 #궁합 #재회운 #인연운 #솔로탈출 #연애사주 #결혼사주 #궁합보기 #인연사주 #짝사랑운 #연애운세 #결혼시기 #인연만남">
+        <div class="ct-title">연애·결혼 특화 해시태그 (15개)</div>
+        <div class="ct-preview">#연애운 #결혼운 #배우자운 #궁합 …</div>
+        <div class="ct-copy-hint">탭하여 복사</div>
+      </div>
+    </div>
+
+    <!-- NAVER JISIK-IN -->
+    <div class="setting-box">
+      <h3 style="color:var(--gold);margin-bottom:14px">💬 네이버 지식인 답변 템플릿</h3>
+
+      <div class="ct-item" onclick="copyText(this)" data-copy="안녕하세요, 저도 무료 사주 찾다가 여기저기 많이 돌아다녔어요.
+
+대부분이 '무료'라고 해놓고 막상 들어가면 기본 정보만 주고 자세한 건 유료더라고요 ㅠㅠ
+
+제가 써본 곳 중에 사주마루는 오늘의 운세를 매일 무료로 볼 수 있어요.
+
+✅ 완전 무료 항목:
+- 오늘의 재물운/애정운/직장운
+- 행운의 숫자
+- 기본 명식 해석
+
+저는 여기서 무료로 며칠 써보다가 괜찮아서 재산운 하나 결제했는데 (2만원)
+20페이지 PDF로 받아서 만족했어요.
+
+'사주마루' 검색하면 바로 나와요!
+도움 되셨으면 좋겠네요 😊">
+        <div class="ct-title">무료 사주 찾는 질문 답변</div>
+        <div class="ct-preview">"무료 사주 볼 수 있는 곳 있나요?" 질문용</div>
+        <div class="ct-copy-hint">탭하여 복사</div>
+      </div>
+
+      <div class="ct-item" onclick="copyText(this)" data-copy="재산운 저도 최근에 봤어요!
+
+결혼하고 나서 재테크 관심이 생겨서 사주로 재산운 어떤지 궁금하더라고요.
+
+처음엔 10만원짜리 대면 상담 알아봤는데 예약도 복잡하고 시간도 안 맞아서 온라인으로 알아봤어요.
+
+사주마루에서 재산운 단독으로 신청했는데 (2만원이었음)
+
+✅ 좋았던 점:
+- 어느 시기에 재물운이 좋은지
+- 투자 적합 시기
+- 재산 모으는 방법
+- 주의할 시기
+
+이런 거 다 나와 있어서 지금 통장에 붙여놓고 참고하고 있어요 ㅋㅋ
+
+PDF로 받아서 남편이랑 같이 봤어요.">
+        <div class="ct-title">재산운 질문 답변</div>
+        <div class="ct-preview">"재산운 사주 볼 수 있는 곳" 질문용</div>
+        <div class="ct-copy-hint">탭하여 복사</div>
+      </div>
+
+      <div class="ct-item" onclick="copyText(this)" data-copy="저도 반신반의하면서 봤는데 생각보다 도움 많이 됐어요!
+
+📌 제가 본 항목:
+- 재산운 (2만원)
+- 평생운 (2.5만원)
+- 자식운 (1.8만원)
+= 총 6.3만원
+
+1️⃣ 재산운 → 투자 타이밍 잡는 데 참고
+2️⃣ 평생운 → 40대에 전성기래서 지금 열심히 준비 중
+3️⃣ 자식운 → 임신 적기 확인
+
+100% 맞는다기보다는 인생 로드맵 참고용으로 좋았어요.
+
+사주마루에서 봤는데 PDF로 받아서 가끔 다시 읽어봐요.
+'사주마루' 검색하면 나와요!">
+        <div class="ct-title">후기 질문 답변</div>
+        <div class="ct-preview">"사주 보고 나서 도움 됐나요?" 질문용</div>
+        <div class="ct-copy-hint">탭하여 복사</div>
+      </div>
+
+      <div style="padding:10px 0;font-size:12px;color:var(--muted);line-height:1.7">
+        ⚠️ 주의: 답변마다 조금씩 수정해서 사용 (똑같은 답변 반복 시 스팸 처리됨)<br>
+        • 하루 7개 이하 답변 권장<br>
+        • 링크 직접 삽입 금지 (브랜드명만 언급)
+      </div>
     </div>
   </div>
 
@@ -664,13 +865,30 @@ function addOrder() {
 function showPanel(name) {
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  const panels = ['dash','orders','add','settings'];
+  const panels = ['dash','orders','add','content','settings'];
   const idx = panels.indexOf(name);
   document.getElementById('panel'+name.charAt(0).toUpperCase()+name.slice(1)).classList.add('active');
   document.querySelectorAll('.tab')[idx].classList.add('active');
   if (name === 'dash') renderDash();
   if (name === 'orders') renderOrders();
   if (name === 'settings') renderSettings();
+}
+
+// ── CONTENT COPY ──
+function copyText(el) {
+  const text = el.dataset.copy;
+  navigator.clipboard.writeText(text).then(() => {
+    el.classList.add('copied');
+    setTimeout(() => el.classList.remove('copied'), 2000);
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    el.classList.add('copied');
+    setTimeout(() => el.classList.remove('copied'), 2000);
+  });
 }
 
 // ── SETTINGS ──
