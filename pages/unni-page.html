@@ -148,6 +148,10 @@ img{max-width:100%}
 .jae-list li{font-size:14px;color:var(--fg2)}
 .jae-note{font-size:12px;color:var(--fg3);margin-top:6px}
 
+/* ── 취업운 spotlight ── */
+.chueop-spot{background:linear-gradient(135deg,color-mix(in srgb,var(--gold) 9%,var(--bg)),color-mix(in srgb,var(--lilac) 9%,var(--bg)));border:1.5px solid color-mix(in srgb,var(--gold) 30%,transparent);border-radius:18px;padding:20px 18px;margin-bottom:24px;text-align:center}
+.ch-tag{display:inline-block;background:linear-gradient(135deg,var(--gold),var(--accent));color:#fff;font-size:12px;font-weight:800;padding:4px 12px;border-radius:999px;margin-bottom:12px;letter-spacing:.04em}
+
 /* 반응형 */
 @media(max-width:400px){
   .menu-grid{grid-template-columns:1fr 1fr}
@@ -213,6 +217,24 @@ img{max-width:100%}
       <li>🔮 이 인연이 나에게 좋은 인연인지 여부</li>
     </ul>
     <button class="btn btn-primary" style="max-width:280px;margin:0 auto;display:block" onclick="quickSelectJaehoe()">🌹 재회운 바로 신청</button>
+    <p class="jae-note">₩18,000 · 1~2일 내 발송 · 1회 추가 질문 무료</p>
+  </div>
+
+  <!-- 취업운 특집 -->
+  <div class="chueop-spot">
+    <div class="ch-tag">💼 지금 인기 상담</div>
+    <div class="jae-title">취업 안 되는 건, 노력의 문제가 아닐 수 있어요</div>
+    <div class="jae-desc">
+      사주에는 직업운이 트이는 시기가 따로 있어요.<br>
+      딱 맞는 시기에 지원하면 술술 풀리거든요 💼
+    </div>
+    <ul class="jae-list">
+      <li>💼 내 사주에 맞는 직종·회사 유형</li>
+      <li>📅 취업운·합격운이 터지는 정확한 시기</li>
+      <li>🔑 면접운 좋은 날과 피해야 할 날</li>
+      <li>✨ 지금 이직 타이밍인지 정확하게</li>
+    </ul>
+    <button class="btn btn-primary" style="max-width:280px;margin:0 auto;display:block" onclick="quickSelectChueop()">💼 취업운 바로 신청</button>
     <p class="jae-note">₩18,000 · 1~2일 내 발송 · 1회 추가 질문 무료</p>
   </div>
 
@@ -397,6 +419,7 @@ const SERVICES = [
   {name:"새해운세",   emoji:"🎍", price:18000},
   {name:"수능·입시운",emoji:"📚", price:18000},
   {name:"재회운",     emoji:"🌹", price:18000},
+  {name:"취업운",     emoji:"💼", price:18000},
   {name:"이혼·결별운",emoji:"🍂", price:18000},
 ];
 
@@ -406,6 +429,11 @@ let deliveryMode = 'email';
 // 메뉴 그리드 렌더
 function quickSelectJaehoe(){
   const idx = SERVICES.findIndex(s => s.name === '재회운');
+  if(idx >= 0){ selected.add(idx); renderMenu(); updateTotal(); }
+  document.getElementById('panelStep1').scrollIntoView({behavior:'smooth'});
+}
+function quickSelectChueop(){
+  const idx = SERVICES.findIndex(s => s.name === '취업운');
   if(idx >= 0){ selected.add(idx); renderMenu(); updateTotal(); }
   document.getElementById('panelStep1').scrollIntoView({behavior:'smooth'});
 }
