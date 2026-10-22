@@ -36,6 +36,7 @@ jobs:
           SOLAPI_FROM: "${{ secrets.SOLAPI_FROM }}"
           KAKAO_CHANNEL_ID: "${{ secrets.KAKAO_CHANNEL_ID }}"
           NOTIFY_PHONE: "${{ secrets.NOTIFY_PHONE }}"
+          NOTIFY_EMAIL: "${{ secrets.NOTIFY_EMAIL }}"
         run: python scripts/payment_check.py
 
       - name: Process orders
@@ -50,6 +51,8 @@ jobs:
           SOLAPI_FROM: "${{ secrets.SOLAPI_FROM }}"
           KAKAO_CHANNEL_ID: "${{ secrets.KAKAO_CHANNEL_ID }}"
           NOTIFY_PHONE: "${{ secrets.NOTIFY_PHONE }}"
+          NOTIFY_EMAIL: "${{ secrets.NOTIFY_EMAIL }}"
+          BANK_ACCOUNT: "${{ secrets.BANK_ACCOUNT }}"
         run: python scripts/check_orders.py
 
       - name: Deliver FL PDFs (with Claude verification)
@@ -62,4 +65,5 @@ jobs:
           SOLAPI_FROM: "${{ secrets.SOLAPI_FROM }}"
           KAKAO_CHANNEL_ID: "${{ secrets.KAKAO_CHANNEL_ID }}"
           NOTIFY_PHONE: "${{ secrets.NOTIFY_PHONE }}"
+          NOTIFY_EMAIL: "${{ secrets.NOTIFY_EMAIL }}"
         run: python scripts/deliver_pdf.py

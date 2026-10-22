@@ -27,6 +27,7 @@ GMAIL_APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD", "")
 PAYMENT_HINTS = [
     "입금", "이체", "결제", "토스", "카카오페이", "kakao", "toss",
     "무통장", "계좌이체", "페이코", "네이버페이",
+    "신한", "shinhan",  # 신한은행 입금 알림
 ]
 
 # 상품 금액 매핑 (확인용)

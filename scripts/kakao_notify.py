@@ -24,6 +24,7 @@ SOLAPI_FROM       = os.getenv("SOLAPI_FROM", "")
 KAKAO_CHANNEL_ID  = os.getenv("KAKAO_CHANNEL_ID", "")
 NOTIFY_PHONE      = os.getenv("NOTIFY_PHONE", "01083863712")   # 신정희
 NOTIFY_EMAIL      = os.getenv("NOTIFY_EMAIL", "s70js@kakao.com")  # 신정희 카카오메일
+BANK_ACCOUNT      = os.getenv("BANK_ACCOUNT", "")  # 신한은행 계좌 (예: 신한은행 110-xxx-xxxxxx 예금주:신정희)
 SOLAPI_BASE       = "https://api.solapi.com"
 
 ACCOUNT_NAMES = {
@@ -268,6 +269,7 @@ def send_customer_guide(order: dict, order_id: str):
     dm        = order.get("delivery_method", "이메일")
     contact   = order.get("delivery_contact", "")
 
+    bank_line = f"\n【입금 계좌】\n{BANK_ACCOUNT}" if BANK_ACCOUNT else ""
     guide_text = (
         f"[{acct_name}] 주문 접수 안내\n\n"
         f"안녕하세요 {name}님 😊\n"
@@ -278,7 +280,8 @@ def send_customer_guide(order: dict, order_id: str):
         f"성별: {gender}\n"
         f"신청 상품: {product}\n"
         f"결과 전달: {dm}\n"
-        f"전달처: {contact}\n\n"
+        f"전달처: {contact}\n"
+        f"{bank_line}\n"
         f"입금 확인 후 분석을 시작합니다.\n"
         f"오류가 있으면 답장 주세요.\n"
         f"감사합니다 🙏"
