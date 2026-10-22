@@ -1,0 +1,550 @@
+<title>합격운 셀프 체크</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700;900&display=swap">
+<style>
+:root {
+  --gold: #b8920e;
+  --gold2: #d4aa2a;
+  --gold3: #f0cc6a;
+  --dark: #0d0d1a;
+  --navy: #12192e;
+  --paper: #fffef8;
+  --ink: #1a1a2e;
+  --muted: #5a5870;
+  --accent-bg: #fdf8ec;
+  --border: #e2d5a0;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0f0f1c;
+    --ink: #eeeaf8;
+    --muted: #9896b0;
+    --accent-bg: #161428;
+    --border: #2e2a48;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0f0f1c;
+  --ink: #eeeaf8;
+  --muted: #9896b0;
+  --accent-bg: #161428;
+  --border: #2e2a48;
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Noto Sans KR', sans-serif;
+  padding: 0 16px 60px;
+}
+
+/* ── PAGE LAYOUT ── */
+.page {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+/* ── COVER ── */
+.cover {
+  padding: 48px 0 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  border-bottom: 1.5px solid var(--border);
+  margin-bottom: 36px;
+}
+.cover-tag {
+  font-size: 10px;
+  letter-spacing: 3.5px;
+  text-transform: uppercase;
+  color: var(--gold2);
+  font-weight: 500;
+  margin-bottom: 14px;
+}
+.cover-title {
+  font-family: 'Noto Serif KR', serif;
+  font-weight: 900;
+  font-size: clamp(26px, 7vw, 38px);
+  line-height: 1.25;
+  text-align: center;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+.cover-title em {
+  font-style: normal;
+  color: var(--gold2);
+}
+.cover-sub {
+  font-size: 13px;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.6;
+  max-width: 400px;
+}
+.gold-bar {
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold2), transparent);
+  margin: 18px auto 0;
+}
+
+/* ── INTRO BOX ── */
+.intro-box {
+  background: var(--accent-bg);
+  border-left: 3px solid var(--gold2);
+  border-radius: 0 10px 10px 0;
+  padding: 18px 20px;
+  margin-bottom: 36px;
+}
+.intro-box p {
+  font-size: 13.5px;
+  line-height: 1.9;
+  color: var(--ink);
+}
+.intro-box strong { color: var(--gold); font-weight: 700; }
+
+/* ── SECTION HEADER ── */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  margin-top: 36px;
+}
+.step-num {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold3));
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Noto Serif KR', serif;
+  font-weight: 900;
+  font-size: 14px;
+  color: #fff;
+  flex-shrink: 0;
+}
+.section-title {
+  font-family: 'Noto Serif KR', serif;
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--ink);
+}
+.section-title span {
+  display: block;
+  font-size: 11px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-weight: 300;
+  color: var(--muted);
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+
+/* ── CHECK TABLE ── */
+.check-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+.check-table th {
+  background: var(--navy);
+  color: var(--gold3);
+  font-weight: 500;
+  padding: 10px 14px;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-align: left;
+}
+.check-table th:first-child { border-radius: 8px 0 0 0; }
+.check-table th:last-child  { border-radius: 0 8px 0 0; }
+.check-table td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+  line-height: 1.55;
+  color: var(--ink);
+}
+.check-table tr:last-child td { border-bottom: none; }
+.check-table tr:nth-child(even) td { background: var(--accent-bg); }
+.check-table .stem { font-family: 'Noto Serif KR', serif; font-weight: 700; font-size: 16px; color: var(--gold); text-align: center; }
+.check-table .good { color: #2e8b3a; font-weight: 700; }
+.check-table .mid  { color: var(--gold); font-weight: 500; }
+.check-table .low  { color: var(--muted); }
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .5px;
+}
+.badge-good { background: #d4edda; color: #1a5c25; }
+.badge-mid  { background: #fef3cd; color: #7a5900; }
+.badge-low  { background: #e9e9ef; color: #555; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .badge-good { background: #1a3d22; color: #6fcf8b; }
+  :root:not([data-theme="light"]) .badge-mid  { background: #3d2e00; color: #e8c85a; }
+  :root:not([data-theme="light"]) .badge-low  { background: #252535; color: #9896b0; }
+}
+:root[data-theme="dark"] .badge-good { background: #1a3d22; color: #6fcf8b; }
+:root[data-theme="dark"] .badge-mid  { background: #3d2e00; color: #e8c85a; }
+:root[data-theme="dark"] .badge-low  { background: #252535; color: #9896b0; }
+
+/* ── CHECKLIST ── */
+.checklist {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.checklist li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 13px 16px;
+  background: var(--accent-bg);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--ink);
+}
+.check-box {
+  width: 20px; height: 20px;
+  border-radius: 4px;
+  border: 1.5px solid var(--border);
+  flex-shrink: 0;
+  margin-top: 1px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+}
+.check-box.checked {
+  background: linear-gradient(135deg, var(--gold), var(--gold3));
+  border-color: var(--gold);
+}
+.check-box.checked::after { content: '✓'; color: #fff; font-size: 12px; font-weight: 700; }
+.check-text { flex: 1; }
+.check-text strong { color: var(--gold); }
+
+/* ── SCORE BOX ── */
+.score-section {
+  margin-top: 32px;
+  margin-bottom: 8px;
+}
+.score-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+@media (max-width: 420px) { .score-grid { grid-template-columns: 1fr; } }
+.score-card {
+  padding: 16px 18px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+.score-card.s3 { border-color: #2e8b3a; background: linear-gradient(135deg, #f0fff4, #e8f8ec); }
+.score-card.s2 { border-color: var(--gold2); background: linear-gradient(135deg, #fffde8, #fdf8dc); }
+.score-card.s1 { border-color: var(--muted); background: var(--accent-bg); }
+.score-card.s0 { border-color: var(--muted); background: var(--accent-bg); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .score-card.s3 { background: #0f2014; }
+  :root:not([data-theme="light"]) .score-card.s2 { background: #1e1800; }
+}
+:root[data-theme="dark"] .score-card.s3 { background: #0f2014; }
+:root[data-theme="dark"] .score-card.s2 { background: #1e1800; }
+.score-range {
+  font-family: 'Noto Serif KR', serif;
+  font-weight: 900;
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+.score-card.s3 .score-range { color: #2e8b3a; }
+.score-card.s2 .score-range { color: var(--gold); }
+.score-card.s1 .score-range, .score-card.s0 .score-range { color: var(--muted); }
+.score-label { font-weight: 700; font-size: 13px; margin-bottom: 6px; color: var(--ink); }
+.score-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+/* ── CTA ── */
+.cta-section {
+  margin-top: 44px;
+  padding: 32px 24px;
+  background: var(--navy);
+  border-radius: 18px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.cta-section::before {
+  content: '';
+  position: absolute;
+  top: -40px; left: 50%;
+  transform: translateX(-50%);
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,162,39,.18) 0%, transparent 70%);
+}
+.cta-eyebrow {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold3);
+  margin-bottom: 12px;
+  position: relative;
+}
+.cta-title {
+  font-family: 'Noto Serif KR', serif;
+  font-weight: 900;
+  font-size: clamp(18px, 5vw, 24px);
+  color: #fff;
+  line-height: 1.4;
+  margin-bottom: 10px;
+  position: relative;
+}
+.cta-sub {
+  font-size: 12.5px;
+  color: rgba(255,255,255,.55);
+  line-height: 1.7;
+  margin-bottom: 22px;
+  position: relative;
+}
+.cta-btn {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--gold), var(--gold3));
+  color: #0d0d1a;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 13px 32px;
+  border-radius: 100px;
+  text-decoration: none;
+  position: relative;
+  box-shadow: 0 6px 24px rgba(201,162,39,.5);
+  letter-spacing: .3px;
+}
+
+/* ── FOOTER ── */
+.doc-footer {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.footer-logo { display: flex; align-items: center; gap: 10px; }
+.logo-circle {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold3));
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Noto Serif KR', serif; font-weight: 900; font-size: 11px;
+  color: #0d0d1a; flex-shrink: 0;
+}
+.footer-brand { font-size: 12px; font-weight: 700; color: var(--gold); }
+.footer-url { font-size: 10px; color: var(--muted); margin-top: 2px; }
+.footer-note { font-size: 10px; color: var(--muted); text-align: right; }
+
+/* divider */
+.divider { width: 100%; height: 1px; background: var(--border); margin: 28px 0; }
+</style>
+
+<div class="page">
+
+  <!-- COVER -->
+  <div class="cover">
+    <div class="cover-tag">무료 사주 자료 · Free Guide</div>
+    <h1 class="cover-title">내 <em>합격운</em>을<br>지금 셀프 체크해봐</h1>
+    <p class="cover-sub">생년월일만 알면 돼 — 대운·세운·월운으로 보는<br>나의 학업·합격 타이밍 셀프 진단 가이드</p>
+    <div class="gold-bar"></div>
+  </div>
+
+  <!-- INTRO -->
+  <div class="intro-box">
+    <p>같은 노력을 해도 <strong>결과가 다른 이유</strong>가 있어. 사주에는 <strong>합격 에너지가 강한 시기</strong>가 따로 존재해. 이 자료로 내 사주의 학업운 흐름을 먼저 파악하고, 전략적으로 준비해봐.</p>
+  </div>
+
+  <!-- STEP 1: 천간 확인 -->
+  <div class="section-header">
+    <div class="step-num">1</div>
+    <div class="section-title">
+      내 일간(日干) 확인하기
+      <span>태어난 날의 天干 — 사주의 나를 대표하는 글자</span>
+    </div>
+  </div>
+
+  <table class="check-table">
+    <thead>
+      <tr>
+        <th>일간</th>
+        <th>오행</th>
+        <th>학업운 기본기</th>
+        <th>합격운 시기</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="stem">甲·乙</td>
+        <td>木</td>
+        <td><span class="badge badge-good">강함</span></td>
+        <td>인성(印星) 강한 해 — 壬·癸년</td>
+      </tr>
+      <tr>
+        <td class="stem">丙·丁</td>
+        <td>火</td>
+        <td><span class="badge badge-mid">보통</span></td>
+        <td>식신(食神) 발달 — 戊·己년</td>
+      </tr>
+      <tr>
+        <td class="stem">戊·己</td>
+        <td>土</td>
+        <td><span class="badge badge-mid">보통</span></td>
+        <td>관성(官星) 활성화 — 甲·乙년</td>
+      </tr>
+      <tr>
+        <td class="stem">庚·辛</td>
+        <td>金</td>
+        <td><span class="badge badge-good">강함</span></td>
+        <td>인성(印星) 발동 — 丙·丁년</td>
+      </tr>
+      <tr>
+        <td class="stem">壬·癸</td>
+        <td>水</td>
+        <td><span class="badge badge-good">최강</span></td>
+        <td>식상(食傷)+인성 同時 — 庚·辛년</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="divider"></div>
+
+  <!-- STEP 2: 체크리스트 -->
+  <div class="section-header">
+    <div class="step-num">2</div>
+    <div class="section-title">
+      합격운 셀프 체크리스트
+      <span>해당하는 항목에 체크해봐</span>
+    </div>
+  </div>
+
+  <ul class="checklist" id="checklist">
+    <li>
+      <div class="check-box" onclick="toggle(this)"></div>
+      <div class="check-text">올해(2026) 세운이 <strong>인성(印星) — 壬·癸·亥·子</strong> 중 하나와 합(合)이 된다</div>
+    </li>
+    <li>
+      <div class="check-box" onclick="toggle(this)"></div>
+      <div class="check-text">현재 대운(大運)이 <strong>인성운</strong> 또는 <strong>관성운</strong> 기간이다</div>
+    </li>
+    <li>
+      <div class="check-box" onclick="toggle(this)"></div>
+      <div class="check-text">사주 원국에 <strong>문창귀인(文昌貴人)</strong>이 있거나 세운에서 들어온다</div>
+    </li>
+    <li>
+      <div class="check-box" onclick="toggle(this)"></div>
+      <div class="check-text">올해 시험 월(月)의 <strong>월운이 인성·관성</strong>에 해당한다</div>
+    </li>
+    <li>
+      <div class="check-box" onclick="toggle(this)"></div>
+      <div class="check-text">사주에 <strong>학당귀인(學堂貴人)</strong> 또는 <strong>천을귀인(天乙貴人)</strong>이 있다</div>
+    </li>
+    <li>
+      <div class="check-box" onclick="toggle(this)"></div>
+      <div class="check-text">올해 사주 흐름에서 <strong>충(沖)이나 형(刑)이 없어</strong> 안정적이다</div>
+    </li>
+    <li>
+      <div class="check-box" onclick="toggle(this)"></div>
+      <div class="check-text">생일 기준 <strong>역마(驛馬)가 활성화</strong>되어 활동·이동 에너지가 강하다</div>
+    </li>
+    <li>
+      <div class="check-box" onclick="toggle(this)"></div>
+      <div class="check-text">이번 달 <strong>월운이 용신(用神)</strong>과 맞아떨어진다</div>
+    </li>
+  </ul>
+
+  <!-- SCORE -->
+  <div class="score-section">
+    <div class="section-header" style="margin-top:20px">
+      <div class="step-num">3</div>
+      <div class="section-title">
+        결과 확인
+        <span>체크한 개수로 내 합격운 에너지 파악</span>
+      </div>
+    </div>
+
+    <div class="score-grid">
+      <div class="score-card s3">
+        <div class="score-range">6~8개 ✓</div>
+        <div class="score-label">🔥 합격 에너지 최고조</div>
+        <div class="score-desc">올해가 네 타이밍이야. 지금 바로 시험 준비에 전력 투구해.</div>
+      </div>
+      <div class="score-card s2">
+        <div class="score-range">4~5개 ✓</div>
+        <div class="score-label">⚡ 합격운 상승 중</div>
+        <div class="score-desc">조건이 맞아가는 중. 월운이 좋은 시기에 맞춰 전략적으로 도전해.</div>
+      </div>
+      <div class="score-card s1">
+        <div class="score-range">2~3개 ✓</div>
+        <div class="score-label">📌 준비 & 기반 다지기</div>
+        <div class="score-desc">지금은 실력 쌓는 시기야. 1~2년 후 대운 흐름을 확인해봐.</div>
+      </div>
+      <div class="score-card s0">
+        <div class="score-range">0~1개 ✓</div>
+        <div class="score-label">🌙 대운 전환 대기</div>
+        <div class="score-desc">타이밍이 아직 안 왔어. 어떤 해에 에너지가 열리는지 꼭 확인해.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <div class="cta-eyebrow">정확한 풀이가 필요해?</div>
+    <div class="cta-title">내 사주로 정확한<br>합격 타이밍 확인하기</div>
+    <div class="cta-sub">셀프 체크는 기초야. 실제 내 일간·대운·세운을<br>전체적으로 보면 훨씬 정확한 타이밍이 나와.</div>
+    <a class="cta-btn" href="https://shinmoney7-cyber.github.io/-/saju-page.html" target="_blank">
+      사주 풀이 신청하기 →
+    </a>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="doc-footer">
+    <div class="footer-logo">
+      <div class="logo-circle">사</div>
+      <div>
+        <div class="footer-brand">사주마루</div>
+        <div class="footer-url">shinmoney7-cyber.github.io/-/saju-page.html</div>
+      </div>
+    </div>
+    <div class="footer-note">무료 배포 가능 · 출처 표기 시<br>© 사주마루 2026</div>
+  </div>
+
+</div>
+
+<script>
+function toggle(el) {
+  el.classList.toggle('checked');
+  const total = document.querySelectorAll('.check-box').length;
+  const checked = document.querySelectorAll('.check-box.checked').length;
+  // subtle feedback (no alert — just visual on checklist)
+}
+// persist checks in localStorage
+(function(){
+  try {
+    const saved = JSON.parse(localStorage.getItem('saju_checks') || '[]');
+    const boxes = document.querySelectorAll('.check-box');
+    saved.forEach(i => { if(boxes[i]) boxes[i].classList.add('checked'); });
+    boxes.forEach((b, i) => b.addEventListener('click', () => {
+      const state = [...boxes].map((b,j)=>b.classList.contains('checked')?j:null).filter(v=>v!==null);
+      localStorage.setItem('saju_checks', JSON.stringify(state));
+    }));
+  } catch(e){}
+})();
+</script>
