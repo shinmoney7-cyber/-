@@ -6,7 +6,7 @@
 :root[data-theme="dark"]{color-scheme:dark}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--dark);color:#fff;font-family:"Noto Sans KR",sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 16px 48px;gap:14px}
-.page-header{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.3)}
+.page-header{font-size:16px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.55);font-family:"Noto Serif KR",serif;font-weight:900}
 .card{width:var(--card-w);height:var(--card-h);border-radius:20px;overflow:hidden;display:none;flex-direction:column;background:#070714;box-shadow:0 24px 64px rgba(0,0,0,.75),0 0 0 1px rgba(156,109,255,.18);transition:height .35s ease}
 .card.active{display:flex}
 body.social{--card-h:var(--card-w)}
@@ -14,7 +14,7 @@ body.social .card-top{flex:0 0 22%!important}
 body.social .card-mid{flex:0 0 56%!important}
 body.social .card-bottom{flex:0 0 22%!important}
 .card-top{flex:0 0 25%;padding:18px 20px 0;display:flex;flex-direction:column;justify-content:flex-start;background:linear-gradient(180deg,rgba(6,6,15,.97) 0%,rgba(6,6,15,.65) 80%,transparent 100%);position:relative;z-index:2}
-.top-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.top-meta{display:flex;justify-content:flex-end;align-items:center;margin-bottom:7px}
 .ch-name{font-size:9px;font-weight:300;letter-spacing:2.8px;text-transform:uppercase;color:rgba(255,255,255,.45)}
 .slide-badge{font-size:8px;letter-spacing:1px;padding:2px 7px;border-radius:20px;opacity:.6;border:1px solid var(--acc);color:var(--acc)}
 .ch-line{width:22px;height:1.5px;margin-bottom:8px;background:linear-gradient(90deg,var(--acc-alt),transparent)}
@@ -29,7 +29,8 @@ body.social .card-bottom{flex:0 0 22%!important}
 .card-bottom{flex:0 0 25%;padding:0 20px 16px;display:flex;flex-direction:column;justify-content:flex-end;gap:8px;background:linear-gradient(0deg,rgba(6,6,15,.98) 0%,rgba(6,6,15,.65) 60%,transparent 100%);position:relative;z-index:2}
 .cta-row{display:flex;justify-content:center;margin-bottom:2px}
 .cta-btn{color:#fff;font-family:"Noto Sans KR",sans-serif;font-weight:700;font-size:12px;letter-spacing:.4px;padding:10px 26px;border-radius:100px;text-decoration:none;display:inline-block;background:linear-gradient(135deg,#7c4dff,#c9a227);box-shadow:0 4px 20px rgba(124,77,255,.5)}
-.card-footer{display:flex;align-items:center;gap:10px;border-top:1px solid rgba(255,255,255,.1);padding-top:10px}
+.card-footer{display:flex;align-items:center;justify-content:center;gap:10px;border-top:1px solid rgba(255,255,255,.1);padding-top:10px}
+.logo-circle{width:64px!important;height:64px!important;flex-direction:column!important;gap:3px!important;padding:6px 4px!important;font-size:7px!important;line-height:1.2!important;text-align:center!important}
 .logo-circle{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"Noto Serif KR",serif;font-weight:900;color:#06060f;flex-shrink:0;font-size:11px;background:linear-gradient(135deg,#c9a227,#e8c85a)}
 .f-brand{font-size:12px;font-weight:700;color:#e8c85a}
 .nav-section{display:flex;flex-direction:column;align-items:center;gap:8px;width:var(--card-w)}
@@ -59,7 +60,7 @@ body.social .card-bottom{flex:0 0 22%!important}
 <!-- S1: 이미지 훅 -->
 <div class="card active" data-slide="0">
   <div class="card-top">
-    <div class="top-meta"><span class="ch-name">사주마루</span><span class="slide-badge">1 / 3</span></div>
+    <div class="top-meta"><span class="slide-badge">1 / 3</span></div>
     <div class="ch-line"></div>
     <div class="card-title">내 사주에 취업운 있어?
 딱 한번만 확인해봐 💼</div>
@@ -159,14 +160,14 @@ body.social .card-bottom{flex:0 0 22%!important}
   <div class="card-bottom">
     <div class="cta-row"><a class="cta-btn" href="https://shinmoney7-cyber.github.io/-/saju-page.html" target="_blank">취업운 분석 신청하기 →</a></div>
     <div class="delivery-note">주문 순서대로 전달 · 약 3시간 소요</div>
-    <div class="card-footer"><div class="logo-circle">사</div><div class="f-brand">사주마루</div></div>
+    <div class="card-footer"><div class="logo-circle"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><polygon points="9,1 10.8,6.2 16.5,6.2 11.9,9.8 13.7,15 9,11.4 4.3,15 6.1,9.8 1.5,6.2 7.2,6.2" fill="#c9a227"/></svg><span style="white-space:nowrap">사주마루</span></div></div>
   </div>
 </div>
 
 <!-- S2: 직업운 체크리스트 -->
 <div class="card" data-slide="1">
   <div class="card-top">
-    <div class="top-meta"><span class="ch-name">사주마루</span><span class="slide-badge">2 / 3</span></div>
+    <div class="top-meta"><span class="slide-badge">2 / 3</span></div>
     <div class="ch-line"></div>
     <div class="card-title">직업운 강한 사주
 이 3가지 체크해봐 📋</div>
@@ -201,14 +202,14 @@ body.social .card-bottom{flex:0 0 22%!important}
   <div class="card-bottom">
     <div class="cta-row"><a class="cta-btn" href="https://shinmoney7-cyber.github.io/-/saju-page.html" target="_blank">내 직업운 확인하기 →</a></div>
     <div class="delivery-note">주문 순서대로 전달 · 약 3시간 소요</div>
-    <div class="card-footer"><div class="logo-circle">사</div><div class="f-brand">사주마루</div></div>
+    <div class="card-footer"><div class="logo-circle"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><polygon points="9,1 10.8,6.2 16.5,6.2 11.9,9.8 13.7,15 9,11.4 4.3,15 6.1,9.8 1.5,6.2 7.2,6.2" fill="#c9a227"/></svg><span style="white-space:nowrap">사주마루</span></div></div>
   </div>
 </div>
 
 <!-- S3: CTA -->
 <div class="card" data-slide="2">
   <div class="card-top">
-    <div class="top-meta"><span class="ch-name">사주마루</span><span class="slide-badge">3 / 3</span></div>
+    <div class="top-meta"><span class="slide-badge">3 / 3</span></div>
     <div class="ch-line"></div>
     <div class="card-title">내 취업 타이밍
 사주로 딱 짚어드려요</div>
@@ -240,7 +241,7 @@ body.social .card-bottom{flex:0 0 22%!important}
   <div class="card-bottom">
     <div class="cta-row"><a class="cta-btn" href="https://shinmoney7-cyber.github.io/-/saju-page.html" target="_blank">무료 취업운 분석 신청하기 →</a></div>
     <div class="delivery-note">주문 순서대로 전달 · 약 3시간 소요</div>
-    <div class="card-footer"><div class="logo-circle">사</div><div class="f-brand">사주마루</div></div>
+    <div class="card-footer"><div class="logo-circle"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><polygon points="9,1 10.8,6.2 16.5,6.2 11.9,9.8 13.7,15 9,11.4 4.3,15 6.1,9.8 1.5,6.2 7.2,6.2" fill="#c9a227"/></svg><span style="white-space:nowrap">사주마루</span></div></div>
   </div>
 </div>
 

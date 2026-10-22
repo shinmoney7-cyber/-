@@ -1,0 +1,126 @@
+{
+  "accounts": [
+    {
+      "id": "sm",
+      "name": "사주마루",
+      "handle": "sajumaru",
+      "theme": "gold_purple",
+      "accent": "#c9a227",
+      "bg": "#070714",
+      "typefully_social_set_id": 348526,
+      "persona": "신비롭고 권위있는 사주 전문가. 학문적이고 깊이있는 운세 분석. 오랜 경험과 지혜.",
+      "env_prefix": "SM",
+      "platforms": {
+        "instagram": true,
+        "facebook": true,
+        "threads": true,
+        "twitter": true,
+        "tiktok": true,
+        "youtube": true,
+        "naver_blog": true,
+        "naver_clip": true,
+        "naver_jisik": true
+      }
+    },
+    {
+      "id": "un",
+      "name": "사주보는언니",
+      "handle": "saju_unni",
+      "theme": "rose_pink",
+      "accent": "#c9549a",
+      "bg": "#200630",
+      "typefully_social_set_id": 349146,
+      "persona": "친근하고 공감능력 뛰어난 언니 같은 사주 상담가. 감성적이고 따뜻한 조언. 여성 타겟.",
+      "env_prefix": "UN",
+      "platforms": {
+        "instagram": true,
+        "facebook": true,
+        "threads": true,
+        "twitter": true,
+        "tiktok": true,
+        "youtube": true,
+        "naver_blog": true,
+        "naver_clip": true,
+        "naver_jisik": true
+      }
+    },
+    {
+      "id": "s77",
+      "name": "사주마루77",
+      "handle": "sajumaru77",
+      "theme": "orange_fire",
+      "accent": "#f4923a",
+      "bg": "#1a0800",
+      "typefully_social_set_id": 349162,
+      "persona": "트렌디하고 젊은 감각의 사주 크리에이터. Z세대 언어. 밈과 유머 활용. 숏폼 최적화.",
+      "env_prefix": "S77",
+      "platforms": {
+        "instagram": true,
+        "facebook": false,
+        "threads": true,
+        "twitter": true,
+        "tiktok": true,
+        "youtube": true,
+        "naver_blog": false,
+        "naver_clip": true,
+        "naver_jisik": false
+      }
+    }
+  ],
+  "time_slots": {
+    "06": {
+      "type": "morning_fortune",
+      "title": "아침 운세",
+      "platforms": ["instagram", "facebook", "threads", "twitter"],
+      "format": "image_carousel"
+    },
+    "08": {
+      "type": "short_video",
+      "title": "숏폼 영상",
+      "platforms": ["tiktok", "youtube", "naver_clip"],
+      "format": "video_shorts"
+    },
+    "10": {
+      "type": "blog_seo",
+      "title": "블로그 SEO",
+      "platforms": ["naver_blog"],
+      "format": "long_article"
+    },
+    "12": {
+      "type": "midday_tip",
+      "title": "점심 꿀팁",
+      "platforms": ["twitter", "threads", "instagram"],
+      "format": "text_image"
+    },
+    "14": {
+      "type": "youtube_main",
+      "title": "유튜브 메인",
+      "platforms": ["youtube"],
+      "format": "video_long"
+    },
+    "16": {
+      "type": "promo_cta",
+      "title": "홍보 CTA",
+      "platforms": ["instagram", "facebook", "threads"],
+      "format": "promo_card"
+    },
+    "18": {
+      "type": "evening_fortune",
+      "title": "저녁 운세",
+      "platforms": ["tiktok", "instagram", "twitter", "threads"],
+      "format": "image_video"
+    },
+    "20": {
+      "type": "jisik_qna",
+      "title": "지식인 답변",
+      "platforms": ["naver_jisik"],
+      "format": "qna"
+    },
+    "22": {
+      "type": "night_preview",
+      "title": "내일 예고",
+      "platforms": ["threads", "twitter", "instagram"],
+      "format": "teaser"
+    }
+  }
+}

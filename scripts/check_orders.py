@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 """
-Gmail에서 사주마루 주문 이메일을 읽어 FL에 자동 주문
+Gmail에서 사주마루/언니/77 주문 이메일을 읽어 FL에 자동 주문
+- 계정 자동 감지 (제목의 [사주마루], [사주보는언니], [사주마루77])
+- orders_db에 주문 저장
+- kakao_notify로 관리자+고객 알림
 """
 import imaplib, email, os, re, sys
 from email.header import decode_header
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from sms_notify import send_sms
 
 # .env 자동 로드
 _env = Path(__file__).parent / ".env"
@@ -17,11 +19,20 @@ if _env.exists():
             k, v = line.split("=", 1)
             os.environ.setdefault(k.strip(), v.strip())
 
+from orders_db   import create_order, update_status, update_field, find_by_email_uid
+from kakao_notify import notify_new_order, notify_error, send_customer_guide
+
 GMAIL_USER         = os.getenv("GMAIL_USER", "shinmoney7@gmail.com")
 GMAIL_APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD", "")
 OPERATOR_EMAIL     = "shinmoney7@gmail.com"
 
-# 시진 → 시작 시간 (시진 범위 중간값)
+# 제목 → 계정 ID 매핑
+SUBJECT_ACCOUNT_MAP = {
+    "[사주마루77]":   "s77",
+    "[사주보는언니]":  "un",
+    "[사주마루]":      "sm",
+}
+
 TIME_MAP = {
     "모름": None,
     "자시": 0,  "축시": 2,  "인시": 4,  "묘시": 6,
@@ -65,7 +76,14 @@ def get_field(lines, key):
     return ""
 
 
-def parse_order_email(body: str) -> list:
+def detect_account(subject: str) -> str:
+    for marker, acct in SUBJECT_ACCOUNT_MAP.items():
+        if marker in subject:
+            return acct
+    return "sm"
+
+
+def parse_order_email(body: str, account: str = "sm", email_uid: str = "") -> list:
     lines = body.splitlines()
 
     name    = get_field(lines, "성함")
@@ -78,7 +96,6 @@ def parse_order_email(body: str) -> list:
     if not name or not birth_raw:
         return []
 
-    # 생년월일 파싱
     cal_type = "음력" if "(음력)" in birth_raw else "양력"
     birth_clean = birth_raw.replace("(음력)", "").strip()
     m = re.match(r"(\d{4})[.\-/](\d{1,2})[.\-/](\d{1,2})", birth_clean)
@@ -86,7 +103,6 @@ def parse_order_email(body: str) -> list:
         return []
     year, month, day = int(m.group(1)), int(m.group(2)), int(m.group(3))
 
-    # 시간 파싱
     hour = None
     if time_raw and "모름" not in time_raw:
         for key, val in TIME_MAP.items():
@@ -94,10 +110,7 @@ def parse_order_email(body: str) -> list:
                 hour = val
                 break
 
-    # FL 결과는 항상 운영자 이메일로 수신 → 운영자가 고객에게 직접 전달
-    customer_email = OPERATOR_EMAIL
-
-    # 신청 상품 파싱 (ㆍ로 시작하는 줄)
+    # 신청 상품 파싱
     products = []
     in_items = False
     for l in lines:
@@ -117,15 +130,20 @@ def parse_order_email(body: str) -> list:
 
     return [
         {
-            "name": name,
-            "gender": gender,
-            "cal_type": cal_type,
-            "year": year, "month": month, "day": day,
-            "hour": hour, "minute": 0,
-            "product": p,
-            "customer_email": customer_email,
-            "delivery_method": delivery_method,
+            "account":          account,
+            "name":             name,
+            "gender":           gender,
+            "cal_type":         cal_type,
+            "year":             year,
+            "month":            month,
+            "day":              day,
+            "hour":             hour,
+            "minute":           0,
+            "product":          p,
+            "customer_email":   OPERATOR_EMAIL,
+            "delivery_method":  delivery_method,
             "delivery_contact": contact,
+            "email_uid":        email_uid,
         }
         for p in products
     ]
@@ -133,72 +151,103 @@ def parse_order_email(body: str) -> list:
 
 def run():
     if not GMAIL_APP_PASSWORD:
-        print("[ERROR] GMAIL_APP_PASSWORD 환경변수가 없습니다.")
+        print("[ERROR] GMAIL_APP_PASSWORD 없음")
         sys.exit(1)
 
     mail = imaplib.IMAP4_SSL("imap.gmail.com")
     mail.login(GMAIL_USER, GMAIL_APP_PASSWORD)
     mail.select("inbox")
 
-    # 미읽은 메일 전체 검색 후 Python에서 제목 필터 (IMAP 한국어 인코딩 오류 방지)
     _, ids = mail.search(None, 'UNSEEN')
     all_unseen = [i for i in ids[0].split() if i]
 
+    # 사주 브랜드 주문 이메일만 필터
     email_ids = []
     for eid in all_unseen:
         _, hdr = mail.fetch(eid, "(BODY.PEEK[HEADER.FIELDS (SUBJECT)])")
         raw_subj = hdr[0][1] if hdr and hdr[0] else b""
         subj = decode_str(email.message_from_bytes(raw_subj).get("Subject", ""))
-        if "[사주마루]" in subj:
-            email_ids.append(eid)
+        if any(k in subj for k in SUBJECT_ACCOUNT_MAP):
+            email_ids.append((eid, subj))
 
     print(f"[Gmail] 미읽은 주문 메일: {len(email_ids)}건")
 
     if not email_ids:
-        print("[Gmail] 처리할 주문 없음")
         mail.logout()
         return
 
-    sys.path.insert(0, str(Path(__file__).parent))
     from saju_analysis import process_order_with_analysis
 
-    for eid in email_ids:
-        _, data = mail.fetch(eid, "(RFC822)")
-        msg = email.message_from_bytes(data[0][1])
-        subject = decode_str(msg.get("Subject", ""))
-        body = get_body(msg)
-
-        # 무료체험 메일은 건너뜀
+    for eid, subject in email_ids:
+        # 무료체험 스킵
         if "무료체험" in subject:
             mail.store(eid, "+FLAGS", "\\Seen")
             continue
 
-        print(f"\n[Gmail] 처리: {subject}")
-        orders = parse_order_email(body)
+        _, data = mail.fetch(eid, "(RFC822)")
+        msg  = email.message_from_bytes(data[0][1])
+        body = get_body(msg)
+
+        account = detect_account(subject)
+        print(f"\n[주문] {subject} → 계정: {account}")
+
+        orders = parse_order_email(body, account=account, email_uid=str(eid.decode() if isinstance(eid, bytes) else eid))
         if not orders:
-            print("  → 파싱 실패, 건너뜀 (미읽음 유지)")
+            print("  → 파싱 실패 (미읽음 유지)")
             continue
 
         all_ok = True
         for order in orders:
-            results = process_order_with_analysis(order)
-            fl_res  = results.get("fl", {})
-            ai_res  = results.get("analysis", {})
-            dm = order.get("delivery_method", "이메일")
-            dc = order.get("delivery_contact", "")
-            if fl_res.get("success"):
-                ai_note = "AI분석메일 발송" if ai_res.get("success") else "AI분석 스킵"
-                print(f"  ✅ {order['product']} → FL완료 + {ai_note} [{dm}: {dc}]: {fl_res.get('url')}")
-                send_sms(f"[사주마루] 주문접수 {order['product']} · {dm}")
-            else:
-                print(f"  ❌ {order['product']} → FL실패: {fl_res.get('error')}")
+            # 중복 주문 방지
+            existing = find_by_email_uid(order["email_uid"]) if order.get("email_uid") else None
+            if existing:
+                print(f"  ⚠️ 이미 처리된 주문 #{existing['order_id']} 건너뜀")
+                continue
+
+            # DB에 주문 저장
+            oid = create_order(order)
+            print(f"  📋 주문 저장: #{oid} {order['name']} / {order['product']}")
+
+            # 고객 안내 메시지 즉시 발송
+            send_customer_guide(order, oid)
+
+            # 관리자 + 고객 알림
+            notify_new_order(order, oid)
+
+            # FL 주문 + AI 분석
+            try:
+                update_status(oid, "processing", "FL 주문 시작")
+                results = process_order_with_analysis(order)
+                fl_res  = results.get("fl", {})
+                ai_res  = results.get("analysis", {})
+
+                if fl_res.get("success"):
+                    update_field(oid,
+                        fl_url=fl_res.get("url", ""),
+                        fl_submitted_at=__import__("datetime").datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    )
+                    dm = order.get("delivery_method", "이메일")
+                    dc = order.get("delivery_contact", "")
+                    ai_note = "AI분석발송" if ai_res.get("success") else "AI분석스킵"
+                    print(f"  ✅ #{oid} {order['product']} → FL완료 + {ai_note} [{dm}: {dc}]")
+                else:
+                    err = fl_res.get("error", "알수없음")
+                    update_status(oid, "error", err)
+                    notify_error(order, oid, err)
+                    print(f"  ❌ #{oid} {order['product']} → FL실패: {err}")
+                    all_ok = False
+
+            except Exception as e:
+                update_status(oid, "error", str(e))
+                notify_error(order, oid, str(e))
+                print(f"  ❌ 예외: {e}")
                 all_ok = False
 
         if all_ok:
             mail.store(eid, "+FLAGS", "\\Seen")
-            print("  → 메일 읽음 처리 완료")
+            print("  → 메일 읽음 처리")
         else:
-            print("  → 일부 실패, 메일 미읽음 유지 (다음 실행 시 재처리)")
+            print("  → 일부 실패, 미읽음 유지")
 
     mail.close()
     mail.logout()

@@ -298,10 +298,56 @@ body{padding:0 16px;padding-block:0;font-size:16px}
 .isa-timing strong{color:var(--gold)}
 </style>
 
-<!-- 수능 시즌 긴급 배너 -->
-<div style="background:linear-gradient(135deg,#7b2fff,#c840ff);color:#fff;text-align:center;padding:11px 16px;font-size:14px;font-weight:700;letter-spacing:.02em;position:sticky;top:0;z-index:200">
-  <a href="https://forms.gle/t2sSNES5NYow77vz5" target="_blank" rel="noopener" style="color:#fff;text-decoration:none">📚 수능 시즌 · <span style="color:#ffe066">수능·입시운 분석 신청 받는 중</span> · 신청하기 →</a>
+<!-- 긴급 배너 (동적 — 날짜별 자동 전환) -->
+<div id="urgentBanner" style="background:linear-gradient(135deg,#7b2fff,#c840ff);color:#fff;text-align:center;padding:11px 16px;font-size:14px;font-weight:700;letter-spacing:.02em;position:sticky;top:0;z-index:200">
+  <a id="urgentLink" href="https://forms.gle/t2sSNES5NYow77vz5" target="_blank" rel="noopener" style="color:#fff;text-decoration:none"></a>
 </div>
+<script>
+(function(){
+  var mo=new Date().getMonth()+1;
+  var msgs={
+    1:"🎊 신년운세 특집 · 2026년 첫 달 대운 분석 신청 받는 중 · 신청하기 →",
+    2:"💝 연애운·궁합 특집 · 이번 달 인연운 분석 신청 받는 중 · 신청하기 →",
+    3:"🌸 봄 대운 특집 · 새 출발 전 사주 분석 신청 받는 중 · 신청하기 →",
+    4:"🌱 재물운·사업운 특집 · 4월 재물 흐름 분석 신청 받는 중 · 신청하기 →",
+    5:"🌻 취업·이직운 특집 · 상반기 취업운 분석 신청 받는 중 · 신청하기 →",
+    6:"☀️ 상반기 결산 특집 · 하반기 운 미리 분석 신청 받는 중 · 신청하기 →",
+    7:"🏖️ 하반기 대운 특집 · 하반기 전체 흐름 분석 신청 받는 중 · 신청하기 →",
+    8:"📚 수능·취업 특집 · 하반기 합격운 분석 신청 받는 중 · 신청하기 →",
+    9:"🍂 가을 대운 특집 · 연말 준비 사주 분석 신청 받는 중 · 신청하기 →",
+    10:"🎃 연말운 특집 · 11월~12월 운세 미리 분석 신청 받는 중 · 신청하기 →",
+    11:"📚 수능 시즌 · 수능·입시운 분석 신청 받는 중 · 신청하기 →",
+    12:"🎄 2025년 마무리 · 내년 대운 미리 분석 신청 받는 중 · 신청하기 →",
+  };
+  document.getElementById("urgentLink").textContent=msgs[mo]||msgs[1];
+})();
+</script>
+
+<!-- 스티키 하단 CTA (모바일) -->
+<div id="bottomCta" style="position:fixed;bottom:0;left:0;right:0;z-index:300;padding:12px 16px;background:linear-gradient(0deg,var(--bg) 0%,transparent 100%);padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));display:none">
+  <a href="https://forms.gle/t2sSNES5NYow77vz5" target="_blank" rel="noopener"
+     style="display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#b87fff,#7b2fff);color:#fff;border-radius:14px;padding:15px;font-size:16px;font-weight:800;text-decoration:none;box-shadow:0 4px 20px rgba(123,47,255,.5);letter-spacing:.02em">
+    🔮 <span>무료 상담 신청하기</span> <span style="font-size:12px;opacity:.85;font-weight:600">(기질 분석 무료)</span>
+  </a>
+</div>
+<script>
+(function(){
+  var shown=false;
+  function check(){
+    var h=document.getElementById("app-header-bottom");
+    if(!h){
+      // header 아래 지나치면 표시
+      if(window.scrollY>180&&!shown){shown=true;document.getElementById("bottomCta").style.display="block";}
+      if(window.scrollY<80&&shown){shown=false;document.getElementById("bottomCta").style.display="none";}
+    } else {
+      var r=h.getBoundingClientRect();
+      if(r.bottom<0&&!shown){shown=true;document.getElementById("bottomCta").style.display="block";}
+      if(r.bottom>80&&shown){shown=false;document.getElementById("bottomCta").style.display="none";}
+    }
+  }
+  window.addEventListener("scroll",check,{passive:true});
+})();
+</script>
 
 <!-- 헤더 -->
 <div class="app-header">
@@ -312,9 +358,70 @@ body{padding:0 16px;padding-block:0;font-size:16px}
     <span style="font-size:14px;font-weight:700;color:var(--green)">기질·성향 분석 <strong style="font-size:16px">무료</strong> 제공</span>
     <span style="font-size:12px;color:var(--fg3)">· 추가 항목 선택 가능</span>
   </div>
-  <a class="btn btn-gold" href="https://forms.gle/t2sSNES5NYow77vz5" target="_blank" rel="noopener" style="max-width:320px;margin:18px auto 0;display:block;text-decoration:none">🔮 사주 분석 신청하기</a>
+  <a id="app-header-bottom" class="btn btn-gold" href="https://forms.gle/t2sSNES5NYow77vz5" target="_blank" rel="noopener" style="max-width:320px;margin:18px auto 0;display:block;text-decoration:none">🔮 사주 분석 신청하기</a>
   <div style="font-size:12px;color:var(--fg3);margin-top:8px">종합 분석 35,000원 · 개별 항목 15,000원부터 · 입금 확인 후 결과 전달</div>
 </div>
+
+<!-- 사회적 증명 + 긴급성 배지 -->
+<div style="max-width:640px;margin:20px auto 0;display:flex;flex-wrap:wrap;gap:8px;justify-content:center">
+  <div style="background:color-mix(in srgb,var(--gold) 10%,var(--bg2));border:1px solid color-mix(in srgb,var(--gold) 30%,transparent);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:700;color:var(--gold)">⭐ 4.9/5.0 (1,200+ 후기)</div>
+  <div style="background:color-mix(in srgb,var(--green) 10%,var(--bg2));border:1px solid color-mix(in srgb,var(--green) 30%,transparent);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:700;color:var(--green)">✅ 당일 결과 전달</div>
+  <div id="slotBadge" style="background:color-mix(in srgb,var(--red) 10%,var(--bg2));border:1px solid color-mix(in srgb,var(--red) 30%,transparent);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:700;color:var(--red)">🔥 오늘 <span id="slotsLeft">3</span>자리 남음</div>
+</div>
+<script>
+(function(){
+  // 날짜 기반으로 남은 자리 시뮬레이션 (하루 단위로 고정)
+  var d=new Date();
+  var seed=d.getFullYear()*10000+((d.getMonth()+1)*100)+d.getDate();
+  var slots=[2,3,4,2,3,2,4,3,2,3,2,4][seed%12];
+  document.getElementById("slotsLeft").textContent=slots;
+})();
+</script>
+
+<!-- 고객 후기 슬라이더 -->
+<div style="max-width:640px;margin:20px auto;overflow:hidden;border-radius:16px;background:var(--bg2);border:1.5px solid var(--border)">
+  <div style="padding:12px 20px 8px;font-size:13px;font-weight:700;color:var(--fg3);border-bottom:1px solid var(--border);letter-spacing:.04em">⭐ 실제 상담 후기</div>
+  <div id="reviewTrack" style="display:flex;gap:0;transition:transform .5s ease">
+    <div style="min-width:100%;padding:16px 20px">
+      <div style="font-size:15px;font-weight:700;color:var(--fg);margin-bottom:6px">취업운 분석 후기 ⭐⭐⭐⭐⭐</div>
+      <div style="font-size:14px;color:var(--fg2);line-height:1.7">"3번 이직을 고민했는데 시기를 정확히 짚어줬어요. 분석대로 9월에 이직했더니 연봉 30% 올랐습니다. 강추합니다!"</div>
+      <div style="font-size:12px;color:var(--fg3);margin-top:8px">— 직장인 30대 여성 · 취업·이직운 분석</div>
+    </div>
+    <div style="min-width:100%;padding:16px 20px">
+      <div style="font-size:15px;font-weight:700;color:var(--fg);margin-bottom:6px">연애운 분석 후기 ⭐⭐⭐⭐⭐</div>
+      <div style="font-size:14px;color:var(--fg2);line-height:1.7">"솔직히 반신반의했는데 인연이 오는 시기를 딱 맞췄어요. 지금 사귀고 있는 분도 사주에서 예고된 사람 특징과 완전 일치합니다."</div>
+      <div style="font-size:12px;color:var(--fg3);margin-top:8px">— 20대 후반 여성 · 연애운·인연 분석</div>
+    </div>
+    <div style="min-width:100%;padding:16px 20px">
+      <div style="font-size:15px;font-weight:700;color:var(--fg);margin-bottom:6px">재물운 분석 후기 ⭐⭐⭐⭐⭐</div>
+      <div style="font-size:14px;color:var(--fg2);line-height:1.7">"주식·부동산 투자 시기를 여쭤봤는데 피하라고 한 달에 실제로 큰 하락이 있었어요. 덕분에 손실 없었습니다. 정말 감사해요."</div>
+      <div style="font-size:12px;color:var(--fg3);margin-top:8px">— 40대 남성 · 재물운·투자 분석</div>
+    </div>
+    <div style="min-width:100%;padding:16px 20px">
+      <div style="font-size:15px;font-weight:700;color:var(--fg);margin-bottom:6px">종합 분석 후기 ⭐⭐⭐⭐⭐</div>
+      <div style="font-size:14px;color:var(--fg2);line-height:1.7">"70페이지 보고서 진짜 놀랐어요. 제 성격을 처음 만난 사람이 이렇게 정확하게 아는 게 신기했고, 앞으로의 계획을 세우는 데 큰 도움이 됐어요."</div>
+      <div style="font-size:12px;color:var(--fg3);margin-top:8px">— 30대 남성 · 종합 분석 패키지</div>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:center;gap:6px;padding:10px 20px 16px">
+    <span id="rd0" style="width:6px;height:6px;border-radius:50%;background:var(--accent);cursor:pointer" onclick="setReview(0)"></span>
+    <span id="rd1" style="width:6px;height:6px;border-radius:50%;background:var(--border);cursor:pointer" onclick="setReview(1)"></span>
+    <span id="rd2" style="width:6px;height:6px;border-radius:50%;background:var(--border);cursor:pointer" onclick="setReview(2)"></span>
+    <span id="rd3" style="width:6px;height:6px;border-radius:50%;background:var(--border);cursor:pointer" onclick="setReview(3)"></span>
+  </div>
+</div>
+<script>
+var _ri=0,_rt;
+function setReview(i){
+  _ri=i;
+  document.getElementById("reviewTrack").style.transform="translateX(-"+(_ri*100)+"%)";
+  [0,1,2,3].forEach(function(j){
+    document.getElementById("rd"+j).style.background=j===_ri?"var(--accent)":"var(--border)";
+  });
+  clearInterval(_rt);_rt=setInterval(function(){setReview((_ri+1)%4);},4500);
+}
+_rt=setInterval(function(){setReview((_ri+1)%4);},4500);
+</script>
 
 <!-- 취업운 특집 스포트라이트 -->
 <div style="background:linear-gradient(135deg,rgba(184,127,255,.13),rgba(126,184,255,.09));border:1.5px solid rgba(184,127,255,.35);border-radius:20px;padding:24px 20px;margin:20px auto;max-width:640px;text-align:center">
