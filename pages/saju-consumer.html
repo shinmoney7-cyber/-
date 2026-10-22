@@ -1,4 +1,3 @@
-<meta http-equiv="refresh" content="0;url=https://forms.gle/t2sSNES5NYow77vz5">
 <title>사주마루 · AI 사주 서비스</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;600;700&display=swap">
 <style>
@@ -150,7 +149,6 @@ body{display:flex;flex-direction:column;padding:0}
 </style>
 
 <!-- 헤더 -->
-<p style="text-align:center;padding:16px;font-size:16px">신청 페이지가 이전되었어요. <a href="https://forms.gle/t2sSNES5NYow77vz5">새 신청서로 이동 →</a></p>
 <div class="app-header">
   <div class="app-header-logo">🔮</div>
   <div class="app-header-text">
@@ -713,11 +711,19 @@ function updateConsumerHanjaResult(syls){
 }
 
 // ─── 문의 신청 ───────────────────────────────────────────────────────────
-function submitInquiry(){
+async function submitInquiry(){
   const name=document.getElementById("inqName").value.trim();
   const contact=document.getElementById("inqContact").value.trim();
+  const service=document.getElementById("inqService").value;
   if(!name||!contact){alert("이름과 연락처를 입력해 주세요.");return;}
-  // 실제로는 서버/폼서비스로 전송
+  const body=`상담 신청\n\n성함: ${name}\n연락처: ${contact}\n원하시는 분석: ${service}`;
+  const formData=new FormData();
+  formData.append("_subject",`[사주마루] 상담신청 - ${name}`);
+  formData.append("message",body);
+  formData.append("name",name);
+  formData.append("email","noreply@sajumaru.com");
+  formData.append("_captcha","false");
+  fetch("https://formsubmit.co/shinmoney7@gmail.com",{method:"POST",body:formData}).catch(()=>{});
   document.getElementById("inqDone").hidden=false;
   document.getElementById("inqName").value="";
   document.getElementById("inqContact").value="";
