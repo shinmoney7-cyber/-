@@ -10,3 +10,4 @@ playwright-report/
 test-results/
 *.egg-info/
 scripts/.env
+output/
