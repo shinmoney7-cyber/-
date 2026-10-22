@@ -1,14 +1,14 @@
 <title>사주 케러셀 카드</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&family=Noto+Serif+KR:wght@400;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Nanum+Gothic:wght@400;700;800&display=swap">
 <style>
 :root{--gold:#c9a227;--gold2:#e8c85a;--purple:#9c6dff;--dark:#06060f;--card-w:min(360px,92vw);--card-h:calc(var(--card-w)*16/9);color-scheme:dark}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark}}
 :root[data-theme="dark"]{color-scheme:dark}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--dark);color:#fff;font-family:"Noto Sans KR",sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 16px 48px;gap:14px}
+body{background:var(--dark);color:#fff;font-family:"Nanum Gothic",sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 16px 48px;gap:14px}
 .page-header{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.3)}
 .tabs{display:flex;background:rgba(255,255,255,.06);border-radius:100px;padding:3px}
-.tab{padding:7px 14px;border-radius:100px;border:none;background:transparent;color:rgba(255,255,255,.45);font-size:11px;font-family:"Noto Sans KR",sans-serif;cursor:pointer;transition:all .2s;white-space:nowrap}
+.tab{padding:7px 14px;border-radius:100px;border:none;background:transparent;color:rgba(255,255,255,.45);font-size:11px;font-family:"Nanum Gothic",sans-serif;cursor:pointer;transition:all .2s;white-space:nowrap}
 .tab[data-acc="sm"].active{background:linear-gradient(135deg,#c9a227,#e8c85a);color:#06060f;font-weight:700}
 .tab[data-acc="un"].active{background:linear-gradient(135deg,#c9549a,#f4a8cc);color:#06060f;font-weight:700}
 .tab[data-acc="77"].active{background:linear-gradient(135deg,#c43700,#f4923a);color:#fff;font-weight:700}
@@ -29,7 +29,7 @@ body.social .card-bottom{flex:0 0 22%!important}
 #acc-sm .ch-line{background:linear-gradient(90deg,var(--purple),transparent)}
 #acc-un .ch-line{background:linear-gradient(90deg,#c9549a,transparent)}
 #acc-77 .ch-line{background:linear-gradient(90deg,#e85d26,transparent)}
-.card-title{font-family:"Noto Serif KR",serif;font-weight:900;font-size:clamp(18px,5.5vw,24px);line-height:1.32;color:#fff;white-space:pre-line;text-wrap:balance}
+.card-title{font-family:"Black Han Sans",sans-serif;font-weight:900;font-size:clamp(18px,5.5vw,24px);line-height:1.32;color:#fff;white-space:pre-line;text-wrap:balance}
 #acc-sm .card-title{text-shadow:0 0 22px rgba(156,109,255,.8),0 0 55px rgba(201,162,39,.35),0 2px 6px #000}
 #acc-un .card-title{text-shadow:0 0 22px rgba(201,84,154,.7),0 0 50px rgba(244,168,204,.25),0 2px 6px #000}
 #acc-77 .card-title{text-shadow:0 0 22px rgba(232,93,38,.85),0 0 50px rgba(244,146,58,.3),0 2px 6px #000}
@@ -42,12 +42,12 @@ body.social .card-bottom{flex:0 0 22%!important}
 .img-layer svg{width:100%;height:100%;display:block}
 .card-bottom{flex:0 0 25%;padding:0 20px 16px;display:flex;flex-direction:column;justify-content:flex-end;gap:8px;background:linear-gradient(0deg,rgba(6,6,15,.98) 0%,rgba(6,6,15,.65) 60%,transparent 100%);position:relative;z-index:2}
 .cta-row{display:flex;justify-content:center;margin-bottom:2px}
-.cta-btn{color:#fff;font-family:"Noto Sans KR",sans-serif;font-weight:700;font-size:12px;letter-spacing:.4px;padding:10px 26px;border-radius:100px;text-decoration:none;display:inline-block}
+.cta-btn{color:#fff;font-family:"Nanum Gothic",sans-serif;font-weight:700;font-size:12px;letter-spacing:.4px;padding:10px 26px;border-radius:100px;text-decoration:none;display:inline-block}
 #acc-sm .cta-btn{background:linear-gradient(135deg,#7c4dff,#c9a227);box-shadow:0 4px 20px rgba(124,77,255,.5)}
 #acc-un .cta-btn{background:linear-gradient(135deg,#9c4dff,#c9549a);box-shadow:0 4px 20px rgba(201,84,154,.5)}
 #acc-77 .cta-btn{background:linear-gradient(135deg,#c43700,#e85d26);box-shadow:0 4px 20px rgba(232,93,38,.55)}
 .card-footer{display:flex;align-items:center;gap:10px;border-top:1px solid rgba(255,255,255,.1);padding-top:10px}
-.logo-circle{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"Noto Serif KR",serif;font-weight:900;color:#06060f;flex-shrink:0;font-size:11px}
+.logo-circle{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"Black Han Sans",sans-serif;font-weight:900;color:#06060f;flex-shrink:0;font-size:11px}
 #acc-sm .logo-circle{background:linear-gradient(135deg,#c9a227,#e8c85a)}
 #acc-un .logo-circle{background:linear-gradient(135deg,#c9549a,#f4a8cc)}
 #acc-77 .logo-circle{background:linear-gradient(135deg,#c43700,#f4923a)}
@@ -69,7 +69,7 @@ body.social .card-bottom{flex:0 0 22%!important}
 .sdot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.18);cursor:pointer;transition:all .2s}
 .sdot.active{background:var(--purple);transform:scale(1.4)}
 .ctrl-row{display:flex;gap:8px}
-.ctrl-btn{padding:8px 16px;border-radius:100px;border:1px solid rgba(156,109,255,.35);background:rgba(156,109,255,.08);color:rgba(255,255,255,.7);font-size:11px;font-family:"Noto Sans KR",sans-serif;cursor:pointer;transition:all .2s;white-space:nowrap}
+.ctrl-btn{padding:8px 16px;border-radius:100px;border:1px solid rgba(156,109,255,.35);background:rgba(156,109,255,.08);color:rgba(255,255,255,.7);font-size:11px;font-family:"Nanum Gothic",sans-serif;cursor:pointer;transition:all .2s;white-space:nowrap}
 .ctrl-btn:hover:not(:disabled){background:rgba(156,109,255,.18);color:#fff}
 .ctrl-btn.on{background:rgba(156,109,255,.28);border-color:var(--purple);color:#fff}
 .ctrl-btn:disabled{opacity:.3;cursor:default}
