@@ -22,7 +22,8 @@ SOLAPI_API_KEY    = os.getenv("SOLAPI_API_KEY", "")
 SOLAPI_API_SECRET = os.getenv("SOLAPI_API_SECRET", "")
 SOLAPI_FROM       = os.getenv("SOLAPI_FROM", "")
 KAKAO_CHANNEL_ID  = os.getenv("KAKAO_CHANNEL_ID", "")
-NOTIFY_PHONE      = os.getenv("NOTIFY_PHONE", "")  # 신정희 번호
+NOTIFY_PHONE      = os.getenv("NOTIFY_PHONE", "01083863712")   # 신정희
+NOTIFY_EMAIL      = os.getenv("NOTIFY_EMAIL", "s70js@kakao.com")  # 신정희 카카오메일
 SOLAPI_BASE       = "https://api.solapi.com"
 
 ACCOUNT_NAMES = {
@@ -81,6 +82,29 @@ def _kakao_or_sms(to: str, text: str, template_id: str = "", variables: dict = N
     return _send_sms_raw(to, text)
 
 
+def _send_admin_email(subject: str, html_body: str):
+    """신정희에게 이메일 알림"""
+    import smtplib
+    from email.mime.multipart import MIMEMultipart
+    from email.mime.text import MIMEText
+    gmail_user = os.getenv("GMAIL_USER", "shinmoney7@gmail.com")
+    gmail_pw   = os.getenv("GMAIL_APP_PASSWORD", "")
+    if not gmail_pw or not NOTIFY_EMAIL:
+        return
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = subject
+    msg["From"]    = gmail_user
+    msg["To"]      = NOTIFY_EMAIL
+    msg.attach(MIMEText(html_body, "html"))
+    try:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as s:
+            s.login(gmail_user, gmail_pw)
+            s.send_message(msg)
+        print(f"  [메일] 신정희 알림: {subject[:40]}")
+    except Exception as e:
+        print(f"  [메일] 관리자 알림 실패: {e}")
+
+
 # ──────────────────────────────────────────
 # 공개 알림 함수들
 # ──────────────────────────────────────────
@@ -93,16 +117,20 @@ def notify_new_order(order: dict, order_id: str):
     dm        = order.get("delivery_method", "이메일")
     contact   = order.get("delivery_contact", "")
 
-    # 관리자 알림 (신정희)
+    # 관리자 알림 (신정희) — 카톡+메일 동시
+    admin_text = (
+        f"[{acct_name}] 신규주문 #{order_id}\n"
+        f"성함: {name}\n"
+        f"상품: {product}\n"
+        f"전달: {dm} {contact}\n"
+        f"⚡입금확인 필요"
+    )
     if NOTIFY_PHONE:
-        admin_text = (
-            f"[{acct_name}] 신규주문 #{order_id}\n"
-            f"성함: {name}\n"
-            f"상품: {product}\n"
-            f"전달: {dm} {contact}\n"
-            f"⚡입금확인 필요"
-        )
         _kakao_or_sms(NOTIFY_PHONE, admin_text)
+    _send_admin_email(
+        f"[{acct_name}] 신규주문 #{order_id} — {name} / {product}",
+        f"<pre style='font-family:sans-serif'>{admin_text}</pre>"
+    )
 
     # 고객 알림 (전화번호가 있을 때만)
     customer_phone = _extract_phone(contact, dm)
@@ -125,11 +153,10 @@ def notify_payment_confirmed(order: dict, order_id: str):
     contact   = order.get("delivery_contact", "")
     dm        = order.get("delivery_method", "이메일")
 
+    admin_text = f"[{acct_name}] 입금확인 #{order_id}\n{name} / {product}\n분석 시작합니다."
     if NOTIFY_PHONE:
-        _kakao_or_sms(NOTIFY_PHONE,
-            f"[{acct_name}] 입금확인 #{order_id}\n"
-            f"{name} / {product}\n분석 시작합니다."
-        )
+        _kakao_or_sms(NOTIFY_PHONE, admin_text)
+    _send_admin_email(f"[{acct_name}] 입금확인 #{order_id} — {name}", f"<pre>{admin_text}</pre>")
 
     customer_phone = _extract_phone(contact, dm)
     if customer_phone:
@@ -166,13 +193,18 @@ def notify_verified_and_sending(order: dict, order_id: str, verify_note: str = "
     contact   = order.get("delivery_contact", "")
     dm        = order.get("delivery_method", "이메일")
 
+    admin_text = (
+        f"[{acct_name}] 발송전확인 완료 #{order_id}\n"
+        f"{name} / {product}\n"
+        f"Claude 검증: {verify_note[:40] if verify_note else '완료'}\n"
+        f"→ {dm} 발송 진행"
+    )
     if NOTIFY_PHONE:
-        _kakao_or_sms(NOTIFY_PHONE,
-            f"[{acct_name}] 발송전확인 완료 #{order_id}\n"
-            f"{name} / {product}\n"
-            f"Claude 검증: {verify_note[:40] if verify_note else '완료'}\n"
-            f"→ {dm} 발송 진행"
-        )
+        _kakao_or_sms(NOTIFY_PHONE, admin_text)
+    _send_admin_email(
+        f"[{acct_name}] 발송전확인 완료 #{order_id} — {name}",
+        f"<pre style='font-family:sans-serif'>{admin_text}</pre>"
+    )
 
     customer_phone = _extract_phone(contact, dm)
     if customer_phone:
@@ -192,11 +224,13 @@ def notify_delivered(order: dict, order_id: str):
     contact   = order.get("delivery_contact", "")
     dm        = order.get("delivery_method", "이메일")
 
+    admin_text = f"[{acct_name}] 발송완료 #{order_id}\n{name} / {product} → {dm}: {contact}"
     if NOTIFY_PHONE:
-        _kakao_or_sms(NOTIFY_PHONE,
-            f"[{acct_name}] 발송완료 #{order_id}\n"
-            f"{name} / {product} → {dm}: {contact}"
-        )
+        _kakao_or_sms(NOTIFY_PHONE, admin_text)
+    _send_admin_email(
+        f"[{acct_name}] 발송완료 #{order_id} — {name} / {product}",
+        f"<pre style='font-family:sans-serif'>{admin_text}</pre>"
+    )
 
     customer_phone = _extract_phone(contact, dm)
     if customer_phone:
@@ -210,13 +244,17 @@ def notify_delivered(order: dict, order_id: str):
 
 def notify_error(order: dict, order_id: str, error_msg: str):
     """오류 알림 — 관리자만"""
-    if not NOTIFY_PHONE:
-        return
     acct_name = ACCOUNT_NAMES.get(order.get("account", "sm"), "사주마루")
-    _kakao_or_sms(NOTIFY_PHONE,
+    error_text = (
         f"[{acct_name}] ❌ 오류 #{order_id}\n"
         f"{order.get('name','')} / {order.get('product','')}\n"
         f"{error_msg[:60]}"
+    )
+    if NOTIFY_PHONE:
+        _kakao_or_sms(NOTIFY_PHONE, error_text)
+    _send_admin_email(
+        f"[{acct_name}] ❌ 오류 #{order_id} — {order.get('name','')}",
+        f"<pre style='font-family:sans-serif;color:#c00'>{error_text}\n\n전체 오류:\n{error_msg}</pre>"
     )
 
 
