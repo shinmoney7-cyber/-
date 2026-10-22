@@ -4,6 +4,7 @@
 현재: 수동 업로드 가이드 이메일 전송
 """
 import os, json, smtplib
+from pathlib import Path
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
@@ -11,7 +12,12 @@ from email.mime.image import MIMEImage
 GMAIL_USER = os.environ.get("GMAIL_USER", "shinmoney7@gmail.com")
 GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD", "")
 
-with open("scripts/sns_output/meta.json", encoding="utf-8") as f:
+ACCOUNT_ID = os.environ.get("ACCOUNT_ID", "sm")
+meta_path = Path("scripts/sns_output") / ACCOUNT_ID / "meta.json"
+if not meta_path.exists():
+    meta_path = Path("scripts/sns_output/meta.json")
+
+with open(meta_path, encoding="utf-8") as f:
     meta = json.load(f)
 
 content = meta["content"]
@@ -51,6 +57,18 @@ msg["Subject"] = f"📱 네이버 클립 업로드 가이드 ({meta['date']})"
 msg["From"] = GMAIL_USER
 msg["To"] = GMAIL_USER
 msg.attach(MIMEText(html, "html"))
+
+# 영상이 있으면 첨부
+video_path = meta.get("video_shorts") or meta.get("video_path", "")
+if video_path and os.path.exists(video_path):
+    from email.mime.base import MIMEBase
+    from email import encoders
+    with open(video_path, "rb") as vf:
+        vpart = MIMEBase("video", "mp4")
+        vpart.set_payload(vf.read())
+        encoders.encode_base64(vpart)
+        vpart.add_header("Content-Disposition", "attachment", filename=os.path.basename(video_path))
+        msg.attach(vpart)
 
 image_path = meta.get("image_path", "")
 if os.path.exists(image_path):
