@@ -1,0 +1,333 @@
+<title>사주보는언니 케러셀</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&family=Noto+Serif+KR:wght@400;900&display=swap">
+<style>
+:root{--acc:#c9549a;--acc2:#f4a8cc;--acc-alt:#9c4dff;--dark:#06060f;--card-w:min(360px,92vw);--card-h:calc(var(--card-w)*16/9);color-scheme:dark}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark}}
+:root[data-theme="dark"]{color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--dark);color:#fff;font-family:"Noto Sans KR",sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 16px 48px;gap:14px}
+.page-header{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.3)}
+.card{width:var(--card-w);height:var(--card-h);border-radius:20px;overflow:hidden;display:none;flex-direction:column;background:#070714;box-shadow:0 24px 64px rgba(0,0,0,.75),0 0 0 1px rgba(201,84,154,.18);transition:height .35s ease}
+.card.active{display:flex}
+body.social{--card-h:var(--card-w)}
+body.social .card-top{flex:0 0 22%!important}
+body.social .card-mid{flex:0 0 56%!important}
+body.social .card-bottom{flex:0 0 22%!important}
+.card-top{flex:0 0 25%;padding:18px 20px 0;display:flex;flex-direction:column;justify-content:flex-start;background:linear-gradient(180deg,rgba(6,6,15,.97) 0%,rgba(6,6,15,.65) 80%,transparent 100%);position:relative;z-index:2}
+.top-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.ch-name{font-size:9px;font-weight:300;letter-spacing:2.8px;text-transform:uppercase;color:rgba(255,255,255,.45)}
+.slide-badge{font-size:8px;letter-spacing:1px;padding:2px 7px;border-radius:20px;opacity:.6;border:1px solid var(--acc);color:var(--acc)}
+.ch-line{width:22px;height:1.5px;margin-bottom:8px;background:linear-gradient(90deg,var(--acc),transparent)}
+.card-title{font-family:"Noto Serif KR",serif;font-weight:900;font-size:clamp(18px,5.5vw,24px);line-height:1.32;color:#fff;white-space:pre-line;text-wrap:balance;text-shadow:0 0 22px rgba(201,84,154,.7),0 0 50px rgba(244,168,204,.25),0 2px 6px #000}
+.card-mid{flex:0 0 50%;position:relative;overflow:hidden}
+.card-mid::before,.card-mid::after{content:"";position:absolute;left:0;right:0;height:32%;pointer-events:none;z-index:1}
+.card-mid::before{top:0;background:linear-gradient(to bottom,rgba(6,6,15,.72),transparent)}
+.card-mid::after{bottom:0;background:linear-gradient(to top,rgba(6,6,15,.78),transparent)}
+.img-layer{position:absolute;inset:0;display:none}
+.img-layer.active{display:block}
+.img-layer svg{width:100%;height:100%;display:block}
+.card-bottom{flex:0 0 25%;padding:0 20px 16px;display:flex;flex-direction:column;justify-content:flex-end;gap:8px;background:linear-gradient(0deg,rgba(6,6,15,.98) 0%,rgba(6,6,15,.65) 60%,transparent 100%);position:relative;z-index:2}
+.cta-row{display:flex;justify-content:center;margin-bottom:2px}
+.cta-btn{color:#fff;font-family:"Noto Sans KR",sans-serif;font-weight:700;font-size:12px;letter-spacing:.4px;padding:10px 26px;border-radius:100px;text-decoration:none;display:inline-block;background:linear-gradient(135deg,#9c4dff,#c9549a);box-shadow:0 4px 20px rgba(201,84,154,.5)}
+.card-footer{display:flex;align-items:center;gap:10px;border-top:1px solid rgba(255,255,255,.1);padding-top:10px}
+.logo-circle{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"Noto Serif KR",serif;font-weight:900;color:#06060f;flex-shrink:0;font-size:11px;background:linear-gradient(135deg,#c9549a,#f4a8cc)}
+.f-brand{font-size:12px;font-weight:700;color:#f4a8cc}
+.nav-section{display:flex;flex-direction:column;align-items:center;gap:8px;width:var(--card-w)}
+.nav-dots{display:flex;gap:5px}
+.dot{width:5px;height:5px;border-radius:3px;background:rgba(255,255,255,.18);cursor:pointer;transition:all .25s}
+.dot.active{background:var(--acc);width:16px}
+.nav-arrows{display:flex;gap:10px;align-items:center}
+.arr-btn{width:36px;height:36px;border-radius:50%;border:1px solid rgba(201,84,154,.3);background:rgba(201,84,154,.07);color:var(--acc);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.arr-btn:hover:not(:disabled){background:rgba(201,84,154,.18)}
+.arr-btn:disabled{opacity:.25;cursor:default}
+.nav-label{font-size:10px;color:rgba(255,255,255,.28);letter-spacing:1.5px;min-width:36px;text-align:center}
+.img-controls{display:flex;flex-direction:column;align-items:center;gap:10px;width:var(--card-w)}
+.style-row{display:flex;align-items:center;gap:10px}
+.sdot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.18);cursor:pointer;transition:all .2s}
+.sdot.active{background:var(--acc);transform:scale(1.4)}
+.ctrl-row{display:flex;gap:8px}
+.ctrl-btn{padding:8px 16px;border-radius:100px;border:1px solid rgba(201,84,154,.35);background:rgba(201,84,154,.08);color:rgba(255,255,255,.7);font-size:11px;font-family:"Noto Sans KR",sans-serif;cursor:pointer;transition:all .2s;white-space:nowrap}
+.ctrl-btn:hover:not(:disabled){background:rgba(201,84,154,.18);color:#fff}
+.ctrl-btn.on{background:rgba(201,84,154,.28);border-color:var(--acc);color:#fff}
+.ctrl-btn:disabled{opacity:.3;cursor:default}
+.fmt-label{font-size:9px;color:rgba(255,255,255,.3);letter-spacing:2px;text-transform:uppercase}
+</style>
+
+<div class="page-header">사주보는언니</div>
+
+<!-- S1: 공감 훅 -->
+<div class="card active" data-slide="0">
+  <div class="card-top">
+    <div class="top-meta"><span class="ch-name">사주보는언니</span><span class="slide-badge">1 / 3</span></div>
+    <div class="ch-line"></div>
+    <div class="card-title">요즘 취업 때문에
+지쳐있는 사람 ✋</div>
+  </div>
+  <div class="card-mid">
+    <div class="img-layer active" data-style="0"><svg viewBox="0 0 360 180" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="una-bg" cx="30%" cy="30%" r="80%"><stop offset="0%" stop-color="#200630"/><stop offset="100%" stop-color="#04040e"/></radialGradient>
+    <radialGradient id="una-mg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#fffbe8" stop-opacity="0.9"/><stop offset="60%" stop-color="#c9549a" stop-opacity="0.15"/><stop offset="100%" stop-color="#c9549a" stop-opacity="0"/></radialGradient>
+    <filter id="una-bl"><feGaussianBlur stdDeviation="6"/></filter>
+    <filter id="una-f"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="360" height="180" fill="url(#una-bg)"/>
+  <circle cx="78" cy="58" r="52" fill="url(#una-mg)" filter="url(#una-bl)"/>
+  <circle cx="78" cy="58" r="34" fill="#fffbe8" opacity="0.92"/>
+  <circle cx="92" cy="50" r="30" fill="#200630"/>
+  <circle cx="65" cy="62" r="4" fill="none" stroke="#e8d898" stroke-width="0.8" opacity="0.3"/>
+  <circle cx="72" cy="72" r="2.5" fill="none" stroke="#e8d898" stroke-width="0.6" opacity="0.25"/>
+  <ellipse cx="78" cy="58" rx="52" ry="52" fill="#fffbe8" opacity="0.04" filter="url(#una-bl)"/>
+  <g transform="translate(185,50)">
+    <rect x="-22" y="-3" width="44" height="32" rx="5" fill="#1a0838" stroke="#c9549a" stroke-width="1.5" stroke-opacity="0.8"/>
+    <rect x="-10" y="-3" width="20" height="6" rx="3" fill="none" stroke="#c9549a" stroke-width="1.2" stroke-opacity="0.7"/>
+    <line x1="-22" y1="10" x2="22" y2="10" stroke="#c9549a" stroke-width="0.8" stroke-opacity="0.5"/>
+    <rect x="-4" y="6" width="8" height="8" rx="1.5" fill="#c9549a" opacity="0.5"/>
+  </g>
+  <g transform="translate(260,90)">
+    <rect x="-28" y="-32" width="56" height="52" rx="5" fill="#1a0838" stroke="#c9a227" stroke-width="1.2" stroke-opacity="0.6"/>
+    <rect x="-28" y="-32" width="56" height="14" rx="5" fill="#c9a227" opacity="0.25"/>
+    <text x="0" y="-22" text-anchor="middle" fill="#c9a227" font-size="7" font-family="serif" letter-spacing="1">2026</text>
+    <text x="0" y="-6" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="7">월 화 수 목 금</text>
+    <text x="-16" y="6" fill="rgba(255,255,255,0.4)" font-size="7">1  2  3  4  5</text>
+    <text x="-16" y="16" fill="rgba(255,255,255,0.4)" font-size="7">8  9 10 11 12</text>
+    <rect x="2" y="18" width="13" height="10" rx="2" fill="#c9a227" opacity="0.4"/>
+    <text x="8" y="26" text-anchor="middle" fill="#c9a227" font-size="7" font-weight="bold">17</text>
+  </g>
+  <text x="180" y="168" text-anchor="middle" fill="#c9549a" font-size="8.5" font-family="serif" opacity="0.6" letter-spacing="2">취업·이직 타이밍을 사주로</text>
+</svg></div>
+    <div class="img-layer" data-style="1"><svg viewBox="0 0 360 180" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="unb-bg" cx="50%" cy="50%" r="70%"><stop offset="0%" stop-color="#200838"/><stop offset="100%" stop-color="#04040e"/></radialGradient>
+    <radialGradient id="unb-ball" cx="38%" cy="35%" r="60%"><stop offset="0%" stop-color="#f4d8ff" stop-opacity="0.9"/><stop offset="50%" stop-color="#c9549a" stop-opacity="0.3"/><stop offset="100%" stop-color="#9c4dff" stop-opacity="0.05"/></radialGradient>
+    <filter id="unb-gl"><feGaussianBlur stdDeviation="8"/></filter>
+    <filter id="unb-f"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="360" height="180" fill="url(#unb-bg)"/>
+  <circle cx="180" cy="82" r="60" fill="#c9549a" opacity="0.08" filter="url(#unb-gl)"/>
+  <circle cx="180" cy="82" r="50" fill="url(#unb-ball)" stroke="#f4a8cc" stroke-width="1" stroke-opacity="0.35"/>
+  <circle cx="163" cy="68" r="8" fill="#fff" opacity="0.12"/>
+  <text x="180" y="78" text-anchor="middle" fill="#c9a227" font-size="11" font-family="serif" filter="url(#unb-f)" letter-spacing="1">2026</text>
+  <text x="180" y="92" text-anchor="middle" fill="#f4a8cc" font-size="9" font-family="serif" opacity="0.85">취업운 상승</text>
+  <ellipse cx="180" cy="140" rx="38" ry="8" fill="#1a0838" stroke="#c9549a" stroke-width="1" stroke-opacity="0.5"/>
+  <rect x="174" y="132" width="12" height="10" fill="#1a0838" stroke="#c9549a" stroke-width="1" stroke-opacity="0.4"/>
+  <circle cx="130" cy="40" r="2" fill="#f4a8cc" opacity="0.7" filter="url(#unb-f)"/>
+  <circle cx="240" cy="30" r="1.5" fill="#c9a227" opacity="0.6" filter="url(#unb-f)"/>
+  <circle cx="280" cy="65" r="2" fill="#f4a8cc" opacity="0.5" filter="url(#unb-f)"/>
+  <circle cx="100" cy="110" r="1.5" fill="#c9549a" opacity="0.6" filter="url(#unb-f)"/>
+  <circle cx="260" cy="120" r="2" fill="#f4a8cc" opacity="0.55" filter="url(#unb-f)"/>
+  <text x="180" y="168" text-anchor="middle" fill="#c9549a" font-size="8" font-family="serif" opacity="0.6" letter-spacing="2">수정구슬이 말하는 당신의 운</text>
+</svg></div>
+    <div class="img-layer" data-style="2"><svg viewBox="0 0 360 180" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="unc-bg" cx="50%" cy="50%" r="80%"><stop offset="0%" stop-color="#12042a"/><stop offset="100%" stop-color="#04040e"/></radialGradient>
+    <filter id="unc-gl"><feGaussianBlur stdDeviation="4"/></filter>
+    <filter id="unc-f"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="360" height="180" fill="url(#unc-bg)"/>
+  <circle cx="30" cy="20" r="0.8" fill="#fff" opacity="0.3"/><circle cx="80" cy="35" r="0.8" fill="#fff" opacity="0.25"/><circle cx="150" cy="15" r="0.8" fill="#fff" opacity="0.3"/><circle cx="220" cy="28" r="0.8" fill="#fff" opacity="0.25"/><circle cx="290" cy="18" r="0.8" fill="#fff" opacity="0.3"/><circle cx="340" cy="40" r="0.8" fill="#fff" opacity="0.2"/>
+  <circle cx="100" cy="55" r="2.8" fill="#f4a8cc" opacity="0.9" filter="url(#unc-f)"/>
+  <circle cx="150" cy="40" r="2.5" fill="#c9a227" opacity="0.9" filter="url(#unc-f)"/>
+  <circle cx="210" cy="45" r="2.8" fill="#f4a8cc" opacity="0.9" filter="url(#unc-f)"/>
+  <circle cx="255" cy="70" r="2.5" fill="#c9a227" opacity="0.9" filter="url(#unc-f)"/>
+  <circle cx="230" cy="105" r="2.8" fill="#f4a8cc" opacity="0.9" filter="url(#unc-f)"/>
+  <circle cx="180" cy="125" r="3" fill="#c9549a" opacity="0.95" filter="url(#unc-f)"/>
+  <circle cx="135" cy="110" r="2.5" fill="#f4a8cc" opacity="0.85" filter="url(#unc-f)"/>
+  <circle cx="110" cy="80" r="2.8" fill="#c9a227" opacity="0.85" filter="url(#unc-f)"/>
+  <line x1="100" y1="55" x2="150" y2="40" stroke="#c9549a" stroke-width="0.8" stroke-opacity="0.5"/>
+  <line x1="150" y1="40" x2="210" y2="45" stroke="#c9549a" stroke-width="0.8" stroke-opacity="0.5"/>
+  <line x1="210" y1="45" x2="255" y2="70" stroke="#c9549a" stroke-width="0.8" stroke-opacity="0.5"/>
+  <line x1="255" y1="70" x2="230" y2="105" stroke="#c9549a" stroke-width="0.8" stroke-opacity="0.5"/>
+  <line x1="100" y1="55" x2="110" y2="80" stroke="#c9549a" stroke-width="0.8" stroke-opacity="0.4"/>
+  <line x1="110" y1="80" x2="135" y2="110" stroke="#c9549a" stroke-width="0.8" stroke-opacity="0.4"/>
+  <line x1="135" y1="110" x2="180" y2="125" stroke="#c9549a" stroke-width="0.8" stroke-opacity="0.5"/>
+  <line x1="230" y1="105" x2="180" y2="125" stroke="#c9549a" stroke-width="0.8" stroke-opacity="0.5"/>
+  <text x="180" y="150" text-anchor="middle" fill="#f4a8cc" font-size="9" font-family="serif" opacity="0.7" letter-spacing="2" filter="url(#unc-f)">취업성座</text>
+  <text x="180" y="168" text-anchor="middle" fill="#c9549a" font-size="8" font-family="serif" opacity="0.5" letter-spacing="2">당신의 별자리가 가리키는 방향</text>
+</svg></div>
+  </div>
+  <div class="card-bottom">
+    <div class="cta-row"><a class="cta-btn" href="https://shinmoney7-cyber.github.io/-/saju-page.html" target="_blank">취업운 상담 신청하기 →</a></div>
+    <div class="card-footer"><div class="logo-circle">언</div><div class="f-brand">사주보는언니</div></div>
+  </div>
+</div>
+
+<!-- S2: 이직 타이밍 시그널 -->
+<div class="card" data-slide="1">
+  <div class="card-top">
+    <div class="top-meta"><span class="ch-name">사주보는언니</span><span class="slide-badge">2 / 3</span></div>
+    <div class="ch-line"></div>
+    <div class="card-title">이직 타이밍 시그널
+몇 개 해당돼? 🎯</div>
+  </div>
+  <div class="card-mid">
+    <div class="img-layer active"><svg viewBox="0 0 360 180" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="un2-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#180428"/><stop offset="100%" stop-color="#04040e"/></linearGradient>
+    <filter id="un2-gl"><feGaussianBlur stdDeviation="8"/></filter>
+    <filter id="un2-f"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="360" height="180" fill="url(#un2-bg)"/>
+  <ellipse cx="180" cy="90" rx="160" ry="80" fill="#c9549a" opacity="0.05" filter="url(#un2-gl)"/>
+  <rect x="20" y="10" width="14" height="14" rx="3" fill="none" stroke="#c9549a" stroke-width="1.5" stroke-opacity="0.7"/>
+  <text x="44" y="21" fill="rgba(255,255,255,0.82)" font-size="9.5">일이 자꾸 막히는 느낌이 든다</text>
+  <rect x="20" y="32" width="14" height="14" rx="3" fill="none" stroke="#c9549a" stroke-width="1.5" stroke-opacity="0.7"/>
+  <text x="44" y="43" fill="rgba(255,255,255,0.82)" font-size="9.5">이직 생각이 반복적으로 떠오른다</text>
+  <rect x="20" y="54" width="14" height="14" rx="3" fill="none" stroke="#c9549a" stroke-width="1.5" stroke-opacity="0.7"/>
+  <text x="44" y="65" fill="rgba(255,255,255,0.82)" font-size="9.5">갑자기 기회들이 눈에 들어온다</text>
+  <rect x="20" y="76" width="14" height="14" rx="3" fill="none" stroke="#c9549a" stroke-width="1.5" stroke-opacity="0.7"/>
+  <text x="44" y="87" fill="rgba(255,255,255,0.82)" font-size="9.5">주변에서 변화 얘기가 자꾸 들린다</text>
+  <rect x="20" y="98" width="14" height="14" rx="3" fill="none" stroke="#c9549a" stroke-width="1.5" stroke-opacity="0.7"/>
+  <text x="44" y="109" fill="rgba(255,255,255,0.82)" font-size="9.5">올해 뭔가 달라질 것 같은 직감</text>
+  <line x1="20" y1="124" x2="340" y2="124" stroke="rgba(201,84,154,0.25)" stroke-width="1"/>
+  <rect x="20" y="133" width="320" height="32" rx="8" fill="#c9549a" opacity="0.12" stroke="#c9549a" stroke-width="1" stroke-opacity="0.4"/>
+  <text x="180" y="148" text-anchor="middle" fill="#f4a8cc" font-size="10" font-family="serif" filter="url(#un2-f)">✨  3개 이상이면 이직 타이밍일 수 있어</text>
+  <text x="180" y="170" text-anchor="middle" fill="rgba(201,84,154,0.6)" font-size="8" letter-spacing="1">DM으로 공유해줘 🔗</text>
+</svg></div>
+  </div>
+  <div class="card-bottom">
+    <div class="cta-row"><a class="cta-btn" href="https://shinmoney7-cyber.github.io/-/saju-page.html" target="_blank">언니가 제대로 봐줄게 →</a></div>
+    <div class="card-footer"><div class="logo-circle">언</div><div class="f-brand">사주보는언니</div></div>
+  </div>
+</div>
+
+<!-- S3: CTA -->
+<div class="card" data-slide="2">
+  <div class="card-top">
+    <div class="top-meta"><span class="ch-name">사주보는언니</span><span class="slide-badge">3 / 3</span></div>
+    <div class="ch-line"></div>
+    <div class="card-title">언니가 딱 봐줄게
+지금 신청해봐 📅</div>
+  </div>
+  <div class="card-mid">
+    <div class="img-layer active"><svg viewBox="0 0 360 180" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="un3-bg" cx="50%" cy="50%" r="70%"><stop offset="0%" stop-color="#200430"/><stop offset="100%" stop-color="#04040e"/></radialGradient>
+    <radialGradient id="un3-gw" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#c9549a" stop-opacity="0.2"/><stop offset="100%" stop-color="#c9549a" stop-opacity="0"/></radialGradient>
+    <filter id="un3-gl"><feGaussianBlur stdDeviation="10"/></filter>
+    <filter id="un3-f"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="360" height="180" fill="url(#un3-bg)"/>
+  <ellipse cx="180" cy="80" rx="130" ry="70" fill="url(#un3-gw)" filter="url(#un3-gl)"/>
+  <circle cx="180" cy="65" r="38" fill="none" stroke="#c9549a" stroke-width="0.8" stroke-opacity="0.3" stroke-dasharray="3,3"/>
+  <circle cx="180" cy="65" r="26" fill="none" stroke="#f4a8cc" stroke-width="1" stroke-opacity="0.4"/>
+  <circle cx="180" cy="65" r="14" fill="#200430" stroke="#c9549a" stroke-width="1.5" stroke-opacity="0.8" filter="url(#un3-f)"/>
+  <text x="180" y="70" text-anchor="middle" fill="#f4a8cc" font-size="12" font-family="serif">언니</text>
+  <text x="180" y="118" text-anchor="middle" fill="rgba(255,255,255,0.75)" font-size="9" letter-spacing="0.5">취업 타이밍 · 직장운 · 합격 가능성</text>
+  <text x="180" y="133" text-anchor="middle" fill="rgba(244,168,204,0.7)" font-size="8.5" letter-spacing="0.5">1:1 맞춤 사주 분석</text>
+  <circle cx="100" cy="35" r="1.5" fill="#f4a8cc" opacity="0.6" filter="url(#un3-f)"/>
+  <circle cx="265" cy="28" r="1.2" fill="#c9a227" opacity="0.5" filter="url(#un3-f)"/>
+  <circle cx="55" cy="115" r="1" fill="#c9549a" opacity="0.5"/>
+  <circle cx="315" cy="105" r="1.2" fill="#f4a8cc" opacity="0.45"/>
+  <text x="180" y="163" text-anchor="middle" fill="#c9549a" font-size="9" font-family="serif" opacity="0.75" letter-spacing="2">↓ 지금 바로 신청 가능</text>
+</svg></div>
+  </div>
+  <div class="card-bottom">
+    <div class="cta-row"><a class="cta-btn" href="https://shinmoney7-cyber.github.io/-/saju-page.html" target="_blank">취업운 무료 상담 신청 →</a></div>
+    <div class="card-footer"><div class="logo-circle">언</div><div class="f-brand">사주보는언니</div></div>
+  </div>
+</div>
+
+<!-- 내비게이션 -->
+<div class="nav-section" id="nav-section">
+  <div class="nav-dots" id="dots"></div>
+  <div class="nav-arrows">
+    <button class="arr-btn" id="prev">‹</button>
+    <span class="nav-label" id="nav-label">1 / 3</span>
+    <button class="arr-btn" id="next">›</button>
+  </div>
+</div>
+<div class="img-controls">
+  <div class="style-row" id="style-dots">
+    <span class="sdot active" data-si="0"></span>
+    <span class="sdot" data-si="1"></span>
+    <span class="sdot" data-si="2"></span>
+  </div>
+  <div class="ctrl-row">
+    <button class="ctrl-btn" id="img-cycle">🎨 이미지 변경</button>
+    <button class="ctrl-btn" id="fmt-toggle">📱 소셜카드</button>
+  </div>
+  <div class="fmt-label" id="fmt-label">케러셀 · 9:16</div>
+</div>
+
+<script>
+(function(){
+  let idx=0,styleIdx=0,isSocial=false;
+  const cards=[...document.querySelectorAll(".card")];
+
+  function hasLayers(){
+    const card=cards[idx];
+    return card?card.querySelectorAll(".img-layer").length>1:false;
+  }
+
+  function buildNav(){
+    const n=cards.length;
+    const dots=document.getElementById("dots");
+    dots.innerHTML="";
+    for(let i=0;i<n;i++){
+      const d=document.createElement("div");
+      d.className="dot"+(i===idx?" active":"");
+      d.onclick=()=>goTo(i);
+      dots.appendChild(d);
+    }
+    document.getElementById("nav-label").textContent=(idx+1)+" / "+n;
+    document.getElementById("prev").disabled=idx===0;
+    document.getElementById("next").disabled=idx===n-1;
+  }
+
+  function updateStyleDots(){
+    const show=hasLayers();
+    document.getElementById("style-dots").style.display=show?"flex":"none";
+    document.getElementById("img-cycle").disabled=!show;
+    if(!show)return;
+    document.querySelectorAll(".sdot").forEach((d,i)=>d.classList.toggle("active",i===styleIdx));
+  }
+
+  function goTo(i){
+    cards.forEach(c=>c.classList.remove("active"));
+    idx=Math.max(0,Math.min(i,cards.length-1));
+    cards[idx].classList.add("active");
+    styleIdx=0;
+    buildNav();
+    updateStyleDots();
+  }
+
+  function cycleStyle(){
+    if(!hasLayers())return;
+    const layers=[...cards[idx].querySelectorAll(".img-layer")];
+    layers.forEach(l=>l.classList.remove("active"));
+    styleIdx=(styleIdx+1)%layers.length;
+    layers[styleIdx].classList.add("active");
+    updateStyleDots();
+  }
+
+  function goStyle(si){
+    if(!hasLayers())return;
+    const layers=[...cards[idx].querySelectorAll(".img-layer")];
+    layers.forEach(l=>l.classList.remove("active"));
+    styleIdx=si;
+    if(layers[si])layers[si].classList.add("active");
+    updateStyleDots();
+  }
+
+  document.getElementById("prev").addEventListener("click",()=>goTo(idx-1));
+  document.getElementById("next").addEventListener("click",()=>goTo(idx+1));
+  document.getElementById("img-cycle").addEventListener("click",cycleStyle);
+  document.getElementById("fmt-toggle").addEventListener("click",()=>{
+    isSocial=!isSocial;
+    document.body.classList.toggle("social",isSocial);
+    const btn=document.getElementById("fmt-toggle");
+    btn.classList.toggle("on",isSocial);
+    btn.textContent=isSocial?"📐 케러셀로":"📱 소셜카드";
+    document.getElementById("fmt-label").textContent=isSocial?"소셜카드 · 1:1":"케러셀 · 9:16";
+  });
+  document.querySelectorAll(".sdot").forEach(d=>d.addEventListener("click",()=>goStyle(+d.dataset.si)));
+
+  let tx=0;
+  document.addEventListener("touchstart",e=>{tx=e.touches[0].clientX},{passive:true});
+  document.addEventListener("touchend",e=>{const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>40)goTo(idx+(dx<0?1:-1))},{passive:true});
+
+  buildNav();
+  updateStyleDots();
+})();
+</script>

@@ -1,0 +1,320 @@
+<title>사주마루77 케러셀</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&family=Noto+Serif+KR:wght@400;900&display=swap">
+<style>
+:root{--acc:#e85d26;--acc2:#f4923a;--acc-alt:#c43700;--dark:#06060f;--card-w:min(360px,92vw);--card-h:calc(var(--card-w)*16/9);color-scheme:dark}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark}}
+:root[data-theme="dark"]{color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--dark);color:#fff;font-family:"Noto Sans KR",sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 16px 48px;gap:14px}
+.page-header{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.3)}
+.card{width:var(--card-w);height:var(--card-h);border-radius:20px;overflow:hidden;display:none;flex-direction:column;background:#070714;box-shadow:0 24px 64px rgba(0,0,0,.75),0 0 0 1px rgba(232,93,38,.18);transition:height .35s ease}
+.card.active{display:flex}
+body.social{--card-h:var(--card-w)}
+body.social .card-top{flex:0 0 22%!important}
+body.social .card-mid{flex:0 0 56%!important}
+body.social .card-bottom{flex:0 0 22%!important}
+.card-top{flex:0 0 25%;padding:18px 20px 0;display:flex;flex-direction:column;justify-content:flex-start;background:linear-gradient(180deg,rgba(6,6,15,.97) 0%,rgba(6,6,15,.65) 80%,transparent 100%);position:relative;z-index:2}
+.top-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.ch-name{font-size:9px;font-weight:300;letter-spacing:2.8px;text-transform:uppercase;color:rgba(255,255,255,.45)}
+.slide-badge{font-size:8px;letter-spacing:1px;padding:2px 7px;border-radius:20px;opacity:.6;border:1px solid var(--acc);color:var(--acc)}
+.ch-line{width:22px;height:1.5px;margin-bottom:8px;background:linear-gradient(90deg,var(--acc),transparent)}
+.card-title{font-family:"Noto Serif KR",serif;font-weight:900;font-size:clamp(18px,5.5vw,24px);line-height:1.32;color:#fff;white-space:pre-line;text-wrap:balance;text-shadow:0 0 22px rgba(232,93,38,.85),0 0 50px rgba(244,146,58,.3),0 2px 6px #000}
+.card-mid{flex:0 0 50%;position:relative;overflow:hidden}
+.card-mid::before,.card-mid::after{content:"";position:absolute;left:0;right:0;height:32%;pointer-events:none;z-index:1}
+.card-mid::before{top:0;background:linear-gradient(to bottom,rgba(6,6,15,.72),transparent)}
+.card-mid::after{bottom:0;background:linear-gradient(to top,rgba(6,6,15,.78),transparent)}
+.img-layer{position:absolute;inset:0;display:none}
+.img-layer.active{display:block}
+.img-layer svg{width:100%;height:100%;display:block}
+.card-bottom{flex:0 0 25%;padding:0 20px 16px;display:flex;flex-direction:column;justify-content:flex-end;gap:8px;background:linear-gradient(0deg,rgba(6,6,15,.98) 0%,rgba(6,6,15,.65) 60%,transparent 100%);position:relative;z-index:2}
+.cta-row{display:flex;justify-content:center;margin-bottom:2px}
+.cta-btn{color:#fff;font-family:"Noto Sans KR",sans-serif;font-weight:700;font-size:12px;letter-spacing:.4px;padding:10px 26px;border-radius:100px;text-decoration:none;display:inline-block;background:linear-gradient(135deg,#c43700,#e85d26);box-shadow:0 4px 20px rgba(232,93,38,.55)}
+.card-footer{display:flex;align-items:center;gap:10px;border-top:1px solid rgba(255,255,255,.1);padding-top:10px}
+.logo-circle{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"Noto Serif KR",serif;font-weight:900;color:#fff;flex-shrink:0;font-size:9px;background:linear-gradient(135deg,#c43700,#f4923a)}
+.f-brand{font-size:12px;font-weight:700;color:#f4923a}
+.nav-section{display:flex;flex-direction:column;align-items:center;gap:8px;width:var(--card-w)}
+.nav-dots{display:flex;gap:5px}
+.dot{width:5px;height:5px;border-radius:3px;background:rgba(255,255,255,.18);cursor:pointer;transition:all .25s}
+.dot.active{background:var(--acc);width:16px}
+.nav-arrows{display:flex;gap:10px;align-items:center}
+.arr-btn{width:36px;height:36px;border-radius:50%;border:1px solid rgba(232,93,38,.3);background:rgba(232,93,38,.07);color:var(--acc);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.arr-btn:hover:not(:disabled){background:rgba(232,93,38,.18)}
+.arr-btn:disabled{opacity:.25;cursor:default}
+.nav-label{font-size:10px;color:rgba(255,255,255,.28);letter-spacing:1.5px;min-width:36px;text-align:center}
+.img-controls{display:flex;flex-direction:column;align-items:center;gap:10px;width:var(--card-w)}
+.style-row{display:flex;align-items:center;gap:10px}
+.sdot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.18);cursor:pointer;transition:all .2s}
+.sdot.active{background:var(--acc);transform:scale(1.4)}
+.ctrl-row{display:flex;gap:8px}
+.ctrl-btn{padding:8px 16px;border-radius:100px;border:1px solid rgba(232,93,38,.35);background:rgba(232,93,38,.08);color:rgba(255,255,255,.7);font-size:11px;font-family:"Noto Sans KR",sans-serif;cursor:pointer;transition:all .2s;white-space:nowrap}
+.ctrl-btn:hover:not(:disabled){background:rgba(232,93,38,.18);color:#fff}
+.ctrl-btn.on{background:rgba(232,93,38,.28);border-color:var(--acc);color:#fff}
+.ctrl-btn:disabled{opacity:.3;cursor:default}
+.fmt-label{font-size:9px;color:rgba(255,255,255,.3);letter-spacing:2px;text-transform:uppercase}
+</style>
+
+<div class="page-header">사주마루77</div>
+
+<!-- S1: 임팩트 훅 -->
+<div class="card active" data-slide="0">
+  <div class="card-top">
+    <div class="top-meta"><span class="ch-name">사주마루77</span><span class="slide-badge">1 / 3</span></div>
+    <div class="ch-line"></div>
+    <div class="card-title">2026 하반기
+지금이 타이밍이야 🔥</div>
+  </div>
+  <div class="card-mid">
+    <div class="img-layer active" data-style="0"><svg viewBox="0 0 360 180" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="77a-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#100520"/><stop offset="100%" stop-color="#04040e"/></linearGradient>
+    <radialGradient id="77a-gw" cx="50%" cy="70%" r="60%"><stop offset="0%" stop-color="#e85d26" stop-opacity="0.25"/><stop offset="100%" stop-color="#e85d26" stop-opacity="0"/></radialGradient>
+    <filter id="77a-gl"><feGaussianBlur stdDeviation="8"/></filter>
+    <filter id="77a-f"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="360" height="180" fill="url(#77a-bg)"/>
+  <ellipse cx="180" cy="140" rx="160" ry="80" fill="url(#77a-gw)" filter="url(#77a-gl)"/>
+  <line x1="180" y1="180" x2="180" y2="110" stroke="#e85d26" stroke-width="2.5" stroke-opacity="0.7"/>
+  <path d="M 180,110 Q 200,90 240,60" fill="none" stroke="#e85d26" stroke-width="2.5" stroke-opacity="0.8" filter="url(#77a-f)"/>
+  <polygon points="240,60 228,64 234,52" fill="#e85d26" opacity="0.9" filter="url(#77a-f)"/>
+  <path d="M 180,110 Q 160,90 120,65" fill="none" stroke="#4a2060" stroke-width="1.5" stroke-opacity="0.5"/>
+  <polygon points="120,65 132,61 126,73" fill="#4a2060" opacity="0.5"/>
+  <text x="260" y="55" fill="#f4923a" font-size="10" font-family="serif" font-weight="bold" filter="url(#77a-f)">취업 ↗</text>
+  <text x="95" y="62" fill="rgba(255,255,255,0.3)" font-size="9">대기 ↖</text>
+  <circle cx="180" cy="110" r="8" fill="#e85d26" opacity="0.3" filter="url(#77a-gl)"/>
+  <circle cx="180" cy="110" r="4" fill="#f4923a" opacity="0.9" filter="url(#77a-f)"/>
+  <text x="180" y="170" text-anchor="middle" fill="#e85d26" font-size="8.5" font-family="serif" opacity="0.65" letter-spacing="3">지금 이 갈림길에 서있는 사람</text>
+</svg></div>
+    <div class="img-layer" data-style="1"><svg viewBox="0 0 360 180" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="77b-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#100520"/><stop offset="100%" stop-color="#04040e"/></linearGradient>
+    <radialGradient id="77b-lft" cx="35%" cy="60%" r="40%"><stop offset="0%" stop-color="#e85d26" stop-opacity="0.2"/><stop offset="100%" stop-color="#e85d26" stop-opacity="0"/></radialGradient>
+    <filter id="77b-gl"><feGaussianBlur stdDeviation="6"/></filter>
+    <filter id="77b-f"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="360" height="180" fill="url(#77b-bg)"/>
+  <ellipse cx="130" cy="110" rx="90" ry="60" fill="url(#77b-lft)" filter="url(#77b-gl)"/>
+  <line x1="180" y1="30" x2="180" y2="120" stroke="#9c6dff" stroke-width="1.5" stroke-opacity="0.5"/>
+  <circle cx="180" cy="30" r="5" fill="#9c6dff" opacity="0.6" filter="url(#77b-f)"/>
+  <line x1="90" y1="75" x2="270" y2="55" stroke="#c9a227" stroke-width="2" stroke-opacity="0.8"/>
+  <ellipse cx="90" cy="110" rx="38" ry="8" fill="#e85d26" opacity="0.15" filter="url(#77b-gl)"/>
+  <line x1="90" y1="75" x2="70" y2="108" stroke="#c9a227" stroke-width="1" stroke-opacity="0.5"/>
+  <line x1="90" y1="75" x2="110" y2="108" stroke="#c9a227" stroke-width="1" stroke-opacity="0.5"/>
+  <ellipse cx="90" cy="108" rx="32" ry="7" fill="#1a0838" stroke="#e85d26" stroke-width="1.5" stroke-opacity="0.7"/>
+  <text x="90" y="103" text-anchor="middle" fill="#f4923a" font-size="8.5" font-family="serif" filter="url(#77b-f)">★★★</text>
+  <text x="90" y="119" text-anchor="middle" fill="#f4923a" font-size="9" font-family="serif" font-weight="bold">합격</text>
+  <line x1="270" y1="55" x2="250" y2="88" stroke="#c9a227" stroke-width="1" stroke-opacity="0.5"/>
+  <line x1="270" y1="55" x2="290" y2="88" stroke="#c9a227" stroke-width="1" stroke-opacity="0.5"/>
+  <ellipse cx="270" cy="88" rx="30" ry="6" fill="#1a0838" stroke="#4a2060" stroke-width="1.2" stroke-opacity="0.5"/>
+  <text x="270" y="100" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-size="9">대기</text>
+  <text x="180" y="165" text-anchor="middle" fill="#e85d26" font-size="8.5" font-family="serif" opacity="0.7" letter-spacing="2">취업운의 무게추가 기울고 있다</text>
+</svg></div>
+    <div class="img-layer" data-style="2"><svg viewBox="0 0 360 180" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="77c-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0e0420"/><stop offset="100%" stop-color="#04040e"/></linearGradient>
+    <radialGradient id="77c-ctr" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#e85d26" stop-opacity="0.3"/><stop offset="100%" stop-color="#e85d26" stop-opacity="0"/></radialGradient>
+    <filter id="77c-gl"><feGaussianBlur stdDeviation="8"/></filter>
+    <filter id="77c-f"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="360" height="180" fill="url(#77c-bg)"/>
+  <g opacity="0.2">
+    <polygon points="180,8 197,18 197,38 180,48 163,38 163,18" fill="none" stroke="#e85d26" stroke-width="0.8"/>
+    <polygon points="215,28 232,38 232,58 215,68 198,58 198,38" fill="none" stroke="#9c6dff" stroke-width="0.6"/>
+    <polygon points="145,28 162,38 162,58 145,68 128,58 128,38" fill="none" stroke="#9c6dff" stroke-width="0.6"/>
+    <polygon points="180,48 197,58 197,78 180,88 163,78 163,58" fill="none" stroke="#9c6dff" stroke-width="0.6"/>
+    <polygon points="215,68 232,78 232,98 215,108 198,98 198,78" fill="none" stroke="#9c6dff" stroke-width="0.5"/>
+    <polygon points="145,68 162,78 162,98 145,108 128,98 128,78" fill="none" stroke="#9c6dff" stroke-width="0.5"/>
+  </g>
+  <polygon points="180,88 197,98 197,118 180,128 163,118 163,98" fill="#e85d26" opacity="0.15" filter="url(#77c-gl)"/>
+  <polygon points="180,88 197,98 197,118 180,128 163,118 163,98" fill="#200820" stroke="#e85d26" stroke-width="2" stroke-opacity="0.8" filter="url(#77c-f)"/>
+  <text x="180" y="107" text-anchor="middle" fill="#f4923a" font-size="9" font-family="serif" letter-spacing="1" filter="url(#77c-f)">取業</text>
+  <text x="180" y="120" text-anchor="middle" fill="#e85d26" font-size="7.5" font-family="serif" opacity="0.85">관성활성</text>
+  <text x="180" y="168" text-anchor="middle" fill="#e85d26" font-size="8.5" font-family="serif" opacity="0.65" letter-spacing="2">취업 에너지가 활성화된 사람</text>
+</svg></div>
+  </div>
+  <div class="card-bottom">
+    <div class="cta-row"><a class="cta-btn" href="https://shinmoney7-cyber.github.io/-/saju-page.html" target="_blank">합격 타이밍 확인하기 →</a></div>
+    <div class="card-footer"><div class="logo-circle">77</div><div class="f-brand">사주마루77</div></div>
+  </div>
+</div>
+
+<!-- S2: 긴박 정보 -->
+<div class="card" data-slide="1">
+  <div class="card-top">
+    <div class="top-meta"><span class="ch-name">사주마루77</span><span class="slide-badge">2 / 3</span></div>
+    <div class="ch-line"></div>
+    <div class="card-title">지금 취업운 열리는
+사람들 따로 있음 ⚡</div>
+  </div>
+  <div class="card-mid">
+    <div class="img-layer active"><svg viewBox="0 0 360 180" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="77d-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#120420"/><stop offset="100%" stop-color="#04040e"/></linearGradient>
+    <filter id="77d-gl"><feGaussianBlur stdDeviation="8"/></filter>
+    <filter id="77d-f"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="360" height="180" fill="url(#77d-bg)"/>
+  <ellipse cx="180" cy="90" rx="150" ry="80" fill="#e85d26" opacity="0.04" filter="url(#77d-gl)"/>
+  <rect x="14" y="10" width="332" height="44" rx="8" fill="#200820" stroke="#e85d26" stroke-width="1.5" stroke-opacity="0.7"/>
+  <rect x="14" y="10" width="6" height="44" rx="3" fill="#e85d26" opacity="0.8"/>
+  <text x="32" y="28" fill="#f4923a" font-size="10" font-family="serif" font-weight="bold" filter="url(#77d-f)">관성 대운에 진입한 사람</text>
+  <text x="32" y="45" fill="rgba(255,255,255,0.55)" font-size="8.5">직장·조직 에너지가 강하게 들어오는 시기</text>
+  <rect x="14" y="62" width="332" height="44" rx="8" fill="#1a0420" stroke="#e85d26" stroke-width="1.2" stroke-opacity="0.5"/>
+  <rect x="14" y="62" width="6" height="44" rx="3" fill="#e85d26" opacity="0.55"/>
+  <text x="32" y="80" fill="rgba(255,255,255,0.85)" font-size="10" font-family="serif" font-weight="bold">세운에서 취업성이 들어오는 사람</text>
+  <text x="32" y="97" fill="rgba(255,255,255,0.5)" font-size="8.5">2026년 해(年)에 좋은 흐름이 있음</text>
+  <rect x="14" y="114" width="332" height="44" rx="8" fill="#1a0420" stroke="#e85d26" stroke-width="1" stroke-opacity="0.4"/>
+  <rect x="14" y="114" width="6" height="44" rx="3" fill="#e85d26" opacity="0.35"/>
+  <text x="32" y="132" fill="rgba(255,255,255,0.85)" font-size="10" font-family="serif" font-weight="bold">이직 충동이 반복되는 사람</text>
+  <text x="32" y="149" fill="rgba(255,255,255,0.5)" font-size="8.5">사주가 움직이라는 신호를 보내는 중</text>
+  <text x="180" y="170" text-anchor="middle" fill="#e85d26" font-size="8" opacity="0.7" letter-spacing="1">해당되면 → 지금이 타이밍</text>
+</svg></div>
+  </div>
+  <div class="card-bottom">
+    <div class="cta-row"><a class="cta-btn" href="https://shinmoney7-cyber.github.io/-/saju-page.html" target="_blank">내 타이밍 지금 확인 →</a></div>
+    <div class="card-footer"><div class="logo-circle">77</div><div class="f-brand">사주마루77</div></div>
+  </div>
+</div>
+
+<!-- S3: 긴급 CTA -->
+<div class="card" data-slide="2">
+  <div class="card-top">
+    <div class="top-meta"><span class="ch-name">사주마루77</span><span class="slide-badge">3 / 3</span></div>
+    <div class="ch-line"></div>
+    <div class="card-title">합격 타이밍
+지금 놓치면 안 돼 ⏰</div>
+  </div>
+  <div class="card-mid">
+    <div class="img-layer active"><svg viewBox="0 0 360 180" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="77e-bg" cx="50%" cy="40%" r="70%"><stop offset="0%" stop-color="#1c0520"/><stop offset="100%" stop-color="#04040e"/></radialGradient>
+    <radialGradient id="77e-gw" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#e85d26" stop-opacity="0.22"/><stop offset="100%" stop-color="#e85d26" stop-opacity="0"/></radialGradient>
+    <filter id="77e-gl"><feGaussianBlur stdDeviation="10"/></filter>
+    <filter id="77e-f"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="360" height="180" fill="url(#77e-bg)"/>
+  <ellipse cx="180" cy="75" rx="110" ry="65" fill="url(#77e-gw)" filter="url(#77e-gl)"/>
+  <circle cx="180" cy="72" r="44" fill="none" stroke="#e85d26" stroke-width="1" stroke-opacity="0.35" stroke-dasharray="4,4"/>
+  <circle cx="180" cy="72" r="32" fill="#1c0520" stroke="#f4923a" stroke-width="1.5" stroke-opacity="0.6" filter="url(#77e-f)"/>
+  <line x1="180" y1="42" x2="180" y2="48" stroke="#f4923a" stroke-width="2" stroke-opacity="0.8"/>
+  <line x1="210" y1="72" x2="204" y2="72" stroke="#f4923a" stroke-width="1.5" stroke-opacity="0.5"/>
+  <line x1="180" y1="102" x2="180" y2="96" stroke="#f4923a" stroke-width="1.5" stroke-opacity="0.5"/>
+  <line x1="150" y1="72" x2="156" y2="72" stroke="#f4923a" stroke-width="1.5" stroke-opacity="0.5"/>
+  <line x1="180" y1="72" x2="168" y2="54" stroke="#e85d26" stroke-width="2.5" stroke-linecap="round" filter="url(#77e-f)"/>
+  <line x1="180" y1="72" x2="196" y2="66" stroke="#f4923a" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="180" cy="72" r="3" fill="#f4923a" filter="url(#77e-f)"/>
+  <text x="180" y="130" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="9.5" letter-spacing="0.5">사주에서 정해진 타이밍이 있어</text>
+  <text x="180" y="146" text-anchor="middle" fill="rgba(244,146,58,0.75)" font-size="9" letter-spacing="0.5">지금이 그 시기인지 확인해봐</text>
+  <circle cx="60" cy="30" r="1.5" fill="#f4923a" opacity="0.5" filter="url(#77e-f)"/>
+  <circle cx="305" cy="25" r="1.2" fill="#e85d26" opacity="0.5" filter="url(#77e-f)"/>
+  <text x="180" y="166" text-anchor="middle" fill="#e85d26" font-size="9" font-family="serif" opacity="0.8" letter-spacing="2">↓ 지금 바로 신청</text>
+</svg></div>
+  </div>
+  <div class="card-bottom">
+    <div class="cta-row"><a class="cta-btn" href="https://shinmoney7-cyber.github.io/-/saju-page.html" target="_blank">지금 바로 신청하기 →</a></div>
+    <div class="card-footer"><div class="logo-circle">77</div><div class="f-brand">사주마루77</div></div>
+  </div>
+</div>
+
+<!-- 내비게이션 -->
+<div class="nav-section" id="nav-section">
+  <div class="nav-dots" id="dots"></div>
+  <div class="nav-arrows">
+    <button class="arr-btn" id="prev">‹</button>
+    <span class="nav-label" id="nav-label">1 / 3</span>
+    <button class="arr-btn" id="next">›</button>
+  </div>
+</div>
+<div class="img-controls">
+  <div class="style-row" id="style-dots">
+    <span class="sdot active" data-si="0"></span>
+    <span class="sdot" data-si="1"></span>
+    <span class="sdot" data-si="2"></span>
+  </div>
+  <div class="ctrl-row">
+    <button class="ctrl-btn" id="img-cycle">🎨 이미지 변경</button>
+    <button class="ctrl-btn" id="fmt-toggle">📱 소셜카드</button>
+  </div>
+  <div class="fmt-label" id="fmt-label">케러셀 · 9:16</div>
+</div>
+
+<script>
+(function(){
+  let idx=0,styleIdx=0,isSocial=false;
+  const cards=[...document.querySelectorAll(".card")];
+
+  function hasLayers(){
+    const card=cards[idx];
+    return card?card.querySelectorAll(".img-layer").length>1:false;
+  }
+
+  function buildNav(){
+    const n=cards.length;
+    const dots=document.getElementById("dots");
+    dots.innerHTML="";
+    for(let i=0;i<n;i++){
+      const d=document.createElement("div");
+      d.className="dot"+(i===idx?" active":"");
+      d.onclick=()=>goTo(i);
+      dots.appendChild(d);
+    }
+    document.getElementById("nav-label").textContent=(idx+1)+" / "+n;
+    document.getElementById("prev").disabled=idx===0;
+    document.getElementById("next").disabled=idx===n-1;
+  }
+
+  function updateStyleDots(){
+    const show=hasLayers();
+    document.getElementById("style-dots").style.display=show?"flex":"none";
+    document.getElementById("img-cycle").disabled=!show;
+    if(!show)return;
+    document.querySelectorAll(".sdot").forEach((d,i)=>d.classList.toggle("active",i===styleIdx));
+  }
+
+  function goTo(i){
+    cards.forEach(c=>c.classList.remove("active"));
+    idx=Math.max(0,Math.min(i,cards.length-1));
+    cards[idx].classList.add("active");
+    styleIdx=0;
+    buildNav();
+    updateStyleDots();
+  }
+
+  function cycleStyle(){
+    if(!hasLayers())return;
+    const layers=[...cards[idx].querySelectorAll(".img-layer")];
+    layers.forEach(l=>l.classList.remove("active"));
+    styleIdx=(styleIdx+1)%layers.length;
+    layers[styleIdx].classList.add("active");
+    updateStyleDots();
+  }
+
+  function goStyle(si){
+    if(!hasLayers())return;
+    const layers=[...cards[idx].querySelectorAll(".img-layer")];
+    layers.forEach(l=>l.classList.remove("active"));
+    styleIdx=si;
+    if(layers[si])layers[si].classList.add("active");
+    updateStyleDots();
+  }
+
+  document.getElementById("prev").addEventListener("click",()=>goTo(idx-1));
+  document.getElementById("next").addEventListener("click",()=>goTo(idx+1));
+  document.getElementById("img-cycle").addEventListener("click",cycleStyle);
+  document.getElementById("fmt-toggle").addEventListener("click",()=>{
+    isSocial=!isSocial;
+    document.body.classList.toggle("social",isSocial);
+    const btn=document.getElementById("fmt-toggle");
+    btn.classList.toggle("on",isSocial);
+    btn.textContent=isSocial?"📐 케러셀로":"📱 소셜카드";
+    document.getElementById("fmt-label").textContent=isSocial?"소셜카드 · 1:1":"케러셀 · 9:16";
+  });
+  document.querySelectorAll(".sdot").forEach(d=>d.addEventListener("click",()=>goStyle(+d.dataset.si)));
+
+  let tx=0;
+  document.addEventListener("touchstart",e=>{tx=e.touches[0].clientX},{passive:true});
+  document.addEventListener("touchend",e=>{const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>40)goTo(idx+(dx<0?1:-1))},{passive:true});
+
+  buildNav();
+  updateStyleDots();
+})();
+</script>
