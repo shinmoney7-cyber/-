@@ -1,12 +1,12 @@
 <title>사주마루 케러셀</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&family=Noto+Serif+KR:wght@400;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Nanum+Gothic:wght@400;700;800&display=swap">
 <style>
 :root{--acc:#c9a227;--acc2:#e8c85a;--acc-alt:#9c6dff;--dark:#06060f;--card-w:min(360px,92vw);--card-h:calc(var(--card-w)*16/9);color-scheme:dark}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark}}
 :root[data-theme="dark"]{color-scheme:dark}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--dark);color:#fff;font-family:"Noto Sans KR",sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 16px 48px;gap:14px}
-.page-header{font-size:16px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.55);font-family:"Noto Serif KR",serif;font-weight:900}
+body{background:var(--dark);color:#fff;font-family:"Nanum Gothic",sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 16px 48px;gap:14px}
+.page-header{font-size:16px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.55);font-family:"Black Han Sans",sans-serif;font-weight:900}
 .card{width:var(--card-w);height:var(--card-h);border-radius:20px;overflow:hidden;display:none;flex-direction:column;background:#070714;box-shadow:0 24px 64px rgba(0,0,0,.75),0 0 0 1px rgba(156,109,255,.18);transition:height .35s ease}
 .card.active{display:flex}
 body.social{--card-h:var(--card-w)}
@@ -18,7 +18,7 @@ body.social .card-bottom{flex:0 0 22%!important}
 .ch-name{font-size:9px;font-weight:300;letter-spacing:2.8px;text-transform:uppercase;color:rgba(255,255,255,.45)}
 .slide-badge{font-size:8px;letter-spacing:1px;padding:2px 7px;border-radius:20px;opacity:.6;border:1px solid var(--acc);color:var(--acc)}
 .ch-line{width:22px;height:1.5px;margin-bottom:8px;background:linear-gradient(90deg,var(--acc-alt),transparent)}
-.card-title{font-family:"Noto Serif KR",serif;font-weight:900;font-size:clamp(18px,5.5vw,24px);line-height:1.32;color:#fff;white-space:pre-line;text-wrap:balance;text-shadow:0 0 22px rgba(156,109,255,.8),0 0 55px rgba(201,162,39,.35),0 2px 6px #000}
+.card-title{font-family:"Black Han Sans",sans-serif;font-weight:900;font-size:clamp(18px,5.5vw,24px);line-height:1.32;color:#fff;white-space:pre-line;text-wrap:balance;text-shadow:0 0 22px rgba(156,109,255,.8),0 0 55px rgba(201,162,39,.35),0 2px 6px #000}
 .card-mid{flex:0 0 50%;position:relative;overflow:hidden}
 .card-mid::before,.card-mid::after{content:"";position:absolute;left:0;right:0;height:32%;pointer-events:none;z-index:1}
 .card-mid::before{top:0;background:linear-gradient(to bottom,rgba(6,6,15,.72),transparent)}
@@ -28,10 +28,10 @@ body.social .card-bottom{flex:0 0 22%!important}
 .img-layer svg{width:100%;height:100%;display:block}
 .card-bottom{flex:0 0 25%;padding:0 20px 16px;display:flex;flex-direction:column;justify-content:flex-end;gap:8px;background:linear-gradient(0deg,rgba(6,6,15,.98) 0%,rgba(6,6,15,.65) 60%,transparent 100%);position:relative;z-index:2}
 .cta-row{display:flex;justify-content:center;margin-bottom:2px}
-.cta-btn{color:#fff;font-family:"Noto Sans KR",sans-serif;font-weight:700;font-size:12px;letter-spacing:.4px;padding:10px 26px;border-radius:100px;text-decoration:none;display:inline-block;background:linear-gradient(135deg,#7c4dff,#c9a227);box-shadow:0 4px 20px rgba(124,77,255,.5)}
+.cta-btn{color:#fff;font-family:"Nanum Gothic",sans-serif;font-weight:700;font-size:12px;letter-spacing:.4px;padding:10px 26px;border-radius:100px;text-decoration:none;display:inline-block;background:linear-gradient(135deg,#7c4dff,#c9a227);box-shadow:0 4px 20px rgba(124,77,255,.5)}
 .card-footer{display:flex;align-items:center;justify-content:center;gap:10px;border-top:1px solid rgba(255,255,255,.1);padding-top:10px}
 .logo-circle{width:64px!important;height:64px!important;flex-direction:column!important;gap:3px!important;padding:6px 4px!important;font-size:7px!important;line-height:1.2!important;text-align:center!important}
-.logo-circle{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"Noto Serif KR",serif;font-weight:900;color:#06060f;flex-shrink:0;font-size:11px;background:linear-gradient(135deg,#c9a227,#e8c85a)}
+.logo-circle{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"Black Han Sans",sans-serif;font-weight:900;color:#06060f;flex-shrink:0;font-size:11px;background:linear-gradient(135deg,#c9a227,#e8c85a)}
 .f-brand{font-size:12px;font-weight:700;color:#e8c85a}
 .nav-section{display:flex;flex-direction:column;align-items:center;gap:8px;width:var(--card-w)}
 .nav-dots{display:flex;gap:5px}
@@ -47,7 +47,7 @@ body.social .card-bottom{flex:0 0 22%!important}
 .sdot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.18);cursor:pointer;transition:all .2s}
 .sdot.active{background:var(--acc-alt);transform:scale(1.4)}
 .ctrl-row{display:flex;gap:8px}
-.ctrl-btn{padding:8px 16px;border-radius:100px;border:1px solid rgba(156,109,255,.35);background:rgba(156,109,255,.08);color:rgba(255,255,255,.7);font-size:11px;font-family:"Noto Sans KR",sans-serif;cursor:pointer;transition:all .2s;white-space:nowrap}
+.ctrl-btn{padding:8px 16px;border-radius:100px;border:1px solid rgba(156,109,255,.35);background:rgba(156,109,255,.08);color:rgba(255,255,255,.7);font-size:11px;font-family:"Nanum Gothic",sans-serif;cursor:pointer;transition:all .2s;white-space:nowrap}
 .ctrl-btn:hover:not(:disabled){background:rgba(156,109,255,.18);color:#fff}
 .ctrl-btn.on{background:rgba(156,109,255,.28);border-color:var(--acc-alt);color:#fff}
 .ctrl-btn:disabled{opacity:.3;cursor:default}
