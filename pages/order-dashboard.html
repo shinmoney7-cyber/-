@@ -1,0 +1,344 @@
+<title>사주마루 주문 관리</title>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f4f8;
+  --surface: #ffffff;
+  --surface2: #f0eef8;
+  --fg: #1e1b2e;
+  --fg2: #6b6780;
+  --accent: #7c3aed;
+  --accent2: #a855f7;
+  --gold: #d97706;
+  --green: #059669;
+  --red: #dc2626;
+  --orange: #ea580c;
+  --blue: #2563eb;
+  --border: #e2e0f0;
+  --radius: 12px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f0d1a; --surface: #1a1728; --surface2: #221f35;
+    --fg: #f0eeff; --fg2: #9d98b8; --border: #2d2a45;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f0d1a; --surface: #1a1728; --surface2: #221f35;
+  --fg: #f0eeff; --fg2: #9d98b8; --border: #2d2a45;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: var(--fg); font-size: 14px; }
+header {
+  background: linear-gradient(135deg, #4c1d95, #6d28d9);
+  color: #fff; padding: 16px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+}
+header h1 { font-size: 18px; font-weight: 700; }
+header .meta { font-size: 12px; opacity: .75; }
+.tabs { display: flex; gap: 2px; background: var(--surface); padding: 8px 16px; border-bottom: 1px solid var(--border); overflow-x: auto; }
+.tab { padding: 6px 16px; border-radius: 20px; cursor: pointer; font-size: 13px; font-weight: 500; white-space: nowrap; color: var(--fg2); transition: background .15s, color .15s; }
+.tab.active { background: var(--accent); color: #fff; }
+.tab:hover:not(.active) { background: var(--surface2); color: var(--fg); }
+.tab .badge { background: var(--red); color: #fff; border-radius: 10px; padding: 1px 6px; font-size: 11px; margin-left: 4px; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; padding: 16px; }
+.stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; text-align: center; }
+.stat .num { font-size: 26px; font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
+.stat .lbl { font-size: 12px; color: var(--fg2); margin-top: 2px; }
+.filter-bar { display: flex; gap: 8px; padding: 0 16px 12px; flex-wrap: wrap; align-items: center; }
+.filter-bar input { flex: 1; min-width: 160px; padding: 7px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--fg); font-size: 13px; }
+.filter-bar select { padding: 7px 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--fg); font-size: 13px; }
+.orders { padding: 0 16px 80px; display: flex; flex-direction: column; gap: 10px; }
+.order-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 16px;
+  cursor: pointer; transition: box-shadow .15s;
+}
+.order-card:hover { box-shadow: 0 4px 16px rgba(124,58,237,.12); }
+.order-card.expanded { border-color: var(--accent); }
+.card-top { display: flex; gap: 10px; align-items: flex-start; }
+.oid { font-size: 11px; font-family: monospace; background: var(--surface2); padding: 2px 8px; border-radius: 6px; color: var(--fg2); white-space: nowrap; }
+.card-name { font-weight: 600; font-size: 15px; }
+.card-product { color: var(--fg2); font-size: 13px; margin-top: 2px; }
+.card-meta { font-size: 12px; color: var(--fg2); margin-top: 4px; }
+.card-right { margin-left: auto; text-align: right; }
+.status-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+.s-pending    { background: #fef3c7; color: #92400e; }
+.s-paid       { background: #d1fae5; color: #065f46; }
+.s-processing { background: #dbeafe; color: #1e40af; }
+.s-verified   { background: #ede9fe; color: #5b21b6; }
+.s-delivered  { background: #d1fae5; color: #065f46; }
+.s-done       { background: #f0fdf4; color: #15803d; }
+.s-cancelled  { background: #fee2e2; color: #991b1b; }
+.s-error      { background: #fee2e2; color: #991b1b; }
+.acct-badge { font-size: 11px; padding: 2px 7px; border-radius: 10px; font-weight: 600; }
+.acct-sm  { background: #fdf4ff; color: #7e22ce; }
+.acct-un  { background: #fff1f2; color: #9f1239; }
+.acct-s77 { background: #eff6ff; color: #1d4ed8; }
+.detail-panel { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); display: none; }
+.detail-panel.open { display: block; }
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; }
+.info-item { font-size: 13px; }
+.info-item .k { color: var(--fg2); font-size: 11px; margin-bottom: 2px; }
+.info-item .v { font-weight: 500; }
+.verified-row { margin-top: 10px; padding: 8px 12px; background: var(--surface2); border-radius: 8px; font-size: 13px; }
+.verified-row.yes { border-left: 3px solid var(--green); }
+.verified-row.no  { border-left: 3px solid var(--fg2); }
+.history { margin-top: 10px; }
+.history h4 { font-size: 12px; color: var(--fg2); margin-bottom: 6px; }
+.history-item { display: flex; gap: 8px; font-size: 12px; padding: 4px 0; border-bottom: 1px solid var(--border); }
+.history-item .h-time { color: var(--fg2); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.history-item .h-event { font-weight: 600; color: var(--accent); }
+.empty { text-align: center; padding: 60px 16px; color: var(--fg2); font-size: 15px; }
+.refresh-btn { position: fixed; bottom: 20px; right: 20px; background: var(--accent); color: #fff; border: none; border-radius: 50%; width: 52px; height: 52px; font-size: 20px; cursor: pointer; box-shadow: 0 4px 16px rgba(124,58,237,.4); z-index: 50; }
+.loading { text-align: center; padding: 40px; color: var(--fg2); }
+@media (max-width: 520px) {
+  .info-grid { grid-template-columns: 1fr; }
+  .stats { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+
+<header>
+  <div>
+    <h1>🔮 주문 관리 대시보드</h1>
+    <div class="meta" id="last-update">로딩 중...</div>
+  </div>
+  <div style="font-size:13px;opacity:.8" id="total-label"></div>
+</header>
+
+<div class="tabs" id="tabs">
+  <div class="tab active" data-status="">전체</div>
+  <div class="tab" data-status="pending">주문접수</div>
+  <div class="tab" data-status="paid">입금확인</div>
+  <div class="tab" data-status="processing">분석중</div>
+  <div class="tab" data-status="verified">확인완료</div>
+  <div class="tab" data-status="delivered">발송완료</div>
+  <div class="tab" data-status="error">오류</div>
+</div>
+
+<div class="stats" id="stats"></div>
+
+<div class="filter-bar">
+  <input type="text" id="search" placeholder="이름 / 상품 / 주문번호 검색..." oninput="render()">
+  <select id="acct-filter" onchange="render()">
+    <option value="">전체 계정</option>
+    <option value="sm">사주마루</option>
+    <option value="un">사주보는언니</option>
+    <option value="s77">사주마루77</option>
+  </select>
+</div>
+
+<div class="orders" id="orders"><div class="loading">주문 데이터 로딩 중...</div></div>
+<button class="refresh-btn" onclick="loadOrders()" title="새로고침">↻</button>
+
+<script>
+const STATUS_LABEL = {
+  pending: "주문접수", paid: "입금확인", processing: "분석중",
+  verified: "확인완료", delivered: "발송완료", done: "완료",
+  cancelled: "취소", error: "오류",
+};
+const ACCT_NAME = { sm: "사주마루", un: "사주보는언니", s77: "사주마루77" };
+
+let allOrders = [];
+let currentStatus = "";
+let expandedId = null;
+
+// orders_db.json을 GitHub Pages 경로로 읽기
+// 실제 배포 시 orders_data/orders.json을 GitHub에 포함하거나 별도 API로 제공
+// 여기서는 로컬 파일 또는 시뮬레이션 모드
+async function loadOrders() {
+  const statusEl = document.getElementById("last-update");
+  statusEl.textContent = "새로고침 중...";
+
+  try {
+    // orders.json을 같은 서버에서 fetch (GitHub Pages에서는 별도 API 필요)
+    const res = await fetch("../scripts/orders_data/orders.json?t=" + Date.now());
+    if (!res.ok) throw new Error("파일 없음");
+    const data = await res.json();
+    allOrders = Object.values(data).sort((a, b) =>
+      (b.created_at || "").localeCompare(a.created_at || "")
+    );
+  } catch {
+    // 데모 데이터 (실제 환경에서는 제거)
+    allOrders = getDemoOrders();
+  }
+
+  updateStats();
+  render();
+  statusEl.textContent = "마지막 업데이트: " + new Date().toLocaleString("ko-KR");
+  document.getElementById("total-label").textContent = `총 ${allOrders.length}건`;
+}
+
+function getDemoOrders() {
+  return [
+    { order_id: "A1B2C3D4", account: "sm", status: "pending", created_at: "2026-10-22 09:15:00",
+      name: "김지수", gender: "여성", cal_type: "양력", year: 1995, month: 3, day: 12, hour: 10,
+      product: "연애운", delivery_method: "이메일", delivery_contact: "jisu@email.com",
+      paid: false, claude_verified: false, history: [
+        { time: "2026-10-22 09:15:00", event: "주문접수", detail: "연애운" }
+      ]
+    },
+    { order_id: "E5F6G7H8", account: "un", status: "processing", created_at: "2026-10-22 08:30:00",
+      name: "박민준", gender: "남성", cal_type: "양력", year: 1990, month: 7, day: 25, hour: null,
+      product: "재물운", delivery_method: "카카오톡", delivery_contact: "010-1234-5678",
+      paid: true, paid_at: "2026-10-22 08:45:00", claude_verified: false, history: [
+        { time: "2026-10-22 08:30:00", event: "주문접수", detail: "재물운" },
+        { time: "2026-10-22 08:45:00", event: "입금확인", detail: "19,800원" },
+        { time: "2026-10-22 08:46:00", event: "사주분석중", detail: "FL 주문 시작" }
+      ]
+    },
+    { order_id: "I9J0K1L2", account: "s77", status: "delivered", created_at: "2026-10-21 14:00:00",
+      name: "이서연", gender: "여성", cal_type: "음력", year: 1988, month: 11, day: 3, hour: 14,
+      product: "평생운", delivery_method: "이메일", delivery_contact: "seoyeon@gmail.com",
+      paid: true, paid_at: "2026-10-21 14:10:00", claude_verified: true,
+      claude_verify_note: "인적사항 정상 확인 완료", delivered_at: "2026-10-21 16:30:00",
+      history: [
+        { time: "2026-10-21 14:00:00", event: "주문접수", detail: "평생운" },
+        { time: "2026-10-21 14:10:00", event: "입금확인", detail: "29,800원" },
+        { time: "2026-10-21 14:15:00", event: "사주분석중", detail: "" },
+        { time: "2026-10-21 16:28:00", event: "발송전확인완료", detail: "인적사항 정상 확인 완료" },
+        { time: "2026-10-21 16:30:00", event: "발송완료", detail: "이메일 → seoyeon@gmail.com" }
+      ]
+    },
+  ];
+}
+
+function updateStats() {
+  const counts = {};
+  allOrders.forEach(o => { counts[o.status] = (counts[o.status] || 0) + 1; });
+  const statsEl = document.getElementById("stats");
+  const items = [
+    { k: "", label: "전체", color: "var(--accent)" },
+    { k: "pending", label: "접수대기", color: "var(--gold)" },
+    { k: "paid", label: "입금확인", color: "var(--green)" },
+    { k: "processing", label: "분석중", color: "var(--blue)" },
+    { k: "verified", label: "확인완료", color: "var(--accent2)" },
+    { k: "delivered", label: "발송완료", color: "var(--green)" },
+    { k: "error", label: "오류", color: "var(--red)" },
+  ];
+  statsEl.innerHTML = items.map(i => {
+    const n = i.k ? (counts[i.k] || 0) : allOrders.length;
+    return `<div class="stat" onclick="setTab('${i.k}')">
+      <div class="num" style="color:${i.color}">${n}</div>
+      <div class="lbl">${i.label}</div>
+    </div>`;
+  }).join("");
+
+  // 탭 뱃지 업데이트
+  document.querySelectorAll(".tab").forEach(t => {
+    const s = t.dataset.status;
+    const n = s ? (counts[s] || 0) : allOrders.length;
+    const existing = t.querySelector(".badge");
+    if (existing) existing.remove();
+    if (n > 0 && s) {
+      const b = document.createElement("span");
+      b.className = "badge";
+      b.textContent = n;
+      t.appendChild(b);
+    }
+  });
+}
+
+function setTab(status) {
+  currentStatus = status;
+  document.querySelectorAll(".tab").forEach(t => {
+    t.classList.toggle("active", t.dataset.status === status);
+  });
+  render();
+}
+
+document.getElementById("tabs").addEventListener("click", e => {
+  const tab = e.target.closest(".tab");
+  if (tab) setTab(tab.dataset.status);
+});
+
+function render() {
+  const search   = (document.getElementById("search").value || "").toLowerCase();
+  const acctFlt  = document.getElementById("acct-filter").value;
+
+  let filtered = allOrders.filter(o => {
+    if (currentStatus && o.status !== currentStatus) return false;
+    if (acctFlt && o.acct !== acctFlt && o.account !== acctFlt) return false;
+    if (search) {
+      const hay = [o.order_id, o.name, o.product, o.delivery_contact, ACCT_NAME[o.account]].join(" ").toLowerCase();
+      if (!hay.includes(search)) return false;
+    }
+    return true;
+  });
+
+  const el = document.getElementById("orders");
+  if (!filtered.length) {
+    el.innerHTML = '<div class="empty">조건에 맞는 주문이 없습니다.</div>';
+    return;
+  }
+
+  el.innerHTML = filtered.map(o => orderCard(o)).join("");
+}
+
+function orderCard(o) {
+  const acct  = ACCT_NAME[o.account] || o.account || "사주마루";
+  const birth = `${o.year}.${String(o.month).padStart(2,"0")}.${String(o.day).padStart(2,"0")} (${o.cal_type})`;
+  const hour  = o.hour != null ? `${o.hour}시` : "모름";
+  const isExp = expandedId === o.order_id;
+  const vNote = o.claude_verify_note || "";
+
+  return `<div class="order-card${isExp ? " expanded" : ""}" onclick="toggleExpand('${o.order_id}')">
+    <div class="card-top">
+      <div>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:4px">
+          <span class="oid">#${o.order_id}</span>
+          <span class="acct-badge acct-${o.account}">${acct}</span>
+          <span class="status-badge s-${o.status}">${STATUS_LABEL[o.status] || o.status}</span>
+          ${o.claude_verified ? '<span style="font-size:11px;color:var(--green)">✓ Claude 검증</span>' : ''}
+        </div>
+        <div class="card-name">${o.name || "-"} <span style="font-weight:400;color:var(--fg2);font-size:13px">${o.gender || ""}</span></div>
+        <div class="card-product">${o.product || "-"}</div>
+        <div class="card-meta">${o.delivery_method || ""} · ${o.delivery_contact || ""}</div>
+      </div>
+      <div class="card-right">
+        <div style="font-size:11px;color:var(--fg2)">${(o.created_at || "").substring(0,10)}</div>
+        ${o.paid ? '<div style="font-size:11px;color:var(--green);margin-top:2px">💰 입금</div>' : '<div style="font-size:11px;color:var(--orange);margin-top:2px">⏳ 미입금</div>'}
+      </div>
+    </div>
+    <div class="detail-panel${isExp ? " open" : ""}">
+      <div class="info-grid">
+        <div class="info-item"><div class="k">생년월일</div><div class="v">${birth}</div></div>
+        <div class="info-item"><div class="k">태어난 시간</div><div class="v">${hour}</div></div>
+        <div class="info-item"><div class="k">전달 방법</div><div class="v">${o.delivery_method || "-"}</div></div>
+        <div class="info-item"><div class="k">전달처</div><div class="v" style="word-break:break-all">${o.delivery_contact || "-"}</div></div>
+        ${o.paid_at ? `<div class="info-item"><div class="k">입금 시각</div><div class="v">${o.paid_at}</div></div>` : ""}
+        ${o.fl_url ? `<div class="info-item" style="grid-column:1/-1"><div class="k">FL URL</div><div class="v" style="word-break:break-all;font-size:12px">${o.fl_url}</div></div>` : ""}
+      </div>
+      <div class="verified-row ${o.claude_verified ? "yes" : "no"}">
+        ${o.claude_verified
+          ? `✅ Claude 검증 완료 (${o.claude_verified_at || ""}) — ${vNote}`
+          : "⬜ Claude 검증 전"}
+      </div>
+      <div class="history">
+        <h4>처리 이력</h4>
+        ${(o.history || []).map(h =>
+          `<div class="history-item">
+            <span class="h-time">${h.time || ""}</span>
+            <span class="h-event">${h.event}</span>
+            <span>${h.detail || ""}</span>
+          </div>`
+        ).join("")}
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleExpand(oid) {
+  expandedId = expandedId === oid ? null : oid;
+  render();
+}
+
+// 자동 새로고침 5분마다
+setInterval(loadOrders, 5 * 60 * 1000);
+loadOrders();
+</script>

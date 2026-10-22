@@ -11,7 +11,7 @@ on:
 jobs:
   process-orders:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     steps:
       - uses: actions/checkout@v4
@@ -27,6 +27,17 @@ jobs:
           playwright install chromium
           playwright install-deps chromium
 
+      - name: Check payments
+        env:
+          GMAIL_USER: shinmoney7@gmail.com
+          GMAIL_APP_PASSWORD: "${{ secrets.GMAIL_APP_PASSWORD }}"
+          SOLAPI_API_KEY: "${{ secrets.SOLAPI_API_KEY }}"
+          SOLAPI_API_SECRET: "${{ secrets.SOLAPI_API_SECRET }}"
+          SOLAPI_FROM: "${{ secrets.SOLAPI_FROM }}"
+          KAKAO_CHANNEL_ID: "${{ secrets.KAKAO_CHANNEL_ID }}"
+          NOTIFY_PHONE: "${{ secrets.NOTIFY_PHONE }}"
+        run: python scripts/payment_check.py
+
       - name: Process orders
         env:
           GMAIL_USER: shinmoney7@gmail.com
@@ -36,15 +47,19 @@ jobs:
           ANTHROPIC_API_KEY: "${{ secrets.ANTHROPIC_API_KEY }}"
           SOLAPI_API_KEY: "${{ secrets.SOLAPI_API_KEY }}"
           SOLAPI_API_SECRET: "${{ secrets.SOLAPI_API_SECRET }}"
+          SOLAPI_FROM: "${{ secrets.SOLAPI_FROM }}"
+          KAKAO_CHANNEL_ID: "${{ secrets.KAKAO_CHANNEL_ID }}"
           NOTIFY_PHONE: "${{ secrets.NOTIFY_PHONE }}"
         run: python scripts/check_orders.py
 
-      - name: Deliver FL PDFs to customers
+      - name: Deliver FL PDFs (with Claude verification)
         env:
           GMAIL_USER: shinmoney7@gmail.com
           GMAIL_APP_PASSWORD: "${{ secrets.GMAIL_APP_PASSWORD }}"
+          ANTHROPIC_API_KEY: "${{ secrets.ANTHROPIC_API_KEY }}"
           SOLAPI_API_KEY: "${{ secrets.SOLAPI_API_KEY }}"
           SOLAPI_API_SECRET: "${{ secrets.SOLAPI_API_SECRET }}"
-          SOLAPI_FROM: "${{ secrets.NOTIFY_PHONE }}"
+          SOLAPI_FROM: "${{ secrets.SOLAPI_FROM }}"
+          KAKAO_CHANNEL_ID: "${{ secrets.KAKAO_CHANNEL_ID }}"
           NOTIFY_PHONE: "${{ secrets.NOTIFY_PHONE }}"
         run: python scripts/deliver_pdf.py
