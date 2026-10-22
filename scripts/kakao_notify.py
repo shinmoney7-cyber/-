@@ -24,7 +24,7 @@ SOLAPI_FROM       = os.getenv("SOLAPI_FROM", "")
 KAKAO_CHANNEL_ID  = os.getenv("KAKAO_CHANNEL_ID", "")
 NOTIFY_PHONE      = os.getenv("NOTIFY_PHONE", "01083863712")   # 신정희
 NOTIFY_EMAIL      = os.getenv("NOTIFY_EMAIL", "s70js@kakao.com")  # 신정희 카카오메일
-BANK_ACCOUNT      = os.getenv("BANK_ACCOUNT", "")  # 신한은행 계좌 (예: 신한은행 110-xxx-xxxxxx 예금주:신정희)
+BANK_ACCOUNT      = os.getenv("BANK_ACCOUNT", "신한은행 133-000-695010 (예금주: 신정희)")
 SOLAPI_BASE       = "https://api.solapi.com"
 
 ACCOUNT_NAMES = {
