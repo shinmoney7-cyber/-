@@ -1,0 +1,242 @@
+name: 사주채널 2시간 자동 포스팅
+
+on:
+  schedule:
+    # KST 06:00~22:00 매 2시간 (UTC 기준)
+    # 06KST=21UTC, 08KST=23UTC, 10KST=01UTC, 12KST=03UTC
+    # 14KST=05UTC, 16KST=07UTC, 18KST=09UTC, 20KST=11UTC, 22KST=13UTC
+    - cron: '0 21,23,1,3,5,7,9,11,13 * * *'
+
+  workflow_dispatch:
+    inputs:
+      account_id:
+        description: '계정 (sm/un/s77/all)'
+        required: false
+        default: 'all'
+      hour_kst:
+        description: '시간대 강제 지정 (06/08/10/12/14/16/18/20/22, 비워두면 현재시각)'
+        required: false
+        default: ''
+      platforms_override:
+        description: '플랫폼 강제 지정 (instagram,threads,twitter 등, 비워두면 시간대 기본값)'
+        required: false
+        default: ''
+
+jobs:
+  # ── 사주마루 ─────────────────────────────────────────────
+  post-sm:
+    name: 사주마루
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: ${{ github.event.inputs.account_id == 'sm' || github.event.inputs.account_id == 'all' || github.event.inputs.account_id == '' || !github.event.inputs.account_id }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install anthropic requests Pillow playwright
+          sudo apt-get install -y fonts-noto-cjk ffmpeg -q
+          PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers playwright install-deps chromium || true
+
+      - name: 오케스트레이터 실행 (사주마루)
+        env:
+          ACCOUNT_ID: sm
+          HOUR_KST: ${{ github.event.inputs.hour_kst }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # Instagram/Facebook/Threads (Meta)
+          SM_INSTAGRAM_ACCESS_TOKEN: ${{ secrets.SM_INSTAGRAM_ACCESS_TOKEN }}
+          SM_INSTAGRAM_USER_ID: ${{ secrets.SM_INSTAGRAM_USER_ID }}
+          SM_FACEBOOK_PAGE_ID: ${{ secrets.SM_FACEBOOK_PAGE_ID }}
+          SM_FACEBOOK_PAGE_ACCESS_TOKEN: ${{ secrets.SM_FACEBOOK_PAGE_ACCESS_TOKEN }}
+          SM_THREADS_ACCESS_TOKEN: ${{ secrets.SM_THREADS_ACCESS_TOKEN }}
+          SM_THREADS_USER_ID: ${{ secrets.SM_THREADS_USER_ID }}
+          # Twitter/X
+          SM_TWITTER_API_KEY: ${{ secrets.SM_TWITTER_API_KEY }}
+          SM_TWITTER_API_SECRET: ${{ secrets.SM_TWITTER_API_SECRET }}
+          SM_TWITTER_ACCESS_TOKEN: ${{ secrets.SM_TWITTER_ACCESS_TOKEN }}
+          SM_TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.SM_TWITTER_ACCESS_TOKEN_SECRET }}
+          # TikTok
+          SM_TIKTOK_CLIENT_KEY: ${{ secrets.SM_TIKTOK_CLIENT_KEY }}
+          SM_TIKTOK_CLIENT_SECRET: ${{ secrets.SM_TIKTOK_CLIENT_SECRET }}
+          SM_TIKTOK_REFRESH_TOKEN: ${{ secrets.SM_TIKTOK_REFRESH_TOKEN }}
+          # YouTube
+          SM_YOUTUBE_CLIENT_ID: ${{ secrets.SM_YOUTUBE_CLIENT_ID }}
+          SM_YOUTUBE_CLIENT_SECRET: ${{ secrets.SM_YOUTUBE_CLIENT_SECRET }}
+          SM_YOUTUBE_REFRESH_TOKEN: ${{ secrets.SM_YOUTUBE_REFRESH_TOKEN }}
+          # Naver
+          SM_NAVER_CLIENT_ID: ${{ secrets.SM_NAVER_CLIENT_ID }}
+          SM_NAVER_CLIENT_SECRET: ${{ secrets.SM_NAVER_CLIENT_SECRET }}
+          SM_NAVER_ACCESS_TOKEN: ${{ secrets.SM_NAVER_ACCESS_TOKEN }}
+          SM_NAVER_REFRESH_TOKEN: ${{ secrets.SM_NAVER_REFRESH_TOKEN }}
+          SM_NAVER_ID: ${{ secrets.SM_NAVER_ID }}
+          SM_NAVER_PW: ${{ secrets.SM_NAVER_PW }}
+          # 공통
+          IMAGE_HOST_URL: https://shinmoney7-cyber.github.io/-
+          GMAIL_USER: shinmoney7@gmail.com
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          TYPEFULLY_API_KEY: ${{ secrets.TYPEFULLY_API_KEY }}
+          PLAYWRIGHT_BROWSERS_PATH: /opt/pw-browsers
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+        run: python scripts/orchestrator.py
+
+      - name: 결과물 저장
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sm-content-${{ github.run_number }}
+          path: scripts/sns_output/sm/
+          retention-days: 7
+
+  # ── 사주보는언니 ─────────────────────────────────────────
+  post-un:
+    name: 사주보는언니
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: ${{ github.event.inputs.account_id == 'un' || github.event.inputs.account_id == 'all' || github.event.inputs.account_id == '' || !github.event.inputs.account_id }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install anthropic requests Pillow playwright
+          sudo apt-get install -y fonts-noto-cjk ffmpeg -q
+          PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers playwright install-deps chromium || true
+
+      - name: 오케스트레이터 실행 (사주보는언니)
+        env:
+          ACCOUNT_ID: un
+          HOUR_KST: ${{ github.event.inputs.hour_kst }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          UN_INSTAGRAM_ACCESS_TOKEN: ${{ secrets.UN_INSTAGRAM_ACCESS_TOKEN }}
+          UN_INSTAGRAM_USER_ID: ${{ secrets.UN_INSTAGRAM_USER_ID }}
+          UN_FACEBOOK_PAGE_ID: ${{ secrets.UN_FACEBOOK_PAGE_ID }}
+          UN_FACEBOOK_PAGE_ACCESS_TOKEN: ${{ secrets.UN_FACEBOOK_PAGE_ACCESS_TOKEN }}
+          UN_THREADS_ACCESS_TOKEN: ${{ secrets.UN_THREADS_ACCESS_TOKEN }}
+          UN_THREADS_USER_ID: ${{ secrets.UN_THREADS_USER_ID }}
+          UN_TWITTER_API_KEY: ${{ secrets.UN_TWITTER_API_KEY }}
+          UN_TWITTER_API_SECRET: ${{ secrets.UN_TWITTER_API_SECRET }}
+          UN_TWITTER_ACCESS_TOKEN: ${{ secrets.UN_TWITTER_ACCESS_TOKEN }}
+          UN_TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.UN_TWITTER_ACCESS_TOKEN_SECRET }}
+          UN_TIKTOK_CLIENT_KEY: ${{ secrets.UN_TIKTOK_CLIENT_KEY }}
+          UN_TIKTOK_CLIENT_SECRET: ${{ secrets.UN_TIKTOK_CLIENT_SECRET }}
+          UN_TIKTOK_REFRESH_TOKEN: ${{ secrets.UN_TIKTOK_REFRESH_TOKEN }}
+          UN_YOUTUBE_CLIENT_ID: ${{ secrets.UN_YOUTUBE_CLIENT_ID }}
+          UN_YOUTUBE_CLIENT_SECRET: ${{ secrets.UN_YOUTUBE_CLIENT_SECRET }}
+          UN_YOUTUBE_REFRESH_TOKEN: ${{ secrets.UN_YOUTUBE_REFRESH_TOKEN }}
+          UN_NAVER_CLIENT_ID: ${{ secrets.UN_NAVER_CLIENT_ID }}
+          UN_NAVER_CLIENT_SECRET: ${{ secrets.UN_NAVER_CLIENT_SECRET }}
+          UN_NAVER_ACCESS_TOKEN: ${{ secrets.UN_NAVER_ACCESS_TOKEN }}
+          UN_NAVER_REFRESH_TOKEN: ${{ secrets.UN_NAVER_REFRESH_TOKEN }}
+          UN_NAVER_ID: ${{ secrets.UN_NAVER_ID }}
+          UN_NAVER_PW: ${{ secrets.UN_NAVER_PW }}
+          IMAGE_HOST_URL: https://shinmoney7-cyber.github.io/-
+          GMAIL_USER: shinmoney7@gmail.com
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          TYPEFULLY_API_KEY: ${{ secrets.TYPEFULLY_API_KEY }}
+          PLAYWRIGHT_BROWSERS_PATH: /opt/pw-browsers
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+        run: python scripts/orchestrator.py
+
+      - name: 결과물 저장
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: un-content-${{ github.run_number }}
+          path: scripts/sns_output/un/
+          retention-days: 7
+
+  # ── 사주마루77 ───────────────────────────────────────────
+  post-s77:
+    name: 사주마루77
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: ${{ github.event.inputs.account_id == 's77' || github.event.inputs.account_id == 'all' || github.event.inputs.account_id == '' || !github.event.inputs.account_id }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install anthropic requests Pillow playwright
+          sudo apt-get install -y fonts-noto-cjk ffmpeg -q
+          PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers playwright install-deps chromium || true
+
+      - name: 오케스트레이터 실행 (사주마루77)
+        env:
+          ACCOUNT_ID: s77
+          HOUR_KST: ${{ github.event.inputs.hour_kst }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          S77_INSTAGRAM_ACCESS_TOKEN: ${{ secrets.S77_INSTAGRAM_ACCESS_TOKEN }}
+          S77_INSTAGRAM_USER_ID: ${{ secrets.S77_INSTAGRAM_USER_ID }}
+          S77_THREADS_ACCESS_TOKEN: ${{ secrets.S77_THREADS_ACCESS_TOKEN }}
+          S77_THREADS_USER_ID: ${{ secrets.S77_THREADS_USER_ID }}
+          S77_TWITTER_API_KEY: ${{ secrets.S77_TWITTER_API_KEY }}
+          S77_TWITTER_API_SECRET: ${{ secrets.S77_TWITTER_API_SECRET }}
+          S77_TWITTER_ACCESS_TOKEN: ${{ secrets.S77_TWITTER_ACCESS_TOKEN }}
+          S77_TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.S77_TWITTER_ACCESS_TOKEN_SECRET }}
+          S77_TIKTOK_CLIENT_KEY: ${{ secrets.S77_TIKTOK_CLIENT_KEY }}
+          S77_TIKTOK_CLIENT_SECRET: ${{ secrets.S77_TIKTOK_CLIENT_SECRET }}
+          S77_TIKTOK_REFRESH_TOKEN: ${{ secrets.S77_TIKTOK_REFRESH_TOKEN }}
+          S77_YOUTUBE_CLIENT_ID: ${{ secrets.S77_YOUTUBE_CLIENT_ID }}
+          S77_YOUTUBE_CLIENT_SECRET: ${{ secrets.S77_YOUTUBE_CLIENT_SECRET }}
+          S77_YOUTUBE_REFRESH_TOKEN: ${{ secrets.S77_YOUTUBE_REFRESH_TOKEN }}
+          IMAGE_HOST_URL: https://shinmoney7-cyber.github.io/-
+          GMAIL_USER: shinmoney7@gmail.com
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          TYPEFULLY_API_KEY: ${{ secrets.TYPEFULLY_API_KEY }}
+          PLAYWRIGHT_BROWSERS_PATH: /opt/pw-browsers
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+        run: python scripts/orchestrator.py
+
+      - name: 결과물 저장
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: s77-content-${{ github.run_number }}
+          path: scripts/sns_output/s77/
+          retention-days: 7
+
+  # ── 결과 알림 ────────────────────────────────────────────
+  notify:
+    name: 결과 알림
+    runs-on: ubuntu-latest
+    needs: [post-sm, post-un, post-s77]
+    if: always()
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: 이메일 알림
+        env:
+          GMAIL_USER: shinmoney7@gmail.com
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          SM_RESULT: ${{ needs.post-sm.result }}
+          UN_RESULT: ${{ needs.post-un.result }}
+          S77_RESULT: ${{ needs.post-s77.result }}
+          RUN_NUMBER: ${{ github.run_number }}
+        run: python scripts/sns_notify.py
