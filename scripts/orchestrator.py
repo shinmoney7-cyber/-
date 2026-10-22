@@ -25,6 +25,9 @@ account = next(a for a in config["accounts"] if a["id"] == ACCOUNT_ID)
 time_slot = config["time_slots"].get(f"{HOUR_KST:02d}", config["time_slots"]["06"])
 enabled_platforms = account["platforms"]
 
+# 플랫폼 강제 지정 (workflow_dispatch 파라미터)
+platforms_override = os.environ.get("PLATFORMS_OVERRIDE", "").strip()
+
 print(f"\n{'='*50}")
 print(f"  {account['name']} | {NOW_KST.strftime('%H:%M')} KST | {time_slot['title']}")
 print(f"{'='*50}")
@@ -42,11 +45,18 @@ PLATFORM_SCRIPTS = {
     "naver_jisik": "post_naver_jisik.py",
 }
 
-# ── 이 시간대에 실행할 플랫폼 결정 ──────────────────────────
-target_platforms = time_slot["platforms"]
-SCRIPTS_DIR = Path(__file__).parent
+# 영상 생성이 필요한 시간대
+VIDEO_SLOTS = {"08", "14", "18"}
 
+# ── 이 시간대에 실행할 플랫폼 결정 ──────────────────────────
+if platforms_override:
+    target_platforms = [p.strip() for p in platforms_override.split(",") if p.strip()]
+else:
+    target_platforms = time_slot["platforms"]
+
+SCRIPTS_DIR = Path(__file__).parent
 results = {}
+
 
 def run_script(script_name: str, platform: str) -> bool:
     script_path = SCRIPTS_DIR / script_name
@@ -66,15 +76,16 @@ def run_script(script_name: str, platform: str) -> bool:
         "instagram": ["INSTAGRAM_ACCESS_TOKEN", "INSTAGRAM_USER_ID"],
         "facebook":  ["FACEBOOK_PAGE_ID", "FACEBOOK_PAGE_ACCESS_TOKEN"],
         "threads":   ["THREADS_ACCESS_TOKEN", "THREADS_USER_ID"],
-        "twitter":   ["TWITTER_API_KEY", "TWITTER_API_SECRET", "TWITTER_ACCESS_TOKEN", "TWITTER_ACCESS_TOKEN_SECRET"],
+        "twitter":   ["TWITTER_API_KEY", "TWITTER_API_SECRET",
+                      "TWITTER_ACCESS_TOKEN", "TWITTER_ACCESS_TOKEN_SECRET"],
         "tiktok":    ["TIKTOK_CLIENT_KEY", "TIKTOK_CLIENT_SECRET", "TIKTOK_REFRESH_TOKEN"],
         "youtube":   ["YOUTUBE_CLIENT_ID", "YOUTUBE_CLIENT_SECRET", "YOUTUBE_REFRESH_TOKEN"],
-        "naver_blog":  ["NAVER_CLIENT_ID", "NAVER_CLIENT_SECRET", "NAVER_ACCESS_TOKEN", "NAVER_REFRESH_TOKEN"],
+        "naver_blog":  ["NAVER_CLIENT_ID", "NAVER_CLIENT_SECRET",
+                        "NAVER_ACCESS_TOKEN", "NAVER_REFRESH_TOKEN"],
         "naver_clip":  ["GMAIL_USER", "GMAIL_APP_PASSWORD"],
         "naver_jisik": ["NAVER_ID", "NAVER_PW"],
     }
 
-    # 계정 prefix로 오버라이드
     for key in secret_map.get(platform, []):
         prefixed = os.environ.get(f"{prefix}_{key}", "")
         if prefixed:
@@ -86,7 +97,7 @@ def run_script(script_name: str, platform: str) -> bool:
             env=env,
             capture_output=True,
             text=True,
-            timeout=120,
+            timeout=180,
         )
         output = result.stdout + result.stderr
         success = result.returncode == 0
@@ -102,20 +113,39 @@ def run_script(script_name: str, platform: str) -> bool:
         print(f"  [{platform}] ❌ 오류: {e}")
         return False
 
+
 # ── 1. 콘텐츠 생성 ───────────────────────────────────────────
-print("\n[1/2] 콘텐츠 생성 중...")
+print("\n[1/3] 콘텐츠 생성 중...")
 gen_result = subprocess.run(
     [sys.executable, str(SCRIPTS_DIR / "content_gen_v2.py")],
     env={**os.environ, "ACCOUNT_ID": ACCOUNT_ID, "HOUR_KST": str(HOUR_KST)},
-    capture_output=True, text=True, timeout=120,
+    capture_output=True, text=True, timeout=180,
 )
 print(gen_result.stdout)
 if gen_result.returncode != 0:
-    print(f"❌ 콘텐츠 생성 실패: {gen_result.stderr[:200]}")
+    print(f"❌ 콘텐츠 생성 실패: {gen_result.stderr[:300]}")
     sys.exit(1)
 
-# ── 2. 플랫폼 포스팅 ─────────────────────────────────────────
-print(f"\n[2/2] 플랫폼 포스팅 ({', '.join(target_platforms)})...")
+# ── 2. 영상 생성 (해당 시간대) ────────────────────────────────
+if f"{HOUR_KST:02d}" in VIDEO_SLOTS:
+    video_script = SCRIPTS_DIR / "video_gen.py"
+    if video_script.exists():
+        print("\n[2/3] 영상 생성 중...")
+        vid_result = subprocess.run(
+            [sys.executable, str(video_script)],
+            env={**os.environ, "ACCOUNT_ID": ACCOUNT_ID, "HOUR_KST": str(HOUR_KST)},
+            capture_output=True, text=True, timeout=300,
+        )
+        print(vid_result.stdout)
+        if vid_result.returncode != 0:
+            print(f"  ⚠️ 영상 생성 실패 (포스팅은 계속): {vid_result.stderr[:300]}")
+    else:
+        print("\n[2/3] video_gen.py 없음 — 건너뜀")
+else:
+    print(f"\n[2/3] 영상 생성 불필요 ({HOUR_KST}시)")
+
+# ── 3. 플랫폼 포스팅 ─────────────────────────────────────────
+print(f"\n[3/3] 플랫폼 포스팅 ({', '.join(target_platforms)})...")
 
 for platform in target_platforms:
     if not enabled_platforms.get(platform, False):
