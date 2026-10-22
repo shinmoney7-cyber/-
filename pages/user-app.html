@@ -1,8 +1,6 @@
 <!doctype html>
 <html lang="ko">
 <head>
-<meta http-equiv="refresh" content="0;url=https://forms.gle/t2sSNES5NYow77vz5">
-
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>사주마루 주문</title>
@@ -213,9 +211,6 @@ input, select, textarea { font-family: var(--f); }
 </style>
 </head>
 <body>
-<p style="text-align:center;padding:16px;font-size:16px">신청 페이지가 이전되었어요. <a href="https://forms.gle/t2sSNES5NYow77vz5">새 신청서로 이동 →</a></p>
-
-
 <div class="topbar">
   <div>
     <div class="topbar__logo">사주마루</div>
@@ -600,7 +595,21 @@ async function submitOrder() {
   const serviceList = [];
   selectedIds.forEach(id => { const s=SERVICES.find(x=>x.id===id); if(s) serviceList.push(s.name); });
 
-  const body = `이름: ${name}\n성별: ${gender}\n생년월일: ${birth} (${calType})\n태어난시간: ${time}\n연락처: ${contact}\n이메일: ${email||'없음'}\n\n선택 서비스: ${serviceList.join(', ')}\n총 금액: ${fmt(total)}\n\n요청사항: ${memo||'없음'}`;
+  const deliveryMethod = email ? '이메일' : '연락처';
+  const deliveryContact = email || contact || '없음';
+  const itemLines = serviceList.map(s => 'ㆍ' + s).join('\n');
+  const body = `성함: ${name}
+성별: ${gender}
+생년월일: ${birth} (${calType})
+태어난 시간: ${time}
+전달 방법: ${deliveryMethod}
+전달 받을 곳: ${deliveryContact}
+
+신청 항목:
+${itemLines}
+합계: ${fmt(total)}
+
+요청사항: ${memo||'없음'}`;
 
   try {
     const formData = new FormData();

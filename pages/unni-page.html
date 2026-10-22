@@ -489,7 +489,7 @@ function setDelivery(mode){
   document.getElementById('detailKakao').classList.toggle('show', mode==='kakao');
 }
 
-function submitOrder(){
+async function submitOrder(){
   const err = document.getElementById('errStep2');
   err.classList.remove('show'); err.textContent='';
 
@@ -501,7 +501,7 @@ function submitOrder(){
   const email = document.getElementById('inpEmail').value.trim();
   const kakao = document.getElementById('inpKakao').value.trim();
   const note  = document.getElementById('inpNote').value.trim();
-  const time  = document.getElementById('inpTime').value;
+  const time  = document.getElementById('inpTime').value || '모름';
   const cal   = document.getElementById('inpCal').value;
 
   if(!name){ err.textContent='이름을 입력해주세요'; err.classList.add('show'); return; }
@@ -510,23 +510,55 @@ function submitOrder(){
   if(deliveryMode==='email' && !email){ err.textContent='이메일을 입력해주세요'; err.classList.add('show'); return; }
   if(deliveryMode==='kakao' && !kakao){ err.textContent='카카오톡 ID를 입력해주세요'; err.classList.add('show'); return; }
 
-  // 완료 화면
-  const services = [...selected].map(i=>SERVICES[i].name).join(', ');
+  const serviceList = [...selected].map(i=>SERVICES[i].name);
   let total = 0; selected.forEach(i=>total+=SERVICES[i].price);
-  const delivery = deliveryMode==='email' ? `이메일: ${email}` : `카카오톡: ${kakao}`;
+  const deliveryMethod = deliveryMode==='email' ? '이메일' : '카카오톡';
+  const deliveryContact = deliveryMode==='email' ? email : kakao;
+  const birthStr = `${year}.${month}.${day}${cal==='음력' ? ' (음력)' : ''}`;
+  const itemLines = serviceList.map(s => 'ㆍ' + s).join('\n');
+  const totalStr = '₩' + total.toLocaleString();
 
-  document.getElementById('doneDelivery').textContent = '토스 또는 카카오페이로 입금 후 주문 정보를 보내주세요 💕';
-  document.getElementById('doneServices').textContent = services;
-  document.getElementById('donePrice').textContent = '₩'+total.toLocaleString();
+  const body = `성함: ${name}
+성별: ${gender}
+생년월일: ${birthStr}
+태어난 시간: ${time}
+전달 방법: ${deliveryMethod}
+전달 받을 곳: ${deliveryContact}
+
+신청 항목:
+${itemLines}
+합계: ${totalStr}
+
+요청사항: ${note||'없음'}`;
+
+  const btn = document.querySelector('#step2 .btn-primary');
+  if(btn){ btn.disabled=true; btn.textContent='처리 중...'; }
+
+  try {
+    const formData = new FormData();
+    formData.append('_subject', `[사주보는언니] 주문 - ${name} ${totalStr}`);
+    formData.append('message', body);
+    formData.append('name', name);
+    formData.append('email', email || 'noreply@sajumaru.com');
+    formData.append('_captcha', 'false');
+    formData.append('_template', 'table');
+    await fetch('https://formsubmit.co/shinmoney7@gmail.com', { method:'POST', body:formData });
+  } catch(e) {
+    console.warn('주문 전송 실패:', e);
+  } finally {
+    if(btn){ btn.disabled=false; btn.textContent='신청서 작성하러 가기 💕'; }
+  }
+
+  // 완료 화면
+  document.getElementById('doneDelivery').textContent = `입금 계좌: 신한은행 133-000-695010 (예금주: 신정희)\n입금 확인 후 ${deliveryMethod}로 결과를 보내드려요 💕`;
+  document.getElementById('doneServices').textContent = serviceList.join(', ');
+  document.getElementById('donePrice').textContent = totalStr;
 
   document.getElementById('orderForm').style.display='none';
   document.getElementById('doneWrap').classList.add('show');
   document.getElementById('step2').classList.remove('active'); document.getElementById('step2').classList.add('done');
   document.getElementById('step3').classList.add('active');
   window.scrollTo(0,0);
-
-  // Kakao 링크 열기 (설정 필요)
-  // window.open('https://open.kakao.com/YOUR_LINK','_blank');
 }
 
 function resetOrder(){
@@ -548,14 +580,6 @@ function resetOrder(){
 // 초기화
 renderMenu();
 updateTotal();
-</script>
-<script>
-// 주문 접수는 구글 신청서로 받는다 (이 페이지는 주문을 저장·전송하지 않음)
-const APPLY_FORM_URL="https://forms.gle/t2sSNES5NYow77vz5";
-function openApplyForm(){window.open(APPLY_FORM_URL,"_blank","noopener");}
-quickSelectJaehoe=openApplyForm;
-quickSelectChueop=openApplyForm;
-submitOrder=openApplyForm;
 </script>
 </body>
 </html>
