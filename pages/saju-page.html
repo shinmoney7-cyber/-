@@ -300,7 +300,7 @@ body{padding:0 16px;padding-block:0;font-size:16px}
 
 <!-- 수능 시즌 긴급 배너 -->
 <div style="background:linear-gradient(135deg,#7b2fff,#c840ff);color:#fff;text-align:center;padding:11px 16px;font-size:14px;font-weight:700;letter-spacing:.02em;position:sticky;top:0;z-index:200">
-  📚 수능 D-31 · <span style="color:#ffe066">수능·입시운 분석 지금 신청하면 당일 발송</span> · 마감 시 종료
+  <a href="https://forms.gle/t2sSNES5NYow77vz5" target="_blank" rel="noopener" style="color:#fff;text-decoration:none">📚 수능 시즌 · <span style="color:#ffe066">수능·입시운 분석 신청 받는 중</span> · 신청하기 →</a>
 </div>
 
 <!-- 헤더 -->
@@ -312,6 +312,8 @@ body{padding:0 16px;padding-block:0;font-size:16px}
     <span style="font-size:14px;font-weight:700;color:var(--green)">기질·성향 분석 <strong style="font-size:16px">무료</strong> 제공</span>
     <span style="font-size:12px;color:var(--fg3)">· 추가 항목 선택 가능</span>
   </div>
+  <a class="btn btn-gold" href="https://forms.gle/t2sSNES5NYow77vz5" target="_blank" rel="noopener" style="max-width:320px;margin:18px auto 0;display:block;text-decoration:none">🔮 사주 분석 신청하기</a>
+  <div style="font-size:12px;color:var(--fg3);margin-top:8px">종합 분석 35,000원 · 개별 항목 15,000원부터 · 입금 확인 후 결과 전달</div>
 </div>
 
 <!-- 취업운 특집 스포트라이트 -->
@@ -325,8 +327,8 @@ body{padding:0 16px;padding-block:0;font-size:16px}
     <li style="font-size:14px;color:var(--fg2)">🏢 나와 맞는 회사 규모·문화·조직 유형</li>
     <li style="font-size:14px;color:var(--fg2)">⚡ 지금 이직해야 할지, 기다려야 할지</li>
   </ul>
-  <button class="btn btn-primary" style="max-width:280px;margin:0 auto;display:block" onclick="quickSelectChueop()">💼 취업운 분석 시작하기</button>
-  <div style="font-size:12px;color:var(--fg3);margin-top:10px">₩18,000 · 분석 즉시 시작 · 기질 분석 무료 포함</div>
+  <button class="btn btn-primary" style="max-width:280px;margin:0 auto;display:block" onclick="quickSelectChueop()">💼 취업운 분석 신청하기</button>
+  <div style="font-size:12px;color:var(--fg3);margin-top:10px">₩18,000 · 입금 확인 후 결과 전달 · 기질 분석 무료 포함</div>
 </div>
 
 <!-- ══════════════════════════════════════
@@ -523,6 +525,7 @@ body{padding:0 16px;padding-block:0;font-size:16px}
 <script>
 // ─── 상수 ───────────────────────────────────────────────────────────────
 const MENU=[
+  {name:"종합 분석",           price:35000,  pages:70, focus:"사주 명식·오행·성격·재물·직업·연애운·2026년 월별운 전체 보고서"},
   {name:"성향·기질 분석",      price:0,      pages:70, focus:"타고난 성격·강점·약점·적성"},
   {name:"평생운",              price:29000,  pages:70, focus:"전반적 평생운·대운 흐름·핵심 기질"},
   {name:"연애운",              price:18000,  pages:70, focus:"연애·이성 인연·궁합·결혼 시기"},
@@ -531,10 +534,10 @@ const MENU=[
   {name:"건강운",              price:18000,  pages:70, focus:"건강 취약점·주의할 시기·관리법"},
   {name:"대운·세운",           price:25000,  pages:70, focus:"대운 10년 흐름·올해 세운"},
   {name:"직장운",              price:18000,  pages:70, focus:"직장 운·이직 시기·승진 가능성"},
-  {name:"사업운",              price:18000,  pages:70, focus:"사업 시기·파트너·성패 요인"},
-  {name:"부모운",              price:13000,  pages:70, focus:"부모와의 인연·부모 건강·덕"},
-  {name:"자식운",              price:13000,  pages:70, focus:"자식 인연·자녀 수·자녀 성향"},
-  {name:"형제간운",            price:13000,  pages:70, focus:"형제자매 관계·덕·협력 여부"},
+  {name:"사업운",              price:25000,  pages:70, focus:"사업 시기·파트너·성패 요인"},
+  {name:"부모운",              price:18000,  pages:70, focus:"부모와의 인연·부모 건강·덕"},
+  {name:"자식운",              price:18000,  pages:70, focus:"자식 인연·자녀 수·자녀 성향"},
+  {name:"형제간운",            price:18000,  pages:70, focus:"형제자매 관계·덕·협력 여부"},
   {name:"친구·우정운",         price:18000,  pages:70, focus:"친구 인연·좋은 우정 시기·인간관계 특성"},
   {name:"새해운세",            price:18000,  pages:70, focus:"2026년 전반 운세·월별 핵심"},
   {name:"월별운세",            price:22000,  pages:70, focus:"2026년 월별 상세 운세"},
@@ -542,8 +545,8 @@ const MENU=[
   {name:"재회운",              price:18000,  pages:70, focus:"전 연인 재회 가능성·시기"},
   {name:"취업운",              price:18000,  pages:70, focus:"취업·이직·합격 시기·직업 유형 분석"},
   {name:"이혼·결별운",         price:18000,  pages:70, focus:"이별·이혼 시기·원인·향후 운"},
-  {name:"도화살 전문분석",     price:14900,  pages:70, focus:"도화살 종류·발현 시기·활용법"},
-  {name:"이런 사람 만나지 마라",price:13000, pages:70, focus:"피해야 할 인연 유형·특징"},
+  {name:"도화살 전문분석",     price:18000,  pages:70, focus:"도화살 종류·발현 시기·활용법"},
+  {name:"이런 사람 만나지 마라",price:15000, pages:70, focus:"피해야 할 인연 유형·특징"},
 ];
 
 const GC=["갑","을","병","정","무","기","경","신","임","계"];
@@ -887,8 +890,9 @@ async function onImageSelect(e){
   }
 }
 
+const APPLY_FORM_URL="https://forms.gle/t2sSNES5NYow77vz5";
 function quickSelectChueop(){
-  document.getElementById('sec-analyze').scrollIntoView({behavior:'smooth'});
+  window.open(APPLY_FORM_URL,"_blank","noopener");
 }
 
 // ─── 스텝 이동 ───────────────────────────────────────────────────────────
@@ -945,7 +949,7 @@ async function startAnalysis(){
   const rawTimeStr=unknown?"시간 미상":`${hour}시 ${min}분`;
 
   if(!sampleCap){
-    showError("분석 서비스를 불러올 수 없습니다.<br>claude.ai 로그인 후 다시 시도해 주세요.");
+    showError(`분석 신청은 아래 신청서에서 받고 있어요.<br>선택하신 항목을 신청서에 체크해 주세요.<br><br><a class="btn btn-gold" href="${APPLY_FORM_URL}" target="_blank" rel="noopener" style="text-decoration:none">🔮 신청서 열기</a>`);
     return;
   }
 

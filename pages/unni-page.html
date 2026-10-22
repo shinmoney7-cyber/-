@@ -371,7 +371,7 @@ img{max-width:100%}
 
       <div style="display:flex;gap:8px;margin-top:4px">
         <button class="btn btn-outline" style="flex:.4" onclick="goStep1()">← 이전</button>
-        <button class="btn btn-primary" style="flex:1" onclick="submitOrder()">주문 완료 💕</button>
+        <button class="btn btn-primary" style="flex:1" onclick="submitOrder()">신청서 작성하러 가기 💕</button>
       </div>
     </div>
 
@@ -414,7 +414,7 @@ const SERVICES = [
   {name:"건강운",     emoji:"🍀", price:18000},
   {name:"대운·세운",  emoji:"🌊", price:25000},
   {name:"직장운",     emoji:"💼", price:18000},
-  {name:"사업운",     emoji:"🏪", price:18000},
+  {name:"사업운",     emoji:"🏪", price:25000},
   {name:"친구·우정운",emoji:"🤝", price:18000},
   {name:"새해운세",   emoji:"🎍", price:18000},
   {name:"수능·입시운",emoji:"📚", price:18000},
@@ -549,6 +549,14 @@ function resetOrder(){
 // 초기화
 renderMenu();
 updateTotal();
+</script>
+<script>
+// 주문 접수는 구글 신청서로 받는다 (이 페이지는 주문을 저장·전송하지 않음)
+const APPLY_FORM_URL="https://forms.gle/t2sSNES5NYow77vz5";
+function openApplyForm(){window.open(APPLY_FORM_URL,"_blank","noopener");}
+quickSelectJaehoe=openApplyForm;
+quickSelectChueop=openApplyForm;
+submitOrder=openApplyForm;
 </script>
 </body>
 </html>
