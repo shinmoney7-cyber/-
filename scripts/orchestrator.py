@@ -192,6 +192,51 @@ print(f"\n결과: {success_count}/{len(results)} 성공")
 for platform, ok in results.items():
     print(f"  {'✅' if ok else '❌'} {platform}")
 
+# ── 포스팅 로그 저장 (대시보드용) ────────────────────────────
+LOG_PATH = Path(__file__).parent.parent / "data" / f"posting_log_{ACCOUNT_ID}.json"
+try:
+    meta_path_check = SCRIPTS_DIR / "sns_output" / ACCOUNT_ID / "meta.json"
+    _c_data = {}
+    _topic = ""
+    if meta_path_check.exists():
+        with open(meta_path_check, encoding="utf-8") as _f:
+            _m2 = json.load(_f)
+        _c_data = _m2.get("content", {})
+        _topic = _m2.get("topic", "")
+
+    log_entry = {
+        "ts_kst": NOW_KST.strftime("%Y-%m-%d %H:%M"),
+        "date": NOW_KST.strftime("%Y-%m-%d"),
+        "slot": time_slot.get("title", ""),
+        "topic": _topic,
+        "hook": _c_data.get("hook", ""),
+        "main_text": _c_data.get("main_text", ""),
+        "theme": _c_data.get("theme", ""),
+        "instagram_caption": _c_data.get("instagram_caption", "")[:200],
+        "threads_post": _c_data.get("threads_post", ""),
+        "twitter_post": _c_data.get("twitter_post", ""),
+        "platforms_ok": [p for p, v in results.items() if v],
+        "platforms_fail": [p for p, v in results.items() if not v],
+    }
+
+    existing = []
+    if LOG_PATH.exists():
+        try:
+            with open(LOG_PATH, encoding="utf-8") as _f:
+                existing = json.load(_f)
+        except Exception:
+            existing = []
+
+    existing.insert(0, log_entry)
+    existing = existing[:30]  # 최근 30개 유지
+
+    LOG_PATH.parent.mkdir(exist_ok=True)
+    with open(LOG_PATH, "w", encoding="utf-8") as _f:
+        json.dump(existing, _f, ensure_ascii=False, indent=2)
+    print(f"✅ 포스팅 로그 저장: {LOG_PATH.name}")
+except Exception as _le:
+    print(f"⚠️ 로그 저장 실패 (무시): {_le}")
+
 # 플랫폼별 결과 카톡 알림 (진행상황)
 ok_list = [p for p, v in results.items() if v]
 fail_list = [p for p, v in results.items() if not v]
