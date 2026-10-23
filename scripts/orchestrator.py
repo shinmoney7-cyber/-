@@ -204,9 +204,35 @@ try:
         _c_data = _m2.get("content", {})
         _topic = _m2.get("topic", "")
 
+    # 카드 이미지를 data/images/ 에 복사해 GitHub Pages로 서빙
+    _date_str = NOW_KST.strftime("%Y-%m-%d")
+    _slot_key = time_slot.get("key", NOW_KST.strftime("%H"))
+    _img_src = SCRIPTS_DIR / "sns_output" / ACCOUNT_ID / f"card_sq_{_date_str}.jpg"
+    _img_dir = LOG_PATH.parent / "images" / ACCOUNT_ID
+    _img_dir.mkdir(parents=True, exist_ok=True)
+    _img_dest_name = f"card_{_date_str}_{_slot_key}.jpg"
+    _img_dest = _img_dir / _img_dest_name
+    _image_url = ""
+    if _img_src.exists():
+        import shutil as _sh
+        _sh.copy2(str(_img_src), str(_img_dest))
+        _image_url = f"https://shinmoney7-cyber.github.io/-/data/images/{ACCOUNT_ID}/{_img_dest_name}"
+        print(f"✅ 카드 이미지 복사: {_img_dest_name}")
+
+    # 슬라이드 이미지 목록도 저장 (대시보드 갤러리용)
+    _slide_imgs = []
+    if _m2 := (lambda: json.load(open(meta_path_check, encoding="utf-8")) if meta_path_check.exists() else {})():
+        for sp in _m2.get("slides_vertical", []):
+            _sp_path = Path(sp)
+            if _sp_path.exists():
+                _sp_dest = _img_dir / _sp_path.name.replace(f"_{_date_str}", f"_{_date_str}_{_slot_key}")
+                import shutil as _sh2
+                _sh2.copy2(str(_sp_path), str(_sp_dest))
+                _slide_imgs.append(f"https://shinmoney7-cyber.github.io/-/data/images/{ACCOUNT_ID}/{_sp_dest.name}")
+
     log_entry = {
         "ts_kst": NOW_KST.strftime("%Y-%m-%d %H:%M"),
-        "date": NOW_KST.strftime("%Y-%m-%d"),
+        "date": _date_str,
         "slot": time_slot.get("title", ""),
         "topic": _topic,
         "hook": _c_data.get("hook", ""),
@@ -217,6 +243,8 @@ try:
         "twitter_post": _c_data.get("twitter_post", ""),
         "platforms_ok": [p for p, v in results.items() if v],
         "platforms_fail": [p for p, v in results.items() if not v],
+        "image_url": _image_url,
+        "slide_urls": _slide_imgs,
     }
 
     existing = []
