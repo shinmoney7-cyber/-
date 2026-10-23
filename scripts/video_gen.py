@@ -180,10 +180,11 @@ def make_slide(text: str, slide_num: int, total: int, size=(1080, 1920)) -> Path
     )
     draw.text((W // 2, LOGO_CENTER_Y), account["name"], fill=(0, 0, 0), font=font_logo, anchor="mm")
 
-    # 로고 하단 작은 URL
-    cta_url = content.get("cta", "무료 사주 상담")
+    # 로고 하단 인스타 CTA
+    handle = account.get("handle", "")
+    cta_url = f"@{handle}" if handle else content.get("cta", "무료 사주 상담")
     draw.text(
-        (W // 2, LOGO_CENTER_Y + 100), f"👉 {cta_url}",
+        (W // 2, LOGO_CENTER_Y + 100), f"📲 인스타 팔로우 → {cta_url}",
         fill=(160, 160, 190), font=font_ad, anchor="mm",
     )
 
@@ -266,8 +267,10 @@ def make_youtube_thumbnail() -> Path:
         radius=44, fill=accent_rgb,
     )
     draw.text((W // 2, LOGO_Y), account["name"], fill=(0, 0, 0), font=font_logo, anchor="mm")
+    _handle = account.get("handle", "")
+    _cta = f"@{_handle}" if _handle else content.get("cta", "무료 사주 상담")
     draw.text(
-        (W // 2, LOGO_Y + 100), f"👉 {content.get('cta', '무료 사주 상담')}",
+        (W // 2, LOGO_Y + 100), f"📲 인스타 팔로우 → {_cta}",
         fill=(160, 160, 190), font=font_ad, anchor="mm",
     )
 
