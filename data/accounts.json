@@ -68,59 +68,26 @@
     }
   ],
   "time_slots": {
-    "06": {
+    "08": {
       "type": "morning_fortune",
       "title": "아침 운세",
-      "platforms": ["instagram", "facebook", "threads", "twitter"],
-      "format": "image_carousel"
+      "platforms": ["instagram", "facebook", "threads", "twitter", "tiktok"],
+      "format": "image_carousel",
+      "topic_rotation": ["띠별운세", "재물운", "재회운", "수능운", "이직승진운", "부모운", "건강운"]
     },
-    "08": {
-      "type": "short_video",
-      "title": "숏폼 영상",
-      "platforms": ["tiktok", "youtube", "naver_clip"],
-      "format": "video_shorts"
-    },
-    "10": {
-      "type": "blog_seo",
-      "title": "블로그 SEO",
-      "platforms": ["naver_blog"],
-      "format": "long_article"
-    },
-    "12": {
-      "type": "midday_tip",
-      "title": "점심 꿀팁",
-      "platforms": ["twitter", "threads", "instagram"],
-      "format": "text_image"
-    },
-    "14": {
-      "type": "youtube_main",
-      "title": "유튜브 메인",
-      "platforms": ["youtube"],
-      "format": "video_long"
-    },
-    "16": {
-      "type": "promo_cta",
-      "title": "홍보 CTA",
-      "platforms": ["instagram", "facebook", "threads"],
-      "format": "promo_card"
-    },
-    "18": {
-      "type": "evening_fortune",
-      "title": "저녁 운세",
-      "platforms": ["tiktok", "instagram", "twitter", "threads"],
-      "format": "image_video"
+    "13": {
+      "type": "midday_insight",
+      "title": "오후 인사이트",
+      "platforms": ["threads", "instagram", "twitter", "naver_blog", "naver_jisik"],
+      "format": "text_image",
+      "topic_rotation": ["재물운", "재회운", "띠별운세", "건강운", "이직승진운", "수능운", "부모운"]
     },
     "20": {
-      "type": "jisik_qna",
-      "title": "지식인 답변",
-      "platforms": ["naver_jisik"],
-      "format": "qna"
-    },
-    "22": {
-      "type": "night_preview",
-      "title": "내일 예고",
-      "platforms": ["threads", "twitter", "instagram"],
-      "format": "teaser"
+      "type": "evening_fortune",
+      "title": "저녁 운세",
+      "platforms": ["instagram", "threads", "twitter", "tiktok", "youtube", "naver_clip"],
+      "format": "image_video",
+      "topic_rotation": ["재회운", "건강운", "수능운", "재물운", "이직승진운", "부모운", "띠별운세"]
     }
   }
 }

@@ -5,6 +5,16 @@
 import os, sys, json, subprocess, datetime
 from pathlib import Path
 
+# 카톡 알림 (없어도 계속 진행)
+try:
+    sys.path.insert(0, str(Path(__file__).parent))
+    from kakao_notify import notify_post_progress, notify_post_content
+    KAKAO_OK = True
+except Exception:
+    KAKAO_OK = False
+    def notify_post_progress(*a, **kw): pass
+    def notify_post_content(*a, **kw): pass
+
 # ── 환경 로드 ─────────────────────────────────────────────────
 env_path = Path(__file__).parent / ".env"
 if env_path.exists():
@@ -116,6 +126,7 @@ def run_script(script_name: str, platform: str) -> bool:
 
 # ── 1. 콘텐츠 생성 ───────────────────────────────────────────
 print("\n[1/3] 콘텐츠 생성 중...")
+notify_post_progress(ACCOUNT_ID, time_slot["title"], "콘텐츠 생성 시작", "working")
 gen_result = subprocess.run(
     [sys.executable, str(SCRIPTS_DIR / "content_gen_v2.py")],
     env={**os.environ, "ACCOUNT_ID": ACCOUNT_ID, "HOUR_KST": str(HOUR_KST)},
@@ -123,8 +134,28 @@ gen_result = subprocess.run(
 )
 print(gen_result.stdout)
 if gen_result.returncode != 0:
+    notify_post_progress(ACCOUNT_ID, time_slot["title"], "콘텐츠 생성 실패", "error", gen_result.stderr[:60])
     print(f"❌ 콘텐츠 생성 실패: {gen_result.stderr[:300]}")
     sys.exit(1)
+
+# 생성된 메타 읽어서 포스팅 내용 카톡 전송 (진행상황과 분리)
+_meta_path = SCRIPTS_DIR / "sns_output" / ACCOUNT_ID / "meta.json"
+if _meta_path.exists():
+    try:
+        with open(_meta_path, encoding="utf-8") as _f:
+            _m = json.load(_f)
+        _c = _m.get("content", {})
+        notify_post_content(
+            ACCOUNT_ID, time_slot["title"],
+            _m.get("topic", ""),
+            _c.get("hook", ""),
+            _c.get("main_text", ""),
+            time_slot.get("platforms", []),
+        )
+        notify_post_progress(ACCOUNT_ID, time_slot["title"], "콘텐츠 생성 완료", "ok",
+                             _c.get("theme", ""))
+    except Exception as _e:
+        notify_post_progress(ACCOUNT_ID, time_slot["title"], "콘텐츠 생성 완료", "ok")
 
 # ── 2. 영상 생성 (해당 시간대) ────────────────────────────────
 if f"{HOUR_KST:02d}" in VIDEO_SLOTS:
@@ -160,3 +191,63 @@ success_count = sum(1 for v in results.values() if v)
 print(f"\n결과: {success_count}/{len(results)} 성공")
 for platform, ok in results.items():
     print(f"  {'✅' if ok else '❌'} {platform}")
+
+# ── 포스팅 로그 저장 (대시보드용) ────────────────────────────
+LOG_PATH = Path(__file__).parent.parent / "data" / f"posting_log_{ACCOUNT_ID}.json"
+try:
+    meta_path_check = SCRIPTS_DIR / "sns_output" / ACCOUNT_ID / "meta.json"
+    _c_data = {}
+    _topic = ""
+    if meta_path_check.exists():
+        with open(meta_path_check, encoding="utf-8") as _f:
+            _m2 = json.load(_f)
+        _c_data = _m2.get("content", {})
+        _topic = _m2.get("topic", "")
+
+    log_entry = {
+        "ts_kst": NOW_KST.strftime("%Y-%m-%d %H:%M"),
+        "date": NOW_KST.strftime("%Y-%m-%d"),
+        "slot": time_slot.get("title", ""),
+        "topic": _topic,
+        "hook": _c_data.get("hook", ""),
+        "main_text": _c_data.get("main_text", ""),
+        "theme": _c_data.get("theme", ""),
+        "instagram_caption": _c_data.get("instagram_caption", "")[:200],
+        "threads_post": _c_data.get("threads_post", ""),
+        "twitter_post": _c_data.get("twitter_post", ""),
+        "platforms_ok": [p for p, v in results.items() if v],
+        "platforms_fail": [p for p, v in results.items() if not v],
+    }
+
+    existing = []
+    if LOG_PATH.exists():
+        try:
+            with open(LOG_PATH, encoding="utf-8") as _f:
+                existing = json.load(_f)
+        except Exception:
+            existing = []
+
+    existing.insert(0, log_entry)
+    existing = existing[:30]  # 최근 30개 유지
+
+    LOG_PATH.parent.mkdir(exist_ok=True)
+    with open(LOG_PATH, "w", encoding="utf-8") as _f:
+        json.dump(existing, _f, ensure_ascii=False, indent=2)
+    print(f"✅ 포스팅 로그 저장: {LOG_PATH.name}")
+except Exception as _le:
+    print(f"⚠️ 로그 저장 실패 (무시): {_le}")
+
+# 플랫폼별 결과 카톡 알림 (진행상황)
+ok_list = [p for p, v in results.items() if v]
+fail_list = [p for p, v in results.items() if not v]
+summary_detail = ""
+if ok_list:
+    summary_detail += f"✅{','.join(ok_list[:4])}"
+if fail_list:
+    summary_detail += f" ❌{','.join(fail_list[:3])}"
+notify_post_progress(
+    ACCOUNT_ID, time_slot["title"],
+    f"포스팅 완료 {success_count}/{len(results)}",
+    "ok" if success_count == len(results) else "error",
+    summary_detail,
+)

@@ -41,10 +41,45 @@ with open(Path(__file__).parent.parent / "data" / "accounts.json", encoding="utf
 account = next(a for a in config["accounts"] if a["id"] == ACCOUNT_ID)
 time_slot = config["time_slots"].get(f"{HOUR_KST:02d}", config["time_slots"]["06"])
 
+# 요일 기반 토픽 결정 (월=0 … 일=6)
+WEEKDAY = NOW_KST.weekday()
+TOPIC = time_slot["topic_rotation"][WEEKDAY % len(time_slot["topic_rotation"])]
+
 OUT_DIR = Path(__file__).parent / "sns_output" / ACCOUNT_ID
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-print(f"[{NOW_KST.strftime('%H:%M')} KST] {account['name']} — {time_slot['title']} 콘텐츠 생성")
+print(f"[{NOW_KST.strftime('%H:%M')} KST] {account['name']} — {time_slot['title']} / {TOPIC} 콘텐츠 생성")
+
+# ── 계정 × 토픽 차별화 가이드 ────────────────────────────────
+TOPIC_ANGLE = {
+    "sm": {  # 사주마루: 학문적·권위있는 전문가
+        "띠별운세":  "12지지 오행 생극제화 학문적 분석. 자평명리학 관점.",
+        "재물운":    "사주 재성(財星) 위치와 대운 흐름으로 재물운 심층 분석.",
+        "재회운":    "연애궁(연지·도화살·홍란성) 분석으로 인연 재회 타이밍 예측.",
+        "수능운":    "학업운 문창성(文昌星)·인성(印星) 분석. 시험운 피크 시기.",
+        "이직승진운": "관성(官星)·인성(印星) 조화와 대운으로 직장·승진운 분석.",
+        "부모운":    "부모궁(년주·월주) 분석. 부모 건강운·가족운 심층 풀이.",
+        "건강운":    "오행(목화토금수) 허실로 신체 취약 부위·건강운 분석.",
+    },
+    "un": {  # 사주보는언니: 친근하고 공감 넘치는 언니
+        "띠별운세":  "언니가 띠별로 오늘 이런 하루 보낼 것 같아서 말해줄게 🥰",
+        "재물운":    "언니가 알려주는 오늘 돈 들어오는 타이밍! 재테크 팁도 같이.",
+        "재회운":    "전남친/전여친한테서 연락 올 수 있는 날이야 💕 설레면 어떡해.",
+        "수능운":    "수험생 동생들 언니가 응원해줄게 🍀 오늘 공부 집중력 어때?",
+        "이직승진운": "직장에서 인정받고 싶지? 언니가 이직·승진 타이밍 짚어줄게.",
+        "부모운":    "부모님이랑 관계운, 효도할 타이밍이야 💝 건강 챙겨드려.",
+        "건강운":    "몸 관리 소홀하면 안 돼 언니가 걱정돼 😥 건강운 체크해.",
+    },
+    "s77": {  # 사주마루77: Z세대 트렌디·직설적
+        "띠별운세":  "내 띠 오늘 어떰? 직빵으로 알려드림 ㅋ",
+        "재물운":    "돈 들어오냐 안 오냐 오늘 결론만 말함",
+        "재회운":    "걔한테 연락 올지 안 올지 사주로 봄 (진짜로)",
+        "수능운":    "수능 운세 개꿀팁 알려줌. D-day 집중력 올리는 방법도.",
+        "이직승진운": "이직해야 함 말아야 함 지금 당장 사주로 확인",
+        "부모운":    "부모님이랑 요즘 어떰? 관계운 솔직하게 봐드림",
+        "건강운":    "건강 무시하지 마 진짜로 📢 오늘 몸 조심해야 하는 이유",
+    },
+}
 
 # ── 콘텐츠 생성 프롬프트 ──────────────────────────────────────
 SLOT_GUIDES = {
@@ -59,12 +94,21 @@ SLOT_GUIDES = {
     "night_preview": "내일/이번주 운세 예고. 궁금증 유발. 짧고 강렬한 훅."
 }
 
+TOPIC_GUIDE = TOPIC_ANGLE.get(ACCOUNT_ID, {}).get(TOPIC, TOPIC)
+
 PROMPT = f"""당신은 {account['name']} 채널의 디지털 마케팅 + 사주 콘텐츠 전문가입니다.
 목표: 최고 수익 = 높은 CPM 키워드 + 조회수 + 상담 전환율 극대화.
 
 페르소나: {account['persona']}
 오늘: {TODAY_KR}
 현재 슬롯: {time_slot['title']} ({SLOT_GUIDES.get(time_slot['type'], '')})
+오늘의 토픽: {TOPIC}
+토픽 접근 방식: {TOPIC_GUIDE}
+
+【중요】 이 채널의 고유한 목소리로만 작성하세요.
+- 사주마루: 격식있고 심오한 학술적 문체, 전문 용어 자연스럽게 포함
+- 사주보는언니: 따뜻하고 감성적, 이모지 많이 사용, 여성 공감 언어
+- 사주마루77: Z세대 말투, 짧고 직설적, 밈 활용, 흥미 유발 우선
 
 수익 최적화 전략:
 - 고CPM 키워드: "무료사주", "사주상담", "운세2025", "오늘운세", "사주팔자풀이"
@@ -224,6 +268,7 @@ print(f"✅ 이미지 카드 생성: {card_path.name}, {vertical_path.name}")
 meta = {
     "date": TODAY_STR,
     "hour_kst": HOUR_KST,
+    "topic": TOPIC,
     "account": account,
     "slot": time_slot,
     "content": content,
