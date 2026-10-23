@@ -1,0 +1,2922 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Flow 수익 최적화</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* ── Tokens ── */
+:root {
+  --sb: 220px;
+  --top: 52px;
+  --bg: #080C16; --sf: #111827; --s2: #1B2438; --s3: #222E46;
+  --bd: #263047; --bdL: #2E3D5C;
+  --cy: #38BDF8; --cyD: rgba(56,189,248,.12); --cyM: rgba(56,189,248,.28);
+  --wa: #FB923C; --waD: rgba(251,146,60,.12); --waM: rgba(251,146,60,.28);
+  --gn: #34D399; --gnD: rgba(52,211,153,.12); --gnM: rgba(52,211,153,.28);
+  --pu: #A78BFA; --puD: rgba(167,139,250,.12); --puM: rgba(167,139,250,.28);
+  --pk: #F472B6; --pkD: rgba(244,114,182,.12); --pkM: rgba(244,114,182,.28);
+  --rd: #F87171; --rdD: rgba(248,113,113,.12);
+  --t1: #EEF2FF; --t2: #94A3B8; --t3: #4B6080;
+  --r: 10px; --rs: 6px;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme:light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #F1F5FB; --sf: #FFFFFF; --s2: #F8FAFC; --s3: #EEF2F7;
+    --bd: #D1DCF0; --bdL: #A8BAD8; --t1: #0F172A; --t2: #475569; --t3: #8EA3BF;
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #F1F5FB; --sf: #FFFFFF; --s2: #F8FAFC; --s3: #EEF2F7;
+  --bd: #D1DCF0; --bdL: #A8BAD8; --t1: #0F172A; --t2: #475569; --t3: #8EA3BF;
+  color-scheme: light;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;font-size:14px;background:var(--bg);color:var(--t1);min-height:100vh;display:flex;flex-direction:column}
+
+/* ── Topbar ── */
+.topbar{position:fixed;top:0;left:0;right:0;height:var(--top);background:var(--sf);border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 16px;gap:12px;z-index:100}
+.topbar-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:var(--cy);letter-spacing:-.3px;white-space:nowrap}
+.topbar-sub{font-size:12px;color:var(--t2);border-left:1px solid var(--bd);padding-left:12px;white-space:nowrap}
+.topbar-spacer{flex:1}
+.theme-btn{background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:5px 12px;color:var(--t2);font-size:12px;cursor:pointer;transition:.15s}
+.theme-btn:hover{color:var(--t1);border-color:var(--bdL)}
+.lang-btn{background:var(--cyD);border:1px solid var(--cyM);border-radius:var(--rs);padding:5px 10px;color:var(--cy);font-size:12px;font-weight:700;cursor:pointer;transition:.15s;letter-spacing:.5px}
+.lang-btn:hover{background:var(--cy);color:#0A1628}
+
+/* ── Layout ── */
+.layout{display:flex;padding-top:var(--top);min-height:100vh}
+.sidebar{width:var(--sb);flex-shrink:0;position:fixed;top:var(--top);bottom:0;left:0;background:var(--sf);border-right:1px solid var(--bd);overflow-y:auto;padding:16px 0}
+.main{flex:1;margin-left:var(--sb);padding:24px;max-width:900px}
+
+/* ── Sidebar nav ── */
+.nav-sec{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;color:var(--t3);letter-spacing:.8px;text-transform:uppercase;padding:8px 16px 4px}
+.nav-btn{display:flex;align-items:center;gap:8px;width:100%;padding:8px 16px;background:none;border:none;color:var(--t2);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;text-align:left;transition:.15s;border-left:2px solid transparent}
+.nav-btn:hover{background:var(--s2);color:var(--t1)}
+.nav-btn.active{background:var(--cyD);color:var(--cy);border-left-color:var(--cy)}
+.nav-icon{font-size:15px;line-height:1}
+
+/* ── Section ── */
+.section{display:none;flex-direction:column;gap:20px;padding-bottom:48px}
+.section.show{display:flex}
+.section-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--t1)}
+.section-sub{font-size:13px;color:var(--t2);margin-top:4px}
+
+/* ── Card ── */
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:20px}
+.card-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--t1);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card-sub{font-size:12px;color:var(--t2);font-weight:400;margin-left:auto}
+
+/* ── Form inputs ── */
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.field label{font-size:12px;color:var(--t2);font-weight:600;letter-spacing:.3px}
+.field input,.field select{background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:9px 12px;color:var(--t1);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:.15s;width:100%}
+.field input:focus,.field select:focus{border-color:var(--cy);box-shadow:0 0 0 3px var(--cyD)}
+.field input::placeholder{color:var(--t3)}
+.field select option{background:var(--s2)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* ── Detect badge ── */
+.detect-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--rs);background:var(--s2);border:1px solid var(--bd);margin-bottom:12px;min-height:42px}
+.detect-label{font-size:11px;color:var(--t2);font-weight:600;letter-spacing:.3px;text-transform:uppercase;flex-shrink:0}
+.detect-badge{display:flex;align-items:center;gap:6px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;background:var(--cyD);color:var(--cy);border:1px solid var(--cyM);transition:.2s}
+
+/* ── Drop zone ── */
+.drop-zone{border:2px dashed var(--bd);border-radius:var(--r);padding:20px;text-align:center;cursor:pointer;transition:.2s;background:var(--s2);position:relative}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--cy);background:var(--cyD)}
+.drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.drop-text{font-size:13px;color:var(--t2)}
+.drop-text strong{display:block;font-size:14px;color:var(--t1);margin-bottom:4px}
+.preview-wrap{position:relative;display:inline-block}
+.preview-img{max-width:120px;max-height:120px;border-radius:var(--rs);border:1px solid var(--bdL);display:block;margin:0 auto 8px}
+
+/* ── Buttons ── */
+.btn{padding:9px 20px;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:.15s;border:none;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--cy);color:#0A1628}
+.btn-primary:hover{filter:brightness(1.1)}
+.btn-ghost{background:var(--s2);color:var(--t1);border:1px solid var(--bd)}
+.btn-ghost:hover{border-color:var(--bdL);background:var(--s3)}
+.btn-sm{padding:6px 14px;font-size:12px}
+
+/* ── Scene output ── */
+.scenes-grid{display:flex;flex-direction:column;gap:12px}
+.scene-card{background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:14px}
+.scene-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.scene-label{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;padding:2px 8px;border-radius:12px}
+.scene-label.s0{background:var(--rdD);color:var(--rd)}
+.scene-label.s1{background:var(--cyD);color:var(--cy)}
+.scene-label.s2{background:var(--waD);color:var(--wa)}
+.scene-label.s3{background:var(--gnD);color:var(--gn)}
+.scene-text{font-size:13px;color:var(--t1);line-height:1.6;white-space:pre-wrap;word-break:break-all}
+.cp-btn{background:none;border:1px solid var(--bd);border-radius:var(--rs);padding:3px 10px;font-size:11px;color:var(--t2);cursor:pointer;transition:.15s}
+.cp-btn:hover{border-color:var(--cy);color:var(--cy)}
+.cp-btn.ok{border-color:var(--gn);color:var(--gn)}
+.copy-all-wrap{display:flex;justify-content:flex-end;margin-top:8px}
+
+/* ── Cat grid ── */
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.cat-card{background:var(--s2);border:2px solid var(--bd);border-radius:var(--r);padding:16px 12px;text-align:center;cursor:pointer;transition:.2s}
+.cat-card:hover{border-color:var(--bdL);background:var(--s3)}
+.cat-card.selected{border-color:var(--cy);background:var(--cyD)}
+.cat-emoji{font-size:26px;margin-bottom:6px}
+.cat-name{font-size:12px;font-weight:600;color:var(--t1)}
+.cat-rev{font-size:11px;color:var(--t2);margin-top:3px}
+
+/* ── Wizard steps ── */
+.step-bar{display:flex;gap:0;margin-bottom:20px;border-radius:var(--rs);overflow:hidden;border:1px solid var(--bd)}
+.step-item{flex:1;padding:10px 8px;text-align:center;font-size:11px;font-weight:600;color:var(--t3);background:var(--s2);border-right:1px solid var(--bd);transition:.15s;cursor:default}
+.step-item:last-child{border-right:none}
+.step-item.done{color:var(--gn);background:var(--gnD)}
+.step-item.cur{color:var(--cy);background:var(--cyD)}
+
+.step-screen{display:none}
+.step-screen.show{display:block}
+
+/* ── Hook cards ── */
+.hook-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.hook-card{background:var(--s2);border:2px solid var(--bd);border-radius:var(--rs);padding:12px;cursor:pointer;transition:.2s}
+.hook-card:hover{border-color:var(--bdL)}
+.hook-card.selected{border-color:var(--cy);background:var(--cyD)}
+.hook-card.rec{border-color:var(--wa);background:var(--waD)}
+.hook-card.rec.selected{border-color:var(--cy);background:var(--cyD)}
+.hook-icon{font-size:18px}
+.hook-name{font-size:13px;font-weight:600;color:var(--t1);margin:4px 0 2px}
+.hook-desc{font-size:11px;color:var(--t2);line-height:1.4}
+.hook-rec{font-size:10px;color:var(--wa);font-weight:600;margin-top:4px}
+
+/* ── Chip groups ── */
+.chip-group{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.chip-label{font-size:11px;color:var(--t2);font-weight:600;letter-spacing:.3px;text-transform:uppercase;margin-bottom:6px;display:block}
+.chip{padding:5px 12px;border-radius:20px;font-size:12px;border:1px solid var(--bd);background:var(--s2);color:var(--t2);cursor:pointer;transition:.15s}
+.chip:hover{border-color:var(--bdL);color:var(--t1)}
+.chip.on{background:var(--cyD);color:var(--cy);border-color:var(--cyM)}
+
+/* ── Revenue cards ── */
+.rev-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.rev-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:16px;transition:.2s;cursor:pointer}
+.rev-card:hover{border-color:var(--bdL);box-shadow:0 4px 16px rgba(0,0,0,.18);transform:translateY(-2px)}
+.rev-card:active{transform:translateY(0);box-shadow:none}
+.rev-card-cta{margin-top:10px;padding:7px 12px;border-radius:var(--rs);background:var(--cyD);color:var(--cy);font-size:11px;font-weight:700;text-align:center;border:1px solid var(--cyM)}
+
+/* ── Skill Grid ── */
+.skill-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.skill-card{background:var(--sf);border:2px solid var(--bd);border-radius:var(--r);padding:14px 10px;text-align:center;cursor:pointer;transition:.2s}
+.skill-card:hover{border-color:var(--cyM);background:var(--s2)}
+.skill-card.selected{border-color:var(--cy);background:var(--cyD);box-shadow:0 0 0 3px var(--cyD)}
+.skill-icon{font-size:28px;margin-bottom:6px}
+.skill-name{font-size:12px;font-weight:700;color:var(--t1)}
+.skill-cats{font-size:10px;color:var(--t3);margin-top:3px}
+.skill-identity{background:var(--s2);border:1px solid var(--cyM);border-radius:var(--r);padding:18px;margin-top:16px}
+.skill-identity-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.skill-identity-icon{font-size:36px}
+.skill-identity-info{}
+.skill-identity-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--cy)}
+.skill-identity-sub{font-size:12px;color:var(--t2);margin-top:2px}
+.skill-strategy-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}
+.skill-strat-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);padding:12px}
+.skill-strat-label{font-size:10px;font-weight:700;color:var(--cy);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px}
+.skill-strat-text{font-size:12px;color:var(--t2);line-height:1.55}
+.skill-active-badge{display:inline-flex;align-items:center;gap:6px;background:var(--cyD);border:1px solid var(--cyM);border-radius:12px;padding:4px 10px;font-size:12px;font-weight:700;color:var(--cy);margin-bottom:12px}
+@media(max-width:720px){.skill-grid{grid-template-columns:repeat(4,1fr)}.skill-strategy-grid{grid-template-columns:1fr}}
+
+.rev-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.rev-emoji{font-size:22px}
+.rev-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--t1)}
+.rev-est{font-size:11px;padding:2px 8px;border-radius:12px;font-weight:600}
+.rev-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--bd);font-size:12px}
+.rev-row:last-child{border-bottom:none}
+.rev-key{color:var(--t2)}
+.rev-val{color:var(--t1);font-family:'DM Mono',monospace;font-size:11px}
+.rev-tip{font-size:11px;color:var(--t2);line-height:1.5;margin-top:10px;padding:8px 10px;background:var(--s2);border-radius:var(--rs);border-left:3px solid var(--cy)}
+.platform-list{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.plat-tag{font-size:11px;padding:3px 8px;border-radius:12px;font-weight:600}
+
+/* ── Calculator ── */
+.calc-cat-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.calc-cat-btn{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid var(--bd);background:var(--s2);color:var(--t2);cursor:pointer;transition:.15s}
+.calc-cat-btn:hover{border-color:var(--bdL);color:var(--t1)}
+.calc-cat-btn.on{background:var(--cyD);color:var(--cy);border-color:var(--cyM)}
+
+.slider-group{display:flex;flex-direction:column;gap:14px;margin-bottom:20px}
+.slider-row{display:flex;flex-direction:column;gap:4px}
+.slider-top{display:flex;justify-content:space-between;align-items:center}
+.slider-name{font-size:12px;color:var(--t2);font-weight:600}
+.slider-val{font-family:'DM Mono',monospace;font-size:12px;color:var(--cy);font-weight:500}
+input[type=range]{width:100%;accent-color:var(--cy);height:4px;border-radius:4px;cursor:pointer}
+
+.result-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.result-tile{background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:14px;text-align:center}
+.result-num{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:var(--cy);margin-bottom:2px}
+.result-num.total{color:var(--gn);font-size:26px}
+.result-label{font-size:11px;color:var(--t2)}
+
+/* ── Platform guide ── */
+.plat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.plat-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:16px}
+.plat-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.plat-icon{font-size:24px}
+.plat-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--t1)}
+.plat-subtitle{font-size:11px;color:var(--t2)}
+.plat-rows{display:flex;flex-direction:column;gap:5px}
+.plat-item{display:flex;gap:8px;font-size:12px;color:var(--t2)}
+.plat-dot{color:var(--cy);flex-shrink:0}
+.plat-txt{line-height:1.5}
+
+/* ── Divider ── */
+.divider{border:none;border-top:1px solid var(--bd);margin:4px 0}
+
+/* ── Nav steps indicator ── */
+.nav-steps{padding:8px 16px;display:flex;flex-direction:column;gap:2px}
+.ns-item{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:var(--rs);cursor:pointer;transition:.15s}
+.ns-item:hover{background:var(--s2)}
+.ns-dot{width:6px;height:6px;border-radius:50%;background:var(--t3);flex-shrink:0;transition:.2s}
+.ns-item.cur .ns-dot{background:var(--cy)}
+.ns-item.done .ns-dot{background:var(--gn)}
+.ns-label{font-size:12px;color:var(--t2)}
+.ns-item.cur .ns-label{color:var(--cy);font-weight:600}
+
+/* ── Tip box ── */
+.tip-box{padding:10px 14px;border-radius:var(--rs);background:var(--cyD);border-left:3px solid var(--cy);font-size:12px;color:var(--t2);line-height:1.6}
+.tip-box strong{color:var(--t1)}
+
+/* ── Badge inline ── */
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:12px}
+.badge-cy{background:var(--cyD);color:var(--cy);border:1px solid var(--cyM)}
+.badge-wa{background:var(--waD);color:var(--wa);border:1px solid var(--waM)}
+.badge-gn{background:var(--gnD);color:var(--gn);border:1px solid var(--gnM)}
+.badge-pu{background:var(--puD);color:var(--pu);border:1px solid var(--puM)}
+.badge-pk{background:var(--pkD);color:var(--pk);border:1px solid var(--pkM)}
+.badge-rd{background:var(--rdD);color:var(--rd)}
+
+/* ── Empty state ── */
+.empty{text-align:center;padding:32px 20px;color:var(--t3)}
+.empty-icon{font-size:32px;margin-bottom:8px}
+.empty-text{font-size:13px;line-height:1.6}
+
+/* ── Bottom tab bar (mobile) ── */
+.btab-bar{display:none}
+
+/* ── Mobile Drawer ── */
+.drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;backdrop-filter:blur(2px);opacity:0;transition:opacity .25s}
+.drawer-overlay.open{opacity:1}
+.sidebar{transition:transform .25s cubic-bezier(.4,0,.2,1)}
+
+/* ── Hamburger ── */
+.ham-btn{display:none;background:none;border:none;color:var(--t2);font-size:20px;cursor:pointer;padding:6px;border-radius:var(--rs);transition:.15s;flex-shrink:0;line-height:1}
+.ham-btn:hover{background:var(--s2);color:var(--t1)}
+
+/* ── Responsive ── */
+@media (max-width:720px) {
+  :root{--sb:0px;--btab:60px}
+  .sidebar{
+    position:fixed;top:var(--top);bottom:0;left:0;
+    width:260px;z-index:210;
+    transform:translateX(-100%);
+    background:var(--sf);border-right:1px solid var(--bd);
+  }
+  .sidebar.open{transform:translateX(0)}
+  .drawer-overlay{display:block}
+  .ham-btn{display:flex;align-items:center;justify-content:center}
+  .topbar-sub{display:none}
+  .main{margin-left:0;padding:14px;padding-bottom:calc(var(--btab) + 16px)}
+  .cat-grid{grid-template-columns:repeat(2,1fr)}
+  .rev-grid,.plat-grid{grid-template-columns:1fr}
+  .hook-grid,.result-grid,.row2{grid-template-columns:1fr}
+  .psych-grid{grid-template-columns:1fr}
+
+  /* Bottom tab bar */
+  .btab-bar{
+    display:flex;position:fixed;bottom:0;left:0;right:0;
+    height:var(--btab);background:var(--sf);border-top:1px solid var(--bd);
+    z-index:150;padding:0;
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  .btab{
+    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:2px;padding:6px 4px;border:none;background:none;color:var(--t3);
+    cursor:pointer;font-family:'DM Sans',sans-serif;font-size:9px;font-weight:600;
+    letter-spacing:.3px;transition:.15s;position:relative;
+    border-top:2px solid transparent;
+  }
+  .btab .btab-icon{font-size:19px;line-height:1;transition:.15s}
+  .btab:hover{color:var(--t2)}
+  .btab.active{color:var(--cy);border-top-color:var(--cy)}
+  .btab.active .btab-icon{transform:translateY(-1px)}
+  .btab-more{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 4px;border:none;background:none;color:var(--t3);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:9px;font-weight:600;letter-spacing:.3px;transition:.15s}
+  .btab-more:hover{color:var(--t2)}
+  .btab-more .btab-icon{font-size:19px;line-height:1}
+
+  /* Card + form touch comfort */
+  .card{padding:16px}
+  .btn{padding:10px 18px;font-size:14px}
+  .btn-sm{padding:8px 14px;font-size:12px}
+  .field input,.field select{padding:10px 12px;font-size:14px}
+  .field textarea,.fish-textarea{font-size:14px;padding:10px 12px}
+  .tts-btn{padding:8px 16px;font-size:13px}
+  .nav-btn{padding:11px 16px}
+
+  /* Swipeable scroll for chips/tabs */
+  .chip-group{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+  .chip-group::-webkit-scrollbar{display:none}
+  #dialect-tabs{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  #dialect-tabs::-webkit-scrollbar{display:none}
+  .calc-cat-row{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+  .calc-cat-row::-webkit-scrollbar{display:none}
+}
+
+/* ── Coupang / Infolk ── */
+.infolk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.infolk-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:8px;position:relative;transition:.2s}
+.infolk-card:hover{border-color:var(--bdL)}
+.infolk-thumb{width:100%;height:130px;border-radius:var(--rs);background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:36px;overflow:hidden;border:1px solid var(--bd)}
+.infolk-thumb img{width:100%;height:100%;object-fit:cover}
+.infolk-name{font-size:13px;font-weight:600;color:var(--t1);line-height:1.4}
+.infolk-meta{font-size:11px;color:var(--t2);display:flex;gap:8px;flex-wrap:wrap}
+.infolk-open{display:flex;align-items:center;gap:6px;padding:7px 10px;background:var(--cyD);border:1px solid var(--cyM);border-radius:var(--rs);font-size:12px;font-weight:600;color:var(--cy);text-decoration:none;transition:.15s;word-break:break-all;cursor:pointer}
+.infolk-open:hover{filter:brightness(1.15)}
+.infolk-del{position:absolute;top:10px;right:10px;background:none;border:none;color:var(--t3);cursor:pointer;font-size:13px;padding:3px 6px;border-radius:var(--rs);transition:.15s}
+.infolk-del:hover{color:var(--rd);background:var(--rdD)}
+.flow-steps{display:flex;flex-direction:column;gap:14px}
+.flow-step{display:flex;gap:12px;align-items:flex-start}
+.fnum{width:26px;height:26px;border-radius:50%;background:var(--cyD);color:var(--cy);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid var(--cyM);margin-top:1px}
+.fnum.done{background:var(--gnD);color:var(--gn);border-color:var(--gnM)}
+.fcontent{flex:1}
+.fcontent label{font-size:12px;font-weight:600;color:var(--t1);display:block;margin-bottom:5px}
+.fcontent .fsub{font-size:11px;color:var(--t2);margin-bottom:6px;line-height:1.4}
+.api-warn{font-size:11px;color:var(--wa);background:var(--waD);border:1px solid var(--waM);border-radius:var(--rs);padding:8px 10px;margin-bottom:10px;line-height:1.5}
+.api-saved{font-size:11px;color:var(--gn);background:var(--gnD);border:1px solid var(--gnM);border-radius:var(--rs);padding:6px 10px;display:inline-flex;align-items:center;gap:4px}
+.py-box{background:#050810;border:1px solid var(--bdL);border-radius:var(--rs);padding:14px;overflow-x:auto}
+.py-box pre{font-family:'DM Mono',monospace;font-size:11px;color:#90b4f5;line-height:1.8;white-space:pre;margin:0}
+.result-deeplink{padding:10px 12px;background:var(--gnD);border:1px solid var(--gnM);border-radius:var(--rs);font-family:'DM Mono',monospace;font-size:12px;color:var(--gn);word-break:break-all;line-height:1.6}
+.err-box{padding:10px 12px;background:var(--rdD);border:1px solid var(--rd);border-radius:var(--rs);font-size:12px;color:var(--rd);line-height:1.6}
+.infolk-empty{text-align:center;padding:32px;color:var(--t3)}
+.infolk-empty .ie-icon{font-size:36px;margin-bottom:8px}
+.tag-cat{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;border:1px solid var(--bd)}
+.cp-row{display:flex;align-items:center;gap:8px;margin-top:6px}
+
+/* ── Psych Profiles ── */
+.psych-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.psych-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:16px;position:relative;overflow:hidden}
+.psych-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--_ac,var(--cy))}
+.psych-num{font-family:'DM Mono',monospace;font-size:30px;font-weight:500;color:var(--t3);line-height:1;opacity:.45}
+.psych-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px}
+.psych-type{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--t1);margin:3px 0 2px}
+.psych-sub{font-size:11px;color:var(--t2);margin-bottom:10px;line-height:1.5}
+.psych-stats{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:10px}
+.psych-stat{background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:7px 10px}
+.psych-stat-key{font-size:10px;color:var(--t3);margin-bottom:2px}
+.psych-stat-val{font-family:'DM Mono',monospace;font-size:15px;font-weight:500}
+.psych-script{font-size:11px;background:var(--s2);border-radius:var(--rs);padding:10px 12px;margin-top:8px;line-height:1.7;color:var(--t2);border-left:3px solid var(--_ac,var(--cy));font-style:italic}
+.psych-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.psych-tag{font-size:10px;padding:2px 8px;border-radius:10px;background:var(--s2);border:1px solid var(--bd);color:var(--t2)}
+@media(max-width:900px){#cta5-grid{grid-template-columns:repeat(3,1fr)!important}}
+@media(max-width:720px){.psych-grid{grid-template-columns:1fr}#cta5-grid{grid-template-columns:repeat(2,1fr)!important}}
+
+/* ── Fish Audio ── */
+.tts-btn{padding:5px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;transition:.15s;border:1px solid var(--cy);background:var(--cyD);color:var(--cy)}
+.tts-btn:hover{background:var(--cy);color:#0A1628}
+.tts-btn:disabled{opacity:.4;cursor:default}
+.audio-wrap{background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:12px}
+.fish-textarea{width:100%;padding:9px 12px;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);color:var(--t1);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;resize:vertical;line-height:1.6;transition:.15s}
+.fish-textarea:focus{border-color:var(--cy);box-shadow:0 0 0 3px var(--cyD)}
+</style>
+</head>
+<body>
+
+<!-- Drawer overlay -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+
+<!-- Topbar -->
+<header class="topbar">
+  <button class="ham-btn" onclick="toggleDrawer()" aria-label="메뉴">☰</button>
+  <div class="topbar-logo">🎓 쇼핑숏츠 스킬채널</div>
+  <div class="topbar-sub">Google Flow Veo 3 · 스킬 기반 쇼핑숏츠 채널 빌더</div>
+  <div class="topbar-spacer"></div>
+  <button class="lang-btn" id="lang-btn" onclick="switchLang()">🌐 EN</button>
+  <button class="theme-btn" onclick="toggleTheme()">🌓 테마</button>
+</header>
+
+<div class="layout">
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="nav-sec" data-i18n="nav.tools">생성 도구</div>
+  <button class="nav-btn" onclick="navGo('skill-channel',this)" data-sec="skill-channel">
+    <span class="nav-icon">🎓</span> <span data-i18n="nav.skill-channel">스킬채널 설계</span>
+  </button>
+  <button class="nav-btn active" onclick="navGo('auto-gen',this)" data-sec="auto-gen">
+    <span class="nav-icon">⚡</span> <span data-i18n="nav.auto">자동 생성</span>
+  </button>
+  <button class="nav-btn" onclick="navGo('wizard',this)" data-sec="wizard">
+    <span class="nav-icon">🎯</span> <span data-i18n="nav.wizard">단계별 마법사</span>
+  </button>
+
+  <hr class="divider" style="margin:10px 16px">
+  <div class="nav-sec" data-i18n="nav.revenue-strat">수익 전략</div>
+  <button class="nav-btn" onclick="navGo('revenue',this)" data-sec="revenue">
+    <span class="nav-icon">💰</span> <span data-i18n="nav.revenue">카테고리별 수익</span>
+  </button>
+  <button class="nav-btn" onclick="navGo('calculator',this)" data-sec="calculator">
+    <span class="nav-icon">📊</span> <span data-i18n="nav.calculator">월 수익 계산기</span>
+  </button>
+  <button class="nav-btn" onclick="navGo('platforms',this)" data-sec="platforms">
+    <span class="nav-icon">🌐</span> <span data-i18n="nav.platforms">플랫폼 전략</span>
+  </button>
+  <button class="nav-btn" onclick="navGo('psych',this)" data-sec="psych">
+    <span class="nav-icon">🧠</span> <span data-i18n="nav.psych">심리 프로파일</span>
+  </button>
+  <button class="nav-btn" onclick="navGo('fish',this);fishRefreshScenes()" data-sec="fish">
+    <span class="nav-icon">🎙</span> <span data-i18n="nav.fish">Fish Audio 음성</span>
+  </button>
+  <button class="nav-btn" onclick="navGo('carousel',this);carouselRefresh()" data-sec="carousel">
+    <span class="nav-icon">🃏</span> <span data-i18n="nav.carousel">캐러셀 카드</span>
+  </button>
+
+  <hr class="divider" style="margin:10px 16px">
+  <div class="nav-sec" data-i18n="nav.cats">카테고리 바로가기</div>
+  <div class="nav-steps" id="cat-nav"></div>
+
+  <hr class="divider" style="margin:10px 16px">
+  <div class="nav-sec" data-i18n="nav.coupang-sec">쿠팡 연동</div>
+  <button class="nav-btn" onclick="navGo('coupang',this)" data-sec="coupang">
+    <span class="nav-icon">🛒</span> <span data-i18n="nav.coupang">쿠팡 자동연동</span>
+  </button>
+  <button class="nav-btn" onclick="navGo('infolk',this)" data-sec="infolk">
+    <span class="nav-icon">🔗</span> <span data-i18n="nav.infolk">인포크 허브</span>
+  </button>
+</aside>
+
+<!-- Main -->
+<main class="main">
+
+<!-- ① 스킬채널 설계 -->
+<section class="section" id="skill-channel">
+  <div>
+    <div class="section-title" data-i18n="sec.skill-channel">🎓 스킬채널 설계</div>
+    <div class="section-sub" data-i18n="sec.skill-channel.sub">내 전문 스킬을 선택하면 최적화된 쇼핑숏츠 채널 전략을 만들어드려요</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">내 전문 스킬 선택</div>
+    <p style="font-size:12px;color:var(--t3);margin-bottom:14px">스킬을 선택하면 자동 생성·수익 계산·음성 CTA 등 모든 섹션이 해당 스킬에 맞게 최적화돼요.</p>
+    <div class="skill-grid" id="skill-grid"></div>
+  </div>
+
+  <!-- 채널 아이덴티티 카드 (스킬 선택 후 표시) -->
+  <div id="skill-identity-section" style="display:none">
+    <div class="skill-identity" id="skill-identity-card"></div>
+
+    <div class="card" style="margin-top:16px">
+      <div class="card-title">이 스킬로 연결된 도구</div>
+      <div class="row2" style="gap:10px;margin-top:10px">
+        <button class="btn btn-primary" onclick="skillGoToAutoGen()" style="justify-content:center">⚡ 스킬 맞춤 자동 생성</button>
+        <button class="btn btn-ghost" onclick="skillGoToRevenue()" style="justify-content:center">💰 추천 카테고리 수익 분석</button>
+      </div>
+      <div class="row2" style="gap:10px;margin-top:8px">
+        <button class="btn btn-ghost" onclick="skillGoToFish()" style="justify-content:center">🎙 스킬 맞춤 음성 스크립트</button>
+        <button class="btn btn-ghost" onclick="navGo('wizard',document.querySelector('[data-sec=wizard]'))" style="justify-content:center">🎯 단계별 마법사</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ② 자동 생성 -->
+<section class="section show" id="auto-gen">
+  <div>
+    <div class="section-title" data-i18n="sec.auto-gen">⚡ 자동 생성</div>
+    <div class="section-sub" data-i18n="sec.auto-gen.sub">제품명 + 이미지 + URL 입력 → 카테고리 자동 감지 → 최적 4-씬 프롬프트 패키지</div>
+  </div>
+
+  <!-- 활성 스킬 배지 -->
+  <div id="ag-skill-badge-wrap" style="display:none;margin-bottom:4px">
+    <span class="skill-active-badge" id="ag-skill-badge">🎓 스킬 미선택</span>
+    <button class="btn btn-ghost btn-sm" onclick="navGo('skill-channel',document.querySelector('[data-sec=skill-channel]'))" style="margin-left:8px;font-size:11px">스킬 변경</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">제품 정보 입력</div>
+    <div class="field">
+      <label>제품명 *</label>
+      <input id="ag-name" type="text" placeholder="예: 제주 하우스 감귤 3kg, PDRN 세럼, 다이슨 에어랩..." oninput="agDetect()">
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>가격 (선택)</label>
+        <input id="ag-price" type="text" placeholder="예: 29,800원">
+      </div>
+      <div class="field">
+        <label>핵심 혜택 (선택)</label>
+        <input id="ag-benefit" type="text" placeholder="예: 당일수확 무료배송, 초특가 세일">
+      </div>
+    </div>
+    <div class="field">
+      <label>쇼핑 URL (선택)</label>
+      <input id="ag-url" type="text" placeholder="https://coupang.com/...">
+    </div>
+
+    <div class="field">
+      <label>제품 이미지 (선택)</label>
+      <div class="drop-zone" id="ag-drop" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="agHandleDrop(event)">
+        <input type="file" accept="image/*" onchange="agHandleFile(event)">
+        <div id="ag-drop-inner">
+          <div class="drop-text"><strong>📸 이미지 드래그 또는 클릭</strong>PNG/JPG/WEBP (참고용)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="detect-row" id="ag-detect-row">
+      <span class="detect-label">감지 카테고리</span>
+      <span class="detect-badge" id="ag-detect-badge">입력 대기 중…</span>
+    </div>
+
+    <button class="btn btn-primary" onclick="agGen()" style="width:100%">⚡ 4-씬 프롬프트 생성</button>
+  </div>
+
+  <div id="ag-output" style="display:none">
+    <div class="card">
+      <div class="card-title" id="ag-out-title">생성 결과 <span class="card-sub" id="ag-out-cat"></span></div>
+      <div class="scenes-grid" id="ag-scenes-grid"></div>
+      <div class="copy-all-wrap">
+        <button class="btn btn-ghost btn-sm" onclick="agCopyAll()">📋 전체 복사</button>
+      </div>
+    </div>
+    <div class="card" id="ag-tips-card">
+      <div class="card-title">💡 카테고리 최적화 팁</div>
+      <div id="ag-tip-text" class="tip-box"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ② 단계별 마법사 -->
+<section class="section" id="wizard">
+  <div>
+    <div class="section-title">🎯 단계별 마법사</div>
+    <div class="section-sub">카테고리 선택 → 훅 설정 → 파라미터 조정 → 최적 프롬프트 생성</div>
+  </div>
+
+  <div class="step-bar">
+    <div class="step-item cur" id="sb1">1. 카테고리</div>
+    <div class="step-item" id="sb2">2. 제품 정보</div>
+    <div class="step-item" id="sb3">3. 훅 선택</div>
+    <div class="step-item" id="sb4">4. 파라미터</div>
+    <div class="step-item" id="sb5">5. 결과</div>
+  </div>
+
+  <!-- Step 1: 카테고리 -->
+  <div class="step-screen show" id="ws1">
+    <div class="card">
+      <div class="card-title">카테고리를 선택하세요</div>
+      <div class="cat-grid" id="wiz-cat-grid"></div>
+      <div style="margin-top:16px;display:flex;justify-content:flex-end">
+        <button class="btn btn-primary" onclick="wNext(1)">다음 →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2: 제품 정보 -->
+  <div class="step-screen" id="ws2">
+    <div class="card">
+      <div class="card-title">제품 정보 입력</div>
+      <div class="field"><label>제품명 *</label><input id="w-name" type="text" placeholder="제품명을 입력하세요"></div>
+      <div class="row2">
+        <div class="field"><label>가격</label><input id="w-price" type="text" placeholder="예: 29,800원"></div>
+        <div class="field"><label>핵심 혜택</label><input id="w-benefit" type="text" placeholder="예: 무료배송, 특가"></div>
+      </div>
+      <div class="field"><label>쇼핑 URL</label><input id="w-url" type="text" placeholder="https://..."></div>
+      <div style="display:flex;justify-content:space-between;margin-top:4px">
+        <button class="btn btn-ghost" onclick="wBack(2)">← 이전</button>
+        <button class="btn btn-primary" onclick="wNext(2)">다음 →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3: 훅 선택 -->
+  <div class="step-screen" id="ws3">
+    <div class="card">
+      <div class="card-title">훅 유형 선택 <span class="card-sub">★ = 이 카테고리 추천</span></div>
+      <div class="hook-grid" id="wiz-hook-grid"></div>
+      <div style="display:flex;justify-content:space-between;margin-top:16px">
+        <button class="btn btn-ghost" onclick="wBack(3)">← 이전</button>
+        <button class="btn btn-primary" onclick="wNext(3)">다음 →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 4: 파라미터 -->
+  <div class="step-screen" id="ws4">
+    <div class="card">
+      <div class="card-title">촬영 파라미터 <button class="btn btn-ghost btn-sm" onclick="applyOpt()" style="margin-left:auto">🎯 카테고리 최적 적용</button></div>
+
+      <div style="margin-bottom:14px">
+        <span class="chip-label">캐릭터</span>
+        <div class="chip-group" id="ch-char"></div>
+      </div>
+      <div style="margin-bottom:14px">
+        <span class="chip-label">촬영 장소</span>
+        <div class="chip-group" id="ch-setting"></div>
+      </div>
+      <div style="margin-bottom:14px">
+        <span class="chip-label">카메라 무브</span>
+        <div class="chip-group" id="ch-camera"></div>
+      </div>
+      <div style="margin-bottom:14px">
+        <span class="chip-label">영상 분위기</span>
+        <div class="chip-group" id="ch-mood"></div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;margin-top:4px">
+        <button class="btn btn-ghost" onclick="wBack(4)">← 이전</button>
+        <button class="btn btn-primary" onclick="wBuild()">✨ 프롬프트 생성</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 5: 결과 -->
+  <div class="step-screen" id="ws5">
+    <div class="card">
+      <div class="card-title" id="w-out-title">생성 결과</div>
+      <div class="scenes-grid" id="wiz-scenes-grid"></div>
+      <div class="copy-all-wrap">
+        <button class="btn btn-ghost btn-sm" onclick="wCopyAll()">📋 전체 복사</button>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:center;margin-top:4px">
+      <button class="btn btn-ghost" onclick="wReset()">🔄 처음부터 다시</button>
+    </div>
+  </div>
+</section>
+
+<!-- ③ 수익 전략 -->
+<section class="section" id="revenue">
+  <div>
+    <div class="section-title" data-i18n="sec.revenue">💰 카테고리별 수익 전략</div>
+    <div class="section-sub" data-i18n="sec.revenue.sub">카테고리마다 최적의 플랫폼·수수료·단가가 다릅니다. 전략적으로 선택하세요.</div>
+  </div>
+  <div class="rev-grid" id="rev-grid"></div>
+</section>
+
+<!-- ④ 월 수익 계산기 -->
+<section class="section" id="calculator">
+  <div>
+    <div class="section-title">📊 월 수익 계산기</div>
+    <div class="section-sub">영상 조회수와 카테고리에 따른 예상 월 수익을 계산합니다.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">카테고리 선택</div>
+    <div class="calc-cat-row" id="calc-cat-row"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">슬라이더 조정</div>
+    <div class="slider-group">
+      <div class="slider-row">
+        <div class="slider-top"><span class="slider-name">월 총 조회수</span><span class="slider-val" id="sv-views">100,000회</span></div>
+        <input type="range" id="sl-views" min="10000" max="5000000" step="10000" value="100000" oninput="calcUpdate()">
+      </div>
+      <div class="slider-row">
+        <div class="slider-top"><span class="slider-name">월 발행 영상 수</span><span class="slider-val" id="sv-vids">10개</span></div>
+        <input type="range" id="sl-vids" min="1" max="60" step="1" value="10" oninput="calcUpdate()">
+      </div>
+      <div class="slider-row">
+        <div class="slider-top"><span class="slider-name">제휴 클릭률 (%)</span><span class="slider-val" id="sv-ctr">2.0%</span></div>
+        <input type="range" id="sl-ctr" min="0.5" max="8" step="0.1" value="2" oninput="calcUpdate()">
+      </div>
+    </div>
+    <div class="result-grid">
+      <div class="result-tile">
+        <div class="result-num" id="r-clicks">—</div>
+        <div class="result-label">월 제휴 클릭수</div>
+      </div>
+      <div class="result-tile">
+        <div class="result-num" id="r-conv">—</div>
+        <div class="result-label">예상 전환 건수</div>
+      </div>
+      <div class="result-tile">
+        <div class="result-num" id="r-aff">—</div>
+        <div class="result-label">제휴 수익</div>
+      </div>
+      <div class="result-tile">
+        <div class="result-num" id="r-yt">—</div>
+        <div class="result-label">광고 수익 (RPM)</div>
+      </div>
+    </div>
+    <div style="margin-top:12px;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:16px;text-align:center">
+      <div class="result-num total" id="r-total">—</div>
+      <div class="result-label" style="margin-top:4px">예상 월 총 수익</div>
+    </div>
+    <div class="tip-box" style="margin-top:12px" id="calc-tip"></div>
+  </div>
+</section>
+
+<!-- ⑥ 쿠팡 자동연동 -->
+<section class="section" id="coupang">
+  <div>
+    <div class="section-title">🛒 쿠팡 자동연동</div>
+    <div class="section-sub">제품명 입력 → 쿠팡 검색 → URL 붙여넣기 → 딥링크 생성 → 인포크에 추가</div>
+  </div>
+
+  <!-- API 키 설정 -->
+  <div class="card">
+    <div class="card-title" style="cursor:pointer" onclick="toggleApiBox()">
+      🔑 쿠팡파트너스 API 키 설정
+      <span id="api-status" style="margin-left:8px;font-size:12px;color:var(--t2)">— 미저장</span>
+      <span style="margin-left:auto;font-size:12px;color:var(--t2)" id="api-toggle-icon">▼</span>
+    </div>
+    <div id="api-key-box" style="display:none">
+      <div class="api-warn">⚠️ API 키를 대화창에 직접 붙여넣지 마세요. 아래 입력창에만 입력하세요 — 브라우저 localStorage에만 저장되며 외부 전송 없음.</div>
+      <div class="row2">
+        <div class="field"><label>Access Key</label><input id="ak-input" type="password" placeholder="액세스 키"></div>
+        <div class="field"><label>Secret Key</label><input id="sk-input" type="password" placeholder="시크릿 키"></div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn btn-primary btn-sm" onclick="saveApiKeys()">💾 저장</button>
+        <button class="btn btn-ghost btn-sm" onclick="clearApiKeys()">🗑 삭제</button>
+        <span style="font-size:11px;color:var(--t3)">partners.coupang.com → 마이페이지 → 오픈API 이용에서 발급</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 자동 분석 + 딥링크 생성 -->
+  <div class="card">
+    <div class="card-title">⚡ 제품 자동 분석 & 딥링크 생성</div>
+    <div class="flow-steps">
+
+      <div class="flow-step">
+        <div class="fnum" id="fn1">1</div>
+        <div class="fcontent">
+          <label>제품명 입력</label>
+          <div class="fsub">제품명을 입력하면 카테고리 자동 감지 + 쿠팡 검색 링크 생성</div>
+          <div style="display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap">
+            <input id="cp-name" type="text" class="field" style="flex:1;min-width:0;margin:0;padding:9px 12px;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);color:var(--t1);font-size:13px;outline:none" placeholder="예: 제주 하우스 감귤, PDRN 세럼..." oninput="cpAutoDetect()">
+            <button class="btn btn-ghost btn-sm" onclick="cpSearchCoupang()" style="flex-shrink:0;white-space:nowrap">🔍 쿠팡 검색 →</button>
+          </div>
+          <div id="cp-detect-row" style="display:none;margin-top:8px">
+            <span class="detect-badge" id="cp-detect-badge" style="display:inline-flex"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="fnum" id="fn2">2</div>
+        <div class="fcontent">
+          <label>쿠팡 제품 URL 붙여넣기</label>
+          <div class="fsub">쿠팡에서 찾은 제품 페이지 URL을 붙여넣으세요</div>
+          <input id="cp-url" type="text" style="width:100%;padding:9px 12px;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);color:var(--t1);font-family:'DM Sans',sans-serif;font-size:13px;outline:none" placeholder="https://www.coupang.com/vp/products/...">
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="fnum" id="fn3">3</div>
+        <div class="fcontent">
+          <label>부가 정보 (선택)</label>
+          <div class="row2" style="margin-top:0">
+            <div class="field" style="margin-bottom:0"><label>가격</label><input id="cp-price" type="text" placeholder="예: 29,800원"></div>
+            <div class="field" style="margin-bottom:0"><label>이미지 URL (선택)</label><input id="cp-img" type="text" placeholder="https://thumbnail..."></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="fnum" id="fn4">4</div>
+        <div class="fcontent">
+          <label>딥링크 생성</label>
+          <div class="fsub">API 키가 저장된 경우 자동 생성. 없으면 Python 스크립트를 제공합니다.</div>
+          <button class="btn btn-primary" onclick="cpGenDeeplink()" style="margin-bottom:8px">🔗 딥링크 생성</button>
+          <div id="cp-result" style="display:none"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Python 스크립트 -->
+  <div class="card">
+    <div class="card-title" style="cursor:pointer" onclick="togglePyBox()">
+      🐍 Python 딥링크 생성 스크립트 <span style="margin-left:auto;font-size:12px;color:var(--t2)" id="py-toggle">▼ 펼치기</span>
+    </div>
+    <div id="py-box-wrap" style="display:none">
+      <div class="tip-box" style="margin-bottom:10px">pip install requests 후 python generate_deeplink.py 실행. ACCESS_KEY와 SECRET_KEY는 환경변수로 설정하세요.</div>
+      <div class="py-box">
+        <div style="display:flex;justify-content:flex-end;margin-bottom:6px">
+          <button class="cp-btn" onclick="cpPyScript()">📋 복사</button>
+        </div>
+        <pre id="py-script-text"></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ⑦ 인포크 허브 -->
+<section class="section" id="infolk">
+  <div>
+    <div class="section-title">🔗 인포크 허브</div>
+    <div class="section-sub">3개 인포크 계정 + 쿠팡 제휴링크 상품 허브 관리</div>
+  </div>
+
+  <!-- 인포크 계정 3개 설정 -->
+  <div class="card">
+    <div class="card-title">👤 인포크 계정 설정 (최대 3개)</div>
+    <div style="display:flex;flex-direction:column;gap:10px" id="infolk-accounts-wrap">
+      <div class="row2" style="align-items:flex-end;gap:8px" id="ia-row-0">
+        <div class="field" style="margin:0"><label>계정 1 — 채널 이름</label><input id="ia-name-0" type="text" placeholder="예: 식품/과일 채널"></div>
+        <div class="field" style="margin:0"><label>인포크 URL</label><input id="ia-url-0" type="text" placeholder="https://infolk.kr/..."></div>
+        <button class="btn btn-ghost btn-sm" onclick="saveInfolkAccount(0)" style="flex-shrink:0;align-self:flex-end">저장</button>
+      </div>
+      <div class="row2" style="align-items:flex-end;gap:8px" id="ia-row-1">
+        <div class="field" style="margin:0"><label>계정 2 — 채널 이름</label><input id="ia-name-1" type="text" placeholder="예: 뷰티/패션 채널"></div>
+        <div class="field" style="margin:0"><label>인포크 URL</label><input id="ia-url-1" type="text" placeholder="https://infolk.kr/..."></div>
+        <button class="btn btn-ghost btn-sm" onclick="saveInfolkAccount(1)" style="flex-shrink:0;align-self:flex-end">저장</button>
+      </div>
+      <div class="row2" style="align-items:flex-end;gap:8px" id="ia-row-2">
+        <div class="field" style="margin:0"><label>계정 3 — 채널 이름</label><input id="ia-name-2" type="text" placeholder="예: 전자기기/헬스 채널"></div>
+        <div class="field" style="margin:0"><label>인포크 URL</label><input id="ia-url-2" type="text" placeholder="https://infolk.kr/..."></div>
+        <button class="btn btn-ghost btn-sm" onclick="saveInfolkAccount(2)" style="flex-shrink:0;align-self:flex-end">저장</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 탭: 계정별 상품 허브 -->
+  <div class="card" style="padding-bottom:8px">
+    <div class="card-title">🛍 계정별 상품 허브</div>
+    <div style="display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap" id="infolk-tab-row"></div>
+    <div id="infolk-hub-content"></div>
+  </div>
+
+  <!-- 수동 상품 추가 -->
+  <div class="card">
+    <div class="card-title">➕ 상품 수동 추가</div>
+    <div class="row2">
+      <div class="field"><label>제품명</label><input id="ih-name" type="text" placeholder="제품명"></div>
+      <div class="field"><label>가격</label><input id="ih-price" type="text" placeholder="₩29,800"></div>
+    </div>
+    <div class="field"><label>쿠팡파트너스 딥링크</label><input id="ih-link" type="text" placeholder="https://coupa.ng/..."></div>
+    <div class="row2">
+      <div class="field"><label>이미지 URL (선택)</label><input id="ih-img" type="text" placeholder="https://thumbnail..."></div>
+      <div class="field"><label>추가할 인포크 계정</label>
+        <select id="ih-account" style="width:100%;padding:9px 12px;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);color:var(--t1);font-family:'DM Sans',sans-serif;font-size:13px;outline:none">
+          <option value="0">계정 1</option>
+          <option value="1">계정 2</option>
+          <option value="2">계정 3</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="addToHub()" style="margin-top:4px">➕ 인포크 허브에 추가</button>
+  </div>
+</section>
+
+<!-- 🧠 심리 프로파일 -->
+<section class="section" id="psych">
+  <div>
+    <div class="section-title">🧠 심리 프로파일 8유형</div>
+    <div class="section-sub">구매자 심리 동기별 훅 전략 · 전환율 데이터 · 스크립트 템플릿 — 숫자로 검증된 8가지 유형</div>
+  </div>
+
+  <!-- 기억하기 쉬운 CTA 5가지 -->
+  <div class="card">
+    <div class="card-title">📢 기억하기 쉬운 CTA 5가지 <span class="card-sub">한 단어로 행동 유도</span></div>
+    <div id="cta5-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px"></div>
+    <div class="tip-box" style="margin-top:12px">💡 <strong>CTA 법칙:</strong> 단어가 짧을수록 시청자가 댓글/저장/클릭을 망설이지 않습니다. "나도"처럼 1~2음절 CTA는 긴 문장 대비 댓글률 <strong>4.6배</strong>.</div>
+  </div>
+
+  <div class="psych-grid" id="psych-grid"></div>
+</section>
+
+<!-- 🎙 Fish Audio 음성 -->
+<section class="section" id="fish">
+  <div>
+    <div class="section-title">🎙 Fish Audio 음성 합성</div>
+    <div class="section-sub">훅·CTA 스크립트를 AI 음성으로 변환하세요. 사투리 5종 지원.</div>
+  </div>
+
+  <!-- API 키 카드 -->
+  <div class="card">
+    <div class="card-title">🔑 API 키 설정 <span class="card-sub" id="fish-status-badge"></span></div>
+    <div class="api-warn">⚠️ API 키를 대화창에 직접 붙여넣지 마세요. 아래 입력란은 브라우저 로컬 스토리지에만 저장됩니다.</div>
+    <div style="display:flex;gap:8px;align-items:flex-end">
+      <div class="field" style="flex:1;margin:0">
+        <label>Fish Audio API Key</label>
+        <input type="password" id="fish-key-input" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="fishSaveKey()">저장</button>
+      <button class="btn btn-ghost btn-sm" onclick="fishClearKey()">삭제</button>
+    </div>
+    <div style="margin-top:8px;font-size:11px;color:var(--t3)">fish.audio → 대시보드 → API Keys 에서 발급</div>
+  </div>
+
+  <!-- 사투리 선택 카드 -->
+  <div class="card">
+    <div class="card-title">🗣️ 음성 모델 · 사투리 선택</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px" id="dialect-tabs">
+      <button class="chip on" data-d="std"   onclick="fishSelectDialect('std',this)">표준어</button>
+      <button class="chip"    data-d="gang"  onclick="fishSelectDialect('gang',this)">강원도</button>
+      <button class="chip"    data-d="jeon"  onclick="fishSelectDialect('jeon',this)">전라도</button>
+      <button class="chip"    data-d="busa"  onclick="fishSelectDialect('busa',this)">부산/경상</button>
+      <button class="chip"    data-d="chun"  onclick="fishSelectDialect('chun',this)">충청도</button>
+    </div>
+    <div id="dialect-form">
+      <!-- 각 사투리마다 voice ID 입력 -->
+      <div class="fish-dialect-panel" data-d="std">
+        <div class="field">
+          <label>표준어 Reference Voice ID <span style="color:var(--t3);font-weight:400">(비워두면 Fish Audio 기본 음성)</span></label>
+          <input type="text" id="voice-std" placeholder="예: 7f92f8efb8ec43bf81429cc1c9199cb1" oninput="fishSaveVoice('std',this.value)">
+        </div>
+      </div>
+      <div class="fish-dialect-panel" data-d="gang" hidden>
+        <div class="field">
+          <label>강원도 사투리 Voice ID</label>
+          <input type="text" id="voice-gang" placeholder="fish.audio 마켓에서 강원도 음성 ID" oninput="fishSaveVoice('gang',this.value)">
+        </div>
+        <div class="tip-box">💡 fish.audio 마켓 → 검색 "강원도" 또는 "Gangwon dialect" → 음성 선택 → Reference ID 복사</div>
+      </div>
+      <div class="fish-dialect-panel" data-d="jeon" hidden>
+        <div class="field">
+          <label>전라도 사투리 Voice ID</label>
+          <input type="text" id="voice-jeon" placeholder="fish.audio 마켓에서 전라도 음성 ID" oninput="fishSaveVoice('jeon',this.value)">
+        </div>
+      </div>
+      <div class="fish-dialect-panel" data-d="busa" hidden>
+        <div class="field">
+          <label>부산/경상 사투리 Voice ID</label>
+          <input type="text" id="voice-busa" placeholder="fish.audio 마켓에서 경상도 음성 ID" oninput="fishSaveVoice('busa',this.value)">
+        </div>
+      </div>
+      <div class="fish-dialect-panel" data-d="chun" hidden>
+        <div class="field">
+          <label>충청도 사투리 Voice ID</label>
+          <input type="text" id="voice-chun" placeholder="fish.audio 마켓에서 충청도 음성 ID" oninput="fishSaveVoice('chun',this.value)">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 스크립트 → 음성 변환 카드 -->
+  <div class="card">
+    <div class="card-title">📝 스크립트 → 음성 변환</div>
+    <div class="field" style="margin-bottom:10px">
+      <label>변환할 텍스트</label>
+      <textarea class="fish-textarea" id="fish-script-text" rows="4" placeholder="여기에 스크립트를 입력하세요..."></textarea>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <button class="tts-btn" id="fish-gen-btn" onclick="fishTTS(document.getElementById('fish-script-text').value,'fish-script-player',this)">🎙 음성 생성</button>
+      <button class="btn btn-ghost btn-sm" onclick="fishPasteLastHook()">📋 마지막 훅 붙여넣기</button>
+    </div>
+    <div id="fish-script-player" style="margin-top:10px"></div>
+  </div>
+
+  <!-- CTA 한 단어 미리듣기 카드 -->
+  <div class="card">
+    <div class="card-title">⚡ CTA 5종 음성 미리듣기</div>
+    <div style="display:flex;flex-direction:column;gap:8px" id="fish-cta-list"></div>
+  </div>
+
+  <!-- 씬 → 음성 카드 -->
+  <div class="card">
+    <div class="card-title">🎬 생성된 씬 → 음성 변환</div>
+    <div style="font-size:12px;color:var(--t2);margin-bottom:12px">마법사에서 생성된 씬 스크립트를 바로 음성으로 변환합니다.</div>
+    <div style="display:flex;flex-direction:column;gap:8px" id="fish-scene-list">
+      <div class="empty"><div class="empty-icon">🎬</div><div class="empty-text">마법사에서 씬을 먼저 생성해주세요.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 🃏 캐러셀 카드 -->
+<section class="section" id="carousel">
+  <div>
+    <div class="section-title">🃏 캐러셀 카드 자동 생성</div>
+    <div class="section-sub">생성된 씬 정보를 기반으로 인스타그램 스타일 멀티 슬라이드 카드를 자동 생성합니다.</div>
+  </div>
+
+  <!-- 설정 카드 -->
+  <div class="card">
+    <div class="card-title">⚙️ 카드 설정</div>
+    <div class="row2">
+      <div class="field">
+        <label>배경 테마</label>
+        <select id="carousel-theme">
+          <option value="dark">다크 (기본)</option>
+          <option value="light">라이트</option>
+          <option value="gradient">그라디언트</option>
+          <option value="cyber">사이버</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>카드 비율</label>
+        <select id="carousel-ratio">
+          <option value="1:1">1:1 (정사각형)</option>
+          <option value="4:5">4:5 (인스타그램 권장)</option>
+          <option value="9:16">9:16 (스토리/릴스)</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>브랜드/계정명 (선택)</label>
+      <input type="text" id="carousel-brand" placeholder="예: @mystore">
+    </div>
+    <button class="btn btn-primary" onclick="carouselRefresh()">🃏 카드 생성</button>
+  </div>
+
+  <!-- 카드 프리뷰 -->
+  <div class="card">
+    <div class="card-title">📱 슬라이드 미리보기</div>
+    <div id="carousel-preview-area">
+      <div class="empty"><div class="empty-icon">🃏</div><div class="empty-text">마법사에서 씬을 먼저 생성한 뒤 카드 생성 버튼을 눌러주세요.</div></div>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end" id="carousel-actions" hidden>
+      <button class="btn btn-ghost btn-sm" onclick="carouselCopyAll()">📋 전체 텍스트 복사</button>
+      <button class="btn btn-ghost btn-sm" onclick="carouselExportHtml()">💾 HTML 내보내기</button>
+    </div>
+  </div>
+</section>
+
+<!-- ⑤ 플랫폼 전략 -->
+<section class="section" id="platforms">
+  <div>
+    <div class="section-title">🌐 플랫폼 전략</div>
+    <div class="section-sub">플랫폼별 최적 업로드 전략과 수익화 팁을 확인하세요.</div>
+  </div>
+  <div class="plat-grid" id="plat-grid"></div>
+
+  <div class="card">
+    <div class="card-title">📅 주간 콘텐츠 캘린더 (권장)</div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px" id="weekly-cal"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🏆 수익화 골든 룰</div>
+    <div style="display:flex;flex-direction:column;gap:10px" id="golden-rules"></div>
+  </div>
+</section>
+
+</main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/msgpack-lite/0.1.26/msgpack.min.js"></script>
+<script>
+/* ══════════════════════════════════
+   DATA
+══════════════════════════════════ */
+const CATS = {
+  food:{
+    emoji:'🍑',label:'식품/과일',label_en:'Food & Produce',cc:'wa',
+    kw:['복숭아','딸기','수박','사과','포도','배','밤','과일','음식','라면','밀키트','만두','쌀','죽','차','꿀','스낵','과자','빵','떡','식품','먹거리','간식','김치','반찬','소스','드레싱','아이스크림','커피','음료','초콜릿','치즈','감귤','오렌지','바나나'],
+    rev:{est:'₩50~300만/월',pl:['쿠팡 파트너스 3~5%','스마트스토어 직판','TikTok Shop'],cpc:'₩45~80',cr:'3.2%',aov:'₩15,000~45,000'},
+    par:{char:'30f',setting:'car',camera:'push',hook:'sound',mood:'ugc'},
+    bh:['sound','discovery','price'],
+    ctas:['지금 구매 링크 ↓','오늘만 이 가격!','재고 한정 빠른 구매'],
+    note:'소리훅 첫 0.5초가 핵심 — 먹방 ASMR 효과 극대화',
+    rt:'소리훅 영상은 평균 조회 완료율 65% 이상. 쿠팡 파트너스 3~5% + TikTok 먹방 ASMR 콘텐츠가 바이럴 확률 최고. 식품은 계절성이 강하므로 제철 과일·명절 선물세트 타이밍을 1~2주 앞서 준비하세요.',
+    rt_en:'ASMR sound-hook videos average 65%+ completion rate. Coupang Partners 3–5% + TikTok food ASMR content has the highest viral potential. Food is highly seasonal — prepare seasonal fruit & gift sets 1–2 weeks ahead.'
+  },
+  beauty:{
+    emoji:'💄',label:'뷰티/화장품',label_en:'Beauty & Cosmetics',cc:'pk',
+    kw:['화장품','크림','세럼','앰플','선크림','쿠션','파운데이션','립','아이','마스크팩','클렌징','토너','에센스','콜라겐','레티놀','PDRN','뷰티','스킨케어','메이크업','향수','BB','CC','컨실러','브러쉬','틴트','글로우','하이라이터'],
+    rev:{est:'₩80~500만/월',pl:['올리브영 파트너 4~7%','쿠팡 뷰티 3%','YouTube Shopping'],cpc:'₩60~120',cr:'2.8%',aov:'₩25,000~80,000'},
+    par:{char:'30f',setting:'beauty_studio',camera:'push',hook:'discovery',mood:'balanced'},
+    bh:['discovery','compare','problem'],
+    ctas:['지금 올리브영에서 확인','성분 확인하러 가기 →','첫 구매 할인 받기'],
+    note:'30대 여성 + 뷰티 스튜디오 or 자연광 창가 — 피부 클로즈업 필수',
+    rt:'뷰티는 CPM 단가가 가장 높은 카테고리. 올리브영 파트너 4~7% + YouTube Shopping 연동 시 영상당 평균 ₩3,000~15,000. Before/After 형식은 저장률 3배 → 추천 알고리즘 활성화.',
+    rt_en:'Beauty has the highest CPM rates. Olive Young Partner 4–7% + YouTube Shopping integration earns avg ₩3,000–15,000/video. Before/After format triples saves → activates recommendation algorithm.'
+  },
+  electronics:{
+    emoji:'📱',label:'전자기기',label_en:'Electronics',cc:'cy',
+    kw:['이어폰','마이크','충전기','케이블','청소기','공기청정기','가습기','전자기기','스마트폰','태블릿','노트북','TV','카메라','헤드셋','스피커','LED','배터리','키보드','마우스','모니터','프린터','게이밍','조이스틱'],
+    rev:{est:'₩100~800만/월',pl:['쿠팡 전자기기 2~4%','다나와 파트너','YouTube Shopping'],cpc:'₩80~150',cr:'1.8%',aov:'₩30,000~200,000'},
+    par:{char:'40m',setting:'home',camera:'static',hook:'compare',mood:'balanced'},
+    bh:['compare','discovery','price'],
+    ctas:['다나와 최저가 확인 →','쿠팡 로켓배송 →','지금 구매 최저가'],
+    note:'40대 아저씨 + 홈 배경 + 고정 카메라 — 전문가 신뢰',
+    rt:'전자기기는 평균 주문금액이 가장 높아 소수 전환도 큰 수익. 다나와+쿠팡 2~4%. 비교 영상(A vs B)은 시청 완료율 높아 알고리즘 부스트.',
+    rt_en:'Electronics has the highest avg. order value — even few conversions mean big revenue. Danawa + Coupang 2–4%. Comparison videos (A vs B) have high completion rates → algorithm boost.'
+  },
+  fashion:{
+    emoji:'👗',label:'패션/의류',label_en:'Fashion & Apparel',cc:'pu',
+    kw:['티셔츠','원피스','바지','자켓','코트','패딩','스웨터','니트','신발','가방','악세사리','시계','반지','목걸이','패션','옷','의류','셔츠','청바지','레깅스','스커트','카디건','후드','맨투맨'],
+    rev:{est:'₩60~400만/월',pl:['무신사 파트너 5~8%','에이블리 협찬','인스타 쇼핑'],cpc:'₩40~90',cr:'2.5%',aov:'₩20,000~70,000'},
+    par:{char:'30f',setting:'street',camera:'handheld',hook:'compare',mood:'ugc'},
+    bh:['compare','discovery','price'],
+    ctas:['무신사 구매 링크 ↓','지금 내 사이즈 확인','한정 수량 빠른 구매'],
+    note:'도심 야외 + 핸드헬드 + 비교 훅 — 트렌디 스트릿',
+    rt:'패션은 인스타그램 Reels 전환율이 가장 높습니다. 무신사 파트너 5~8%는 업계 최고 수준. 착샷+가격 공개 영상은 저장률 5배.',
+    rt_en:'Fashion has the highest conversion rate on Instagram Reels. Musinsa Partner 5–8% is the best in the industry. Outfit reveal + price-reveal videos get 5× the saves.'
+  },
+  home:{
+    emoji:'🏠',label:'홈/생활',label_en:'Home & Living',cc:'gn',
+    kw:['정리함','트레이','용기','수납','매트','쿠션','침구','이불','베개','욕실','주방','그릇','컵','냄비','프라이팬','도마','칼','생활용품','밀폐','바구니','선반','청소기','수건','램프','조명'],
+    rev:{est:'₩40~250만/월',pl:['쿠팡 로켓배송 3%','다이소 파트너','SmartStore'],cpc:'₩35~70',cr:'3.5%',aov:'₩8,000~30,000'},
+    par:{char:'40m',setting:'home',camera:'push',hook:'problem',mood:'balanced'},
+    bh:['problem','discovery','compare'],
+    ctas:['쿠팡에서 구매 →','다이소 온라인 →','지금 장바구니에 담기'],
+    note:'홈 배경 + 푸시인 카메라 — 실생활 시연',
+    rt:'홈/생활은 전환율(3.5%) 최고 카테고리. "이 문제 나만 겪나요?" 문제공감 훅은 댓글·저장 폭발.',
+    rt_en:'Home & Living has the highest conversion rate (3.5%). "Am I the only one with this problem?" empathy hooks explode comments and saves.'
+  },
+  health:{
+    emoji:'💪',label:'건강/헬스',label_en:'Health & Fitness',cc:'cy',
+    kw:['영양제','프로틴','건강식품','다이어트','비타민','콜라겐','오메가','칼슘','홍삼','한방','건강기능식품','헬스','운동','스포츠','요가','필라테스','등산','아웃도어','마그네슘','루테인','오메가3'],
+    rev:{est:'₩70~450만/월',pl:['쿠팡 건강식품 4~6%','아이허브 파트너','SmartStore 직판'],cpc:'₩70~140',cr:'2.2%',aov:'₩20,000~80,000'},
+    par:{char:'40m',setting:'home',camera:'static',hook:'discovery',mood:'balanced'},
+    bh:['discovery','compare','problem'],
+    ctas:['쿠팡 최저가 →','아이허브 직구 →','성분 확인하고 구매'],
+    note:'40대 아저씨 + 홈 배경 + 고정 카메라 — 전문가 신뢰',
+    rt:'건강식품은 CPC 단가 높고(₩70~140) 쿠팡 파트너스 4~6% 수수료. 40대 남성 전문가 캐릭터가 신뢰도를 높여 구매 전환 상승.',
+    rt_en:'Health supplements have high CPC (₩70–140) and Coupang Partners 4–6% commission. A 40s male expert persona builds trust and boosts purchase conversion.'
+  }
+};
+
+const HOOKS = {
+  sound:    {icon:'🔊',name:'소리훅',desc:'첫 0.5초 ASMR/효과음으로 스크롤 멈추기'},
+  discovery:{icon:'👀',name:'발견기쁨',desc:'기대감·궁금증 유발 → "이게 있었어?"'},
+  price:    {icon:'💸',name:'가격충격',desc:'충격적 저가 or 고가의 이유 공개'},
+  compare:  {icon:'⚡',name:'비교반전',desc:'A vs B 비교 → 승자 공개'},
+  problem:  {icon:'😣',name:'문제공감',desc:'"이거 나만 겪나?" → 공감 댓글 폭발'}
+};
+
+/* ══════════════════════════════════
+   SKILLS DATA
+══════════════════════════════════ */
+const SKILLS = {
+  cook:{
+    icon:'👨‍🍳',label:'요리',label_en:'Cooking',
+    persona:'홈쿡 크리에이터',persona_en:'Home Cook Creator',
+    cats:['food','health'],
+    angle:'레시피 시연 중 핵심 식재료·도구를 자연스럽게 소개 → 전문가 추천 신뢰도',
+    angle_en:'Naturally introduce key ingredients/tools during recipe demo → expert credibility',
+    hook:'이 재료 없으면 이 맛 못 내요',
+    hook_en:'You can\'t make this dish without this ingredient',
+    style:'ASMR 요리음·클로즈업 식재료·핸즈온 조리 과정',
+    veo3:'close-up food preparation, ASMR cooking sounds, hands-on technique demonstration, warm kitchen lighting, steam and texture details',
+  },
+  beauty:{
+    icon:'💄',label:'뷰티',label_en:'Beauty',
+    persona:'스킨케어 크리에이터',persona_en:'Skincare Creator',
+    cats:['beauty'],
+    angle:'스킨케어 루틴 시연에서 핵심 제품 효과·텍스처를 집중 강조',
+    angle_en:'Focus on product effect and texture during skincare routine',
+    hook:'이 제품이 내 피부를 바꿨어요',
+    hook_en:'This product completely changed my skin',
+    style:'피부 텍스처 클로즈업·비포애프터·레이어링 루틴',
+    veo3:'extreme close-up skin texture, glowing skin before/after, layering skincare routine, soft studio lighting, dewy finish detail shots',
+  },
+  fitness:{
+    icon:'💪',label:'피트니스',label_en:'Fitness',
+    persona:'홈트 트레이너',persona_en:'Home Trainer',
+    cats:['health','home'],
+    angle:'운동 루틴 시연 중 필수 장비·보충제의 실제 효과를 바디랭귀지로 증명',
+    angle_en:'Prove essential equipment/supplement effects through body language during workout',
+    hook:'이거 없이는 운동 못 해요',
+    hook_en:'I can\'t work out without this anymore',
+    style:'다이나믹 무브먼트·에너지샷·트랜스포메이션',
+    veo3:'dynamic workout movement, energy and pump aesthetic, transformation shots, high contrast lighting, motivational atmosphere',
+  },
+  fashion:{
+    icon:'👗',label:'패션',label_en:'Fashion',
+    persona:'스타일리스트',persona_en:'Personal Stylist',
+    cats:['fashion'],
+    angle:'코디 완성 과정에서 핵심 아이템의 착용감·소재·퀄리티 직접 시연',
+    angle_en:'Demonstrate fit, fabric, and quality of key items during outfit coordination',
+    hook:'이 조합이 왜 이렇게 잘 어울리냐',
+    hook_en:'Why does this combination work SO well',
+    style:'OOTD 트랜지션·패브릭 클로즈업·레이어링',
+    veo3:'OOTD transition shots, fabric close-up texture, styling layering process, natural daylight, color coordination detail',
+  },
+  tech:{
+    icon:'📱',label:'테크',label_en:'Tech',
+    persona:'테크 리뷰어',persona_en:'Tech Reviewer',
+    cats:['electronics'],
+    angle:'실제 사용 테스트로 숨겨진 기능 발견 → 구매 욕구 자연 유발',
+    angle_en:'Reveal hidden features through real-use testing → natural purchase desire',
+    hook:'이 기능 알고 샀어요?',
+    hook_en:'Did you know this feature existed when you bought it?',
+    style:'화면 녹화 오버레이·스피드테스트·벤치마크 비교',
+    veo3:'screen recording overlay, speed test benchmark, feature discovery moment, clean desk setup, high-tech aesthetic with precise lighting',
+  },
+  home:{
+    icon:'🏠',label:'홈 인테리어',label_en:'Home Decor',
+    persona:'홈 스타일리스트',persona_en:'Home Stylist',
+    cats:['home'],
+    angle:'공간 변신 타임랩스 + 핵심 아이템이 공간을 완성하는 포인트 강조',
+    angle_en:'Space transformation timelapse + highlight how key items complete the space',
+    hook:'이거 하나로 집이 달라져요',
+    hook_en:'One item completely transforms the room',
+    style:'비포애프터 룸·디테일 클로즈업·코지 에스테틱',
+    veo3:'before/after room transformation, cozy aesthetic detail shots, warm interior lighting, texture and material close-ups, styled vignette',
+  },
+  parenting:{
+    icon:'👶',label:'육아',label_en:'Parenting',
+    persona:'육아 크리에이터',persona_en:'Parenting Creator',
+    cats:['food','health','home'],
+    angle:'아이와 일상 중 안전·편의 제품을 자연스럽게 소개 — 부모 공감 극대화',
+    angle_en:'Naturally introduce safety/convenience products during parenting moments',
+    hook:'아이 키우는 부모님들 이거 꼭 보세요',
+    hook_en:'Every parent needs to see this',
+    style:'진짜 육아 순간·아이 리액션샷·따뜻한 자연광',
+    veo3:'candid parenting moments, genuine child reaction shots, warm natural light, cozy family environment, real-life authenticity',
+  },
+  pet:{
+    icon:'🐾',label:'반려동물',label_en:'Pet Care',
+    persona:'펫 케어 크리에이터',persona_en:'Pet Care Creator',
+    cats:['health','food'],
+    angle:'반려동물 일상 케어에서 필수 제품의 효과를 직접 반려동물 반응으로 증명',
+    angle_en:'Prove essential product effects through pet reactions during daily care',
+    hook:'우리 아이 이거 먹고 달라졌어요',
+    hook_en:'My pet completely changed after this product',
+    style:'귀여운 펫 리액션·케어 루틴 클로즈업·행복한 에너지',
+    veo3:'cute pet reaction shots, care routine close-ups, playful and warm energy, soft natural light, genuine emotional pet moments',
+  },
+};
+
+let activeSkillKey = null; // 현재 선택된 스킬
+
+function getActiveSkill() {
+  return activeSkillKey ? SKILLS[activeSkillKey] : null;
+}
+
+const CHARS = {
+  '30f':{label:'30대 여성',desc:'공감·세련 이미지'},
+  '30m':{label:'30대 남성',desc:'활동적·트렌디'},
+  '40m':{label:'40대 남성',desc:'전문가·신뢰'},
+  'couple':{label:'커플',desc:'라이프스타일 감성'},
+  'none':{label:'인물 없음',desc:'제품 단독'}
+};
+const SETTINGS = {
+  car:{label:'자동차 내부',desc:'친근한 일상'},
+  beauty_studio:{label:'뷰티 스튜디오',desc:'세련·전문'},
+  home:{label:'홈 인테리어',desc:'실생활 신뢰'},
+  street:{label:'도심 야외',desc:'트렌디 스트릿'},
+  cafe:{label:'카페',desc:'감성 라이프'},
+  gym:{label:'헬스장',desc:'에너지'},
+  kitchen:{label:'주방',desc:'요리·생활'}
+};
+const CAMERAS = {
+  push:{label:'푸시인',desc:'클로즈업 압박감'},
+  static:{label:'고정',desc:'안정·전문'},
+  handheld:{label:'핸드헬드',desc:'역동·UGC느낌'},
+  orbit:{label:'오빗',desc:'제품 360° 쇼케이스'},
+  pullback:{label:'풀백',desc:'공간감 연출'}
+};
+const MOODS = {
+  ugc:{label:'UGC 느낌',desc:'소비자 리뷰 감성'},
+  balanced:{label:'균형 잡힌',desc:'깔끔 전문 광고'},
+  cinematic:{label:'시네마틱',desc:'프리미엄 영상미'},
+  energetic:{label:'에너제틱',desc:'역동·신나는'}
+};
+
+const CALC_DATA = {
+  food:        {cpc:62, cr:0.032, aov:30000, comm:0.04, rpm:1200},
+  beauty:      {cpc:90, cr:0.028, aov:52000, comm:0.055,rpm:1800},
+  electronics: {cpc:115,cr:0.018, aov:115000,comm:0.03, rpm:2200},
+  fashion:     {cpc:65, cr:0.025, aov:45000, comm:0.065,rpm:1400},
+  home:        {cpc:52, cr:0.035, aov:19000, comm:0.03, rpm:1000},
+  health:      {cpc:105,cr:0.022, aov:50000, comm:0.05, rpm:2000}
+};
+
+const PLATS = [
+  {
+    icon:'▶️',name:'YouTube Shorts',sub:'광고 수익 + 쇼핑',
+    rows:[
+      '세로 9:16, 최대 60초 (15~30초 최적)',
+      '자막 필수 — 무음 시청 62% 이상',
+      'RPM ₩800~2,500/1,000회 (카테고리별 차등)',
+      '설명란 제휴 링크 3개 이내 권장',
+      '주 3~5회 업로드 → 알고리즘 학습 가속',
+      'YouTube Shopping 연동 → 영상 내 제품 태그'
+    ]
+  },
+  {
+    icon:'🎵',name:'TikTok Shop',sub:'커머스 직연동',
+    rows:[
+      '숍 탭 직접 연동 → 영상→구매 원클릭',
+      '제품 태그 → 0.8~3% 추가 전환율',
+      '트렌딩 사운드 사용 시 노출 3~5배',
+      'LIVE 커머스 병행 시 수익 2~4배',
+      '오전 7~9시, 저녁 8~11시 업로드 최적',
+      '먹방·ASMR 카테고리 유독 높은 바이럴률'
+    ]
+  },
+  {
+    icon:'📸',name:'Instagram Reels',sub:'패션·뷰티 최강',
+    rows:[
+      '패션·뷰티 카테고리 전환율 업계 1위',
+      'Link in Bio + Linktree로 다중 링크',
+      '스토리 제품 링크 스티커 활용',
+      'Collab 포스팅 → 팔로워 교차 확장',
+      '릴스→스토리→피드 크로스포스팅 필수',
+      '저장률 높은 콘텐츠 = 추천 피드 진입'
+    ]
+  },
+  {
+    icon:'🛒',name:'쿠팡·네이버',sub:'한국 이커머스 직결',
+    rows:[
+      '쿠팡 파트너스: 카테고리별 2~6% 수수료',
+      '네이버 파트너: 스마트스토어 연동 유리',
+      '쿠팡 로켓배송 제품 → 충동구매율 40%↑',
+      '네이버 블로그+쇼츠 교차 노출 전략',
+      '카카오 선물하기 연동 → 선물 수요 포착',
+      '리뷰 수 100개+ 제품 우선 선택'
+    ]
+  }
+];
+
+const CTA5 = [
+  {
+    word:'나도', color:'pk',
+    trigger:'공감 → 동일시',
+    stats:[{k:'댓글률',v:'4.6×'},{k:'저장율',v:'3.1×'}],
+    how:'"나도 써봐야겠다!" 댓글 폭발 → 알고리즘 참여 신호 최강. 자막: "나도 할 수 있어요 ↓"',
+    ex:'"저도 처음엔 몰랐어요. 이걸 보고 나도 해봤더니..." → 마지막: "나도 → 링크 클릭"'
+  },
+  {
+    word:'진짜?', color:'wa',
+    trigger:'의심 → 확인 충동',
+    stats:[{k:'클릭률',v:'+73%'},{k:'영상 재시청',v:'2.2×'}],
+    how:'의심을 유발해 스크롤 멈추기. "진짜?" 자막이 보이는 순간 확인하고 싶어짐. 영상 내 최소 2번 사용.',
+    ex:'"이 가격 진짜예요?" / "효과 진짜 있어요?" / 마지막 CTA: "진짜인지 링크로 확인 ↓"'
+  },
+  {
+    word:'어디서', color:'cy',
+    trigger:'탐색 → 프로필 이동',
+    stats:[{k:'프로필 방문',v:'+58%'},{k:'팔로우 전환',v:'14%'}],
+    how:'"어디서 사요?" 댓글 유도 = 자연스러운 링크 안내 명분. 프로필 링크로 유도 시 이탈 없이 이동.',
+    ex:'"어디서 파는 거냐고요? 프로필 링크에 다 있어요 — 지금 눌러보세요 ↑"'
+  },
+  {
+    word:'이거다', color:'gn',
+    trigger:'결정 확신 전이',
+    stats:[{k:'즉시구매율',v:'+91%'},{k:'고민 시간',v:'-68%'}],
+    how:'시청자의 결정 장벽 제거. "이거다" 선언은 대신 결정해주는 효과. 구매 포기율 최저.',
+    ex:'"찾던 거 이거다 싶었어요" → "여러분도 이거다 싶으면 지금 바로 ↓"'
+  },
+  {
+    word:'잠깐', color:'pu',
+    trigger:'주목 → 스크롤 정지',
+    stats:[{k:'첫3초 이탈',v:'-44%'},{k:'완료율',v:'+31%'}],
+    how:'스크롤 도중 "잠깐" 자막이 뜨면 무의식적 정지 반응. 영상 중간(7-8초)에 배치 시 완료율 급상승.',
+    ex:'"잠깐 — 이 성분 꼭 확인하세요" / CTA: "잠깐만요 — 지금 재고 확인 ↓"'
+  }
+];
+
+const PSYCH = [
+  {
+    num:'01',emoji:'🔥',type:'욕망/욕구형',sub:'"나도 저렇게 되고 싶다" — 이상적 자아와 현실의 격차를 공략',
+    cc:'pk',kw:'갖고싶다 · 되고싶다 · 이렇게 · 변신 · 부러워',
+    stats:[{key:'CTR 평균 대비',val:'+47%',c:'pk'},{key:'시청 완료율',val:'72%',c:'pk'},{key:'저장율 배수',val:'3.8×',c:'pk'},{key:'전환율',val:'4.1%',c:'pk'}],
+    hooks:['발견기쁨','비교반전'],cats:['💄 뷰티','👗 패션','💪 헬스'],
+    script:'"30일 전 제 피부 보여드릴게요 (Before)... 지금이에요 (After). 차이 느껴지시죠? 이거 하나 바꿨을 뿐인데 ↑피부점수 23점"',
+    tip:'Before→After + 구체적 수치 → 완료율 72%, 저장 3.8배. 이상적 결과를 먼저 보여줄 것'
+  },
+  {
+    num:'02',emoji:'😰',type:'회피형',sub:'"손해보기 싫다" — 손실 회피 심리. 이득보다 손실이 2.5배 강하다',
+    cc:'rd',kw:'손해 · 모르면 · 이걸 안 하면 · 위험 · 실수',
+    stats:[{key:'CTR 평균 대비',val:'+63%',c:'rd'},{key:'댓글률 배수',val:'5.2×',c:'rd'},{key:'즉시 구매율',val:'+44%',c:'rd'},{key:'전환율',val:'3.8%',c:'rd'}],
+    hooks:['문제공감','비교반전'],cats:['🏠 홈/생활','💪 건강','🍑 식품'],
+    script:'"이걸 모르고 쓰면 진짜 손해예요. 3년 동안 뭘 써도 효과 없었는데, 이 성분 하나 빠진 거였어요. 지금 쓰는 거 확인해보세요."',
+    tip:'손실 프레이밍: "얻는 것"보다 "잃는 것" 강조 → CTR +63%. 카넌먼 손실회피 2.5× 법칙 적용'
+  },
+  {
+    num:'03',emoji:'🎓',type:'전문가형',sub:'"데이터로 검증됐다" — 권위와 전문성으로 신뢰 구축',
+    cc:'cy',kw:'분석 · 성분 · 데이터 · 검증 · 임상 · 연구',
+    stats:[{key:'신뢰도 지수',val:'+82%',c:'cy'},{key:'시청 완료율',val:'68%',c:'cy'},{key:'평균 주문금액',val:'+35%',c:'cy'},{key:'반품률',val:'-28%',c:'cy'}],
+    hooks:['비교반전','발견기쁨'],cats:['📱 전자기기','💪 건강','💄 뷰티'],
+    script:'"성분표 직접 분석해봤어요. 1등 제품이랑 비교하면: 유효성분 농도 1,000ppm → 3,500ppm. 3.5배 차이. 가격은 반값이에요."',
+    tip:'숫자+비교 조합: 신뢰도 +82%, AOV +35% 향상. 반품률 최저(-28%) — 신뢰가 높으면 구매 확신도 높다'
+  },
+  {
+    num:'04',emoji:'👥',type:'사회적증거형',sub:'"다들 쓰는 데는 이유가 있다" — 집단 행동으로 안전감 형성',
+    cc:'gn',kw:'다들 · 10만명 · 1위 · 인기 · 베스트 · 후기',
+    stats:[{key:'구매의도 배수',val:'4.2×',c:'gn'},{key:'CTR 평균 대비',val:'+38%',c:'gn'},{key:'첫5초 이탈률',val:'-31%',c:'gn'},{key:'구전 효과',val:'1.7×',c:'gn'}],
+    hooks:['발견기쁨','가격충격'],cats:['🍑 식품','💄 뷰티','🏠 홈/생활'],
+    script:'"이거 올해 쿠팡 뷰티 1위예요. 리뷰 47,820개 중 별점 4.8. 제가 직접 써봤는데 이유 있더라고요 — 이 성분 때문이에요."',
+    tip:'구체적 숫자(리뷰 수, 판매량) 포함 시 구매의도 4.2배. 막연한 "인기"보단 정확한 숫자로'
+  },
+  {
+    num:'05',emoji:'👀',type:'호기심형',sub:'"이게 뭐지?" — 정보 격차로 시청 완료까지 끌어당기기',
+    cc:'pu',kw:'비밀 · 사실 · 몰랐던 · 충격 · 이유 · 알고보니',
+    stats:[{key:'시청 완료율',val:'78%',c:'pu'},{key:'재시청률',val:'2.4×',c:'pu'},{key:'CTR 평균 대비',val:'+52%',c:'pu'},{key:'공유율',val:'2.9×',c:'pu'}],
+    hooks:['발견기쁨','소리훅'],cats:['📱 전자기기','💄 뷰티','💪 건강'],
+    script:'"이거 절대 먹으면 안 되는 조합이에요... (3초 정지) 아 이건 같이 먹으면 흡수율 3배 올라가서 절대 빠지면 안 된다는 말이에요."',
+    tip:'역설적 언어/반전: 완료율 78%(8유형 중 최고), 공유율 2.9배. 정보 격차 → 끝까지 시청'
+  },
+  {
+    num:'06',emoji:'⏰',type:'긴급/희소성형',sub:'"지금 아니면 없다" — 제한된 시간·수량으로 즉각 행동 유도',
+    cc:'wa',kw:'오늘만 · 한정 · 재고 · 마감 · 지금 · D-day',
+    stats:[{key:'즉시구매율',val:'+156%',c:'wa'},{key:'충동구매율',val:'61%',c:'wa'},{key:'카트추가율',val:'+89%',c:'wa'},{key:'포기율',val:'-42%',c:'wa'}],
+    hooks:['가격충격','소리훅'],cats:['🍑 식품','👗 패션','💄 뷰티'],
+    script:'"오늘 자정까지만 이 가격이에요. 지금 재고 23개 남았고 — 어제도 이 시간에 품절됐거든요. 링크는 프로필에 있어요."',
+    tip:'재고 수량 + 마감 시각 구체화 → 즉시구매 +156%. "23개 남음"이 막연한 "한정"보다 3.4배 효과'
+  },
+  {
+    num:'07',emoji:'💝',type:'감성/공감형',sub:'"내 이야기다" — 감정적 공명으로 저장·공유·팔로우 폭발',
+    cc:'pk',kw:'나도 · 공감 · 솔직히 · 처음엔 · 스토리 · 변화',
+    stats:[{key:'저장율 배수',val:'5.1×',c:'pk'},{key:'공유율',val:'3.7×',c:'pk'},{key:'팔로워 전환율',val:'18%',c:'pk'},{key:'LTV 배수',val:'2.3×',c:'pk'}],
+    hooks:['문제공감','발견기쁨'],cats:['🍑 식품','💄 뷰티','💪 헬스'],
+    script:'"솔직히 말할게요. 처음엔 이거 그냥 광고겠지 싶었어요. 근데 엄마가 무릎 아프다고 계속 연락 오길래... 그냥 보내드렸어요. 3주 후에 전화 왔어요."',
+    tip:'개인 스토리 + 감성 BGM: 저장 5.1배, 팔로워 전환율 18%(8유형 중 최고). LTV 2.3배'
+  },
+  {
+    num:'08',emoji:'💰',type:'가성비형',sub:'"이 가격에 이 품질?" — 가치 인식 극대화로 충동구매 유도',
+    cc:'gn',kw:'가성비 · 이 가격 · 최저가 · 직구 · 갑 · 실화',
+    stats:[{key:'CTR 평균 대비',val:'+89%',c:'gn'},{key:'전환율',val:'5.3%',c:'gn'},{key:'재방문율',val:'2.1×',c:'gn'},{key:'리뷰작성율',val:'+67%',c:'gn'}],
+    hooks:['가격충격','비교반전'],cats:['🏠 홈/생활','🍑 식품','📱 전자기기'],
+    script:'"백화점에서 68,000원에 팔리는 거랑 성분표 비교해봤어요 — 완전히 똑같아요. 이게 지금 9,800원이거든요. 이게 말이 돼요?"',
+    tip:'가격 비교 + "말이 돼?" 반응 유도: CTR +89%, 전환율 5.3%(8유형 중 최고). 가격 오버레이 필수'
+  }
+];
+
+const WEEKLY = [
+  {day:'월',focus:'리뷰/비교',note:'정보성 높은 콘텐츠 → 저장률↑'},
+  {day:'화',focus:'할인 알림',note:'반짝세일·쿠폰 → 클릭률↑'},
+  {day:'수',focus:'라이프스타일',note:'UGC 감성 → 공감·댓글↑'},
+  {day:'목',focus:'TikTok 집중',note:'트렌딩 사운드 편승'},
+  {day:'금',focus:'주말 특가',note:'충동구매 유도'},
+  {day:'토',focus:'Shorts 업로드',note:'YT 알고리즘 주말 피크'},
+  {day:'일',focus:'성과 분석',note:'다음 주 소재 기획'}
+];
+
+const GOLDEN = [
+  {icon:'⚡',title:'첫 3초가 전부다',desc:'훅이 실패하면 나머지 12초는 의미 없음. 훅 A/B 테스트를 매주 진행하세요.'},
+  {icon:'🔗',title:'제휴 링크는 1개만',desc:'링크가 많을수록 클릭률이 분산됩니다. 가장 수수료 높은 링크 1개에 집중.'},
+  {icon:'📅',title:'제철·시즌을 2주 앞서라',desc:'알고리즘 인덱싱 시간 고려. 여름 상품은 5월 말, 명절 선물은 2주 전 업로드.'},
+  {icon:'🎯',title:'카테고리 한 우물만 파라',desc:'채널당 1~2 카테고리 집중 시 추천 알고리즘이 타겟 청중에 최적화됩니다.'},
+  {icon:'📊',title:'조회 완료율 50%+ 목표',desc:'완료율이 50% 이하면 알고리즘 패널티. 씬 전환 속도와 BGM 볼륨을 조절하세요.'},
+  {icon:'💬',title:'댓글 질문으로 끝내라',desc:'"여러분은 어떤 브랜드 쓰세요?" 같은 질문 CTA가 알고리즘 참여 신호를 높입니다.'}
+];
+
+/* ══════════════════════════════════
+   COUPANG / INFOLK
+══════════════════════════════════ */
+
+/* ─ API Key ─ */
+function saveApiKeys() {
+  const ak = document.getElementById('ak-input').value.trim();
+  const sk = document.getElementById('sk-input').value.trim();
+  if (!ak || !sk) { alert('액세스 키와 시크릿 키를 모두 입력하세요'); return; }
+  try {
+    localStorage.setItem('cp_ak', ak);
+    localStorage.setItem('cp_sk', sk);
+  } catch(e) {}
+  document.getElementById('ak-input').value = '';
+  document.getElementById('sk-input').value = '';
+  updateApiStatus();
+  alert('✅ API 키 저장됨 (브라우저 localStorage)');
+}
+function clearApiKeys() {
+  try { localStorage.removeItem('cp_ak'); localStorage.removeItem('cp_sk'); } catch(e) {}
+  updateApiStatus();
+}
+function updateApiStatus() {
+  let ak = ''; try { ak = localStorage.getItem('cp_ak') || ''; } catch(e) {}
+  const el = document.getElementById('api-status');
+  if (el) el.innerHTML = ak ? '<span style="color:var(--gn)">✓ 저장됨</span>' : '— 미저장';
+}
+function toggleApiBox() {
+  const box = document.getElementById('api-key-box');
+  const icon = document.getElementById('api-toggle-icon');
+  const show = box.style.display === 'none';
+  box.style.display = show ? '' : 'none';
+  if (icon) icon.textContent = show ? '▲' : '▼';
+}
+function togglePyBox() {
+  const box = document.getElementById('py-box-wrap');
+  const icon = document.getElementById('py-toggle');
+  const show = box.style.display === 'none';
+  box.style.display = show ? '' : 'none';
+  if (icon) icon.textContent = show ? '▲ 접기' : '▼ 펼치기';
+}
+
+/* ─ Smart Fuzzy Detect ─ */
+function smartDetect(raw) {
+  if (!raw || !raw.trim()) return null;
+  const input = raw.toLowerCase().replace(/[\s\-_,.!?~]/g, '');
+
+  // 1st: exact keyword substring
+  for (const [k, c] of Object.entries(CATS)) {
+    if (c.kw.some(kw => input.includes(kw.toLowerCase().replace(/\s/g,'')))) return k;
+  }
+
+  // 2nd: n-gram scoring (handles typos & partial input)
+  const scores = {};
+  for (const [k, c] of Object.entries(CATS)) {
+    const pool = c.kw.join('').toLowerCase().replace(/\s/g,'');
+    let sc = 0;
+    for (let i = 0; i < input.length - 2; i++) { if (pool.includes(input.slice(i,i+3))) sc += 5; }
+    for (let i = 0; i < input.length - 1; i++) { if (pool.includes(input.slice(i,i+2))) sc += 2; }
+    for (const ch of input) { if (ch.charCodeAt(0) > 0xAC00 && pool.includes(ch)) sc += 0.5; }
+    scores[k] = sc;
+  }
+  const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  if (sorted[0][1] >= 1) return sorted[0][0];
+
+  // 3rd: numeric heuristic (price range)
+  const nums = raw.replace(/[^0-9]/g,'');
+  if (nums.length >= 4) {
+    const n = parseInt(nums);
+    if (n >= 100000) return 'electronics';
+    if (n >= 50000)  return 'beauty';
+    if (n >= 20000)  return 'health';
+    if (n >= 10000)  return 'fashion';
+    return 'food';
+  }
+
+  // 4th: always return best-scored (never null)
+  return sorted[0][0];
+}
+
+/* ─ Coupang Auto Detect ─ */
+let cpCatKey = 'food';
+function cpAutoDetect() {
+  const name = document.getElementById('cp-name').value;
+  const row = document.getElementById('cp-detect-row');
+  const badge = document.getElementById('cp-detect-badge');
+  if (!name.trim()) { row.style.display = 'none'; return; }
+  const found = smartDetect(name);
+  cpCatKey = found || 'food';
+  const cat = CATS[cpCatKey];
+  badge.textContent = cat.emoji + ' ' + cat.label + ' 감지';
+  badge.style.background = `var(--${cat.cc}D,var(--cyD))`;
+  badge.style.color = `var(--${cat.cc},var(--cy))`;
+  badge.style.borderColor = `var(--${cat.cc}M,var(--cyM))`;
+  row.style.display = '';
+  // update Python script
+  renderPyScript();
+}
+
+function cpSearchCoupang() {
+  const name = document.getElementById('cp-name').value.trim();
+  if (!name) { alert('제품명을 입력하세요'); return; }
+  const url = 'https://www.coupang.com/np/search?q=' + encodeURIComponent(name) + '&channel=user&sorter=scoreDesc';
+  window.open(url, '_blank');
+}
+
+/* ─ Deeplink Generation ─ */
+async function generateHmac(secretKey, message) {
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey('raw', enc.encode(secretKey), {name:'HMAC',hash:'SHA-256'}, false, ['sign']);
+  const sig = await crypto.subtle.sign('HMAC', key, enc.encode(message));
+  return Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+async function cpGenDeeplink() {
+  const prodUrl = document.getElementById('cp-url').value.trim();
+  const name = document.getElementById('cp-name').value.trim();
+  if (!prodUrl) { alert('쿠팡 제품 URL을 입력하세요'); return; }
+  if (!prodUrl.includes('coupang.com')) { alert('쿠팡(coupang.com) URL을 입력하세요'); return; }
+
+  const resultEl = document.getElementById('cp-result');
+  resultEl.style.display = '';
+  resultEl.innerHTML = '<div class="tip-box">🔄 딥링크 생성 중…</div>';
+
+  let ak = ''; let sk = '';
+  try { ak = localStorage.getItem('cp_ak') || ''; sk = localStorage.getItem('cp_sk') || ''; } catch(e) {}
+
+  if (!ak || !sk) {
+    showNoKeyResult(prodUrl, name, resultEl);
+    return;
+  }
+
+  try {
+    const now = new Date();
+    const pad = n => String(n).padStart(2,'0');
+    const datetime = now.getUTCFullYear()+pad(now.getUTCMonth()+1)+pad(now.getUTCDate())+'T'+pad(now.getUTCHours())+pad(now.getUTCMinutes())+pad(now.getUTCSeconds())+'Z';
+    const path = '/v2/providers/affiliate_open_api/apis/openapi/v1/deeplink';
+    const message = datetime + '\nPOST\n' + path;
+    const signature = await generateHmac(sk, message);
+    const auth = `CEA algorithm=HmacSHA256, access-key=${ak}, signed-date=${datetime}, signature=${signature}`;
+
+    const resp = await fetch('https://api-gateway.coupang.com' + path, {
+      method: 'POST',
+      headers: { 'Authorization': auth, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ coupangUrls: [prodUrl] })
+    });
+    const data = await resp.json();
+
+    if (data.rCode === '0' && data.data && data.data.length > 0) {
+      const item = data.data[0];
+      if (item.shortenUrl || item.landingUrl) {
+        const deeplink = item.shortenUrl || item.landingUrl;
+        showDeeplinkSuccess(deeplink, name, resultEl);
+      } else {
+        showNoKeyResult(prodUrl, name, resultEl, '변환 실패: ' + (item.rMessage || ''));
+      }
+    } else {
+      showNoKeyResult(prodUrl, name, resultEl, 'API 오류 rCode:' + data.rCode);
+    }
+  } catch(e) {
+    // CORS or network error → show script fallback
+    showNoKeyResult(prodUrl, name, resultEl, 'CORS 차단으로 브라우저 직접 호출 불가. Python 스크립트를 사용하세요.');
+  }
+}
+
+function showDeeplinkSuccess(deeplink, name, el) {
+  el.innerHTML = `
+    <div class="result-deeplink">✅ 딥링크 생성 완료<br>${escHtml(deeplink)}</div>
+    <div class="cp-row">
+      <button class="cp-btn" onclick="cpText('${deeplink.replace(/'/g,"\\'")}', this)">📋 복사</button>
+      <button class="btn btn-primary btn-sm" onclick="cpAddToHub('${escHtml(deeplink)}', '${escHtml(name)}')">➕ 인포크 허브에 추가</button>
+    </div>`;
+}
+
+function showNoKeyResult(prodUrl, name, el, msg) {
+  const encodedUrl = encodeURIComponent(prodUrl);
+  el.innerHTML = `
+    <div class="err-box">
+      ${msg || 'API 키가 없습니다.'}<br>
+      아래 Python 스크립트를 로컬에서 실행하거나,<br>
+      <strong>쿠팡파트너스 사이트에서 직접 단축링크를 생성 후 인포크에 추가하세요.</strong>
+    </div>
+    <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+      <a href="https://partners.coupang.com" target="_blank" class="btn btn-ghost btn-sm">🔗 파트너스 사이트 열기</a>
+      <button class="btn btn-ghost btn-sm" onclick="togglePyBox();navGo('coupang',document.querySelector(\'[data-sec=coupang]\'))">🐍 Python 스크립트 보기</button>
+    </div>`;
+}
+
+function cpAddToHub(deeplink, name) {
+  const price = document.getElementById('cp-price')?.value || '';
+  const img = document.getElementById('cp-img')?.value || '';
+  const acct = parseInt(document.getElementById('ih-account')?.value || '0');
+  addProductToHub(name, price, deeplink, img, acct);
+  navGo('infolk', document.querySelector('[data-sec="infolk"]'));
+}
+
+/* ─ Python Script ─ */
+function renderPyScript() {
+  const url = document.getElementById('cp-url')?.value.trim() || 'https://www.coupang.com/vp/products/YOUR_PRODUCT_ID';
+  const script = `import os, hmac, hashlib, datetime, requests, json
+
+ACCESS_KEY = os.environ.get("COUPANG_ACCESS_KEY", "")
+SECRET_KEY = os.environ.get("COUPANG_SECRET_KEY", "")
+
+def generate_hmac(secret_key, message):
+    return hmac.new(
+        secret_key.encode("utf-8"),
+        message.encode("utf-8"),
+        hashlib.sha256
+    ).hexdigest()
+
+def get_deeplink(urls):
+    now = datetime.datetime.utcnow()
+    datetime_str = now.strftime("%Y%m%dT%H%M%SZ")
+    path = "/v2/providers/affiliate_open_api/apis/openapi/v1/deeplink"
+    message = f"{datetime_str}\\nPOST\\n{path}"
+    signature = generate_hmac(SECRET_KEY, message)
+    auth = (f"CEA algorithm=HmacSHA256, access-key={ACCESS_KEY},"
+            f" signed-date={datetime_str}, signature={signature}")
+    resp = requests.post(
+        f"https://api-gateway.coupang.com{path}",
+        headers={"Authorization": auth, "Content-Type": "application/json"},
+        json={"coupangUrls": urls}
+    )
+    return resp.json()
+
+urls = [
+    "${url.replace(/"/g, '\\"')}",
+]
+
+result = get_deeplink(urls)
+print(json.dumps(result, ensure_ascii=False, indent=2))
+for item in result.get("data", []):
+    print("원본:", item.get("originalUrl"))
+    print("딥링크:", item.get("shortenUrl"))
+    print()`;
+  const el = document.getElementById('py-script-text');
+  if (el) el.textContent = script;
+}
+
+function cpPyScript() {
+  const el = document.getElementById('py-script-text');
+  if (el) cpText(el.textContent, null);
+}
+
+/* ─ Infolk Accounts ─ */
+let infolkAccounts = [{name:'',url:''},{name:'',url:''},{name:'',url:''}];
+
+function loadInfolkAccounts() {
+  try {
+    const saved = localStorage.getItem('infolk_accounts');
+    if (saved) infolkAccounts = JSON.parse(saved);
+  } catch(e) {}
+  infolkAccounts.forEach((a,i) => {
+    const n = document.getElementById('ia-name-'+i);
+    const u = document.getElementById('ia-url-'+i);
+    if (n) n.value = a.name || '';
+    if (u) u.value = a.url || '';
+  });
+  renderInfolkTabs();
+  renderInfolkHub(0);
+  updateAccountSelect();
+}
+
+function saveInfolkAccount(i) {
+  const name = document.getElementById('ia-name-'+i)?.value.trim() || '';
+  const url = document.getElementById('ia-url-'+i)?.value.trim() || '';
+  infolkAccounts[i] = {name, url};
+  try { localStorage.setItem('infolk_accounts', JSON.stringify(infolkAccounts)); } catch(e) {}
+  renderInfolkTabs();
+  updateAccountSelect();
+  alert(`✅ 계정 ${i+1} 저장됨`);
+}
+
+function updateAccountSelect() {
+  const sel = document.getElementById('ih-account');
+  if (!sel) return;
+  sel.innerHTML = '';
+  infolkAccounts.forEach((a,i) => {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = (a.name || '계정 '+(i+1));
+    sel.appendChild(opt);
+  });
+}
+
+/* ─ Hub Data ─ */
+let hubData = [[],[],[]]; // 3 accounts
+let activeHubTab = 0;
+
+function loadHubData() {
+  try {
+    const saved = localStorage.getItem('infolk_hub');
+    if (saved) hubData = JSON.parse(saved);
+    if (!Array.isArray(hubData) || hubData.length < 3) hubData = [[],[],[]];
+  } catch(e) {}
+}
+
+function saveHubData() {
+  try { localStorage.setItem('infolk_hub', JSON.stringify(hubData)); } catch(e) {}
+}
+
+function addProductToHub(name, price, deeplink, img, acct) {
+  if (!name) { alert('제품명을 입력하세요'); return; }
+  if (!deeplink) { alert('딥링크를 입력하세요'); return; }
+  const idx = Math.min(Math.max(parseInt(acct)||0, 0), 2);
+  const item = { id: Date.now(), name, price, deeplink, img, cat: cpCatKey, added: new Date().toLocaleDateString('ko-KR') };
+  hubData[idx].unshift(item);
+  saveHubData();
+  renderInfolkHub(idx);
+  renderInfolkTabs();
+  activeHubTab = idx;
+  renderInfolkTabs();
+}
+
+function addToHub() {
+  const name = document.getElementById('ih-name').value.trim();
+  const price = document.getElementById('ih-price').value.trim();
+  const deeplink = document.getElementById('ih-link').value.trim();
+  const img = document.getElementById('ih-img').value.trim();
+  const acct = parseInt(document.getElementById('ih-account').value || '0');
+  addProductToHub(name, price, deeplink, img, acct);
+  document.getElementById('ih-name').value = '';
+  document.getElementById('ih-price').value = '';
+  document.getElementById('ih-link').value = '';
+  document.getElementById('ih-img').value = '';
+}
+
+function removeFromHub(acct, id) {
+  hubData[acct] = hubData[acct].filter(p => p.id !== id);
+  saveHubData();
+  renderInfolkHub(acct);
+  renderInfolkTabs();
+}
+
+function renderInfolkTabs() {
+  const row = document.getElementById('infolk-tab-row');
+  if (!row) return;
+  row.innerHTML = '';
+  infolkAccounts.forEach((a,i) => {
+    const btn = document.createElement('button');
+    btn.className = 'calc-cat-btn' + (i===activeHubTab?' on':'');
+    const count = hubData[i]?.length || 0;
+    btn.innerHTML = `${a.name || '계정 '+(i+1)} <span style="margin-left:4px;background:var(--cyD);color:var(--cy);padding:1px 6px;border-radius:10px;font-size:10px">${count}</span>`;
+    btn.onclick = () => { activeHubTab = i; renderInfolkTabs(); renderInfolkHub(i); };
+    row.appendChild(btn);
+  });
+}
+
+function renderInfolkHub(acct) {
+  const wrap = document.getElementById('infolk-hub-content');
+  if (!wrap) return;
+  const items = hubData[acct] || [];
+  const acc = infolkAccounts[acct];
+
+  if (items.length === 0) {
+    wrap.innerHTML = `<div class="infolk-empty">
+      <div class="ie-icon">🛍</div>
+      <div class="empty-text">아직 상품이 없습니다.<br>쿠팡 자동연동 탭에서 딥링크를 생성 후 추가하세요.</div>
+    </div>`;
+    return;
+  }
+
+  let html = '';
+  if (acc?.url) {
+    html += `<div style="margin-bottom:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <a href="${escHtml(acc.url)}" target="_blank" class="btn btn-ghost btn-sm">🔗 인포크 페이지 열기</a>
+      <button class="btn btn-ghost btn-sm" onclick="cpText('${escHtml(acc.url)}', this)">📋 URL 복사</button>
+      <span style="font-size:11px;color:var(--t2)">상품 ${items.length}개 · 딥링크 생성 후 인포크에서 직접 추가하세요</span>
+    </div>`;
+  }
+
+  html += '<div class="infolk-grid">';
+  items.forEach(p => {
+    const catCC = CATS[p.cat]?.cc || 'cy';
+    const catLabel = CATS[p.cat]?.label || '기타';
+    const catEmoji = CATS[p.cat]?.emoji || '🛍';
+    html += `<div class="infolk-card">
+      <button class="infolk-del" onclick="removeFromHub(${acct},${p.id})" title="삭제">✕</button>
+      <div class="infolk-thumb">${p.img ? `<img src="${escHtml(p.img)}" onerror="this.parentNode.textContent='${catEmoji}'">` : catEmoji}</div>
+      <div class="infolk-name">${escHtml(p.name)}</div>
+      <div class="infolk-meta">
+        <span class="tag-cat" style="background:var(--${catCC}D,var(--cyD));color:var(--${catCC},var(--cy));border-color:var(--${catCC}M,var(--cyM))">${catLabel}</span>
+        ${p.price ? `<span>₩ ${escHtml(p.price)}</span>` : ''}
+        <span style="color:var(--t3)">${p.added}</span>
+      </div>
+      <div class="cp-row" style="margin-top:0">
+        <a class="infolk-open" href="${escHtml(p.deeplink)}" target="_blank" style="flex:1">🛒 쿠팡 구매</a>
+        <button class="cp-btn" onclick="cpText('${p.deeplink.replace(/'/g,"\\'")}', this)" title="딥링크 복사">📋</button>
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+  wrap.innerHTML = html;
+}
+
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+let ws = { cat:null, hook:null, char:'30f', setting:'car', camera:'push', mood:'ugc' };
+let calcCatKey = 'beauty';
+let agScenes = {};
+let wScenes = {};
+
+/* ══════════════════════════════════
+   SKILL CHANNEL
+══════════════════════════════════ */
+function initSkillGrid() {
+  const grid = document.getElementById('skill-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  Object.entries(SKILLS).forEach(([k, s]) => {
+    const div = document.createElement('div');
+    div.className = 'skill-card' + (activeSkillKey === k ? ' selected' : '');
+    div.id = 'skill-card-' + k;
+    const catLabels = s.cats.map(c => CATS[c]?.emoji + (CATS[c]?.label || c)).join(' · ');
+    div.innerHTML = `<div class="skill-icon">${s.icon}</div>
+      <div class="skill-name">${s.label}</div>
+      <div class="skill-cats">${catLabels}</div>`;
+    div.onclick = () => selectSkill(k);
+    grid.appendChild(div);
+  });
+}
+
+function selectSkill(k) {
+  activeSkillKey = k;
+  const sk = SKILLS[k];
+  // update grid selection
+  document.querySelectorAll('.skill-card').forEach(el => el.classList.remove('selected'));
+  document.getElementById('skill-card-'+k)?.classList.add('selected');
+
+  // render identity card
+  const catBadges = sk.cats.map(c => `<span class="tag-cat" style="background:var(--${CATS[c]?.cc||'cy'}D,var(--cyD));color:var(--${CATS[c]?.cc||'cy'},var(--cy));border-color:var(--${CATS[c]?.cc||'cy'}M,var(--cyM))">${CATS[c]?.emoji||''} ${CATS[c]?.label||c}</span>`).join(' ');
+  const card = document.getElementById('skill-identity-card');
+  card.innerHTML = `<div class="skill-identity-head">
+    <div class="skill-identity-icon">${sk.icon}</div>
+    <div class="skill-identity-info">
+      <div class="skill-identity-title">${sk.persona}</div>
+      <div class="skill-identity-sub">${sk.label} 채널 · ${catBadges}</div>
+    </div>
+  </div>
+  <div class="skill-strategy-grid">
+    <div class="skill-strat-card">
+      <div class="skill-strat-label">채널 앵글</div>
+      <div class="skill-strat-text">${sk.angle}</div>
+    </div>
+    <div class="skill-strat-card">
+      <div class="skill-strat-label">채널 훅 문구</div>
+      <div class="skill-strat-text">"${sk.hook}"</div>
+    </div>
+    <div class="skill-strat-card">
+      <div class="skill-strat-label">Veo 3 촬영 스타일</div>
+      <div class="skill-strat-text">${sk.style}</div>
+    </div>
+    <div class="skill-strat-card">
+      <div class="skill-strat-label">추천 카테고리</div>
+      <div class="skill-strat-text">${sk.cats.map(c => (CATS[c]?.emoji||'') + ' ' + (CATS[c]?.label||c)).join(' · ')}</div>
+    </div>
+  </div>`;
+
+  document.getElementById('skill-identity-section').style.display = '';
+
+  // update auto-gen badge
+  updateSkillBadge();
+}
+
+function updateSkillBadge() {
+  const wrap = document.getElementById('ag-skill-badge-wrap');
+  const badge = document.getElementById('ag-skill-badge');
+  if (!wrap || !badge) return;
+  if (activeSkillKey) {
+    const sk = SKILLS[activeSkillKey];
+    wrap.style.display = '';
+    badge.textContent = sk.icon + ' ' + sk.persona + ' 스킬 활성';
+  } else {
+    wrap.style.display = 'none';
+  }
+}
+
+function skillGoToAutoGen() {
+  navGo('auto-gen', document.querySelector('[data-sec=auto-gen]'));
+  updateSkillBadge();
+}
+
+function skillGoToRevenue() {
+  navGo('revenue', document.querySelector('[data-sec=revenue]'));
+  if (activeSkillKey) {
+    const sk = SKILLS[activeSkillKey];
+    // highlight relevant categories
+    setTimeout(() => {
+      sk.cats.forEach(catKey => {
+        const card = document.querySelector(`.rev-card[data-cat="${catKey}"]`);
+        if (card) card.style.borderColor = 'var(--cy)';
+      });
+    }, 200);
+  }
+}
+
+function skillGoToFish() {
+  navGo('fish', document.querySelector('[data-sec=fish]'));
+  // pre-fill fish textarea with skill hook
+  if (activeSkillKey) {
+    const sk = SKILLS[activeSkillKey];
+    const ta = document.getElementById('fish-text');
+    if (ta && !ta.value) ta.value = sk.hook + ' — ' + (document.getElementById('ag-name')?.value || '이 제품');
+    fishRefreshScenes();
+  }
+}
+
+/* ══════════════════════════════════
+   SCENE BUILDER
+══════════════════════════════════ */
+function buildScenes(catKey, name, price, benefit, shopUrl, hook, char, setting, camera, mood, skillKey) {
+  const c = CATS[catKey] || CATS.food;
+  const h = hook || c.par.hook;
+  const ch = char || c.par.char;
+  const se = setting || c.par.setting;
+  const ca = camera || c.par.camera;
+  const mo = mood || c.par.mood;
+
+  const charLabel = CHARS[ch]?.label || ch;
+  const setLabel = SETTINGS[se]?.label || se;
+  const camLabel = CAMERAS[ca]?.label || ca;
+  const moodLabel = MOODS[mo]?.label || mo;
+  const hookDef = HOOKS[h] || HOOKS.discovery;
+
+  // 스킬채널 맥락
+  const sk = skillKey ? SKILLS[skillKey] : null;
+  const skillPrefix = sk ? `[${sk.persona} 스킬채널 / Google Flow Veo 3]\n` : '';
+  const skillAngle = sk ? `\n🎓 스킬 앵글: ${sk.angle}\n🎙 채널훅: "${sk.hook}"` : '';
+  const veo3Style = sk ? `\n⚡ Veo 3 Style: ${sk.veo3}` : '';
+
+  const priceText = price ? `, 가격: ${price}` : '';
+  const benefitText = benefit ? `, 혜택: ${benefit}` : '';
+  const urlText = shopUrl ? `\n구매 링크: ${shopUrl}` : '';
+  const ctaText = c.ctas[0] || '지금 구매하기';
+
+  const hookLines = {
+    sound:    `${skillPrefix}[SCENE 1 / HOOK — 0-3s | 클립 1-2 × 1.5s | 9:16 Vertical]\n${name} ${c.emoji} — ${setLabel} 공간에서 ${charLabel}이 제품을 집어들며 첫 소리훅 시작.\n클립1(0-1.5s): 손이 제품 집어드는 순간 클로즈업 | 클립2(1.5-3s): 얼굴 리액션샷\n카메라: ${camLabel} | 오디오: ASMR 질감음 선명 (포장 뜯는 소리 or 음식 소리)\n조명: 자연광 + 측면 리플렉터 | 분위기: ${moodLabel}\n자막: "${name} 직접 사봤어요" (0.8s 페이드인) | Duration per clip: 1.5s\n✦ 7-Element: ${name} · ${setLabel}에서 집어들기 · ${camLabel} · ${setLabel} · 자연광 · ${moodLabel} · ASMR`,
+    discovery:`${skillPrefix}[SCENE 1 / HOOK — 0-3s | 클립 1-2 × 1.5s | 9:16 Vertical]\n${name} ${c.emoji} — ${charLabel}이 제품을 들고 카메라 정면을 바라보며 궁금증 유발.\n클립1(0-1.5s): 제품 뒤에서 등장 순간 | 클립2(1.5-3s): 정면 응시 + 자막\n카메라: ${camLabel} | 오디오: 미스터리 BGM 페이드인\n조명: 소프트박스 정면 | 분위기: ${moodLabel}\n자막: "이거 진짜 대박이에요 ⚡" (즉시 표시) | Duration per clip: 1.5s\n✦ 7-Element: ${charLabel} · 카메라 응시 · ${camLabel} · ${setLabel} · 소프트박스 · ${moodLabel} · 미스터리 BGM`,
+    price:    `${skillPrefix}[SCENE 1 / HOOK — 0-3s | 클립 1-2 × 1.5s | 9:16 Vertical]\n${name} ${c.emoji} — 가격 태그 클로즈업. 충격적 가격 공개 순간 포착.\n클립1(0-1.5s): 가격 태그 익스트림 클로즈업 | 클립2(1.5-3s): 충격 리액션 얼굴\n카메라: 익스트림 클로즈업 | 오디오: 충격음 효과\n조명: 하이라이트 스팟 | 분위기: ${moodLabel}\n자막: "${price || '이 가격??'} 실화?" (빨간 텍스트, 1s) | Duration per clip: 1.5s\n✦ 7-Element: 가격 태그 · 손가락 포인트 · 익스트림CU · ${setLabel} · 스팟라이트 · ${moodLabel} · 충격음`,
+    compare:  `${skillPrefix}[SCENE 1 / HOOK — 0-3s | 클립 1-2 × 1.5s | 9:16 Vertical]\n${name} ${c.emoji} vs 기존 제품 — 두 제품 나란히 비교 샷. 어느 쪽이 이길지 궁금증 유발.\n클립1(0-1.5s): 두 제품 투샷 — 어느 쪽? 자막 | 클립2(1.5-3s): 제품 전환 비교 애니\n카메라: 투샷 고정 | 오디오: "과연 어느 쪽?" 보이스오버\n조명: 균등 소프트라이트 | 분위기: ${moodLabel}\n자막: "어느 게 더 좋을까? 🤔" (1.5s) | Duration per clip: 1.5s\n✦ 7-Element: 두 제품 · 나란히 배치 · 투샷 고정 · ${setLabel} · 균등조명 · ${moodLabel} · 긴장감 BGM`,
+    problem:  `${skillPrefix}[SCENE 1 / HOOK — 0-3s | 클립 1-2 × 1.5s | 9:16 Vertical]\n일상 문제 상황 연출 — ${charLabel}이 불편한 표정으로 문제 상황 묘사.\n클립1(0-1.5s): 문제 상황 시연 샷 | 클립2(1.5-3s): 좌절 리액션 얼굴 클로즈업\n카메라: ${camLabel} 리액션 샷 | 오디오: 좌절 사운드\n조명: 일반 실내광 | 분위기: ${moodLabel}\n자막: "이거 나만 겪나요? 😫" (0.5s) | Duration per clip: 1.5s\n✦ 7-Element: ${charLabel} · 좌절 리액션 · ${camLabel} · 일상 공간 · 실내광 · 공감 무드 · 좌절음`
+  };
+
+  const s0 = hookLines[h] || hookLines.discovery;
+
+  const s1 = `[SCENE 2 / PRODUCT CU — 3-4.5s | 클립 3 × 1.5s | 9:16 Vertical]\n${name} ${c.emoji} 클로즈업 — 핵심 특징 부각. Duration: 1.5s\n클립3(3-4.5s): 제품 익스트림 클로즈업 → 서서히 풀백 (1.5s 1컷)\n카메라: 매크로 렌즈 느낌 극단 클로즈업 → 천천히 풀백\n오디오: 잔잔한 배경음악 유지${priceText}${benefitText}\n조명: 링라이트 or 박스라이트 — 반사 없이 선명\n자막: ${benefit || '핵심 특징'} 텍스트 오버레이 | Duration per clip: 1.5s\n✦ 7-Element: ${name} 클로즈업 · 천천히 풀백 · 매크로CU · 스튜디오 느낌 · 링라이트 · 깔끔 · 제품 사운드`;
+
+  const s2 = `${skillPrefix}[SCENE 3 / DEMO — 4.5-12s | 클립 4-8 × 1.5s × 5컷 | 9:16 Vertical]${skillAngle}\n${charLabel}이 ${setLabel}에서 ${name}을 실제 사용 시연. 혜택 체감.\n클립4(4.5-6s): 제품 꺼내기/열기 액션 | 클립5(6-7.5s): 실제 사용 핸즈온\n클립6(7.5-9s): 사용 중 얼굴 리액션 | 클립7(9-10.5s): 제품 효과/결과 클로즈업\n클립8(10.5-12s): 만족 표정 + 제품 들어보이기\n카메라: ${camLabel} 추적 → 반응샷 인서트 | Duration per clip: 1.5s\n오디오: 사용 효과음 + ${moodLabel} BGM\n조명: 3점 조명 (키/필/백)\n자막: "${benefitText || name} 직접 사용해봤어요!" → 결과 텍스트\n✦ 7-Element: ${charLabel} · 실제 사용 · ${camLabel} · ${setLabel} · 3점조명 · ${moodLabel} · 사용음`;
+
+  const s3 = `${skillPrefix}[SCENE 4 / CTA — 12-15s | 클립 9-10 × 1.5s | 9:16 Vertical]${veo3Style}\n${sk ? `[${sk.persona} 전문가 추천] ` : ''}${charLabel} 카메라 정면 응시. ${ctaText} 행동 유도.\n클립9(12-13.5s): 제품 들고 정면 미디엄샷 — CTA 자막 등장 | 클립10(13.5-15s): 손가락 아래 가리키기 + 링크 화살표\n카메라: 미디엄샷 고정 | 오디오: 클릭 효과음 | Duration per clip: 1.5s\n조명: 클로즈업 포트레이트 라이트\n자막: "${ctaText}" + 화살표 애니메이션${urlText}\n해시태그: ${c.ctas.join(' · ')}  ${catKey === 'food' ? '#쿠팡 #신선식품' : catKey === 'beauty' ? '#올리브영 #뷰티' : catKey === 'fashion' ? '#무신사 #패션' : '#쇼핑 #추천'}\n✦ 7-Element: ${charLabel} · 정면 응시 · 미디엄 고정 · ${setLabel} · 포트레이트라이트 · CTA 무드 · 클릭음`;
+
+  return {s0, s1, s2, s3};
+}
+
+/* ══════════════════════════════════
+   AUTO GENERATOR
+══════════════════════════════════ */
+let agCatKey = 'food';
+
+function agDetect() {
+  const name = document.getElementById('ag-name').value;
+  const badge = document.getElementById('ag-detect-badge');
+  if (!name.trim()) { badge.textContent = '입력 대기 중…'; badge.style.cssText = ''; return; }
+  const found = smartDetect(name);
+  agCatKey = found || 'food';
+  const cat = CATS[agCatKey];
+  badge.textContent = cat.emoji + ' ' + cat.label;
+  badge.style.background = `var(--${cat.cc}D,var(--cyD))`;
+  badge.style.color = `var(--${cat.cc},var(--cy))`;
+  badge.style.borderColor = `var(--${cat.cc}M,var(--cyM))`;
+}
+
+function agHandleFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    document.getElementById('ag-drop-inner').innerHTML =
+      `<img src="${ev.target.result}" class="preview-img"><div class="drop-text">이미지 업로드됨</div>`;
+  };
+  reader.readAsDataURL(file);
+}
+
+function agHandleDrop(e) {
+  e.preventDefault();
+  document.getElementById('ag-drop').classList.remove('drag');
+  const file = e.dataTransfer.files[0];
+  if (!file || !file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    document.getElementById('ag-drop-inner').innerHTML =
+      `<img src="${ev.target.result}" class="preview-img"><div class="drop-text">이미지 업로드됨</div>`;
+  };
+  reader.readAsDataURL(file);
+}
+
+function agGen() {
+  const name = document.getElementById('ag-name').value.trim();
+  if (!name) { alert('제품명을 입력해주세요'); return; }
+  const price = document.getElementById('ag-price').value.trim();
+  const benefit = document.getElementById('ag-benefit').value.trim();
+  const url = document.getElementById('ag-url').value.trim();
+
+  agScenes = buildScenes(agCatKey, name, price, benefit, url, null, null, null, null, null, activeSkillKey);
+  const cat = CATS[agCatKey];
+
+  document.getElementById('ag-out-title').innerHTML =
+    `생성 결과 <span class="card-sub">${cat.emoji} ${cat.label}</span>`;
+
+  const grid = document.getElementById('ag-scenes-grid');
+  grid.innerHTML = '';
+  const labels = ['🔥 HOOK · 클립1-2 (0-3s)','📸 PRODUCT CU · 클립3 (3-4.5s)','🎬 DEMO · 클립4-8 (4.5-12s)','✅ CTA · 클립9-10 (12-15s)'];
+  const cls = ['s0','s1','s2','s3'];
+  ['s0','s1','s2','s3'].forEach((k,i) => {
+    const div = document.createElement('div');
+    div.className = 'scene-card';
+    div.innerHTML = `<div class="scene-head">
+      <span class="scene-label ${cls[i]}">${labels[i]}</span>
+      <button class="cp-btn" id="agcp-${k}" onclick="agCpScene('${k}')">복사</button>
+    </div>
+    <div class="scene-text">${escHtml(agScenes[k])}</div>`;
+    grid.appendChild(div);
+  });
+
+  document.getElementById('ag-tip-text').textContent = cat.rt;
+  document.getElementById('ag-output').style.display = '';
+}
+
+function agCpScene(k) {
+  cpText(agScenes[k], document.getElementById('agcp-'+k));
+}
+
+function agCopyAll() {
+  const all = `=== ${document.getElementById('ag-name').value} 4-씬 프롬프트 패키지 ===\n\n` +
+    ['s0','s1','s2','s3'].map(k => agScenes[k]).join('\n\n---\n\n');
+  cpText(all, null);
+}
+
+/* ══════════════════════════════════
+   WIZARD
+══════════════════════════════════ */
+function initWizardCatGrid() {
+  const grid = document.getElementById('wiz-cat-grid');
+  grid.innerHTML = '';
+  Object.entries(CATS).forEach(([k,c]) => {
+    const div = document.createElement('div');
+    div.className = 'cat-card' + (ws.cat === k ? ' selected' : '');
+    div.id = 'wcat-'+k;
+    div.onclick = () => wSelCat(k);
+    div.innerHTML = `<div class="cat-emoji">${c.emoji}</div>
+      <div class="cat-name">${c.label}</div>
+      <div class="cat-rev">${c.rev.est}</div>`;
+    grid.appendChild(div);
+  });
+}
+
+function wSelCat(k) {
+  ws.cat = k;
+  document.querySelectorAll('.cat-card').forEach(el => el.classList.remove('selected'));
+  document.getElementById('wcat-'+k)?.classList.add('selected');
+}
+
+function wNext(step) {
+  if (step === 1) {
+    if (!ws.cat) { alert('카테고리를 선택하세요'); return; }
+    setStep(2);
+  } else if (step === 2) {
+    const name = document.getElementById('w-name').value.trim();
+    if (!name) { alert('제품명을 입력하세요'); return; }
+    renderHooks();
+    setStep(3);
+  } else if (step === 3) {
+    if (!ws.hook) { alert('훅 유형을 선택하세요'); return; }
+    initChips();
+    setStep(4);
+  }
+}
+
+function wBack(step) { setStep(step - 1); }
+
+function setStep(n) {
+  for (let i=1;i<=5;i++) {
+    const el = document.getElementById('ws'+i);
+    const sb = document.getElementById('sb'+i);
+    if (el) el.classList.toggle('show', i===n);
+    if (sb) {
+      sb.className = 'step-item' + (i<n?' done':i===n?' cur':'');
+    }
+  }
+}
+
+function renderHooks() {
+  const cat = CATS[ws.cat];
+  const grid = document.getElementById('wiz-hook-grid');
+  grid.innerHTML = '';
+  Object.entries(HOOKS).forEach(([k,h]) => {
+    const rec = cat.bh.includes(k);
+    const div = document.createElement('div');
+    div.className = 'hook-card' + (rec?' rec':'') + (ws.hook===k?' selected':'');
+    div.id = 'whk-'+k;
+    div.onclick = () => wSelHook(k);
+    div.innerHTML = `<div class="hook-icon">${h.icon}</div>
+      <div class="hook-name">${h.name}</div>
+      <div class="hook-desc">${h.desc}</div>
+      ${rec?`<div class="hook-rec">★ 이 카테고리 추천</div>`:''}`;
+    grid.appendChild(div);
+  });
+  if (!ws.hook) {
+    const defHook = cat.bh[0];
+    wSelHook(defHook);
+  }
+}
+
+function wSelHook(k) {
+  ws.hook = k;
+  document.querySelectorAll('.hook-card').forEach(el => el.classList.remove('selected'));
+  document.getElementById('whk-'+k)?.classList.add('selected');
+}
+
+function initChips() {
+  makeChips('ch-char', CHARS, ws.char, 'char');
+  makeChips('ch-setting', SETTINGS, ws.setting, 'setting');
+  makeChips('ch-camera', CAMERAS, ws.camera, 'camera');
+  makeChips('ch-mood', MOODS, ws.mood, 'mood');
+}
+
+function makeChips(containerId, data, selected, key) {
+  const c = document.getElementById(containerId);
+  c.innerHTML = '';
+  Object.entries(data).forEach(([k,v]) => {
+    const btn = document.createElement('button');
+    btn.className = 'chip' + (k===selected?' on':'');
+    btn.id = 'chip-'+key+'-'+k;
+    btn.textContent = v.label;
+    btn.title = v.desc;
+    btn.onclick = () => wChip(key, k, btn);
+    c.appendChild(btn);
+  });
+}
+
+function wChip(key, k, el) {
+  ws[key] = k;
+  const prefix = 'chip-'+key+'-';
+  document.querySelectorAll('[id^="'+prefix+'"]').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+}
+
+function applyOpt() {
+  if (!ws.cat) return;
+  const p = CATS[ws.cat].par;
+  ws.char = p.char; ws.setting = p.setting; ws.camera = p.camera; ws.mood = p.mood;
+  initChips();
+}
+
+function wBuild() {
+  const name = document.getElementById('w-name').value.trim();
+  const price = document.getElementById('w-price').value.trim();
+  const benefit = document.getElementById('w-benefit').value.trim();
+  const url = document.getElementById('w-url').value.trim();
+
+  wScenes = buildScenes(ws.cat, name, price, benefit, url, ws.hook, ws.char, ws.setting, ws.camera, ws.mood);
+  const cat = CATS[ws.cat];
+  document.getElementById('w-out-title').innerHTML =
+    `생성 결과 <span class="card-sub">${cat.emoji} ${cat.label}</span>`;
+
+  const grid = document.getElementById('wiz-scenes-grid');
+  grid.innerHTML = '';
+  const labels = ['🔥 HOOK · 클립1-2 (0-3s)','📸 PRODUCT CU · 클립3 (3-4.5s)','🎬 DEMO · 클립4-8 (4.5-12s)','✅ CTA · 클립9-10 (12-15s)'];
+  const cls = ['s0','s1','s2','s3'];
+  ['s0','s1','s2','s3'].forEach((k,i) => {
+    const div = document.createElement('div');
+    div.className = 'scene-card';
+    div.innerHTML = `<div class="scene-head">
+      <span class="scene-label ${cls[i]}">${labels[i]}</span>
+      <button class="cp-btn" id="wcp-${k}" onclick="wCpScene('${k}')">복사</button>
+    </div>
+    <div class="scene-text">${escHtml(wScenes[k])}</div>`;
+    grid.appendChild(div);
+  });
+  setStep(5);
+}
+
+function wCpScene(k) {
+  cpText(wScenes[k], document.getElementById('wcp-'+k));
+}
+
+function wCopyAll() {
+  const all = ['s0','s1','s2','s3'].map(k => wScenes[k]).join('\n\n---\n\n');
+  cpText(all, null);
+}
+
+function wReset() {
+  ws = {cat:null,hook:null,char:'30f',setting:'car',camera:'push',mood:'ugc'};
+  document.getElementById('w-name').value = '';
+  document.getElementById('w-price').value = '';
+  document.getElementById('w-benefit').value = '';
+  document.getElementById('w-url').value = '';
+  initWizardCatGrid();
+  setStep(1);
+}
+
+/* ══════════════════════════════════
+   REVENUE GRID
+══════════════════════════════════ */
+function initRevGrid() {
+  const grid = document.getElementById('rev-grid');
+  grid.innerHTML = '';
+  const badgeCC = {wa:'badge-wa',pk:'badge-pk',cy:'badge-cy',pu:'badge-pu',gn:'badge-gn'};
+  Object.entries(CATS).forEach(([k,c]) => {
+    const cc = badgeCC[c.cc] || 'badge-cy';
+    const div = document.createElement('div');
+    div.className = 'rev-card';
+    div.setAttribute('data-cat', k);
+    const platTags = c.rev.pl.map(p=>`<span class="plat-tag ${cc}">${p}</span>`).join('');
+    const catLabel = LANG === 'en' ? (c.label_en || c.label) : c.label;
+    const catTip = LANG === 'en' ? (c.rt_en || c.rt) : c.rt;
+    div.innerHTML = `<div class="rev-header">
+        <span class="rev-emoji">${c.emoji}</span>
+        <div><div class="rev-name">${catLabel}</div>
+        <div class="rev-est badge ${cc}" style="margin-top:3px">${c.rev.est}</div></div>
+      </div>
+      <div class="rev-row"><span class="rev-key">${t('CPC 단가','CPC Rate')}</span><span class="rev-val">${c.rev.cpc}</span></div>
+      <div class="rev-row"><span class="rev-key">${t('전환율','Conv. Rate')}</span><span class="rev-val">${c.rev.cr}</span></div>
+      <div class="rev-row"><span class="rev-key">${t('평균 주문금액','Avg. Order Value')}</span><span class="rev-val">${c.rev.aov}</span></div>
+      <div class="platform-list">${platTags}</div>
+      <div class="rev-tip">${catTip}</div>
+      <div class="rev-card-cta">${t('🎯 이 카테고리로 콘텐츠 생성 →','🎯 Generate content for this category →')}</div>`;
+    div.onclick = () => {
+      navGo('wizard', document.querySelector('[data-sec="wizard"]'));
+      setTimeout(() => { wSelCat(k); document.getElementById('ws1')?.scrollIntoView({behavior:'smooth'}); }, 120);
+    };
+    grid.appendChild(div);
+  });
+}
+
+/* ══════════════════════════════════
+   CALCULATOR
+══════════════════════════════════ */
+function initCalcCats() {
+  const row = document.getElementById('calc-cat-row');
+  row.innerHTML = '';
+  Object.entries(CATS).forEach(([k,c]) => {
+    const btn = document.createElement('button');
+    btn.className = 'calc-cat-btn' + (k===calcCatKey?' on':'');
+    btn.id = 'ccb-'+k;
+    btn.textContent = c.emoji+' '+c.label;
+    btn.onclick = () => { calcCatKey = k; calcCat(k, btn); };
+    row.appendChild(btn);
+  });
+}
+
+function calcCat(k, el) {
+  calcCatKey = k;
+  document.querySelectorAll('.calc-cat-btn').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  calcUpdate();
+}
+
+function calcUpdate() {
+  const views = +document.getElementById('sl-views').value;
+  const vids = +document.getElementById('sl-vids').value;
+  const ctr = +document.getElementById('sl-ctr').value;
+  document.getElementById('sv-views').textContent = fmt(views) + '회';
+  document.getElementById('sv-vids').textContent = vids + '개';
+  document.getElementById('sv-ctr').textContent = ctr.toFixed(1) + '%';
+
+  const d = CALC_DATA[calcCatKey];
+  const clicks = Math.round(views * ctr / 100);
+  const conv = Math.round(clicks * d.cr);
+  const affRev = Math.round(conv * d.aov * d.comm);
+  const ytRev = Math.round(views / 1000 * d.rpm);
+  const total = affRev + ytRev;
+
+  document.getElementById('r-clicks').textContent = fmt(clicks) + '회';
+  document.getElementById('r-conv').textContent = fmt(conv) + '건';
+  document.getElementById('r-aff').textContent = '₩' + fmt(affRev);
+  document.getElementById('r-yt').textContent = '₩' + fmt(ytRev);
+  document.getElementById('r-total').textContent = '₩' + fmt(total);
+
+  const cat = CATS[calcCatKey];
+  document.getElementById('calc-tip').textContent =
+    `${cat.emoji} ${cat.label}: ${vids}개 영상, 총 ${fmt(views)}회 조회 기준 예상 수익입니다. ` +
+    `전환율 ${(d.cr*100).toFixed(1)}%, 평균 수수료 ${(d.comm*100).toFixed(1)}% 적용. ` + cat.rt;
+}
+
+/* ══════════════════════════════════
+   PLATFORM GUIDE
+══════════════════════════════════ */
+function initPlatGrid() {
+  const grid = document.getElementById('plat-grid');
+  grid.innerHTML = '';
+  PLATS.forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'plat-card';
+    const rows = p.rows.map(r => `<div class="plat-item"><span class="plat-dot">›</span><span class="plat-txt">${r}</span></div>`).join('');
+    div.innerHTML = `<div class="plat-header">
+        <span class="plat-icon">${p.icon}</span>
+        <div><div class="plat-title">${p.name}</div><div class="plat-subtitle">${p.sub}</div></div>
+      </div>
+      <div class="plat-rows">${rows}</div>`;
+    grid.appendChild(div);
+  });
+}
+
+function initWeekly() {
+  const cal = document.getElementById('weekly-cal');
+  cal.innerHTML = '';
+  WEEKLY.forEach(w => {
+    const div = document.createElement('div');
+    div.style.cssText = 'text-align:center;padding:10px 4px;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs)';
+    div.innerHTML = `<div style="font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--cy)">${w.day}</div>
+      <div style="font-size:11px;font-weight:600;color:var(--t1);margin:4px 0">${w.focus}</div>
+      <div style="font-size:10px;color:var(--t2);line-height:1.4">${w.note}</div>`;
+    cal.appendChild(div);
+  });
+}
+
+function initGolden() {
+  const wrap = document.getElementById('golden-rules');
+  wrap.innerHTML = '';
+  GOLDEN.forEach(g => {
+    const div = document.createElement('div');
+    div.style.cssText = 'display:flex;gap:12px;padding:12px 14px;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs)';
+    div.innerHTML = `<span style="font-size:20px;flex-shrink:0">${g.icon}</span>
+      <div><div style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:3px">${g.title}</div>
+      <div style="font-size:12px;color:var(--t2);line-height:1.5">${g.desc}</div></div>`;
+    wrap.appendChild(div);
+  });
+}
+
+/* ══════════════════════════════════
+   PSYCH PROFILES + CTA5
+══════════════════════════════════ */
+function initCta5() {
+  const grid = document.getElementById('cta5-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  CTA5.forEach(c => {
+    const statsHtml = c.stats.map(s =>
+      `<div style="text-align:center;padding:6px 4px;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);flex:1">
+        <div style="font-family:'DM Mono',monospace;font-size:14px;font-weight:500;color:var(--${c.color})">${s.v}</div>
+        <div style="font-size:9px;color:var(--t3);margin-top:1px">${s.k}</div>
+      </div>`
+    ).join('');
+    const div = document.createElement('div');
+    div.style.cssText = 'background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:8px;border-top:3px solid var(--'+c.color+')';
+    div.innerHTML = `
+      <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--${c.color})">"${c.word}"</div>
+      <div style="font-size:11px;color:var(--t2);font-weight:600">${c.trigger}</div>
+      <div style="display:flex;gap:4px">${statsHtml}</div>
+      <div style="font-size:10px;color:var(--t2);line-height:1.5">${c.how}</div>
+      <div style="font-size:10px;color:var(--t3);background:var(--s2);padding:6px 8px;border-radius:var(--rs);line-height:1.5;font-style:italic">${c.ex}</div>`;
+    grid.appendChild(div);
+  });
+}
+
+function initPsychGrid() {
+  const grid = document.getElementById('psych-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  PSYCH.forEach(p => {
+    const statsHtml = p.stats.map(s =>
+      `<div class="psych-stat"><div class="psych-stat-key">${s.key}</div><div class="psych-stat-val" style="color:var(--${s.c})">${s.val}</div></div>`
+    ).join('');
+    const hookHtml = p.hooks.map(h =>
+      `<span class="psych-tag" style="border-color:var(--${p.cc});color:var(--${p.cc})">${h}</span>`
+    ).join('');
+    const catHtml = p.cats.map(c => `<span class="psych-tag">${c}</span>`).join('');
+    const div = document.createElement('div');
+    div.className = 'psych-card';
+    div.id = 'psych-' + p.num;
+    div.style.setProperty('--_ac', 'var(--' + p.cc + ')');
+    div.innerHTML = `
+      <div class="psych-header">
+        <div class="psych-num">${p.num}</div>
+        <span style="font-size:26px">${p.emoji}</span>
+      </div>
+      <div class="psych-type">${p.type}</div>
+      <div class="psych-sub">${p.sub}</div>
+      <div style="font-size:10px;color:var(--t3);margin-bottom:8px;font-family:'DM Mono',monospace;letter-spacing:.3px">TRIGGER — ${p.kw}</div>
+      <div class="psych-stats">${statsHtml}</div>
+      <div style="font-size:10px;color:var(--t3);font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px">추천 훅</div>
+      <div class="psych-tags">${hookHtml}</div>
+      <div style="font-size:10px;color:var(--t3);font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin:6px 0 4px">추천 카테고리</div>
+      <div class="psych-tags">${catHtml}</div>
+      <div class="psych-script">${p.script}</div>
+      <div style="margin-top:8px;font-size:10px;color:var(--t3);line-height:1.5;padding:6px 8px;background:var(--s2);border-radius:var(--rs)">💡 ${p.tip}</div>
+      <div style="margin-top:8px;display:flex;justify-content:flex-end">
+        <button class="btn btn-ghost btn-sm" onclick="applyPsychToWizard('${p.hooks[0]}', this)" style="font-size:10px">🎯 이 유형으로 생성</button>
+      </div>`;
+    grid.appendChild(div);
+  });
+}
+
+function applyPsychToWizard(hookKey, btn) {
+  const hookMap = {'발견기쁨':'discovery','비교반전':'compare','문제공감':'problem','소리훅':'sound','가격충격':'price'};
+  const key = hookMap[hookKey] || 'discovery';
+  navGo('wizard', document.querySelector('[data-sec="wizard"]'));
+  setTimeout(() => {
+    ws.hook = key;
+    renderHooks();
+    document.querySelector('.step-screen.show')?.scrollIntoView({behavior:'smooth'});
+  }, 150);
+}
+
+/* ══════════════════════════════════
+   FISH AUDIO TTS
+══════════════════════════════════ */
+const FISH_CTA_TEXTS = [
+  {label:'나도', text:'나도 써봐야겠다! 링크는 프로필에 있어요.'},
+  {label:'진짜?', text:'진짜예요? 네, 진짜입니다. 직접 확인해보세요!'},
+  {label:'어디서', text:'어디서 사냐고요? 프로필 링크에 다 있어요!'},
+  {label:'이거다', text:'이거다 싶었어요. 여러분도 이거다 싶으면 지금 바로 링크 클릭!'},
+  {label:'잠깐!', text:'잠깐! 이 성분 꼭 확인하세요. 지금 재고 확인하러 가세요.'}
+];
+
+let _fishDialect = 'std';
+
+function fishSaveKey() {
+  const v = document.getElementById('fish-key-input').value.trim();
+  if (!v) return;
+  try { localStorage.setItem('fish_api_key', v); } catch(e) {}
+  document.getElementById('fish-key-input').value = '';
+  fishUpdateStatus();
+}
+
+function fishClearKey() {
+  try { localStorage.removeItem('fish_api_key'); } catch(e) {}
+  fishUpdateStatus();
+}
+
+function fishGetKey() {
+  try { return localStorage.getItem('fish_api_key') || ''; } catch(e) { return ''; }
+}
+
+function fishUpdateStatus() {
+  const el = document.getElementById('fish-status-badge');
+  if (!el) return;
+  const key = fishGetKey();
+  if (key) {
+    el.innerHTML = '<span class="badge badge-gn">✓ 키 저장됨</span>';
+  } else {
+    el.innerHTML = '<span class="badge badge-wa">키 없음</span>';
+  }
+}
+
+function fishSaveVoice(dialectId, val) {
+  try { localStorage.setItem('fish_voice_' + dialectId, val); } catch(e) {}
+}
+
+function fishLoadVoiceIds() {
+  ['std','gang','jeon','busa','chun'].forEach(d => {
+    const el = document.getElementById('voice-' + d);
+    if (el) {
+      try { el.value = localStorage.getItem('fish_voice_' + d) || ''; } catch(e) {}
+    }
+  });
+}
+
+function fishGetVoiceId(dialectId) {
+  try { return localStorage.getItem('fish_voice_' + dialectId) || ''; } catch(e) { return ''; }
+}
+
+function fishSelectDialect(d, btn) {
+  _fishDialect = d;
+  document.querySelectorAll('#dialect-tabs .chip').forEach(c => c.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('.fish-dialect-panel').forEach(p => {
+    p.hidden = (p.dataset.d !== d);
+  });
+}
+
+function fishPasteLastHook() {
+  const ta = document.getElementById('fish-script-text');
+  if (!ta) return;
+  const s0 = document.getElementById('out-s0');
+  if (s0) {
+    ta.value = s0.textContent || '';
+  } else {
+    const hookEls = document.querySelectorAll('.scene-text');
+    if (hookEls.length) ta.value = hookEls[0].textContent || '';
+  }
+}
+
+async function fishTTS(text, playerId, btn) {
+  text = (text || '').trim();
+  if (!text) { alert('변환할 텍스트를 입력하세요.'); return; }
+  const key = fishGetKey();
+  if (!key) { alert('Fish Audio API 키를 먼저 저장해주세요.'); return; }
+  const voiceId = fishGetVoiceId(_fishDialect);
+  if (btn) { btn.disabled = true; btn.textContent = '생성 중...'; }
+  const playerEl = document.getElementById(playerId);
+  if (playerEl) playerEl.innerHTML = '<span style="font-size:12px;color:var(--t2)">음성 생성 중...</span>';
+
+  const payload = { text, format: 'mp3', mp3_bitrate: 128, normalize: true, latency: 'normal' };
+  if (voiceId) payload.reference_id = voiceId;
+
+  let body, contentType;
+  try {
+    if (typeof msgpack !== 'undefined') {
+      body = msgpack.encode(payload);
+      contentType = 'application/msgpack';
+    } else { throw new Error('no msgpack'); }
+  } catch(e) {
+    body = JSON.stringify(payload);
+    contentType = 'application/json';
+  }
+
+  try {
+    const res = await fetch('https://api.fish.audio/v1/tts', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': contentType },
+      body
+    });
+    if (!res.ok) {
+      const err = await res.text().catch(() => res.status);
+      throw new Error('HTTP ' + res.status + ': ' + err);
+    }
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    if (playerEl) playerEl.innerHTML = `<div class="audio-wrap"><audio controls style="width:100%" src="${url}"></audio></div>`;
+  } catch(e) {
+    let msg = e.message || String(e);
+    if (msg.includes('CORS') || msg.includes('Failed to fetch') || msg.includes('NetworkError')) {
+      msg = 'CORS 오류: 브라우저 직접 호출이 차단되었습니다. fish.audio 대시보드에서 직접 사용하거나 서버 프록시를 설정하세요.';
+    }
+    if (playerEl) playerEl.innerHTML = `<div class="err-box">오류: ${msg}</div>`;
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = btn.dataset.origText || '🎙 음성 생성'; }
+  }
+}
+
+function initFishCtaList() {
+  const list = document.getElementById('fish-cta-list');
+  if (!list) return;
+  list.innerHTML = '';
+  FISH_CTA_TEXTS.forEach((c, i) => {
+    const pid = 'fish-cta-player-' + i;
+    const div = document.createElement('div');
+    div.style.cssText = 'display:flex;flex-direction:column;gap:6px;padding:10px;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs)';
+    div.innerHTML = `<div style="display:flex;align-items:center;gap:10px">
+      <span class="badge badge-cy">${c.label}</span>
+      <span style="font-size:12px;color:var(--t2);flex:1">${c.text}</span>
+      <button class="tts-btn" data-orig-text="🎙 듣기" onclick="fishTTS(FISH_CTA_TEXTS[${i}].text,'${pid}',this)">🎙 듣기</button>
+    </div>
+    <div id="${pid}"></div>`;
+    list.appendChild(div);
+  });
+}
+
+function fishRefreshScenes() {
+  const list = document.getElementById('fish-scene-list');
+  if (!list) return;
+  const scenes = [
+    {id:'out-s0', label:'HOOK', cls:'s0'},
+    {id:'out-s1', label:'CU',   cls:'s1'},
+    {id:'out-s2', label:'DEMO', cls:'s2'},
+    {id:'out-s3', label:'CTA',  cls:'s3'}
+  ];
+  let found = 0;
+  const html = scenes.map(s => {
+    const el = document.getElementById(s.id);
+    const text = (el && el.textContent || '').trim();
+    if (!text) return '';
+    found++;
+    const pid = 'fish-scene-player-' + s.id;
+    return `<div style="display:flex;flex-direction:column;gap:6px;padding:10px;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs)">
+      <div style="display:flex;align-items:flex-start;gap:10px">
+        <span class="scene-label ${s.cls}">${s.label}</span>
+        <span style="font-size:12px;color:var(--t2);flex:1;line-height:1.6">${text.slice(0,120)}${text.length>120?'…':''}</span>
+        <button class="tts-btn" data-orig-text="🎙 음성" onclick="fishTTS(document.getElementById('${s.id}').textContent,'${pid}',this)">🎙 음성</button>
+      </div>
+      <div id="${pid}"></div>
+    </div>`;
+  }).filter(Boolean).join('');
+  list.innerHTML = found ? html : '<div class="empty"><div class="empty-icon">🎬</div><div class="empty-text">마법사에서 씬을 먼저 생성해주세요.</div></div>';
+}
+
+/* ══════════════════════════════════
+   CAROUSEL CARDS
+══════════════════════════════════ */
+const CAROUSEL_THEMES = {
+  dark:     {bg:'#0D1117',card:'#161B22',accent:'#38BDF8',fg:'#EEF2FF',sub:'#94A3B8',border:'#30363D'},
+  light:    {bg:'#F1F5F9',card:'#FFFFFF',accent:'#0EA5E9',fg:'#0F172A',sub:'#475569',border:'#E2E8F0'},
+  gradient: {bg:'linear-gradient(135deg,#0F0C29,#302B63,#24243e)',card:'rgba(255,255,255,0.08)',accent:'#F472B6',fg:'#FFFFFF',sub:'rgba(255,255,255,0.65)',border:'rgba(255,255,255,0.15)'},
+  cyber:    {bg:'#050010',card:'#0A0020',accent:'#00F5D4',fg:'#FFFFFF',sub:'#A0AEC0',border:'#00F5D4'}
+};
+
+const CAROUSEL_LABELS = {s0:['🔥','HOOK','훅'],s1:['✨','CLOSE UP','클로즈업'],s2:['📱','DEMO','데모'],s3:['🎯','CTA','행동유도']};
+
+function carouselRefresh() {
+  const scenes = [
+    {id:'out-s0',key:'s0'},{id:'out-s1',key:'s1'},{id:'out-s2',key:'s2'},{id:'out-s3',key:'s3'}
+  ];
+  const activeScenes = scenes.map(s => {
+    const el = document.getElementById(s.id);
+    return {key:s.key, text:(el && el.textContent||'').trim()};
+  }).filter(s => s.text);
+
+  const area = document.getElementById('carousel-preview-area');
+  const actions = document.getElementById('carousel-actions');
+  if (!activeScenes.length) {
+    area.innerHTML = '<div class="empty"><div class="empty-icon">🃏</div><div class="empty-text">마법사에서 씬을 먼저 생성해주세요.</div></div>';
+    if (actions) actions.hidden = true;
+    return;
+  }
+
+  const themeKey = (document.getElementById('carousel-theme') || {}).value || 'dark';
+  const ratioKey = (document.getElementById('carousel-ratio') || {}).value || '4:5';
+  const brand = ((document.getElementById('carousel-brand') || {}).value || '').trim();
+  const t = CAROUSEL_THEMES[themeKey] || CAROUSEL_THEMES.dark;
+
+  const [rw, rh] = ratioKey.split(':').map(Number);
+  const cardW = 280;
+  const cardH = Math.round(cardW * rh / rw);
+
+  const totalSlides = activeScenes.length + 1;
+
+  let slidesHtml = activeScenes.map((s, i) => {
+    const [emoji, enLabel, krLabel] = CAROUSEL_LABELS[s.key] || ['📌','SLIDE','슬라이드'];
+    const slideNum = i + 1;
+    const text = s.text.length > 180 ? s.text.slice(0, 177) + '…' : s.text;
+    return `<div class="cs-slide" style="width:${cardW}px;height:${cardH}px;flex-shrink:0;background:${t.bg};border:1px solid ${t.border};border-radius:12px;padding:24px 20px;display:flex;flex-direction:column;position:relative;overflow:hidden;gap:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;color:${t.accent};text-transform:uppercase">${enLabel} ${emoji}</div>
+        <div style="font-size:10px;color:${t.sub}">${slideNum}/${totalSlides}</div>
+      </div>
+      <div style="flex:1;font-family:'DM Sans',sans-serif;font-size:13px;color:${t.fg};line-height:1.7;overflow:hidden">${text}</div>
+      <div style="font-size:11px;color:${t.accent};font-weight:600;letter-spacing:.5px;background:${t.card};padding:4px 10px;border-radius:20px;align-self:flex-start;border:1px solid ${t.border}">${krLabel}</div>
+      ${brand?`<div style="position:absolute;bottom:14px;right:16px;font-size:10px;color:${t.sub}">${brand}</div>`:''}
+    </div>`;
+  });
+
+  // CTA 마지막 슬라이드
+  slidesHtml.push(`<div class="cs-slide" style="width:${cardW}px;height:${cardH}px;flex-shrink:0;background:${t.accent};border:1px solid ${t.border};border-radius:12px;padding:24px 20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;flex-shrink:0">
+    <div style="font-size:36px">🔗</div>
+    <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:#0A1628;text-align:center;line-height:1.3">지금 바로<br>확인하세요!</div>
+    <div style="font-size:13px;color:rgba(10,22,40,.7);text-align:center">프로필 링크 클릭</div>
+    ${brand?`<div style="font-size:12px;font-weight:700;color:#0A1628;margin-top:4px">${brand}</div>`:''}
+    <div style="font-size:10px;color:rgba(10,22,40,.55)">${totalSlides}/${totalSlides}</div>
+  </div>`);
+
+  area.innerHTML = `<div style="display:flex;gap:12px;overflow-x:auto;padding-bottom:10px">${slidesHtml.join('')}</div>
+    <div style="margin-top:10px;font-size:11px;color:var(--t3)">← 스크롤하여 슬라이드 확인</div>`;
+  if (actions) actions.hidden = false;
+}
+
+function carouselCopyAll() {
+  const scenes = ['out-s0','out-s1','out-s2','out-s3'];
+  const texts = scenes.map(id => {
+    const el = document.getElementById(id);
+    return (el && el.textContent || '').trim();
+  }).filter(Boolean);
+  const combined = texts.map((t,i)=>['[HOOK]','[CU]','[DEMO]','[CTA]'][i]+'\n'+t).join('\n\n');
+  navigator.clipboard.writeText(combined).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = combined;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  });
+  const btn = event.target;
+  const orig = btn.textContent;
+  btn.textContent = '✓ 복사됨';
+  setTimeout(() => btn.textContent = orig, 1500);
+}
+
+function carouselExportHtml() {
+  const area = document.getElementById('carousel-preview-area');
+  if (!area) return;
+  const content = `<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>캐러셀 카드</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;600&display=swap"></head><body style="margin:0;padding:20px;background:#0D1117;font-family:'DM Sans',sans-serif">${area.innerHTML}</body></html>`;
+  const blob = new Blob([content], {type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'carousel-cards.html'; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
+/* ══════════════════════════════════
+   CAT SIDEBAR NAV
+══════════════════════════════════ */
+function initCatNav() {
+  const nav = document.getElementById('cat-nav');
+  nav.innerHTML = '';
+  Object.entries(CATS).forEach(([k,c]) => {
+    const div = document.createElement('div');
+    div.className = 'ns-item';
+    div.id = 'cni-'+k;
+    div.onclick = () => navCat(k);
+    div.innerHTML = `<span class="ns-dot"></span><span class="ns-label">${c.emoji} ${c.label}</span>`;
+    nav.appendChild(div);
+  });
+}
+
+function navCat(k) {
+  navGo('wizard', document.querySelector('[data-sec="wizard"]'));
+  setTimeout(() => {
+    wSelCat(k);
+    document.getElementById('ws1').scrollIntoView({behavior:'smooth'});
+  }, 100);
+}
+
+/* ══════════════════════════════════
+   NAVIGATION
+══════════════════════════════════ */
+function navGo(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('show'));
+  document.getElementById(id)?.classList.add('show');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  else document.querySelector(`[data-sec="${id}"]`)?.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ══════════════════════════════════
+   UTILS
+══════════════════════════════════ */
+function toggleTheme() {
+  const root = document.documentElement;
+  const cur = root.getAttribute('data-theme');
+  root.setAttribute('data-theme', cur === 'dark' ? 'light' : 'dark');
+}
+
+function fmt(n) {
+  return n.toLocaleString('ko-KR');
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function cpText(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    if (btn) { btn.textContent = '✓ 복사됨'; btn.classList.add('ok'); setTimeout(() => { btn.textContent = '복사'; btn.classList.remove('ok'); }, 1800); }
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    document.body.removeChild(ta);
+    if (btn) { btn.textContent = '✓'; setTimeout(() => { btn.textContent = '복사'; }, 1500); }
+  });
+}
+
+/* ══════════════════════════════════
+   I18N — KO / EN
+══════════════════════════════════ */
+let LANG = 'ko';
+
+const I18N = {
+  'nav.tools':          ['생성 도구','Creation'],
+  'nav.skill-channel':  ['스킬채널 설계','Skill Channel'],
+  'nav.auto':           ['자동 생성','Auto Generate'],
+  'sec.skill-channel':  ['🎓 스킬채널 설계','🎓 Skill Channel Builder'],
+  'sec.skill-channel.sub':['내 전문 스킬을 선택하면 최적화된 쇼핑숏츠 채널 전략을 만들어드려요','Select your expert skill to get an optimized Shopping Shorts channel strategy'],
+  'nav.wizard':      ['단계별 마법사','Step Wizard'],
+  'nav.revenue-strat':['수익 전략','Revenue'],
+  'nav.revenue':     ['카테고리별 수익','Revenue by Category'],
+  'nav.calculator':  ['월 수익 계산기','Calculator'],
+  'nav.platforms':   ['플랫폼 전략','Platforms'],
+  'nav.psych':       ['심리 프로파일','Psych Profiles'],
+  'nav.fish':        ['Fish Audio 음성','Fish Audio Voice'],
+  'nav.carousel':    ['캐러셀 카드','Carousel Cards'],
+  'nav.cats':        ['카테고리 바로가기','Categories'],
+  'nav.coupang-sec': ['쿠팡 연동','Coupang'],
+  'nav.coupang':     ['쿠팡 자동연동','Coupang Auto'],
+  'nav.infolk':      ['인포크 허브','Infolk Hub'],
+  'sec.auto-gen':    ['⚡ 자동 생성','⚡ Auto Generate'],
+  'sec.auto-gen.sub':['제품명 + 이미지 + URL 입력 → 카테고리 자동 감지 → 최적 4-씬 프롬프트 패키지','Enter product name + image + URL → auto-detect category → optimal 4-scene prompt package'],
+  'sec.revenue':     ['💰 카테고리별 수익 전략','💰 Revenue by Category'],
+  'sec.revenue.sub': ['카테고리마다 최적의 플랫폼·수수료·단가가 다릅니다. 전략적으로 선택하세요.','Each category has different optimal platforms, commissions & pricing. Choose strategically.'],
+  'rev.cpc':  ['CPC 단가','CPC Rate'],
+  'rev.cr':   ['전환율','Conv. Rate'],
+  'rev.aov':  ['평균 주문금액','Avg. Order Value'],
+  'rev.cta':  ['🎯 이 카테고리로 콘텐츠 생성 →','🎯 Generate content for this category →'],
+};
+
+function t(ko, en) { return LANG === 'en' ? en : ko; }
+
+function switchLang() {
+  LANG = LANG === 'ko' ? 'en' : 'ko';
+  const btn = document.getElementById('lang-btn');
+  if (btn) btn.textContent = LANG === 'ko' ? '🌐 EN' : '🌐 KO';
+  /* swap all data-i18n elements */
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const pair = I18N[el.dataset.i18n];
+    if (pair) el.textContent = pair[LANG === 'en' ? 1 : 0];
+  });
+  /* re-render dynamic sections that use translated text */
+  initRevGrid();
+}
+
+/* ══════════════════════════════════
+   MOBILE DRAWER / BTAB
+══════════════════════════════════ */
+function toggleDrawer() {
+  const sb = document.querySelector('.sidebar');
+  const ov = document.getElementById('drawer-overlay');
+  const open = sb.classList.toggle('open');
+  if (open) { ov.classList.add('open'); document.body.style.overflow='hidden'; }
+  else { ov.classList.remove('open'); document.body.style.overflow=''; }
+}
+
+function closeDrawer() {
+  document.querySelector('.sidebar')?.classList.remove('open');
+  document.getElementById('drawer-overlay')?.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function btabActivate(el) {
+  document.querySelectorAll('.btab').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+/* patch navGo to also close drawer */
+const _navGoOrig = navGo;
+navGo = function(id, btn) {
+  _navGoOrig(id, btn);
+  closeDrawer();
+  /* sync btab active state */
+  const tab = document.querySelector(`.btab[data-sec="${id}"]`);
+  if (tab) btabActivate(tab);
+  else document.querySelectorAll('.btab').forEach(b => b.classList.remove('active'));
+};
+
+/* ══════════════════════════════════
+   INIT
+══════════════════════════════════ */
+function init() {
+  initSkillGrid();
+  initWizardCatGrid();
+  initRevGrid();
+  initCalcCats();
+  calcUpdate();
+  initPlatGrid();
+  initWeekly();
+  initGolden();
+  initCatNav();
+  initCta5();
+  initPsychGrid();
+  // Coupang / Infolk
+  updateApiStatus();
+  renderPyScript();
+  loadHubData();
+  loadInfolkAccounts();
+  // Fish Audio
+  fishUpdateStatus();
+  fishLoadVoiceIds();
+  initFishCtaList();
+}
+
+init();
+</script>
+
+<!-- Bottom tab bar (mobile only) -->
+<nav class="btab-bar" id="btab-bar">
+  <button class="btab" data-sec="skill-channel" onclick="navGo('skill-channel',document.querySelector('[data-sec=skill-channel]'));btabActivate(this)">
+    <span class="btab-icon">🎓</span>스킬
+  </button>
+  <button class="btab active" data-sec="auto-gen" onclick="navGo('auto-gen',document.querySelector('[data-sec=auto-gen]'));btabActivate(this)">
+    <span class="btab-icon">⚡</span>생성
+  </button>
+  <button class="btab" data-sec="wizard" onclick="navGo('wizard',document.querySelector('[data-sec=wizard]'));btabActivate(this)">
+    <span class="btab-icon">🎯</span>마법사
+  </button>
+  <button class="btab" data-sec="fish" onclick="navGo('fish',document.querySelector('[data-sec=fish]'));fishRefreshScenes();btabActivate(this)">
+    <span class="btab-icon">🎙</span>음성
+  </button>
+  <button class="btab-more" onclick="toggleDrawer()">
+    <span class="btab-icon">☰</span>더보기
+  </button>
+</nav>
+</body>
+</html>
