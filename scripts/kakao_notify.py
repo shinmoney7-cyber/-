@@ -110,6 +110,47 @@ def _send_admin_email(subject: str, html_body: str):
 # 공개 알림 함수들
 # ──────────────────────────────────────────
 
+def notify_post_progress(account_id: str, slot_title: str, step: str, status: str, detail: str = ""):
+    """포스팅 진행상황 알림 — 관리자(신정희)에게만, 계정별 이모지 구분"""
+    ACCT_EMOJI = {"sm": "🔮", "un": "💕", "s77": "🔥"}
+    acct_name = ACCOUNT_NAMES.get(account_id, account_id)
+    emoji = ACCT_EMOJI.get(account_id, "📌")
+    status_icon = "✅" if status == "ok" else ("❌" if status == "error" else "⏳")
+
+    text = (
+        f"{emoji}[{acct_name}] {slot_title}\n"
+        f"{status_icon} {step}"
+    )
+    if detail:
+        text += f"\n{detail[:50]}"
+
+    if NOTIFY_PHONE:
+        _kakao_or_sms(NOTIFY_PHONE, text)
+
+
+def notify_post_content(account_id: str, slot_title: str, topic: str, hook: str,
+                        main_text: str, platforms: list):
+    """포스팅 내용 알림 — 관리자(신정희)에게만, 진행상황과 분리된 메시지"""
+    ACCT_EMOJI = {"sm": "🔮", "un": "💕", "s77": "🔥"}
+    acct_name = ACCOUNT_NAMES.get(account_id, account_id)
+    emoji = ACCT_EMOJI.get(account_id, "📌")
+
+    platform_str = " ".join(f"#{p}" for p in platforms[:4])
+    lines = [l.strip() for l in main_text.split("\n") if l.strip()][:2]
+    preview = " / ".join(lines)
+
+    text = (
+        f"{emoji}[{acct_name}] {slot_title} 포스팅\n"
+        f"📌 토픽: {topic}\n"
+        f"💬 {hook}\n"
+        f"   {preview[:60]}\n"
+        f"📲 {platform_str}"
+    )
+
+    if NOTIFY_PHONE:
+        _kakao_or_sms(NOTIFY_PHONE, text)
+
+
 def notify_new_order(order: dict, order_id: str):
     """신규 주문 접수 — 관리자 + 고객 동시 알림"""
     acct_name = ACCOUNT_NAMES.get(order.get("account", "sm"), "사주마루")
