@@ -180,6 +180,35 @@ body{font-family:'DM Sans',sans-serif;font-size:14px;background:var(--bg);color:
 .skill-active-badge{display:inline-flex;align-items:center;gap:6px;background:var(--cyD);border:1px solid var(--cyM);border-radius:12px;padding:4px 10px;font-size:12px;font-weight:700;color:var(--cy);margin-bottom:12px}
 @media(max-width:720px){.skill-grid{grid-template-columns:repeat(4,1fr)}.skill-strategy-grid{grid-template-columns:1fr}}
 
+/* ── Video Method Grid ── */
+.vid-method-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.vmc{background:var(--sf);border:2px solid var(--bd);border-radius:var(--r);padding:14px 8px;text-align:center;cursor:pointer;transition:.2s;min-height:100px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.vmc:hover{border-color:var(--bdL);background:var(--s2)}
+.vmc.selected{border-color:var(--cy);background:var(--cyD);box-shadow:0 0 0 3px var(--cyD)}
+.vmc-icon{font-size:24px;margin-bottom:5px}
+.vmc-label{font-size:11px;font-weight:700;color:var(--t1);line-height:1.3}
+.vmc-desc{font-size:9px;color:var(--t3);margin-top:3px;line-height:1.3}
+.vmc-count{display:inline-block;background:var(--s2);border:1px solid var(--bd);border-radius:10px;font-size:10px;color:var(--t2);padding:1px 7px;margin-top:4px}
+.vmc.selected .vmc-count{background:var(--cyD);border-color:var(--cyM);color:var(--cy)}
+.vm-tool-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.vmt{background:var(--s2);border:2px solid var(--bd);border-radius:var(--r);padding:12px 10px;cursor:pointer;transition:.2s;position:relative;min-height:70px}
+.vmt:hover{border-color:var(--bdL);background:var(--s3)}
+.vmt.selected{border-color:var(--cy);background:var(--cyD)}
+.vmt-icon{font-size:18px;margin-bottom:4px}
+.vmt-name{font-size:11px;font-weight:700;color:var(--t1);line-height:1.3}
+.vmt-badge{position:absolute;top:6px;right:6px;font-size:9px;font-weight:700;padding:1px 5px;border-radius:10px}
+.vmt-badge-wa{background:var(--waD);color:var(--wa);border:1px solid var(--waM)}
+.vmt-badge-gn{background:var(--gnD);color:var(--gn);border:1px solid var(--gnM)}
+.vmt-badge-cy{background:var(--cyD);color:var(--cy);border:1px solid var(--cyM)}
+.vmt-badge-pu{background:var(--puD);color:var(--pu);border:1px solid var(--puM)}
+.vm-tool-detail{background:var(--s2);border:1px solid var(--cyM);border-radius:var(--r);padding:16px;margin-top:14px}
+.vm-tool-detail-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.vm-tool-detail-icon{font-size:28px}
+.vm-tool-detail-name{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--cy)}
+.vm-tool-detail-hint{font-size:12px;color:var(--t2);line-height:1.6;padding:10px;background:var(--sf);border-radius:var(--rs);border-left:3px solid var(--cy);margin-bottom:14px}
+.vm-active-badge{display:inline-flex;align-items:center;gap:6px;background:var(--gnD);border:1px solid var(--gnM);border-radius:12px;padding:4px 10px;font-size:12px;font-weight:700;color:var(--gn);margin-bottom:12px}
+@media(max-width:720px){.vid-method-grid{grid-template-columns:repeat(3,1fr)}.vm-tool-grid{grid-template-columns:repeat(2,1fr)}}
+
 .rev-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .rev-emoji{font-size:22px}
 .rev-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--t1)}
@@ -401,6 +430,9 @@ input[type=range]{width:100%;accent-color:var(--cy);height:4px;border-radius:4px
 <!-- Sidebar -->
 <aside class="sidebar">
   <div class="nav-sec" data-i18n="nav.tools">생성 도구</div>
+  <button class="nav-btn" onclick="navGo('vid-method',this)" data-sec="vid-method">
+    <span class="nav-icon">🎬</span> <span data-i18n="nav.vid-method">영상 AI 선택</span>
+  </button>
   <button class="nav-btn" onclick="navGo('skill-channel',this)" data-sec="skill-channel">
     <span class="nav-icon">🎓</span> <span data-i18n="nav.skill-channel">스킬채널 설계</span>
   </button>
@@ -449,6 +481,42 @@ input[type=range]{width:100%;accent-color:var(--cy);height:4px;border-radius:4px
 <!-- Main -->
 <main class="main">
 
+<!-- ⓪ 영상 AI 선택 -->
+<section class="section" id="vid-method">
+  <div>
+    <div class="section-title">🎬 영상 생성 AI 선택</div>
+    <div class="section-sub">영상 생성 방식을 선택하면 그에 맞는 프롬프트·스크립트 구조로 자동 전환돼요</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">영상 생성 방식 선택</div>
+    <p style="font-size:12px;color:var(--t3);margin-bottom:14px">방식을 선택하면 자동 생성·마법사 등 모든 섹션의 출력 형식이 해당 방식에 맞게 최적화돼요.</p>
+    <div class="vid-method-grid" id="vid-method-grid"></div>
+  </div>
+
+  <div id="vm-tool-section" style="display:none">
+    <div class="card">
+      <div class="card-title" id="vm-tool-title">AI 도구 선택</div>
+      <div class="vm-tool-grid" id="vm-tool-grid"></div>
+    </div>
+  </div>
+
+  <div id="vm-detail-section" style="display:none">
+    <div class="vm-tool-detail" id="vm-tool-detail-card"></div>
+    <div class="card" style="margin-top:14px">
+      <div class="card-title">이 도구로 연결</div>
+      <div class="row2" style="gap:10px;margin-top:10px">
+        <button class="btn btn-primary" onclick="vidGoToAutoGen()" style="justify-content:center">⚡ 맞춤 콘텐츠 생성</button>
+        <button class="btn btn-ghost" onclick="navGo('skill-channel',document.querySelector('[data-sec=skill-channel]'))" style="justify-content:center">🎓 스킬채널 연결</button>
+      </div>
+      <div class="row2" style="gap:10px;margin-top:8px">
+        <button class="btn btn-ghost" onclick="navGo('wizard',document.querySelector('[data-sec=wizard]'))" style="justify-content:center">🎯 단계별 마법사</button>
+        <button class="btn btn-ghost" onclick="navGo('fish',document.querySelector('[data-sec=fish]'));fishRefreshScenes()" style="justify-content:center">🎙 음성 스크립트</button>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ① 스킬채널 설계 -->
 <section class="section" id="skill-channel">
   <div>
@@ -487,6 +555,11 @@ input[type=range]{width:100%;accent-color:var(--cy);height:4px;border-radius:4px
     <div class="section-sub" data-i18n="sec.auto-gen.sub">제품명 + 이미지 + URL 입력 → 카테고리 자동 감지 → 최적 4-씬 프롬프트 패키지</div>
   </div>
 
+  <!-- 활성 영상 AI 배지 -->
+  <div id="ag-vid-badge-wrap" style="display:none;margin-bottom:4px">
+    <span class="vm-active-badge" id="ag-vid-badge">🎬 AI 미선택</span>
+    <button class="btn btn-ghost btn-sm" onclick="navGo('vid-method',document.querySelector('[data-sec=vid-method]'))" style="margin-left:8px;font-size:11px">AI 변경</button>
+  </div>
   <!-- 활성 스킬 배지 -->
   <div id="ag-skill-badge-wrap" style="display:none;margin-bottom:4px">
     <span class="skill-active-badge" id="ag-skill-badge">🎓 스킬 미선택</span>
@@ -1226,6 +1299,203 @@ const SKILLS = {
     veo3:'cute pet reaction shots, care routine close-ups, playful and warm energy, soft natural light, genuine emotional pet moments',
   },
 };
+
+/* ══════════════════════════════════
+   VIDEO METHOD DATA
+══════════════════════════════════ */
+const VID_METHODS = {
+  t2v:{icon:'🎬',color:'cy',label:'텍스트→영상',desc:'텍스트 프롬프트로 AI 직접 생성',
+    tools:[
+      {id:'google-flow',name:'Google Flow / Veo 3',icon:'🌊',badge:'추천',bc:'wa'},
+      {id:'kling',name:'Kling AI',icon:'⚫',badge:'무료',bc:'gn'},
+      {id:'runway',name:'Runway Gen-4',icon:'🛤️',badge:'',bc:''},
+      {id:'sora',name:'Sora',icon:'☀️',badge:'',bc:''},
+      {id:'pika',name:'Pika 2.2',icon:'⚡',badge:'무료',bc:'gn'},
+      {id:'luma',name:'Luma Dream Machine',icon:'🌙',badge:'무료',bc:'gn'},
+    ],
+    promptType:'t2v',
+    hint:'장면 묘사 · 카메라 무브먼트 · 조명 · 분위기 중심으로 프롬프트 작성 (Veo 3 7-Element 포맷)'},
+  i2v:{icon:'🖼️',color:'pu',label:'이미지→영상',desc:'제품 사진을 업로드해서 영상 변환',
+    tools:[
+      {id:'kling-i2v',name:'Kling AI (I2V)',icon:'⚫',badge:'추천',bc:'wa'},
+      {id:'runway-i2v',name:'Runway (I2V)',icon:'🛤️',badge:'',bc:''},
+      {id:'pika-i2v',name:'Pika (I2V)',icon:'⚡',badge:'무료',bc:'gn'},
+      {id:'luma-i2v',name:'Luma (I2V)',icon:'🌙',badge:'',bc:''},
+    ],
+    promptType:'i2v',
+    hint:'제품 사진 업로드 후 움직임·카메라 방향을 짧게 설명 (예: zoom in slowly, gentle orbit)'},
+  avatar:{icon:'🤖',color:'pk',label:'아바타 발표자',desc:'AI 아바타·디지털 인간 제품 소개',
+    tools:[
+      {id:'heygen',name:'HeyGen',icon:'🧑‍💼',badge:'추천',bc:'wa'},
+      {id:'did',name:'D-ID',icon:'👤',badge:'',bc:''},
+      {id:'synthesia',name:'Synthesia',icon:'🎭',badge:'',bc:''},
+      {id:'captions',name:'Captions AI',icon:'💬',badge:'무료',bc:'gn'},
+    ],
+    promptType:'avatar',
+    hint:'장면 묘사 불필요 — 자연스러운 말투 스크립트가 핵심. 30초 ≈ 75단어'},
+  shopping:{icon:'🛍️',color:'gn',label:'AI 쇼핑 특화',desc:'쇼핑 숏츠 전용 최적화 AI 플랫폼',
+    tools:[
+      {id:'genspark',name:'Genspark',icon:'✨',badge:'기존',bc:'cy'},
+      {id:'hix',name:'hix.ai',icon:'🔷',badge:'신규',bc:'pu'},
+      {id:'creatify',name:'Creatify',icon:'🎨',badge:'',bc:''},
+      {id:'invideo',name:'InVideo AI',icon:'📹',badge:'무료',bc:'gn'},
+    ],
+    promptType:'shopping',
+    hint:'제품 URL 또는 제품명 + USP → 플랫폼이 쇼핑 광고 영상 자동 생성'},
+  edit:{icon:'✂️',color:'wa',label:'합성·편집 AI',desc:'스크립트+이미지·클립 자동 합성',
+    tools:[
+      {id:'capcut',name:'CapCut AI',icon:'🎵',badge:'무료',bc:'gn'},
+      {id:'pictory',name:'Pictory',icon:'🖼️',badge:'',bc:''},
+      {id:'descript',name:'Descript',icon:'📝',badge:'',bc:''},
+    ],
+    promptType:'edit',
+    hint:'스크립트 입력 → AI가 이미지·B-roll·자막·BGM 자동 매칭 후 편집 완료'},
+};
+
+let activeVidCategory = null;
+let activeVidTool = null;
+
+function initVidMethodGrid() {
+  const g = document.getElementById('vid-method-grid');
+  if (!g) return;
+  g.innerHTML = Object.entries(VID_METHODS).map(([k,m]) =>
+    `<div class="vmc" id="vmc-${k}" onclick="selectVidCategory('${k}')">
+      <div class="vmc-icon">${m.icon}</div>
+      <div class="vmc-label">${m.label}</div>
+      <div class="vmc-desc">${m.desc}</div>
+      <span class="vmc-count">${m.tools.length}개 도구</span>
+    </div>`
+  ).join('');
+}
+
+function selectVidCategory(k) {
+  activeVidCategory = k;
+  document.querySelectorAll('.vmc').forEach(c => c.classList.remove('selected'));
+  const el = document.getElementById('vmc-'+k);
+  if (el) el.classList.add('selected');
+  const m = VID_METHODS[k];
+  document.getElementById('vm-tool-title').textContent = m.icon+' '+m.label+' — AI 도구 선택';
+  document.getElementById('vm-tool-grid').innerHTML = m.tools.map(t => {
+    const bh = t.badge ? `<span class="vmt-badge vmt-badge-${t.bc}">${t.badge}</span>` : '';
+    return `<div class="vmt" id="vmt-${t.id}" onclick="selectVidTool('${k}','${t.id}')">
+      ${bh}<div class="vmt-icon">${t.icon}</div><div class="vmt-name">${t.name}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('vm-tool-section').style.display = '';
+  document.getElementById('vm-detail-section').style.display = 'none';
+  activeVidTool = null;
+  updateVidBadge();
+}
+
+function selectVidTool(catK, toolId) {
+  const m = VID_METHODS[catK];
+  const tool = m.tools.find(t => t.id === toolId);
+  if (!tool) return;
+  activeVidCategory = catK;
+  activeVidTool = {catKey:catK, ...tool, promptType:m.promptType, hint:m.hint};
+  document.querySelectorAll('.vmt').forEach(c => c.classList.remove('selected'));
+  const el = document.getElementById('vmt-'+toolId);
+  if (el) el.classList.add('selected');
+  const ptLabel = {
+    t2v:'🎬 Veo 3 스타일 4-씬 프롬프트',
+    i2v:'🖼️ 이미지 모션 디스크립션',
+    avatar:'🤖 TTS 스피치 스크립트 4단계',
+    shopping:'🛍️ 쇼핑 광고 카피 + 스크립트',
+    edit:'✂️ 보이스오버 + 샷리스트'
+  }[m.promptType]||'프롬프트 생성';
+  const bh = tool.badge ? `<span class="vmt-badge vmt-badge-${tool.bc}" style="position:static;margin-left:6px">${tool.badge}</span>` : '';
+  const hixExtra = toolId==='hix' ? `<div style="margin-top:10px;padding:10px;background:var(--puD);border:1px solid var(--puM);border-radius:var(--rs);font-size:12px;color:var(--pu);line-height:1.6">
+    <strong style="color:var(--t1)">🔷 hix.ai 전용 워크플로우</strong><br>
+    제품명 + 타겟 + 톤 입력 → AI 라이팅 엔진이<br>
+    ① 쇼핑 비디오 스크립트 &nbsp;② SNS 캡션 &nbsp;③ 광고 헤드라인 자동 생성<br>
+    <span style="opacity:.7">Veo 3 장면 묘사 불필요 — 카피 중심 출력</span>
+  </div>` : '';
+  document.getElementById('vm-tool-detail-card').innerHTML =
+    `<div class="vm-tool-detail-head">
+      <span class="vm-tool-detail-icon">${tool.icon}</span>
+      <div>
+        <div class="vm-tool-detail-name">${tool.name}${bh}</div>
+        <div style="font-size:11px;color:var(--t2);margin-top:2px">출력 형식: ${ptLabel}</div>
+      </div>
+    </div>
+    <div class="vm-tool-detail-hint">💡 ${m.hint}</div>
+    ${hixExtra}
+    <div style="font-size:11px;color:var(--gn)">✓ 선택됨 — 자동 생성 섹션이 이 도구 방식으로 최적화됩니다</div>`;
+  document.getElementById('vm-detail-section').style.display = '';
+  updateVidBadge();
+}
+
+function updateVidBadge() {
+  const wrap = document.getElementById('ag-vid-badge-wrap');
+  if (!wrap) return;
+  if (activeVidTool) {
+    wrap.style.display = '';
+    document.getElementById('ag-vid-badge').textContent = activeVidTool.icon+' '+activeVidTool.name;
+  } else {
+    wrap.style.display = 'none';
+  }
+}
+
+function vidGoToAutoGen() {
+  navGo('auto-gen', document.querySelector('[data-sec=auto-gen]'));
+  updateVidBadge();
+}
+
+/* build scenes by video method type */
+function buildScenesTyped(catKey, name, price, benefit, shopUrl, skillKey) {
+  const pt = activeVidTool?.promptType || 't2v';
+  if (pt === 't2v') return buildScenes(catKey, name, price, benefit, shopUrl, null, null, null, null, null, skillKey);
+  const c = CATS[catKey] || CATS.food;
+  const sk = skillKey ? SKILLS[skillKey] : null;
+  const tn = activeVidTool?.name || '';
+  const pTx = price ? ' · 가격: '+price : '';
+  const bTx = benefit || '';
+  const urlTx = shopUrl ? '\n구매링크: '+shopUrl : '';
+  if (pt === 'i2v') return {
+    s0:`[I2V 모션 1 / PRODUCT REVEAL]\n도구: ${tn}\n제품: ${name}${pTx}\n─\n이미지: 제품 정면 흰배경 or 라이프스타일 사진\n모션: zoom in slowly (0.3× speed) → subtle float\n카메라: Push-in + gentle float\n효과: highlight sweep\n지속: 3초\n메모: 고화질 제품 정면 사진 사용 권장`,
+    s1:`[I2V 모션 2 / FEATURE DETAIL]\n도구: ${tn}\n제품: ${name}\n─\n이미지: 제품 특징 클로즈업 사진\n모션: gentle 15° orbit left → right\n카메라: Slow orbit\n효과: soft focus insert\n지속: 3초\n메모: ${bTx||'핵심 특징'} 부각 앵글`,
+    s2:`[I2V 모션 3 / LIFESTYLE]\n도구: ${tn}\n제품: ${name}\n─\n이미지: 라이프스타일 or 실사용 사진\n모션: slow pan left + 인물 미세 움직임\n카메라: Slow pan with depth\n효과: 배경 보케 강화\n지속: 3초\n메모: 감성 공감 이미지`,
+    s3:`[I2V 모션 4 / CTA OVERLAY]\n도구: ${tn}\n제품: ${name}\n─\n이미지: 제품 정면 or 브랜드 이미지\n모션: slow zoom out\n오버레이: "${c.ctas[0]||'지금 구매하기'}" 자막 + 화살표\n지속: 3초${urlTx}`,
+  };
+  if (pt === 'avatar') {
+    const persona = sk ? sk.persona : '크리에이터';
+    const hookLine = sk?.hook || name+' 써봤어요?';
+    return {
+      s0:`[아바타 스크립트 1 / HOOK — 0~3초]\n도구: ${tn}\n─\n"${hookLine} 진짜 놀라웠어요."\n(카메라 정면 응시 · 자신감 있는 표정)\n추천 아바타: 친근한 일상룩 · 밝은 배경\n자막: 하단 자동 자막 ON\n글자수 ≈ 20자 (2.5초 TTS)`,
+      s1:`[아바타 스크립트 2 / INTRO — 3~7초]\n도구: ${tn}\n─\n"${name}인데요, ${price ? price+'에 ' : ''}구매할 수 있어요. ${persona}로서 직접 써본 후기 알려드릴게요."\n(제품 들어보이기 or 화면 옆 제품 이미지)\n글자수 ≈ 50자 (4초 TTS)`,
+      s2:`[아바타 스크립트 3 / DEMO — 7~13초]\n도구: ${tn}\n─\n"${bTx||'이 제품의 핵심'}이에요. 직접 써보니 ${c.label} 고민이 해결됐어요. 특히 ${bTx||'품질'} 면에서 기대 이상이었어요."\n(B-roll 실사용 영상 or 결과 이미지 삽입 가능)\n글자수 ≈ 70자 (6초 TTS)`,
+      s3:`[아바타 스크립트 4 / CTA — 13~15초]\n도구: ${tn}\n─\n"${c.ctas[0]||'지금 구매하기'} 링크는 아래에 있어요! 후기 댓글로 알려주세요 😊"\n(손가락 아래 가리키기)\n글자수 ≈ 30자 (2초 TTS)${urlTx}`,
+    };
+  }
+  if (pt === 'shopping') {
+    const isHix = activeVidTool?.id === 'hix';
+    const lbl = isHix ? '[hix.ai 프롬프트]' : `[${tn} 쇼핑 광고]`;
+    const hixTip = isHix ? '\nhix.ai에 위 내용 붙여넣기 → AI 카피 자동 생성' : '';
+    return {
+      s0:`${lbl} HEADLINE / HOOK\n제품: ${name}${pTx}\n─\n헤드라인: "${name} ${c.emoji} — ${sk?.hook||c.label+' 고민 해결!'}"\n서브헤드: "${bTx||'지금 바로 확인하세요'}"\n타겟: ${c.label} 관심 고객 18-40세\n플랫폼: TikTok · Reels · Shorts\n톤: 친근함 + 신뢰감${hixTip}`,
+      s1:`${lbl} PRODUCT COPY\n제품: ${name}${pTx}\n─\n제품 설명 (150자):\n"${name}은 ${c.label} 카테고리의 검증된 제품입니다. ${bTx||'핵심 혜택'}으로 많은 분들이 이미 경험하고 있어요."\n키워드: ${name} · ${c.label} · 추천 · 후기${hixTip}`,
+      s2:`${lbl} BENEFITS + SOCIAL PROOF\n제품: ${name}\n─\n핵심 혜택 3가지:\n① ${bTx||c.label+' 카테고리 1위'}\n② ${price ? price+' 합리적 가격' : '가성비 최고'}\n③ 실제 구매자 후기 기반 검증\n소셜 프루프: "이미 __명이 구매했어요"\n해시태그: #${name.replace(/\s/g,'')} #${c.label}추천${hixTip}`,
+      s3:`${lbl} CTA COPY\n제품: ${name}\n─\nCTA: "${c.ctas[0]||'지금 구매하기'} ↓"\n긴급성: "오늘만 특가 / 수량 한정"\n버튼: "구매하러 가기"${urlTx}${isHix ? '\n\nhix.ai 추가: 이 카피로 SNS 캡션 · 이메일 제목 · 블로그 서론 자동 생성 가능' : ''}`,
+    };
+  }
+  if (pt === 'edit') return {
+    s0:`[편집 스크립트 1 / VOICEOVER + B-ROLL]\n도구: ${tn}\n제품: ${name}${pTx}\n─\n보이스오버: "${name} 써보셨어요?"\nB-roll: 제품 언박싱 클립 or 사진 슬라이드\n자막: "✨ ${name}" 오버레이\n지속: 3초`,
+    s1:`[편집 스크립트 2 / FEATURE]\n도구: ${tn}\n─\n보이스오버: "${bTx||c.label+' 전문 제품'}, ${price ? price+'에' : ''} 구매 가능해요"\nB-roll: 제품 디테일 클로즈업 or 기능 시연 스틸\n자막: "${bTx||'핵심 기능'}" 텍스트 모션\n지속: 3초`,
+    s2:`[편집 스크립트 3 / TESTIMONIAL]\n도구: ${tn}\n─\n보이스오버: "실제 후기: '${bTx||'기대 이상이에요'}' — ${c.label} 구매자"\nB-roll: 라이프스타일 이미지 or 리뷰 캡처 슬라이드\n자막: ⭐⭐⭐⭐⭐ 별점 애니메이션\n지속: 3초`,
+    s3:`[편집 스크립트 4 / CTA + MUSIC]\n도구: ${tn}\n─\n보이스오버: "${c.ctas[0]||'지금 구매하기'} 링크는 아래에 있어요!"\nB-roll: 제품 정면 + 가격 자막 오버레이\nBGM: Upbeat · Energetic · ${c.label} 분위기${urlTx}`,
+  };
+  return buildScenes(catKey, name, price, benefit, shopUrl, null, null, null, null, null, skillKey);
+}
+
+/* scene labels by type */
+function getSceneLabels() {
+  const pt = activeVidTool?.promptType || 't2v';
+  if (pt === 'i2v') return ['MOTION 1 / Reveal','MOTION 2 / Detail','MOTION 3 / Lifestyle','MOTION 4 / CTA'];
+  if (pt === 'avatar') return ['SCRIPT 1 / Hook','SCRIPT 2 / Intro','SCRIPT 3 / Demo','SCRIPT 4 / CTA'];
+  if (pt === 'shopping') return ['HEADLINE','PRODUCT COPY','BENEFITS','CTA COPY'];
+  if (pt === 'edit') return ['VO 1 / Hook','VO 2 / Feature','VO 3 / Proof','VO 4 / CTA'];
+  return ['SCENE 1 / HOOK','SCENE 2 / PRODUCT CU','SCENE 3 / DEMO','SCENE 4 / CTA'];
+}
 
 let activeSkillKey = null; // 현재 선택된 스킬
 
@@ -2048,15 +2318,20 @@ function agGen() {
   const benefit = document.getElementById('ag-benefit').value.trim();
   const url = document.getElementById('ag-url').value.trim();
 
-  agScenes = buildScenes(agCatKey, name, price, benefit, url, null, null, null, null, null, activeSkillKey);
+  agScenes = buildScenesTyped(agCatKey, name, price, benefit, url, activeSkillKey);
   const cat = CATS[agCatKey];
+  const pt = activeVidTool?.promptType || 't2v';
+  const toolLabel = activeVidTool ? ` · ${activeVidTool.icon} ${activeVidTool.name}` : '';
 
   document.getElementById('ag-out-title').innerHTML =
-    `생성 결과 <span class="card-sub">${cat.emoji} ${cat.label}</span>`;
+    `생성 결과 <span class="card-sub">${cat.emoji} ${cat.label}${toolLabel}</span>`;
 
   const grid = document.getElementById('ag-scenes-grid');
   grid.innerHTML = '';
-  const labels = ['🔥 HOOK · 클립1-2 (0-3s)','📸 PRODUCT CU · 클립3 (3-4.5s)','🎬 DEMO · 클립4-8 (4.5-12s)','✅ CTA · 클립9-10 (12-15s)'];
+  const slabs = getSceneLabels();
+  const ptIcons = {t2v:'🎬',i2v:'🖼️',avatar:'🤖',shopping:'🛍️',edit:'✂️'};
+  const ptIcon = ptIcons[pt] || '🎬';
+  const labels = slabs.map((l,i) => `${['🔥','📸','🎬','✅'][i]} ${l}`);
   const cls = ['s0','s1','s2','s3'];
   ['s0','s1','s2','s3'].forEach((k,i) => {
     const div = document.createElement('div');
@@ -2071,6 +2346,11 @@ function agGen() {
 
   document.getElementById('ag-tip-text').textContent = cat.rt;
   document.getElementById('ag-output').style.display = '';
+  // update section sub-title to reflect selected method
+  const subEl = document.querySelector('#auto-gen .section-sub');
+  if (subEl && activeVidTool) {
+    subEl.textContent = `${ptIcon} ${activeVidTool.name} · ${VID_METHODS[activeVidTool.catKey].hint}`;
+  }
 }
 
 function agCpScene(k) {
@@ -2797,6 +3077,7 @@ let LANG = 'ko';
 
 const I18N = {
   'nav.tools':          ['생성 도구','Creation'],
+  'nav.vid-method':     ['영상 AI 선택','Video AI'],
   'nav.skill-channel':  ['스킬채널 설계','Skill Channel'],
   'nav.auto':           ['자동 생성','Auto Generate'],
   'sec.skill-channel':  ['🎓 스킬채널 설계','🎓 Skill Channel Builder'],
@@ -2875,6 +3156,7 @@ navGo = function(id, btn) {
    INIT
 ══════════════════════════════════ */
 function init() {
+  initVidMethodGrid();
   initSkillGrid();
   initWizardCatGrid();
   initRevGrid();
@@ -2902,8 +3184,8 @@ init();
 
 <!-- Bottom tab bar (mobile only) -->
 <nav class="btab-bar" id="btab-bar">
-  <button class="btab" data-sec="skill-channel" onclick="navGo('skill-channel',document.querySelector('[data-sec=skill-channel]'));btabActivate(this)">
-    <span class="btab-icon">🎓</span>스킬
+  <button class="btab" data-sec="vid-method" onclick="navGo('vid-method',document.querySelector('[data-sec=vid-method]'));btabActivate(this)">
+    <span class="btab-icon">🎬</span>AI선택
   </button>
   <button class="btab active" data-sec="auto-gen" onclick="navGo('auto-gen',document.querySelector('[data-sec=auto-gen]'));btabActivate(this)">
     <span class="btab-icon">⚡</span>생성
