@@ -62,10 +62,19 @@ body::before {
   -webkit-backdrop-filter:blur(14px);
   border-bottom:1px solid var(--border);
   display:flex; align-items:center; justify-content:space-between;
-  padding:14px max(16px, var(--safe-r)) 14px max(16px, var(--safe-l));
+  padding:12px max(16px, var(--safe-r)) 12px max(16px, var(--safe-l));
 }
-.topbar__logo { font-family:var(--fh); font-size:20px; color:var(--gold); letter-spacing:.06em; }
-.topbar__right { display:flex; gap:12px; align-items:center; }
+.topbar__logo {
+  display:flex; align-items:center; gap:8px;
+  font-family:var(--fh); font-size:18px; color:var(--gold); letter-spacing:.06em;
+}
+.topbar__logo-badge {
+  width:32px; height:32px; border-radius:50%;
+  background:linear-gradient(135deg,#c9a227,#e8c85a);
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+.topbar__right { display:flex; gap:10px; align-items:center; }
 .topbar__icon { width:36px; height:36px; border-radius:50%; border:1px solid var(--border2); background:var(--bg3); display:flex; align-items:center; justify-content:center; font-size:16px; }
 
 /* ── BOTTOM NAV ── */
@@ -95,11 +104,22 @@ body::before {
 .sec-hd h2 { font-family:var(--fh); font-size:16px; color:var(--text); }
 .sec-hd span { font-size:12px; color:var(--muted); }
 
+/* ── ACCOUNT LOGO BADGE ── */
+.acct-logo-wrap {
+  width:50px; height:50px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  margin:0 auto 8px; flex-shrink:0;
+  position:relative; overflow:hidden;
+}
+.acct-logo-wrap.sm { background:linear-gradient(135deg,#c9a227,#e8c85a); }
+.acct-logo-wrap.un { background:linear-gradient(135deg,#c9549a,#f4a8cc); }
+.acct-logo-wrap.s77 { background:linear-gradient(135deg,#c43700,#f4923a); }
+
 /* ── ACCOUNT CARDS ── */
 .acct-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:20px; }
 .acct-card {
   background:var(--bg2); border:1px solid var(--border); border-radius:var(--r);
-  padding:14px 10px 12px; text-align:center; cursor:pointer;
+  padding:14px 8px 12px; text-align:center; cursor:pointer;
   transition:border-color .15s, transform .1s;
 }
 .acct-card:active { transform:scale(.97); }
@@ -107,12 +127,21 @@ body::before {
 .acct-card.un { --ac:var(--rose); --ac3:var(--rose3); }
 .acct-card.s77 { --ac:var(--fire); --ac3:var(--fire3); }
 .acct-card.active-card { border-color:var(--ac); background:var(--ac3); }
-.acct-emoji { font-size:26px; margin-bottom:6px; }
-.acct-name { font-size:11px; font-weight:800; color:var(--ac,var(--gold)); letter-spacing:.04em; }
+.acct-name { font-size:10px; font-weight:800; color:var(--ac,var(--gold)); letter-spacing:.04em; line-height:1.3; }
 .acct-status { font-size:10px; color:var(--muted); margin-top:3px; }
 .acct-dot { display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--green); margin-right:3px; vertical-align:middle; }
 .acct-dot.red { background:var(--red); }
 .acct-dot.grey { background:var(--faint); }
+
+/* ── TRIG LOGO (small inline) ── */
+.trig-logo {
+  width:32px; height:32px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+.trig-logo.sm { background:linear-gradient(135deg,#c9a227,#e8c85a); }
+.trig-logo.un { background:linear-gradient(135deg,#c9549a,#f4a8cc); }
+.trig-logo.s77 { background:linear-gradient(135deg,#c43700,#f4923a); }
 
 /* ── STATUS SUMMARY ── */
 .stat-row { display:flex; gap:10px; margin-bottom:20px; }
@@ -178,15 +207,11 @@ body::before {
 .trig-btn {
   padding:16px 10px; border-radius:var(--r); border:1px solid var(--border2);
   background:var(--bg2); color:var(--text); font-size:13px; font-weight:800;
-  display:flex; flex-direction:column; align-items:center; gap:6px;
+  display:flex; flex-direction:column; align-items:center; gap:8px;
   transition:background .15s, border-color .15s;
 }
 .trig-btn:active { background:var(--bg3); }
-.trig-btn .trig-icon { font-size:24px; }
-.trig-btn .trig-acct { font-size:12px; }
-.trig-btn.sm .trig-icon { color:var(--gold); }
-.trig-btn.un .trig-icon { color:var(--rose); }
-.trig-btn.s77 .trig-icon { color:var(--fire); }
+.trig-btn .trig-acct { font-size:12px; color:var(--muted); }
 .trig-btn.all { grid-column:1/-1; background:var(--gold3); border-color:var(--gold); }
 .trig-btn.all .trig-icon { color:var(--gold2); font-size:20px; }
 
@@ -208,11 +233,11 @@ body::before {
 .trig-log .ok { color:var(--green); }
 .trig-log .err { color:var(--red); }
 
-/* ── SETTINGS ── */
+/* ── SETTINGS / EDIT ── */
 .set-group { background:var(--bg2); border:1px solid var(--border); border-radius:var(--r); overflow:hidden; margin-bottom:16px; }
 .set-row {
   display:flex; align-items:center; padding:15px 16px; gap:12px;
-  border-bottom:1px solid var(--border); cursor:pointer; transition:background .12s;
+  border-bottom:1px solid var(--border); transition:background .12s;
 }
 .set-row:last-child { border-bottom:none; }
 .set-row:active { background:var(--bg3); }
@@ -238,6 +263,7 @@ body::before {
   width:100%; max-width:540px;
   padding:24px max(20px,var(--safe-r)) max(24px,calc(var(--safe-b)+8px)) max(20px,var(--safe-l));
   transform:translateY(100%); transition:transform .3s cubic-bezier(.32,.72,0,1);
+  max-height:90vh; overflow-y:auto;
 }
 .modal-overlay.open .modal-sheet { transform:translateY(0); }
 .modal-handle { width:36px; height:4px; border-radius:2px; background:var(--faint); margin:0 auto 20px; }
@@ -250,34 +276,64 @@ body::before {
   margin-bottom:14px;
 }
 .modal-input:focus { outline:none; border-color:var(--gold); }
+.modal-input-label { font-size:12px; color:var(--muted); margin-bottom:6px; display:block; }
 .modal-btn {
   width:100%; padding:16px; border-radius:var(--r); border:none;
   background:var(--gold); color:#07071A; font-size:16px; font-weight:800;
   font-family:var(--fh);
 }
 .modal-btn:active { opacity:.85; }
+.modal-btn.secondary {
+  background:var(--bg3); color:var(--muted); border:1px solid var(--border);
+  margin-top:10px; font-size:14px;
+}
 .modal-link { display:block; text-align:center; margin-top:12px; font-size:12px; color:var(--muted); }
 
 /* ── MONETIZATION ── */
 .mono-card {
   background:linear-gradient(135deg,var(--gold3) 0%,var(--bg2) 100%);
   border:1px solid var(--border2); border-radius:var(--rL);
-  padding:18px 16px; margin-bottom:12px; cursor:pointer;
-  display:flex; align-items:center; gap:14px; transition:border-color .15s;
+  padding:16px; margin-bottom:12px;
+  display:flex; align-items:center; gap:12px; transition:border-color .15s;
 }
 .mono-card:active { border-color:var(--gold); }
-.mono-icon { font-size:32px; flex-shrink:0; }
+.mono-icon { font-size:28px; flex-shrink:0; }
 .mono-info { flex:1; min-width:0; }
 .mono-title { font-size:15px; font-weight:800; }
-.mono-sub { font-size:12px; color:var(--muted); margin-top:2px; }
-.mono-price { font-family:var(--fh); font-size:16px; color:var(--gold); white-space:nowrap; }
+.mono-sub { font-size:12px; color:var(--muted); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.mono-price { font-family:var(--fh); font-size:15px; color:var(--gold); white-space:nowrap; }
+.mono-actions { display:flex; gap:6px; flex-shrink:0; }
+.mono-btn {
+  padding:6px 10px; border-radius:var(--rS); border:1px solid var(--border2);
+  background:var(--bg3); color:var(--muted); font-size:12px; font-weight:700; font-family:var(--font);
+  white-space:nowrap; transition:all .15s;
+}
+.mono-btn:active { background:var(--bg4); }
+.mono-btn.copy-btn { color:var(--gold); border-color:var(--gold); }
 
 /* ── SCHEDULE TABLE ── */
-.sch-row { display:flex; gap:10px; margin-bottom:8px; align-items:center; }
-.sch-time { font-family:var(--fh); font-size:16px; color:var(--gold); width:52px; flex-shrink:0; }
+.sch-row { display:flex; gap:10px; margin-bottom:8px; align-items:flex-start; }
+.sch-time { font-family:var(--fh); font-size:16px; color:var(--gold); width:52px; flex-shrink:0; padding-top:10px; }
 .sch-bar { flex:1; min-width:0; background:var(--bg2); border:1px solid var(--border); border-radius:var(--rS); padding:10px 12px; }
 .sch-slot { font-size:13px; font-weight:700; }
-.sch-topics { font-size:12px; color:var(--muted); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.sch-topics { font-size:12px; color:var(--muted); margin-top:2px; word-break:break-all; line-height:1.5; }
+.sch-edit-btn { font-size:11px; padding:3px 8px; border-radius:20px; border:1px solid var(--border); background:none; color:var(--muted); font-family:var(--font); margin-top:6px; }
+.sch-edit-btn:active { background:var(--bg3); }
+
+/* ── EDIT TOGGLE BAR ── */
+.edit-bar {
+  background:var(--bg3); border:1px solid var(--border2); border-radius:var(--rS);
+  padding:10px 14px; margin-bottom:16px;
+  display:flex; align-items:center; justify-content:space-between;
+  font-size:13px; color:var(--muted);
+}
+.edit-bar .edit-mode-label { font-weight:700; color:var(--gold); }
+.edit-toggle-btn {
+  padding:7px 14px; border-radius:20px; border:1px solid var(--border2);
+  background:var(--bg4); color:var(--text); font-size:12px; font-weight:700; font-family:var(--font);
+}
+.edit-toggle-btn.active { background:var(--gold); color:#07071A; border-color:var(--gold); }
+.edit-toggle-btn:active { opacity:.8; }
 
 /* ── LOADING SPINNER ── */
 .spinner { display:inline-block; width:20px; height:20px; border:2px solid var(--faint); border-top-color:var(--gold); border-radius:50%; animation:spin .6s linear infinite; vertical-align:middle; }
@@ -301,7 +357,7 @@ body::before {
 .update-bar {
   background:rgba(82,176,106,.15); border:1px solid rgba(82,176,106,.4);
   border-radius:var(--rS); padding:10px 14px; margin-bottom:14px;
-  font-size:13px; display:flex; align-items:center; gap:8px; display:none;
+  font-size:13px; display:none; align-items:center; gap:8px;
 }
 .update-bar.show { display:flex; }
 
@@ -311,15 +367,33 @@ body::before {
   .trig-grid { grid-template-columns:repeat(3,1fr); }
   .trig-btn.all { grid-column:1/-1; }
 }
+
+/* ── LOG CHIP LOGO ── */
+.chip-logo {
+  display:inline-flex; align-items:center; gap:5px; vertical-align:middle;
+}
+.chip-logo-badge {
+  width:16px; height:16px; border-radius:50%;
+  display:inline-flex; align-items:center; justify-content:center;
+  flex-shrink:0; vertical-align:middle;
+}
+.chip-logo-badge.sm { background:linear-gradient(135deg,#c9a227,#e8c85a); }
+.chip-logo-badge.un { background:linear-gradient(135deg,#c9549a,#f4a8cc); }
+.chip-logo-badge.s77 { background:linear-gradient(135deg,#c43700,#f4923a); }
 </style>
 </head>
 <body>
 
-<!-- STATUS BAR FILL handled by body::before -->
-
 <!-- TOP BAR -->
 <div class="topbar">
-  <div class="topbar__logo">☯ 사주마루</div>
+  <div class="topbar__logo">
+    <div class="topbar__logo-badge">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <polygon points="9,1 10.8,6.2 16.5,6.2 11.9,9.8 13.7,15 9,11.4 4.3,15 6.1,9.8 1.5,6.2 7.2,6.2" fill="#06060f"/>
+      </svg>
+    </div>
+    사주마루
+  </div>
   <div class="topbar__right">
     <div id="onlineIndicator" class="topbar__icon" title="온라인 상태">🟢</div>
     <button class="topbar__icon" onclick="openPatModal()" title="설정">⚙️</button>
@@ -327,7 +401,7 @@ body::before {
 </div>
 
 <!-- UPDATE BANNER -->
-<div id="updateBar" class="update-bar" style="margin:8px 16px 0; display:none;">
+<div id="updateBar" class="update-bar" style="margin:8px 16px 0;">
   <span>🔄</span>
   <span>새 버전이 있어요.</span>
   <button onclick="location.reload()" style="margin-left:auto;padding:4px 10px;border-radius:6px;border:1px solid var(--green);background:none;color:var(--green);font-size:12px;font-weight:700;">업데이트</button>
@@ -343,18 +417,32 @@ body::before {
 
   <div class="acct-grid">
     <div class="acct-card sm" id="acctSm" onclick="switchAcct('sm')">
-      <div class="acct-emoji">☯</div>
+      <div class="acct-logo-wrap sm">
+        <svg width="26" height="26" viewBox="0 0 18 18" fill="none">
+          <polygon points="9,1 10.8,6.2 16.5,6.2 11.9,9.8 13.7,15 9,11.4 4.3,15 6.1,9.8 1.5,6.2 7.2,6.2" fill="#06060f"/>
+        </svg>
+      </div>
       <div class="acct-name">사주마루</div>
       <div class="acct-status"><span class="acct-dot grey" id="dotSm"></span><span id="statusSm">-</span></div>
     </div>
     <div class="acct-card un" id="acctUn" onclick="switchAcct('un')">
-      <div class="acct-emoji">💜</div>
-      <div class="acct-name">사주언니</div>
+      <div class="acct-logo-wrap un">
+        <svg width="20" height="20" viewBox="0 0 16 16" fill="none">
+          <circle cx="8" cy="6" r="5" fill="#c9549a" opacity="0.9"/>
+          <circle cx="11" cy="4" r="4" fill="#200630"/>
+          <circle cx="11" cy="4" r="1.5" fill="#f4a8cc" opacity="0.7"/>
+        </svg>
+      </div>
+      <div class="acct-name">사주보는언니</div>
       <div class="acct-status"><span class="acct-dot grey" id="dotUn"></span><span id="statusUn">-</span></div>
     </div>
     <div class="acct-card s77" id="acctS77" onclick="switchAcct('s77')">
-      <div class="acct-emoji">🔥</div>
-      <div class="acct-name">마루77</div>
+      <div class="acct-logo-wrap s77">
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+          <path d="M9 1L7 8h4L6 15l1-6H3L9 1z" fill="#fff" opacity="0.95"/>
+        </svg>
+      </div>
+      <div class="acct-name">사주마루77</div>
       <div class="acct-status"><span class="acct-dot grey" id="dotS77"></span><span id="statusS77">-</span></div>
     </div>
   </div>
@@ -424,21 +512,35 @@ body::before {
   </div>
   <div class="trig-grid trigger-section">
     <button class="trig-btn all" onclick="trigPost('all')">
-      <span class="trig-icon">🚀</span>
+      <span style="font-size:22px;">🚀</span>
       <span>전체 계정 실행</span>
-      <span class="trig-acct" style="color:var(--muted);">sm + un + s77</span>
+      <span class="trig-acct">sm + un + s77</span>
     </button>
     <button class="trig-btn sm" onclick="trigPost('sm')">
-      <span class="trig-icon">☯</span>
+      <div class="trig-logo sm">
+        <svg width="20" height="20" viewBox="0 0 18 18" fill="none">
+          <polygon points="9,1 10.8,6.2 16.5,6.2 11.9,9.8 13.7,15 9,11.4 4.3,15 6.1,9.8 1.5,6.2 7.2,6.2" fill="#06060f"/>
+        </svg>
+      </div>
       <span>사주마루</span>
     </button>
     <button class="trig-btn un" onclick="trigPost('un')">
-      <span class="trig-icon" style="color:var(--rose);">💜</span>
-      <span>사주언니</span>
+      <div class="trig-logo un">
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+          <circle cx="8" cy="6" r="5" fill="#c9549a" opacity="0.9"/>
+          <circle cx="11" cy="4" r="4" fill="#200630"/>
+          <circle cx="11" cy="4" r="1.5" fill="#f4a8cc" opacity="0.7"/>
+        </svg>
+      </div>
+      <span>사주보는언니</span>
     </button>
     <button class="trig-btn s77" onclick="trigPost('s77')">
-      <span class="trig-icon" style="color:var(--fire);">🔥</span>
-      <span>마루77</span>
+      <div class="trig-logo s77">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M9 1L7 8h4L6 15l1-6H3L9 1z" fill="#fff" opacity="0.95"/>
+        </svg>
+      </div>
+      <span>사주마루77</span>
     </button>
   </div>
 
@@ -456,9 +558,24 @@ body::before {
   <!-- 계정 필터 -->
   <div class="slot-picker" style="margin-bottom:14px;">
     <div class="slot-chip sel" onclick="filterLog(this,'all')">전체</div>
-    <div class="slot-chip" onclick="filterLog(this,'sm')">☯ 사주마루</div>
-    <div class="slot-chip" onclick="filterLog(this,'un')">💜 사주언니</div>
-    <div class="slot-chip" onclick="filterLog(this,'s77')">🔥 마루77</div>
+    <div class="slot-chip" onclick="filterLog(this,'sm')">
+      <span class="chip-logo">
+        <span class="chip-logo-badge sm"><svg width="10" height="10" viewBox="0 0 18 18" fill="none"><polygon points="9,1 10.8,6.2 16.5,6.2 11.9,9.8 13.7,15 9,11.4 4.3,15 6.1,9.8 1.5,6.2 7.2,6.2" fill="#06060f"/></svg></span>
+        사주마루
+      </span>
+    </div>
+    <div class="slot-chip" onclick="filterLog(this,'un')">
+      <span class="chip-logo">
+        <span class="chip-logo-badge un"><svg width="10" height="10" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="6" r="5" fill="#c9549a" opacity="0.9"/><circle cx="11" cy="4" r="4" fill="#200630"/><circle cx="11" cy="4" r="1.5" fill="#f4a8cc" opacity="0.7"/></svg></span>
+        사주보는언니
+      </span>
+    </div>
+    <div class="slot-chip" onclick="filterLog(this,'s77')">
+      <span class="chip-logo">
+        <span class="chip-logo-badge s77"><svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M9 1L7 8h4L6 15l1-6H3L9 1z" fill="#fff" opacity="0.95"/></svg></span>
+        사주마루77
+      </span>
+    </div>
   </div>
 
   <div id="logList"></div>
@@ -469,82 +586,33 @@ body::before {
 
   <div class="sec-hd" style="margin-top:12px;">
     <h2>수익화 링크</h2>
-    <span style="color:var(--green);">활성</span>
+    <button id="editToggleBtn" class="edit-toggle-btn" onclick="toggleEditMode()">✏️ 편집</button>
   </div>
 
-  <div class="mono-card" onclick="copyLink('https://pf.kakao.com/_saju')">
-    <div class="mono-icon">💬</div>
-    <div class="mono-info">
-      <div class="mono-title">카카오 무료상담</div>
-      <div class="mono-sub">pf.kakao.com/_saju · 탭해서 복사</div>
-    </div>
-    <div class="mono-price">무료</div>
+  <!-- 편집 모드 안내 -->
+  <div id="editBar" class="edit-bar" style="display:none;">
+    <span class="edit-mode-label">✏️ 편집 모드</span>
+    <span>카드를 탭해서 수정해봐</span>
   </div>
 
-  <div class="mono-card" onclick="copyLink('https://forms.gle/t2sSNES5NYow77vz5')">
-    <div class="mono-icon">📋</div>
-    <div class="mono-info">
-      <div class="mono-title">무료 사주 신청폼</div>
-      <div class="mono-sub">forms.gle · 탭해서 복사</div>
-    </div>
-    <div class="mono-price">무료 퍼널</div>
-  </div>
-
-  <div class="mono-card" style="background:linear-gradient(135deg,var(--rose3),var(--bg2));border-color:var(--rose);" onclick="copyLink('https://smartstore.naver.com/sajumaru')">
-    <div class="mono-icon">🛒</div>
-    <div class="mono-info">
-      <div class="mono-title">네이버 스마트스토어</div>
-      <div class="mono-sub">sajumaru · 사주책/자료</div>
-    </div>
-    <div class="mono-price" style="color:var(--rose);">판매</div>
-  </div>
-
-  <div class="mono-card" style="background:linear-gradient(135deg,var(--fire3),var(--bg2));border-color:var(--fire);" onclick="copyLink('https://www.youtube.com/@sajumaru/join')">
-    <div class="mono-icon">▶️</div>
-    <div class="mono-info">
-      <div class="mono-title">유튜브 멤버십</div>
-      <div class="mono-sub">@sajumaru · 구독 전환</div>
-    </div>
-    <div class="mono-price" style="color:var(--fire);">월정액</div>
+  <div id="monoCards">
+    <!-- 카드는 JS로 렌더링 -->
   </div>
 
   <div class="sec-hd" style="margin-top:20px;">
     <h2>가격 안내</h2>
+    <button id="priceEditBtn" class="edit-toggle-btn" onclick="openPriceEdit()" style="display:none;">수정</button>
   </div>
-  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
-    <div style="display:flex;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);">
-      <span>기본 사주 상담</span>
-      <span style="font-family:var(--fh);color:var(--gold);">30,000원</span>
-    </div>
-    <div style="display:flex;justify-content:space-between;padding:14px 16px;">
-      <span>풀 사주 상담</span>
-      <span style="font-family:var(--fh);color:var(--gold);">90,000원</span>
-    </div>
+  <div id="priceTable" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
+    <!-- JS로 렌더링 -->
   </div>
 
   <div class="sec-hd" style="margin-top:20px;">
     <h2>자동 포스팅 일정</h2>
+    <button id="schedEditBtn" class="edit-toggle-btn" onclick="openSchedEdit()" style="display:none;">수정</button>
   </div>
-  <div class="sch-row">
-    <div class="sch-time">08:00</div>
-    <div class="sch-bar">
-      <div class="sch-slot">☀️ 아침 운세</div>
-      <div class="sch-topics">띠별·재물·재회·합격·이직·사업·건강·궁합·이사·부모</div>
-    </div>
-  </div>
-  <div class="sch-row">
-    <div class="sch-time">13:00</div>
-    <div class="sch-bar">
-      <div class="sch-slot">🌤 점심 픽</div>
-      <div class="sch-topics">재물·재회·띠별·건강·이직·합격·사업·궁합·이사·부모</div>
-    </div>
-  </div>
-  <div class="sch-row">
-    <div class="sch-time">20:00</div>
-    <div class="sch-bar">
-      <div class="sch-slot">🌙 저녁 포춘</div>
-      <div class="sch-topics">재회·건강·합격·재물·이직·사업·부모·띠별·궁합·이사</div>
-    </div>
+  <div id="schedTable">
+    <!-- JS로 렌더링 -->
   </div>
 </div>
 
@@ -569,7 +637,7 @@ body::before {
 </nav>
 
 <!-- ───────── PAT MODAL ───────── -->
-<div class="modal-overlay" id="patModal" onclick="closePatModal(event)">
+<div class="modal-overlay" id="patModal" onclick="closeModal('patModal',event)">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
     <div class="modal-title">🔑 GitHub PAT 설정</div>
@@ -577,10 +645,60 @@ body::before {
     <input class="modal-input" id="patInput" type="password" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off" spellcheck="false">
     <div style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.6;">
       ✅ 필요 권한: <strong style="color:var(--text);">workflow</strong><br>
-      📍 발급: github.com → Settings → Developer settings → Personal access tokens → Fine-grained
+      📍 발급: github.com → Settings → Developer settings → Personal access tokens
     </div>
     <button class="modal-btn" onclick="savePat()">저장</button>
     <a class="modal-link" href="https://github.com/settings/tokens" target="_blank" rel="noopener">GitHub 토큰 발급 페이지 →</a>
+  </div>
+</div>
+
+<!-- ───────── LINK EDIT MODAL ───────── -->
+<div class="modal-overlay" id="linkModal" onclick="closeModal('linkModal',event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="linkModalTitle">링크 수정</div>
+    <input type="hidden" id="linkEditIdx">
+    <label class="modal-input-label">제목</label>
+    <input class="modal-input" id="linkEditTitle" type="text" placeholder="카드 제목">
+    <label class="modal-input-label">URL</label>
+    <input class="modal-input" id="linkEditUrl" type="url" placeholder="https://...">
+    <label class="modal-input-label">부제목</label>
+    <input class="modal-input" id="linkEditSub" type="text" placeholder="짧은 설명">
+    <label class="modal-input-label">가격/라벨</label>
+    <input class="modal-input" id="linkEditPrice" type="text" placeholder="무료 / 판매 / 월정액">
+    <button class="modal-btn" onclick="saveLinkEdit()">저장</button>
+    <button class="modal-btn secondary" onclick="closeModal('linkModal')">취소</button>
+  </div>
+</div>
+
+<!-- ───────── PRICE EDIT MODAL ───────── -->
+<div class="modal-overlay" id="priceModal" onclick="closeModal('priceModal',event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">💰 가격 수정</div>
+    <label class="modal-input-label">기본 사주 상담 가격</label>
+    <input class="modal-input" id="priceBasic" type="text" placeholder="30,000원">
+    <label class="modal-input-label">풀 사주 상담 가격</label>
+    <input class="modal-input" id="priceFull" type="text" placeholder="90,000원">
+    <button class="modal-btn" onclick="savePriceEdit()">저장</button>
+    <button class="modal-btn secondary" onclick="closeModal('priceModal')">취소</button>
+  </div>
+</div>
+
+<!-- ───────── SCHEDULE EDIT MODAL ───────── -->
+<div class="modal-overlay" id="schedModal" onclick="closeModal('schedModal',event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="schedModalTitle">일정 수정</div>
+    <input type="hidden" id="schedEditIdx">
+    <label class="modal-input-label">시간</label>
+    <input class="modal-input" id="schedEditTime" type="text" placeholder="08:00">
+    <label class="modal-input-label">슬롯 이름</label>
+    <input class="modal-input" id="schedEditSlot" type="text" placeholder="☀️ 아침 운세">
+    <label class="modal-input-label">주제 목록 (쉼표 구분)</label>
+    <textarea class="modal-input" id="schedEditTopics" rows="3" style="resize:vertical;" placeholder="띠별,재물,재회,..."></textarea>
+    <button class="modal-btn" onclick="saveSchedEdit()">저장</button>
+    <button class="modal-btn secondary" onclick="closeModal('schedModal')">취소</button>
   </div>
 </div>
 
@@ -594,6 +712,50 @@ const REPO  = '-';
 const WORKFLOW = 'auto_post_2h.yml';
 const BASE_URL = 'https://shinmoney7-cyber.github.io/-';
 
+// ── DEFAULT DATA ──
+const DEFAULT_LINKS = [
+  { icon:'💬', title:'카카오 무료상담', url:'https://pf.kakao.com/_saju', sub:'pf.kakao.com/_saju', price:'무료', color:'' },
+  { icon:'📋', title:'무료 사주 신청폼', url:'https://forms.gle/t2sSNES5NYow77vz5', sub:'forms.gle', price:'무료 퍼널', color:'' },
+  { icon:'🛒', title:'네이버 스마트스토어', url:'https://smartstore.naver.com/sajumaru', sub:'sajumaru · 사주책/자료', price:'판매', color:'rose' },
+  { icon:'▶️', title:'유튜브 멤버십', url:'https://www.youtube.com/@sajumaru/join', sub:'@sajumaru · 구독 전환', price:'월정액', color:'fire' }
+];
+
+const DEFAULT_PRICES = { basic:'30,000원', full:'90,000원' };
+
+const DEFAULT_SCHED = [
+  { time:'08:00', slot:'☀️ 아침 운세', topics:'띠별,재물,재회,합격,이직,사업,건강,궁합,이사,부모' },
+  { time:'13:00', slot:'🌤 점심 픽', topics:'재물,재회,띠별,건강,이직,합격,사업,궁합,이사,부모' },
+  { time:'20:00', slot:'🌙 저녁 포춘', topics:'재회,건강,합격,재물,이직,사업,부모,띠별,궁합,이사' }
+];
+
+// ── EDITABLE STATE ──
+let links = DEFAULT_LINKS.map(l=>({...l}));
+let prices = {...DEFAULT_PRICES};
+let sched = DEFAULT_SCHED.map(s=>({...s}));
+let editMode = false;
+
+// ── LOAD SAVED DATA ──
+function loadEditable() {
+  try {
+    const savedLinks = localStorage.getItem('mono_links');
+    if (savedLinks) links = JSON.parse(savedLinks);
+    const savedPrices = localStorage.getItem('mono_prices');
+    if (savedPrices) prices = JSON.parse(savedPrices);
+    const savedSched = localStorage.getItem('post_sched');
+    if (savedSched) sched = JSON.parse(savedSched);
+  } catch(e) {}
+}
+
+function saveLinks() {
+  try { localStorage.setItem('mono_links', JSON.stringify(links)); } catch(e) {}
+}
+function savePrices() {
+  try { localStorage.setItem('mono_prices', JSON.stringify(prices)); } catch(e) {}
+}
+function saveSched() {
+  try { localStorage.setItem('post_sched', JSON.stringify(sched)); } catch(e) {}
+}
+
 // ── STATE ──
 let allLogs = { sm:[], un:[], s77:[] };
 let curAcct = 'all';
@@ -604,15 +766,15 @@ let pat = '';
 // ── INIT ──
 document.addEventListener('DOMContentLoaded', () => {
   loadPat();
+  loadEditable();
   updateOnline();
   window.addEventListener('online',  updateOnline);
   window.addEventListener('offline', updateOnline);
 
-  // PWA update check
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').then(reg => {
       reg.addEventListener('updatefound', () => {
-        document.getElementById('updateBar').style.display = 'flex';
+        document.getElementById('updateBar').classList.add('show');
       });
     }).catch(() => {});
   }
@@ -620,8 +782,8 @@ document.addEventListener('DOMContentLoaded', () => {
   refreshAll();
   updateTimer();
   setInterval(updateTimer, 30000);
+  renderMoney();
 
-  // URL param: tab
   const params = new URLSearchParams(location.search);
   if (params.get('tab')) navTo(params.get('tab'));
   if (params.get('action') === 'post') navTo('trigger');
@@ -643,7 +805,7 @@ function savePat() {
   if (!v) { showToast('PAT를 입력해줘'); return; }
   pat = v;
   try { localStorage.setItem('gh_pat', v); } catch(e) {}
-  closePatModal();
+  closeModal('patModal');
   updatePatStatus();
   showToast('✅ PAT 저장 완료');
 }
@@ -669,11 +831,16 @@ function clearPat() {
 }
 function openPatModal() {
   document.getElementById('patInput').value = pat;
-  document.getElementById('patModal').classList.add('open');
+  openModal('patModal');
 }
-function closePatModal(e) {
-  if (!e || e.target === document.getElementById('patModal')) {
-    document.getElementById('patModal').classList.remove('open');
+
+// ── MODAL HELPER ──
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id, e) {
+  if (!e || e.target === document.getElementById(id)) {
+    document.getElementById(id).classList.remove('open');
   }
 }
 
@@ -694,9 +861,9 @@ async function refreshAll() {
   const now = new Date().toISOString().slice(0,10);
   let todayN = 0, totalN = 0;
   const accts = [
-    { id:'sm', logs:sm, dotId:'dotSm', statusId:'statusSm', cardId:'acctSm' },
-    { id:'un', logs:un, dotId:'dotUn', statusId:'statusUn', cardId:'acctUn' },
-    { id:'s77', logs:s77, dotId:'dotS77', statusId:'statusS77', cardId:'acctS77' }
+    { id:'sm', logs:sm, dotId:'dotSm', statusId:'statusSm' },
+    { id:'un', logs:un, dotId:'dotUn', statusId:'statusUn' },
+    { id:'s77', logs:s77, dotId:'dotS77', statusId:'statusS77' }
   ];
   accts.forEach(a => {
     const last = a.logs[0];
@@ -716,7 +883,6 @@ async function refreshAll() {
   });
   document.getElementById('todayCount').textContent = todayN;
   document.getElementById('totalCount').textContent = totalN;
-  // week
   const weekAgo = new Date(Date.now() - 7*86400000).toISOString().slice(0,10);
   const weekN = [...sm,...un,...s77].filter(l => l.date >= weekAgo).length;
   document.getElementById('weekCount').textContent = weekN;
@@ -748,7 +914,7 @@ function renderRecent() {
 function renderPostCard(l) {
   const ok = (l.platforms_ok||[]).map(p=>`<span class="plat-badge ok">${platIcon(p)} ${p}</span>`).join('');
   const fail = (l.platforms_fail||[]).map(p=>`<span class="plat-badge fail">✗ ${p}</span>`).join('');
-  const acctLabel = {sm:'사주마루',un:'사주언니',s77:'마루77'}[l._acct]||l._acct;
+  const acctLabel = {sm:'사주마루',un:'사주보는언니',s77:'사주마루77'}[l._acct]||l._acct;
   const acctColor = {sm:'var(--gold)',un:'var(--rose)',s77:'var(--fire)'}[l._acct]||'var(--gold)';
 
   let imgHtml = '';
@@ -784,13 +950,10 @@ function escHtml(s) {
 // ── SWITCH ACCT ──
 function switchAcct(id) {
   curAcct = id;
-  ['sm','un','s77'].forEach(a => {
-    const el = document.getElementById('acct'+a.charAt(0).toUpperCase()+a.slice(1).replace('77','S77').replace('un','Un').replace('sm','Sm'));
-  });
   document.getElementById('acctSm').classList.toggle('active-card', id==='sm');
   document.getElementById('acctUn').classList.toggle('active-card', id==='un');
   document.getElementById('acctS77').classList.toggle('active-card', id==='s77');
-  const labels = {sm:'☯ 사주마루',un:'💜 사주언니',s77:'🔥 마루77',all:'전체'};
+  const labels = {sm:'사주마루',un:'사주보는언니',s77:'사주마루77',all:'전체'};
   document.getElementById('curAcctLabel').textContent = labels[id]||'전체';
   renderRecent();
 }
@@ -829,10 +992,10 @@ function updateTimer() {
   const h = kstNow.getUTCHours();
   const m = kstNow.getUTCMinutes();
   const curMin = h*60 + m;
-  const slots = [{min:8*60,label:'08:00 아침 운세'},{min:13*60,label:'13:00 점심 픽'},{min:20*60,label:'20:00 저녁 포춘'}];
+  const slots = sched.map(s => ({ min: parseInt(s.time)*60 + parseInt(s.time.slice(3)), label: s.time + ' ' + s.slot }));
   let next = null;
   for (const s of slots) { if (s.min > curMin) { next = s; break; } }
-  if (!next) next = { min: 8*60 + 24*60, label:'08:00 아침 운세 (내일)' };
+  if (!next) next = { min: parseInt(slots[0]?.time||'08')*60 + 24*60, label:(slots[0]?.label||'08:00') + ' (내일)' };
   const diff = next.min - curMin;
   const hLeft = Math.floor(diff / 60), mLeft = diff % 60;
   document.getElementById('timerVal').textContent = `${hLeft}시간 ${mLeft}분 후`;
@@ -872,6 +1035,157 @@ async function trigPost(acct) {
   } catch(e) {
     log.innerHTML = `<span class="err">❌ 네트워크 오류: ${e.message}</span>`;
   }
+}
+
+// ── RENDER MONEY ──
+function renderMoney() {
+  renderMonoCards();
+  renderPriceTable();
+  renderSchedTable();
+}
+
+function renderMonoCards() {
+  const colorMap = {
+    '': `background:linear-gradient(135deg,var(--gold3) 0%,var(--bg2) 100%);border-color:var(--border2);`,
+    rose: `background:linear-gradient(135deg,var(--rose3),var(--bg2));border-color:var(--rose);`,
+    fire: `background:linear-gradient(135deg,var(--fire3),var(--bg2));border-color:var(--fire);`
+  };
+  const priceColorMap = { '':' color:var(--gold)', rose:' color:var(--rose)', fire:' color:var(--fire)' };
+  const container = document.getElementById('monoCards');
+  container.innerHTML = links.map((l, i) => {
+    const cs = colorMap[l.color||''] || colorMap[''];
+    const pc = priceColorMap[l.color||''] || priceColorMap[''];
+    const editBtns = editMode ? `
+      <div class="mono-actions">
+        <button class="mono-btn copy-btn" onclick="event.stopPropagation();copyLink('${escHtml(l.url)}')">복사</button>
+        <button class="mono-btn" onclick="event.stopPropagation();openLinkEdit(${i})">수정</button>
+      </div>` : `
+      <div class="mono-actions">
+        <button class="mono-btn copy-btn" onclick="event.stopPropagation();copyLink('${escHtml(l.url)}')">복사</button>
+      </div>`;
+    return `<div class="mono-card" style="${cs}" onclick="copyLink('${escHtml(l.url)}')">
+      <div class="mono-icon">${l.icon}</div>
+      <div class="mono-info">
+        <div class="mono-title">${escHtml(l.title)}</div>
+        <div class="mono-sub">${escHtml(l.sub)}</div>
+      </div>
+      <div class="mono-price" style="${pc}">${escHtml(l.price)}</div>
+      ${editBtns}
+    </div>`;
+  }).join('');
+}
+
+function renderPriceTable() {
+  document.getElementById('priceTable').innerHTML = `
+    <div style="display:flex;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);">
+      <span>기본 사주 상담</span>
+      <span style="font-family:var(--fh);color:var(--gold);">${escHtml(prices.basic)}</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;padding:14px 16px;">
+      <span>풀 사주 상담</span>
+      <span style="font-family:var(--fh);color:var(--gold);">${escHtml(prices.full)}</span>
+    </div>`;
+}
+
+function renderSchedTable() {
+  document.getElementById('schedTable').innerHTML = sched.map((s, i) => {
+    const editBtn = editMode ? `<button class="sch-edit-btn" onclick="openSchedItemEdit(${i})">✏️ 수정</button>` : '';
+    return `<div class="sch-row">
+      <div class="sch-time">${escHtml(s.time)}</div>
+      <div class="sch-bar">
+        <div class="sch-slot">${escHtml(s.slot)}</div>
+        <div class="sch-topics">${escHtml(s.topics)}</div>
+        ${editBtn}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── EDIT MODE ──
+function toggleEditMode() {
+  editMode = !editMode;
+  const btn = document.getElementById('editToggleBtn');
+  const bar = document.getElementById('editBar');
+  const priceBtn = document.getElementById('priceEditBtn');
+  const schedBtn = document.getElementById('schedEditBtn');
+  btn.textContent = editMode ? '✅ 완료' : '✏️ 편집';
+  btn.classList.toggle('active', editMode);
+  bar.style.display = editMode ? 'flex' : 'none';
+  priceBtn.style.display = editMode ? '' : 'none';
+  schedBtn.style.display = editMode ? '' : 'none';
+  renderMoney();
+}
+
+// ── LINK EDIT ──
+function openLinkEdit(idx) {
+  const l = links[idx];
+  document.getElementById('linkEditIdx').value = idx;
+  document.getElementById('linkModalTitle').textContent = '링크 수정 — ' + l.title;
+  document.getElementById('linkEditTitle').value = l.title;
+  document.getElementById('linkEditUrl').value = l.url;
+  document.getElementById('linkEditSub').value = l.sub;
+  document.getElementById('linkEditPrice').value = l.price;
+  openModal('linkModal');
+}
+
+function saveLinkEdit() {
+  const idx = parseInt(document.getElementById('linkEditIdx').value);
+  links[idx] = {
+    ...links[idx],
+    title: document.getElementById('linkEditTitle').value.trim() || links[idx].title,
+    url:   document.getElementById('linkEditUrl').value.trim() || links[idx].url,
+    sub:   document.getElementById('linkEditSub').value.trim(),
+    price: document.getElementById('linkEditPrice').value.trim()
+  };
+  saveLinks();
+  closeModal('linkModal');
+  renderMonoCards();
+  showToast('✅ 저장 완료');
+}
+
+// ── PRICE EDIT ──
+function openPriceEdit() {
+  document.getElementById('priceBasic').value = prices.basic;
+  document.getElementById('priceFull').value = prices.full;
+  openModal('priceModal');
+}
+
+function savePriceEdit() {
+  prices.basic = document.getElementById('priceBasic').value.trim() || prices.basic;
+  prices.full  = document.getElementById('priceFull').value.trim() || prices.full;
+  savePrices();
+  closeModal('priceModal');
+  renderPriceTable();
+  showToast('✅ 가격 저장 완료');
+}
+
+// ── SCHEDULE EDIT ──
+function openSchedEdit() {
+  openSchedItemEdit(0);
+}
+
+function openSchedItemEdit(idx) {
+  const s = sched[idx];
+  document.getElementById('schedEditIdx').value = idx;
+  document.getElementById('schedModalTitle').textContent = '일정 수정 — ' + s.time;
+  document.getElementById('schedEditTime').value = s.time;
+  document.getElementById('schedEditSlot').value = s.slot;
+  document.getElementById('schedEditTopics').value = s.topics;
+  openModal('schedModal');
+}
+
+function saveSchedEdit() {
+  const idx = parseInt(document.getElementById('schedEditIdx').value);
+  sched[idx] = {
+    time:   document.getElementById('schedEditTime').value.trim() || sched[idx].time,
+    slot:   document.getElementById('schedEditSlot').value.trim() || sched[idx].slot,
+    topics: document.getElementById('schedEditTopics').value.trim()
+  };
+  saveSched();
+  closeModal('schedModal');
+  renderSchedTable();
+  updateTimer();
+  showToast('✅ 일정 저장 완료');
 }
 
 // ── COPY LINK ──
