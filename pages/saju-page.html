@@ -1088,7 +1088,7 @@ ${itemLines}
     formData.append("email",userEmail||"noreply@sajumaru.com");
     formData.append("_captcha","false");
     formData.append("_template","table");
-    fetch("https://formsubmit.co/shinmoney7@gmail.com",{method:"POST",body:formData}).catch(()=>{});
+    fetch("https://formsubmit.co/sajumaru7@gmail.com",{method:"POST",body:formData}).catch(()=>{});
     showError(`주문이 접수되었어요!<br><br>입금 계좌: <strong>신한은행 133-000-695010 (예금주: 신정희)</strong><br>합계: ${totalStr}<br><br>입금 확인 후 분석을 시작해드릴게요.<br>${deliveryContact!=="없음"?`결과는 ${deliveryContact} 로 보내드립니다.`:""}`);
     return;
   }
