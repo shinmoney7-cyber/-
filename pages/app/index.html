@@ -368,6 +368,52 @@ body::before {
   .trig-btn.all { grid-column:1/-1; }
 }
 
+/* ── APPLICANT PAGE ── */
+.sub-tab-bar { display:flex; background:var(--bg2); border-radius:var(--r); padding:3px; gap:3px; margin-bottom:16px; border:1px solid var(--border); }
+.sub-tab { flex:1; padding:9px 4px; border-radius:var(--rS); border:none; background:none; color:var(--muted); font-size:12px; font-weight:700; font-family:var(--font); cursor:pointer; transition:all .15s; }
+.sub-tab.active { background:var(--bg4); color:var(--text); }
+.sub-panel { display:none; }
+.sub-panel.active { display:block; }
+
+.form-field { margin-bottom:14px; }
+.form-label { font-size:12px; color:var(--muted); font-weight:700; display:block; margin-bottom:6px; }
+.form-input { width:100%; padding:13px 14px; border-radius:var(--rS); border:1px solid var(--border2); background:var(--bg3); color:var(--text); font-size:15px; font-family:var(--font); }
+.form-input:focus { outline:none; border-color:var(--gold); }
+.form-chips { display:flex; flex-wrap:wrap; gap:6px; }
+.form-chip { padding:7px 12px; border-radius:20px; border:1px solid var(--border); background:var(--bg2); color:var(--muted); font-size:12px; font-weight:700; cursor:pointer; transition:all .15s; }
+.form-chip.sel { border-color:var(--gold); color:var(--gold); background:var(--gold3); }
+.form-chip.sm-sel { border-color:var(--gold); color:var(--gold); background:var(--gold3); }
+.form-chip.un-sel { border-color:var(--rose); color:var(--rose); background:var(--rose3); }
+.form-chip.s77-sel { border-color:var(--fire); color:var(--fire); background:var(--fire3); }
+
+.appl-card { background:var(--bg2); border:1px solid var(--border); border-radius:var(--r); padding:14px; margin-bottom:10px; }
+.appl-header { display:flex; align-items:center; gap:8px; margin-bottom:8px; flex-wrap:wrap; }
+.appl-name { font-size:15px; font-weight:700; }
+.appl-date { font-size:12px; color:var(--muted); margin-left:auto; }
+.appl-tags { display:flex; gap:6px; flex-wrap:wrap; }
+.appl-tag { font-size:11px; padding:3px 8px; border-radius:20px; border:1px solid var(--border); color:var(--muted); background:var(--bg3); }
+.appl-tag.cat { border-color:var(--gold); color:var(--gold); background:var(--gold3); }
+.appl-tag.pending { border-color:var(--blue); color:var(--blue); background:rgba(74,143,217,.1); }
+.appl-tag.done { border-color:var(--green); color:var(--green); background:rgba(82,176,106,.1); }
+.appl-memo { font-size:12px; color:var(--muted); margin-top:8px; line-height:1.5; }
+.appl-actions { display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; }
+.appl-btn { padding:6px 10px; border-radius:var(--rS); border:1px solid var(--border); background:var(--bg3); color:var(--muted); font-size:11px; font-weight:700; font-family:var(--font); cursor:pointer; }
+.appl-btn.done-btn { border-color:var(--green); color:var(--green); }
+.appl-btn.del-btn { border-color:var(--red); color:var(--red); }
+
+.ana-card { background:var(--bg2); border:1px solid var(--border); border-radius:var(--r); padding:16px; margin-bottom:12px; }
+.ana-title { font-family:var(--fh); font-size:14px; margin-bottom:14px; color:var(--text); }
+.bar-row { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.bar-label { font-size:11px; color:var(--muted); width:52px; flex-shrink:0; text-align:right; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.bar-wrap { flex:1; height:20px; background:var(--bg3); border-radius:6px; overflow:hidden; min-width:0; }
+.bar-fill { height:100%; border-radius:6px; background:var(--gold); transition:width .5s cubic-bezier(.4,0,.2,1); }
+.bar-count { font-size:12px; color:var(--muted); width:24px; flex-shrink:0; text-align:left; }
+.range-chips { display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap; }
+.stat-grid-mini { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px; }
+.stat-mini { background:var(--bg3); border-radius:var(--rS); padding:10px 8px; text-align:center; }
+.stat-mini .n { font-family:var(--fh); font-size:20px; color:var(--gold); }
+.stat-mini .l { font-size:10px; color:var(--muted); margin-top:2px; }
+
 /* ── LOG CHIP LOGO ── */
 .chip-logo {
   display:inline-flex; align-items:center; gap:5px; vertical-align:middle;
@@ -616,6 +662,129 @@ body::before {
   </div>
 </div>
 
+<!-- ───────── PAGE: APPLICANT ───────── -->
+<div id="pageApplicant" class="page">
+
+  <div class="sec-hd" style="margin-top:12px;">
+    <h2>신청자 관리</h2>
+    <span id="applCountLabel" style="color:var(--gold);">0명</span>
+  </div>
+
+  <div class="sub-tab-bar">
+    <button class="sub-tab active" id="stab-reg" onclick="switchSubTab('reg')">📝 등록</button>
+    <button class="sub-tab" id="stab-list" onclick="switchSubTab('list')">📋 목록</button>
+    <button class="sub-tab" id="stab-ana" onclick="switchSubTab('ana')">📊 분석</button>
+  </div>
+
+  <!-- 등록 패널 -->
+  <div id="subReg" class="sub-panel active">
+    <div class="form-field">
+      <label class="form-label">이름 / 닉네임</label>
+      <input class="form-input" id="aName" type="text" placeholder="이름 또는 닉네임" autocomplete="off">
+    </div>
+    <div class="form-field">
+      <label class="form-label">생년월일</label>
+      <input class="form-input" id="aBirth" type="date">
+    </div>
+    <div class="form-field">
+      <label class="form-label">태어난 시간 <span style="font-weight:400;">(선택)</span></label>
+      <input class="form-input" id="aTime" type="text" placeholder="오전 9시, 미상 등">
+    </div>
+    <div class="form-field">
+      <label class="form-label">성별</label>
+      <div class="form-chips" id="aGenderChips">
+        <div class="form-chip sel" data-val="남" onclick="selGender(this)">남</div>
+        <div class="form-chip" data-val="여" onclick="selGender(this)">여</div>
+        <div class="form-chip" data-val="미상" onclick="selGender(this)">미상</div>
+      </div>
+    </div>
+    <div class="form-field">
+      <label class="form-label">상담 카테고리</label>
+      <div class="form-chips" id="aCatChips">
+        <div class="form-chip" data-val="재물" onclick="selCat(this)">재물</div>
+        <div class="form-chip" data-val="재회" onclick="selCat(this)">재회</div>
+        <div class="form-chip" data-val="궁합" onclick="selCat(this)">궁합</div>
+        <div class="form-chip" data-val="건강" onclick="selCat(this)">건강</div>
+        <div class="form-chip" data-val="합격" onclick="selCat(this)">합격</div>
+        <div class="form-chip" data-val="이직" onclick="selCat(this)">이직</div>
+        <div class="form-chip" data-val="사업" onclick="selCat(this)">사업</div>
+        <div class="form-chip" data-val="이사" onclick="selCat(this)">이사</div>
+        <div class="form-chip" data-val="부모" onclick="selCat(this)">부모</div>
+        <div class="form-chip" data-val="띠별" onclick="selCat(this)">띠별</div>
+        <div class="form-chip" data-val="기타" onclick="selCat(this)">기타</div>
+      </div>
+    </div>
+    <div class="form-field">
+      <label class="form-label">유입 채널</label>
+      <div class="form-chips" id="aAcctChips">
+        <div class="form-chip sm-sel" data-val="sm" onclick="selApplAcct(this)">사주마루</div>
+        <div class="form-chip" data-val="un" onclick="selApplAcct(this)">사주보는언니</div>
+        <div class="form-chip" data-val="s77" onclick="selApplAcct(this)">사주마루77</div>
+        <div class="form-chip" data-val="기타" onclick="selApplAcct(this)">기타/직접</div>
+      </div>
+    </div>
+    <div class="form-field">
+      <label class="form-label">서비스 유형</label>
+      <div class="form-chips" id="aSvcChips">
+        <div class="form-chip sel" data-val="기본" onclick="selSvc(this)">기본 사주</div>
+        <div class="form-chip" data-val="풀" onclick="selSvc(this)">풀 사주</div>
+        <div class="form-chip" data-val="무료" onclick="selSvc(this)">무료 상담</div>
+      </div>
+    </div>
+    <div class="form-field">
+      <label class="form-label">메모 <span style="font-weight:400;">(선택)</span></label>
+      <textarea class="form-input" id="aMemo" rows="3" style="resize:vertical;" placeholder="특이사항, 질문, 연락처 등..."></textarea>
+    </div>
+    <button class="modal-btn" style="margin-top:4px;" onclick="saveApplicant()">✅ 신청자 등록</button>
+    <div style="height:8px;"></div>
+  </div>
+
+  <!-- 목록 패널 -->
+  <div id="subList" class="sub-panel">
+    <div style="margin-bottom:10px;">
+      <input class="form-input" id="applSearch" type="search" placeholder="이름·카테고리·메모 검색..." oninput="renderApplList()">
+    </div>
+    <div class="slot-picker" style="margin-bottom:14px;" id="applStatusFilter">
+      <div class="slot-chip sel" onclick="filterAppl(this,'all')">전체</div>
+      <div class="slot-chip" onclick="filterAppl(this,'pending')">대기중</div>
+      <div class="slot-chip" onclick="filterAppl(this,'done')">완료</div>
+    </div>
+    <div id="applList"></div>
+  </div>
+
+  <!-- 분석 패널 -->
+  <div id="subAna" class="sub-panel">
+    <div class="range-chips">
+      <div class="slot-chip sel" onclick="selAnaRange(this,'7')">7일</div>
+      <div class="slot-chip" onclick="selAnaRange(this,'30')">30일</div>
+      <div class="slot-chip" onclick="selAnaRange(this,'90')">3개월</div>
+      <div class="slot-chip" onclick="selAnaRange(this,'all')">전체</div>
+    </div>
+
+    <div class="stat-grid-mini" id="anaStats"></div>
+
+    <div class="ana-card">
+      <div class="ana-title">카테고리별 신청 현황</div>
+      <div id="catBars"></div>
+    </div>
+
+    <div class="ana-card">
+      <div class="ana-title">일별 신청 추이</div>
+      <div id="dailyBars"></div>
+    </div>
+
+    <div class="ana-card">
+      <div class="ana-title">유입 채널별 비중</div>
+      <div id="acctBars"></div>
+    </div>
+
+    <div class="ana-card">
+      <div class="ana-title">서비스 유형별</div>
+      <div id="svcBars"></div>
+    </div>
+  </div>
+</div>
+
 <!-- ───────── BOTTOM NAV ───────── -->
 <nav class="bottomnav">
   <button class="nav-item active" id="navHome" onclick="navTo('home')">
@@ -633,6 +802,10 @@ body::before {
   <button class="nav-item" id="navMoney" onclick="navTo('money')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
     수익화
+  </button>
+  <button class="nav-item" id="navApplicant" onclick="navTo('applicant')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    신청자
   </button>
 </nav>
 
@@ -767,6 +940,7 @@ let pat = '';
 document.addEventListener('DOMContentLoaded', () => {
   loadPat();
   loadEditable();
+  loadApplicants();
   updateOnline();
   window.addEventListener('online',  updateOnline);
   window.addEventListener('offline', updateOnline);
@@ -1206,10 +1380,249 @@ function selectText(txt) {
 
 // ── NAV ──
 function navTo(page) {
-  ['home','trigger','log','money'].forEach(p => {
+  ['home','trigger','log','money','applicant'].forEach(p => {
     document.getElementById('page'+p.charAt(0).toUpperCase()+p.slice(1)).classList.toggle('active', p===page);
     document.getElementById('nav'+p.charAt(0).toUpperCase()+p.slice(1)).classList.toggle('active', p===page);
   });
+  if (page === 'applicant') renderApplList();
+}
+
+// ── APPLICANT DATA ──
+let applicants = [];
+let applFilter = 'all';
+let anaRange = '7';
+let fGender = '남', fCat = '', fAcct = 'sm', fSvc = '기본';
+
+const CATEGORIES = ['재물','재회','궁합','건강','합격','이직','사업','이사','부모','띠별','기타'];
+const ACCT_NAMES = {sm:'사주마루',un:'사주보는언니',s77:'사주마루77','기타':'기타/직접'};
+const ACCT_COLORS = {sm:'var(--gold)',un:'var(--rose)',s77:'var(--fire)','기타':'var(--muted)'};
+
+function loadApplicants() {
+  try {
+    const s = localStorage.getItem('applicants_v1');
+    if (s) applicants = JSON.parse(s);
+  } catch(e) { applicants = []; }
+  updateApplCount();
+}
+
+function saveApplicants() {
+  try { localStorage.setItem('applicants_v1', JSON.stringify(applicants)); } catch(e) {}
+}
+
+function updateApplCount() {
+  const el = document.getElementById('applCountLabel');
+  if (el) el.textContent = applicants.length + '명';
+}
+
+function saveApplicant() {
+  const name = document.getElementById('aName').value.trim();
+  if (!name) { showToast('이름을 입력해줘'); return; }
+  if (!fCat) { showToast('카테고리를 선택해줘'); return; }
+  const appl = {
+    id: Date.now(),
+    date: new Date().toISOString().slice(0,10),
+    ts: new Date().toISOString(),
+    name,
+    birth: document.getElementById('aBirth').value,
+    birthtime: document.getElementById('aTime').value.trim(),
+    gender: fGender,
+    category: fCat,
+    account: fAcct,
+    service: fSvc,
+    memo: document.getElementById('aMemo').value.trim(),
+    status: 'pending'
+  };
+  applicants.unshift(appl);
+  saveApplicants();
+  updateApplCount();
+  resetApplForm();
+  showToast('✅ 신청자 등록 완료');
+}
+
+function resetApplForm() {
+  document.getElementById('aName').value = '';
+  document.getElementById('aBirth').value = '';
+  document.getElementById('aTime').value = '';
+  document.getElementById('aMemo').value = '';
+  fGender = '남'; fCat = ''; fAcct = 'sm'; fSvc = '기본';
+  document.querySelectorAll('#aGenderChips .form-chip').forEach(c => c.classList.toggle('sel', c.dataset.val === '남'));
+  document.querySelectorAll('#aCatChips .form-chip').forEach(c => c.classList.remove('sel'));
+  document.querySelectorAll('#aAcctChips .form-chip').forEach(c => {
+    c.classList.remove('sel','sm-sel','un-sel','s77-sel');
+    if (c.dataset.val === 'sm') c.classList.add('sm-sel');
+  });
+  document.querySelectorAll('#aSvcChips .form-chip').forEach(c => c.classList.toggle('sel', c.dataset.val === '기본'));
+}
+
+function selGender(el) {
+  fGender = el.dataset.val;
+  document.querySelectorAll('#aGenderChips .form-chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function selCat(el) {
+  fCat = el.dataset.val;
+  document.querySelectorAll('#aCatChips .form-chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function selApplAcct(el) {
+  fAcct = el.dataset.val;
+  document.querySelectorAll('#aAcctChips .form-chip').forEach(c => {
+    c.classList.remove('sel','sm-sel','un-sel','s77-sel');
+  });
+  const cls = {sm:'sm-sel',un:'un-sel',s77:'s77-sel','기타':'sel'}[fAcct] || 'sel';
+  el.classList.add(cls);
+}
+
+function selSvc(el) {
+  fSvc = el.dataset.val;
+  document.querySelectorAll('#aSvcChips .form-chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function switchSubTab(tab) {
+  ['reg','list','ana'].forEach(t => {
+    document.getElementById('stab-'+t).classList.toggle('active', t===tab);
+    const panelId = 'sub' + t.charAt(0).toUpperCase() + t.slice(1);
+    document.getElementById(panelId).classList.toggle('active', t===tab);
+  });
+  if (tab === 'list') renderApplList();
+  if (tab === 'ana') renderAnalytics();
+}
+
+function filterAppl(el, val) {
+  applFilter = val;
+  document.querySelectorAll('#applStatusFilter .slot-chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  renderApplList();
+}
+
+function renderApplList() {
+  const q = (document.getElementById('applSearch')?.value || '').toLowerCase();
+  const container = document.getElementById('applList');
+  if (!container) return;
+  let list = applicants.filter(a => {
+    if (applFilter === 'pending' && a.status !== 'pending') return false;
+    if (applFilter === 'done' && a.status !== 'done') return false;
+    if (q && !`${a.name} ${a.category} ${a.memo||''}`.toLowerCase().includes(q)) return false;
+    return true;
+  });
+  if (!list.length) {
+    container.innerHTML = `<div class="empty"><div class="empty-icon">📭</div>신청자가 없어요</div>`;
+    return;
+  }
+  container.innerHTML = list.map(a => {
+    const acctColor = ACCT_COLORS[a.account] || 'var(--muted)';
+    const acctName = ACCT_NAMES[a.account] || a.account;
+    const statusTag = a.status === 'done'
+      ? `<span class="appl-tag done">✅ 완료</span>`
+      : `<span class="appl-tag pending">⏳ 대기중</span>`;
+    return `<div class="appl-card">
+      <div class="appl-header">
+        <span class="appl-name">${escHtml(a.name)}</span>
+        <span style="font-size:11px;color:${acctColor};font-weight:700;">${escHtml(acctName)}</span>
+        <span class="appl-date">${a.date||''}</span>
+      </div>
+      <div class="appl-tags">
+        <span class="appl-tag cat">${escHtml(a.category)}</span>
+        ${a.service ? `<span class="appl-tag">${escHtml(a.service)}</span>` : ''}
+        ${a.gender ? `<span class="appl-tag">${escHtml(a.gender)}</span>` : ''}
+        ${a.birth ? `<span class="appl-tag">${escHtml(a.birth)}</span>` : ''}
+        ${statusTag}
+      </div>
+      ${a.birthtime ? `<div class="appl-memo">🕐 ${escHtml(a.birthtime)}</div>` : ''}
+      ${a.memo ? `<div class="appl-memo">📝 ${escHtml(a.memo)}</div>` : ''}
+      <div class="appl-actions">
+        ${a.status !== 'done' ? `<button class="appl-btn done-btn" onclick="markApplDone(${a.id})">✅ 완료 처리</button>` : ''}
+        <button class="appl-btn del-btn" onclick="delAppl(${a.id})">삭제</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function markApplDone(id) {
+  const a = applicants.find(x => x.id === id);
+  if (a) { a.status = 'done'; saveApplicants(); renderApplList(); showToast('✅ 완료 처리됨'); }
+}
+
+function delAppl(id) {
+  applicants = applicants.filter(x => x.id !== id);
+  saveApplicants();
+  updateApplCount();
+  renderApplList();
+  showToast('삭제 완료');
+}
+
+function selAnaRange(el, val) {
+  anaRange = val;
+  document.querySelectorAll('#subAna .range-chips .slot-chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  renderAnalytics();
+}
+
+function getAnaApplicants() {
+  if (anaRange === 'all') return applicants;
+  const days = parseInt(anaRange);
+  const cutoff = new Date(Date.now() - days * 86400000).toISOString().slice(0,10);
+  return applicants.filter(a => (a.date||'') >= cutoff);
+}
+
+function makeBars(entries, maxVal, colorFn) {
+  if (!entries.length) return `<div style="color:var(--muted);font-size:13px;text-align:center;padding:8px 0;">데이터 없음</div>`;
+  return entries.map(([label, cnt]) => `
+    <div class="bar-row">
+      <div class="bar-label" title="${escHtml(label)}">${escHtml(label)}</div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:${Math.round(cnt/maxVal*100)}%;${colorFn ? 'background:'+colorFn(label)+';' : ''}"></div></div>
+      <div class="bar-count">${cnt}</div>
+    </div>`).join('');
+}
+
+function renderAnalytics() {
+  const list = getAnaApplicants();
+  const total = list.length;
+  const done = list.filter(a => a.status === 'done').length;
+  const pending = total - done;
+
+  document.getElementById('anaStats').innerHTML = `
+    <div class="stat-mini"><div class="n">${total}</div><div class="l">전체 신청</div></div>
+    <div class="stat-mini"><div class="n" style="color:var(--blue)">${pending}</div><div class="l">대기중</div></div>
+    <div class="stat-mini"><div class="n" style="color:var(--green)">${done}</div><div class="l">완료</div></div>`;
+
+  // 카테고리 바
+  const catMap = {};
+  CATEGORIES.forEach(c => catMap[c] = 0);
+  list.forEach(a => { if (a.category) catMap[a.category] = (catMap[a.category]||0) + 1; });
+  const catEntries = Object.entries(catMap).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]);
+  const maxCat = Math.max(1, ...catEntries.map(([,v])=>v));
+  document.getElementById('catBars').innerHTML = makeBars(catEntries, maxCat, null);
+
+  // 일별 바 (최근 14일)
+  const dayMap = {};
+  list.forEach(a => { if (a.date) dayMap[a.date] = (dayMap[a.date]||0) + 1; });
+  const dayEntries = Object.entries(dayMap).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,14)
+    .map(([d,v]) => [d.slice(5), v]); // MM-DD
+  const maxDay = Math.max(1, ...dayEntries.map(([,v])=>v));
+  document.getElementById('dailyBars').innerHTML = makeBars(dayEntries, maxDay, null);
+
+  // 계정 바
+  const acctMap = {sm:0,un:0,s77:0,'기타':0};
+  list.forEach(a => { acctMap[a.account||'기타'] = (acctMap[a.account||'기타']||0) + 1; });
+  const acctEntries = Object.entries(acctMap).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1])
+    .map(([k,v]) => [ACCT_NAMES[k]||k, v]);
+  const origKeys = Object.keys(acctMap).filter(k=>acctMap[k]>0).sort((a,b)=>acctMap[b]-acctMap[a]);
+  const maxAcct = Math.max(1, ...acctEntries.map(([,v])=>v));
+  document.getElementById('acctBars').innerHTML = makeBars(
+    acctEntries, maxAcct,
+    (_, i) => ACCT_COLORS[origKeys[i]] || 'var(--gold)'
+  );
+
+  // 서비스 유형 바
+  const svcMap = {'기본':0,'풀':0,'무료':0};
+  list.forEach(a => { svcMap[a.service||'기본'] = (svcMap[a.service||'기본']||0) + 1; });
+  const svcEntries = Object.entries(svcMap).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]);
+  const maxSvc = Math.max(1, ...svcEntries.map(([,v])=>v));
+  document.getElementById('svcBars').innerHTML = makeBars(svcEntries, maxSvc, null);
 }
 
 // ── TOAST ──
