@@ -898,6 +898,8 @@ let sampleCap=null, assetsCap=null, canUploadImages=false;
 let uploadedImgUrl=null, uploadedImgType=null;
 let reportType='20';
 const _utmFrom=(new URLSearchParams(location.search)).get("from")||"";
+const _isAdmin=(new URLSearchParams(location.search)).get("admin")==="1";
+if(_isAdmin){const rb=document.getElementById("tab-rebrand");if(rb)rb.style.display="block";}
 let selectedStype='warning';
 let selectedPlat='daangn';
 let orders=[];
@@ -3890,7 +3892,7 @@ function copyCheol(){
 <!-- ══════════════════════════════════════
      어드민: 리브랜딩 도구 (사주톡톡 → 사주마루)
 ══════════════════════════════════════ -->
-<div class="tab-panel" id="tab-rebrand" style="padding-bottom:80px">
+<div class="tab-panel" id="tab-rebrand" style="padding-bottom:80px;display:none">
 <div id="sec-rebrand" style="scroll-margin-top:56px"></div>
 <div class="sec-section">
   <div class="sec-heading">🔄 리브랜딩 도구 <span style="font-size:13px;font-weight:400;color:var(--fg3)">(내부 전용)</span></div>
