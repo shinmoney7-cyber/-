@@ -458,6 +458,72 @@ input[type=range]{width:100%;accent-color:var(--cy);height:4px;border-radius:4px
 .roi-mini-lbl{font-size:10px;color:var(--t2)}
 .uf-flow-connector{display:flex;align-items:center;gap:8px;padding:4px 0;color:var(--t3);font-size:12px}
 .uf-flow-connector::before,.uf-flow-connector::after{content:'';flex:1;height:1px;background:var(--bd)}
+
+/* ── Hook Generator ── */
+.hg-type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media(max-width:600px){.hg-type-grid{grid-template-columns:repeat(2,1fr)}}
+.hg-type-btn{border:1px solid var(--bd);border-radius:var(--r);padding:10px 8px;background:var(--s2);cursor:pointer;transition:.15s;text-align:center;font-size:12px;color:var(--t2)}
+.hg-type-btn:hover{border-color:var(--bdL);background:var(--s3)}
+.hg-type-btn.active{border-color:currentColor;background:var(--s3)}
+.hg-type-icon{font-size:20px;display:block;margin-bottom:4px}
+.hg-type-name{font-weight:600;font-size:11px}
+.hg-result-card{border:1px solid var(--bd);border-radius:var(--r);padding:14px;background:var(--s2);margin-top:8px}
+.hg-hook-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--bd)}
+.hg-hook-row:last-child{border-bottom:none}
+.hg-hook-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;margin-top:2px}
+.hg-hook-text{flex:1;font-size:13px;line-height:1.6;color:var(--t1)}
+.hg-hook-actions{display:flex;gap:6px;margin-top:8px}
+.ab-track-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:600px){.ab-track-grid{grid-template-columns:1fr}}
+.ab-card{border:1px solid var(--bd);border-radius:var(--r);padding:12px;background:var(--s2)}
+.ab-card-head{font-size:11px;font-weight:700;margin-bottom:8px;color:var(--t2)}
+.ab-bar-wrap{height:6px;background:var(--bd);border-radius:4px;margin:6px 0}
+.ab-bar{height:6px;border-radius:4px;transition:.4s}
+.ab-stat{font-size:12px;color:var(--t2);margin-bottom:2px}
+.longform-expand-row{margin-top:10px;padding:10px;background:var(--puD);border:1px solid var(--puM);border-radius:var(--r);display:none}
+.longform-expand-row.visible{display:block}
+
+/* ── Season Calendar ── */
+.sc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:12px}
+.sc-card{border:1px solid var(--bd);border-radius:var(--r);padding:12px;background:var(--s2);cursor:pointer;transition:.15s}
+.sc-card:hover{border-color:var(--bdL);background:var(--s3)}
+.sc-card.hot{border-color:var(--wa);background:var(--waD)}
+.sc-card.upcoming{border-color:var(--cy);background:var(--cyD)}
+.sc-emoji{font-size:22px;margin-bottom:6px}
+.sc-name{font-weight:700;font-size:13px;color:var(--t1);margin-bottom:2px}
+.sc-date{font-size:11px;color:var(--t2);margin-bottom:6px}
+.sc-countdown{font-family:'DM Mono',monospace;font-size:12px;font-weight:700}
+.sc-cats{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
+.sc-cat-tag{font-size:10px;padding:2px 6px;border-radius:20px;background:var(--s3);color:var(--t2)}
+.sc-rec{margin-top:14px;padding:14px;background:var(--cyD);border:1px solid var(--cyM);border-radius:var(--r)}
+.sc-rec-title{font-weight:700;font-size:13px;color:var(--cy);margin-bottom:8px}
+
+/* ── Trend Hooks ── */
+.th-cat-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.th-cat-tab{padding:6px 14px;border-radius:20px;border:1px solid var(--bd);background:var(--s2);font-size:12px;cursor:pointer;transition:.15s;color:var(--t2)}
+.th-cat-tab:hover{border-color:var(--bdL)}
+.th-cat-tab.active{border-color:var(--cy);background:var(--cyD);color:var(--cy);font-weight:600}
+.th-hook-list{display:flex;flex-direction:column;gap:8px}
+.th-hook-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);cursor:pointer;transition:.15s}
+.th-hook-item:hover{border-color:var(--bdL);background:var(--s3)}
+.th-hook-rank{font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:var(--t3);min-width:20px}
+.th-hook-txt{flex:1;font-size:13px;color:var(--t1)}
+.th-hook-fire{font-size:11px;color:var(--wa)}
+
+/* ── Platform Checklist (UF Step 4) ── */
+.pc-platform-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.pc-tab{padding:6px 14px;border-radius:20px;border:1px solid var(--bd);background:var(--s2);font-size:12px;cursor:pointer;color:var(--t2);transition:.15s}
+.pc-tab:hover{border-color:var(--bdL)}
+.pc-tab.active{font-weight:600}
+.pc-checklist{display:flex;flex-direction:column;gap:6px}
+.pc-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);cursor:pointer;transition:.15s}
+.pc-item.done{background:var(--gnD);border-color:var(--gnM)}
+.pc-item-check{width:18px;height:18px;border-radius:4px;border:2px solid var(--bd);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;transition:.15s}
+.pc-item.done .pc-item-check{border-color:var(--gn);background:var(--gn);color:#000}
+.pc-item-txt{font-size:12px;color:var(--t2)}
+.pc-item.done .pc-item-txt{color:var(--gn)}
+.pc-progress{height:4px;background:var(--bd);border-radius:4px;margin-top:8px}
+.pc-progress-bar{height:4px;background:var(--gn);border-radius:4px;transition:.3s}
 </style>
 </head>
 <body>
@@ -530,6 +596,18 @@ input[type=range]{width:100%;accent-color:var(--cy);height:4px;border-radius:4px
   </button>
   <button class="nav-btn" onclick="navGo('infolk',this)" data-sec="infolk">
     <span class="nav-icon">🔗</span> <span data-i18n="nav.infolk">인포크 허브</span>
+  </button>
+
+  <hr class="divider" style="margin:10px 16px">
+  <div class="nav-sec">🎯 전략 도구</div>
+  <button class="nav-btn" onclick="navGo('hook-gen',this)" data-sec="hook-gen">
+    <span class="nav-icon">🎣</span> <span>훅 문구 생성기</span>
+  </button>
+  <button class="nav-btn" onclick="navGo('season-cal',this);renderSeasonCal()" data-sec="season-cal">
+    <span class="nav-icon">📅</span> <span>시즌 캘린더</span>
+  </button>
+  <button class="nav-btn" onclick="navGo('trend-hooks',this);renderTrendHooks('food')" data-sec="trend-hooks">
+    <span class="nav-icon">📈</span> <span>유행 훅 트렌드</span>
   </button>
 </aside>
 
@@ -1357,6 +1435,18 @@ input[type=range]{width:100%;accent-color:var(--cy);height:4px;border-radius:4px
       <div id="uf-platform-body" style="font-size:13px;color:var(--t2);line-height:1.7"></div>
     </div>
 
+    <div class="card" id="uf-platform-checklist">
+      <div class="card-title" style="display:flex;align-items:center;gap:8px">
+        <span>✅ 멀티 플랫폼 업로드 체크리스트</span>
+        <span style="font-size:11px;font-weight:400;color:var(--gn);background:var(--gnD);padding:2px 8px;border-radius:20px">신기능</span>
+      </div>
+      <p style="font-size:12px;color:var(--t3);margin-bottom:12px">플랫폼별 업로드 전 필수 체크리스트 — 완료율이 높을수록 알고리즘 노출 최적화</p>
+      <div class="pc-platform-tabs" id="pc-platform-tabs"></div>
+      <div class="pc-checklist" id="pc-checklist-body"></div>
+      <div class="pc-progress" style="margin-top:10px"><div class="pc-progress-bar" id="pc-progress-bar" style="width:0%"></div></div>
+      <div id="pc-progress-lbl" style="font-size:11px;color:var(--t2);margin-top:4px;text-align:right">0/6 완료</div>
+    </div>
+
     <div class="card">
       <div class="card-title">📊 이번 달 목표 설정</div>
       <div id="uf-monthly-goal-body" style="display:flex;flex-direction:column;gap:8px"></div>
@@ -1365,6 +1455,131 @@ input[type=range]{width:100%;accent-color:var(--cy);height:4px;border-radius:4px
 
     <div style="text-align:center;padding:8px 0">
       <button class="btn btn-ghost" onclick="ufGoToStep(1)">🔄 새 영상 시작</button>
+    </div>
+  </div>
+</section>
+
+<!-- 🎣 훅 문구 생성기 -->
+<section class="section" id="hook-gen">
+  <div>
+    <div class="section-title">🎣 훅 문구 자동 생성기</div>
+    <div class="section-sub">상위 채널의 6가지 훅 유형 + A/B 테스트 변형 자동 생성</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">① 훅 유형 선택</div>
+    <div class="hg-type-grid" id="hg-type-grid"></div>
+  </div>
+
+  <div class="card" style="margin-top:0">
+    <div class="card-title">② 상품 정보 입력</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div>
+        <label class="input-label">상품명</label>
+        <input class="input" id="hg-product" placeholder="예: 비타민C 세럼" />
+      </div>
+      <div>
+        <label class="input-label">카테고리</label>
+        <select class="input" id="hg-cat">
+          <option value="beauty">💄 뷰티</option>
+          <option value="food">🍑 식품</option>
+          <option value="electronics">📱 전자기기</option>
+          <option value="fashion">👗 패션</option>
+          <option value="home">🏠 홈/생활</option>
+          <option value="health">💪 건강</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <div>
+        <label class="input-label">핵심 혜택/결과</label>
+        <input class="input" id="hg-benefit" placeholder="예: 28일 만에 피부 밝기 23% 향상" />
+      </div>
+      <div>
+        <label class="input-label">가격/할인율 (선택)</label>
+        <input class="input" id="hg-price" placeholder="예: 68% 할인, 9,800원" />
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-primary" onclick="hgGenerate()" style="flex:1">✨ 훅 문구 생성</button>
+      <button class="btn btn-ghost" onclick="hgABTest()" id="hg-ab-btn" style="display:none">🔬 A/B 변형 3개 생성</button>
+    </div>
+  </div>
+
+  <div id="hg-results" style="display:none">
+    <div class="card" style="margin-top:0">
+      <div class="card-title">③ 생성된 훅 문구</div>
+      <div id="hg-hook-list"></div>
+    </div>
+
+    <div class="card" id="hg-ab-section" style="margin-top:0;display:none">
+      <div class="card-title">🔬 A/B 테스트 변형 비교</div>
+      <p style="font-size:12px;color:var(--t3);margin-bottom:12px">각 변형을 24시간 테스트 후 CTR이 높은 걸 채택하세요</p>
+      <div class="ab-track-grid" id="hg-ab-grid"></div>
+    </div>
+
+    <div class="card" style="margin-top:0">
+      <div class="card-title" style="display:flex;align-items:center;gap:8px">
+        <span>📹 숏폼 → 롱폼 확장</span>
+        <span style="font-size:11px;font-weight:400;color:var(--pu);background:var(--puD);padding:2px 8px;border-radius:20px">신기능</span>
+      </div>
+      <p style="font-size:12px;color:var(--t3);margin-bottom:10px">선택한 훅을 기반으로 숏폼(15초) → 롱폼(3-5분) 씬 구성으로 확장합니다</p>
+      <button class="btn" style="background:var(--puD);border-color:var(--puM);color:var(--pu)" onclick="longformExpand()">📹 롱폼 씬 구성 확장하기</button>
+      <div id="longform-result" class="longform-expand-row" style="margin-top:10px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 📅 시즌 캘린더 -->
+<section class="section" id="season-cal">
+  <div>
+    <div class="section-title">📅 시즌 캘린더 수익 예보</div>
+    <div class="section-sub">한국 주요 쇼핑 이벤트 미리보기 · 2주 전 준비 전략 자동 제안</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">다가오는 쇼핑 이벤트</div>
+    <div id="sc-grid" class="sc-grid"></div>
+  </div>
+
+  <div id="sc-rec" class="card" style="margin-top:0;display:none">
+    <div class="card-title">📊 카테고리별 준비 전략</div>
+    <div id="sc-rec-body"></div>
+  </div>
+</section>
+
+<!-- 📈 유행 훅 트렌드 -->
+<section class="section" id="trend-hooks">
+  <div>
+    <div class="section-title">📈 유행 훅 트렌드</div>
+    <div class="section-sub">상위 채널이 지금 쓰는 카테고리별 고성과 훅 문구 모음</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">카테고리 선택</div>
+    <div class="th-cat-tabs" id="th-cat-tabs"></div>
+    <div class="th-hook-list" id="th-hook-list"></div>
+  </div>
+
+  <div class="card" style="margin-top:0">
+    <div class="card-title">💡 훅 작성 공식 (상위 채널 분석)</div>
+    <div style="display:grid;gap:8px">
+      <div style="padding:10px;background:var(--waD);border:1px solid var(--waM);border-radius:var(--rs)">
+        <div style="font-weight:700;font-size:12px;color:var(--wa);margin-bottom:4px">🔥 욕망 유도 공식</div>
+        <div style="font-size:12px;color:var(--t2)">[결과] + [기간] + [상품] → <em>"28일 만에 피부가 달라졌어요"</em></div>
+      </div>
+      <div style="padding:10px;background:var(--rdD);border:1px solid rgba(248,113,113,.28);border-radius:var(--rs)">
+        <div style="font-weight:700;font-size:12px;color:var(--rd);margin-bottom:4px">⚠️ 손실 회피 공식</div>
+        <div style="font-size:12px;color:var(--t2)">[모르면 손해] + [구체적 결과] → <em>"이거 모르고 사면 진짜 손해예요"</em></div>
+      </div>
+      <div style="padding:10px;background:var(--puD);border:1px solid var(--puM);border-radius:var(--rs)">
+        <div style="font-weight:700;font-size:12px;color:var(--pu);margin-bottom:4px">🔑 정보 격차 공식</div>
+        <div style="font-size:12px;color:var(--t2)">[숨겨진 사실] + [반전] → <em>"99%가 모르는 쿠팡 꿀팁"</em></div>
+      </div>
+      <div style="padding:10px;background:var(--cyD);border:1px solid var(--cyM);border-radius:var(--rs)">
+        <div style="font-weight:700;font-size:12px;color:var(--cy);margin-bottom:4px">👥 사회적 증명 공식</div>
+        <div style="font-size:12px;color:var(--t2)">[구체적 숫자] + [행동] → <em>"47,820명이 산 이유 있더라고요"</em></div>
+      </div>
     </div>
   </div>
 </section>
@@ -1963,6 +2178,69 @@ const GOLDEN = [
   {icon:'📊',title:'조회 완료율 50%+ 목표',desc:'완료율이 50% 이하면 알고리즘 패널티. 씬 전환 속도와 BGM 볼륨을 조절하세요.'},
   {icon:'💬',title:'댓글 질문으로 끝내라',desc:'"여러분은 어떤 브랜드 쓰세요?" 같은 질문 CTA가 알고리즘 참여 신호를 높입니다.'}
 ];
+
+/* ══════════════════════════════════
+   HOOK / SEASON / TREND DATA
+══════════════════════════════════ */
+const HOOK_TYPES = {
+  desire:{name:'욕망 자극',icon:'🔥',cc:'wa',
+    desc:'이상적 결과를 먼저 보여줘 구매 욕구 폭발',
+    kw:['되고싶다','갖고싶다','변신','부러워'],
+    templates:['{product} 써보고 ○○이 바뀌었어요','이 가격에 이 퀄리티? 실화예요','샀더니 주변에서 다 물어봐요','{benefit} — 직접 써보고 확인했어요']},
+  loss:{name:'손실 회피',icon:'⚠️',cc:'rd',
+    desc:'손해 가능성을 먼저 언급해 즉각 반응 유도',
+    kw:['손해','모르면','안 하면','위험'],
+    templates:['이거 모르면 돈 낭비예요','{product} 안 사면 나중에 후회해요','이 할인 오늘 끝나요 — 내일은 정가예요','지금 안 담으면 {price} 손해예요']},
+  social:{name:'사회적 증명',icon:'👥',cc:'cy',
+    desc:'구체적 숫자로 집단 행동 심리 자극',
+    kw:['○만명','실시간','베스트','1위'],
+    templates:['○만 명이 이미 산 {product}','실시간 품절 되고 있어요 — 재고 23개 남음','쿠팡 {category} 1위 이유 직접 확인했어요','{product} 리뷰 {n}개 · 별점 4.8 — 이유 있어요']},
+  expert:{name:'전문가 권위',icon:'🎓',cc:'gn',
+    desc:'데이터·권위로 신뢰 구축 → AOV 향상',
+    kw:['성분','데이터','임상','검증'],
+    templates:['피부과 의사가 추천하는 {product}','영양사가 직접 고른 {category} TOP3','{product} 성분표 직접 분석했어요 — 결과 충격','전문가가 {product} 고르는 기준이 따로 있어요']},
+  secret:{name:'정보 격차',icon:'🔑',cc:'pu',
+    desc:'숨겨진 정보로 시청 완료율 극대화',
+    kw:['비밀','숨겨진','99%모름','꿀팁'],
+    templates:['쿠팡에 숨겨진 {category} 기능 알아요?','99%가 모르는 {product} 꿀팁','이렇게 사면 {price} 반값이에요','{product} 이 설정 켜면 완전히 달라져요']},
+  compare:{name:'비교·가성비',icon:'⚖️',cc:'pk',
+    desc:'가격 비교로 전환율 5.3% — 8유형 중 최고',
+    kw:['비교','가성비','최저가','실화'],
+    templates:['다이소 vs 쿠팡 {product} 직접 비교','1만원 이하 {category} 최강 추천','브랜드 vs 무명 {product} — 진짜 차이는?','백화점 {price} vs 쿠팡 — 성분표 같아요']}
+};
+
+const SEASON_CAL = [
+  {month:1,day:1,name:'신년 세일',emoji:'🎊',lead:2,cats:['health','home'],tip:'건강보조제·수납/정리 수요 폭증. 새해 결심 키워드("다이어트","정리정돈") 연계'},
+  {month:2,name:'설날',emoji:'🎍',lead:3,cats:['food','health','home'],tip:'선물세트 수요 연간 최고. 식품/건강 패키지 상품 집중. 명절 3주 전 업로드 필수'},
+  {month:3,day:14,name:'화이트데이',emoji:'🍬',lead:2,cats:['food','beauty'],tip:'초콜릿·캔디류 + 뷰티 선물세트. "선물 추천" 훅 CTR +83%'},
+  {month:5,day:5,name:'어린이날',emoji:'🧒',lead:2,cats:['food','home'],tip:'간식·장난감·체험용 식품. "아이가 좋아하는" 훅 전환율 최고'},
+  {month:5,day:8,name:'어버이날',emoji:'💐',lead:2,cats:['health','food'],tip:'건강식품·명품 식품세트. "부모님께" 키워드 CTR +71%'},
+  {month:7,name:'여름 시즌',emoji:'☀️',lead:3,cats:['beauty','home','health'],tip:'선크림·냉감 제품·에어컨 용품. 여름 전 5월 말부터 준비 시작'},
+  {month:9,name:'추석',emoji:'🎑',lead:3,cats:['food','health','home'],tip:'프리미엄 선물세트 시즌. 9월 초 업로드 → 추석 전 2주 집중 트래픽'},
+  {month:11,day:11,name:'빼빼로데이',emoji:'🍫',lead:3,cats:['food','beauty'],tip:'과자류·뷰티 선물. 편의점 vs 쿠팡 비교 콘텐츠 CTR 최고'},
+  {month:11,day:11,name:'블랙프라이데이',emoji:'🛒',lead:2,cats:['electronics','fashion','home'],tip:'연간 최대 할인 시즌. 가격 비교·할인율 강조 훅 전환율 5.8%'},
+  {month:12,name:'크리스마스/연말',emoji:'🎄',lead:3,cats:['beauty','fashion','food'],tip:'뷰티 선물세트·패션·프리미엄 식품. "크리스마스 선물" 훅 저장율 4.2×'}
+];
+
+const TREND_HOOKS = {
+  food:['이거 먹어봤어? 충격이었어요...','쿠팡에서만 파는 이 간식 아세요?','냉장고에 꼭 있어야 하는 {product}','제철 {product} 지금이 최저가예요','먹방 유튜버들이 다 사는 그 {product}','마트보다 {price} 더 싼데 퀄리티가 더 좋아요'],
+  beauty:['피부가 달라졌어요 (Before→After)','이 성분 하나로 완전 바뀜','피부과 가기 전에 이거 써보세요','{benefit} — 28일 직접 실험했어요','이 루틴 따라하면 피부 등급 올라요','1만원 이하 스킨케어 이거 하나면 돼요'],
+  electronics:['쿠팡만 아는 숨겨진 스펙','99% 모르는 이 설정 켜면 속도 2배','갤럭시 vs 아이폰 {product} 실제 비교','이 악세서리 없이는 못 써요','정품보다 3배 싼데 성능 똑같아요','해외 유튜버들이 극찬하는 한국 {product}'],
+  fashion:['이 가격에 이 퀄리티? 실화예요','코디 3만원으로 완성하는 법','패션 유튜버들이 사는 {product}','체형 커버 완벽한 {product} 발견했어요','무신사 품절템 쿠팡에서 찾았어요','계절 바뀌기 전에 지금 사야 해요'],
+  home:['다이소 vs 쿠팡 {product} 직접 비교','자취방 인테리어 10만원 이하로 완성','이거 하나로 방이 달라졌어요','오래된 아파트 {benefit} 대변신','청소 시간 반으로 줄이는 {product}','집들이 선물 1등 추천 {product}'],
+  health:['이거 안 먹으면 살 못 빼요','영양사가 직접 고른 단백질 TOP3','운동 전후 이거 먹으면 차이나요','{benefit} — 30일 직접 실험 결과','이 성분 없는 건강식품은 의미없어요','병원 가기 전에 이거 먹어보세요']
+};
+
+const PLATFORM_CHECKLIST = {
+  youtube:{name:'유튜브 쇼츠',icon:'▶️',cc:'rd',
+    items:['#쇼핑 #추천 #쿠팡 해시태그 3-5개 추가','설명란 첫 줄에 제휴 링크 배치','좋아요/구독 CTA 영상 마지막 3초에 삽입','YouTube Shopping 상품 태그 등록','제목에 검색 키워드 포함 (예: "추천","후기","리뷰")','썸네일 텍스트 크게 · 세로형 최적화']},
+  tiktok:{name:'틱톡',icon:'🎵',cc:'pk',
+    items:['해시태그 5-7개 (#틱톡쇼핑 #틱톡추천 포함)','유행 BGM 사용 (소리 on 필수)','첫 댓글에 제휴 링크 고정','TikTok Shop 상품 직접 태그','프로필 링크 = 인포크 허브로 설정','영상 캡션 첫 줄 훅 문구 반복']},
+  instagram:{name:'인스타 릴스',icon:'📸',cc:'pu',
+    items:['#광고 #협찬 표시 (법적 의무)','릴스 커버 이미지 세로형 (9:16) 최적화','스토리에 링크 스티커 연동','바이오 링크 = 인포크 허브로 설정','제품 태그 기능 (인스타 쇼핑) 활성화','릴스 공유 → 피드 + 스토리 동시 게시']},
+  naver:{name:'네이버 클립',icon:'🟢',cc:'gn',
+    items:['네이버 쇼핑 키워드 포함 제목 작성','스마트스토어 상품 직접 연동','블로그 포스팅과 교차 링크 설정','네이버페이 혜택 언급 시 CTA 강화','클립 업로드 후 블로그 임베드','쇼핑 검색 상단 키워드 체크']}
+};
 
 /* ══════════════════════════════════
    COUPANG / INFOLK
@@ -3753,6 +4031,288 @@ function agShowRoiMini(catKey) {
 }
 
 /* ══════════════════════════════════
+   HOOK GENERATOR
+══════════════════════════════════ */
+let hgSelectedType = 'desire';
+
+function initHookGen() {
+  const grid = document.getElementById('hg-type-grid');
+  if (!grid) return;
+  grid.innerHTML = Object.entries(HOOK_TYPES).map(([k,v]) => `
+    <button class="hg-type-btn${k===hgSelectedType?' active':''}" onclick="hgSelectType('${k}')" style="${k===hgSelectedType?`border-color:var(--${v.cc});background:var(--${v.cc}D);color:var(--${v.cc})`:''}">
+      <span class="hg-type-icon">${v.icon}</span>
+      <span class="hg-type-name">${v.name}</span>
+    </button>`).join('');
+}
+
+function hgSelectType(key) {
+  hgSelectedType = key;
+  initHookGen();
+}
+
+function hgFillTemplate(tpl, product, benefit, price, cat) {
+  const catLabel = {food:'식품',beauty:'뷰티',electronics:'전자기기',fashion:'패션',home:'홈/생활',health:'건강'}[cat] || cat;
+  return tpl
+    .replace(/{product}/g, product || '이 제품')
+    .replace(/{benefit}/g, benefit || '놀라운 결과')
+    .replace(/{price}/g, price || '이 가격')
+    .replace(/{category}/g, catLabel)
+    .replace(/{n}/g, Math.floor(Math.random()*40000+5000).toLocaleString());
+}
+
+function hgGenerate() {
+  const product = document.getElementById('hg-product').value.trim();
+  const cat = document.getElementById('hg-cat').value;
+  const benefit = document.getElementById('hg-benefit').value.trim();
+  const price = document.getElementById('hg-price').value.trim();
+  if (!product) { alert('상품명을 입력하세요'); return; }
+
+  const ht = HOOK_TYPES[hgSelectedType];
+  const hooks = ht.templates.map((tpl, i) =>
+    hgFillTemplate(tpl, product, benefit, price, cat)
+  );
+
+  const list = document.getElementById('hg-hook-list');
+  list.innerHTML = hooks.map((h, i) => `
+    <div class="hg-hook-row">
+      <span class="hg-hook-badge" style="background:var(--${ht.cc}D);color:var(--${ht.cc})">${ht.icon} ${ht.name}</span>
+      <div class="hg-hook-text">${h}</div>
+      <button class="btn btn-ghost" style="font-size:11px;padding:4px 10px;flex-shrink:0" onclick="hgCopyHook(this,'${h.replace(/'/g,"&#39;")}')">📋 복사</button>
+    </div>`).join('');
+
+  document.getElementById('hg-results').style.display = '';
+  document.getElementById('hg-ab-btn').style.display = '';
+}
+
+function hgCopyHook(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✅ 복사됨';
+    setTimeout(() => btn.textContent = '📋 복사', 1500);
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    btn.textContent = '✅ 복사됨';
+    setTimeout(() => btn.textContent = '📋 복사', 1500);
+  });
+}
+
+function hgABTest() {
+  const product = document.getElementById('hg-product').value.trim() || '이 제품';
+  const cat = document.getElementById('hg-cat').value;
+  const benefit = document.getElementById('hg-benefit').value.trim();
+  const price = document.getElementById('hg-price').value.trim();
+
+  const types = Object.keys(HOOK_TYPES);
+  const picks = [hgSelectedType,
+    types.filter(k=>k!==hgSelectedType)[Math.floor(Math.random()*5)],
+    types.filter(k=>k!==hgSelectedType)[Math.floor(Math.random()*5)+1] || 'compare'
+  ];
+
+  const grid = document.getElementById('hg-ab-grid');
+  grid.innerHTML = picks.map((key, i) => {
+    const ht = HOOK_TYPES[key];
+    const hook = hgFillTemplate(ht.templates[0], product, benefit, price, cat);
+    const fakeCtrs = [4.2, 2.8, 3.6];
+    const fakeViews = [12400, 8900, 10200];
+    return `
+      <div class="ab-card">
+        <div class="ab-card-head" style="color:var(--${ht.cc})">${['A','B','C'][i]}안 · ${ht.icon} ${ht.name}</div>
+        <p style="font-size:12px;color:var(--t1);margin-bottom:10px;line-height:1.5">${hook}</p>
+        <div style="font-size:11px;color:var(--t3);margin-bottom:4px">예상 CTR 기준</div>
+        <div class="ab-bar-wrap"><div class="ab-bar" style="width:${[80,50,65][i]}%;background:var(--${ht.cc})"></div></div>
+        <div class="ab-stat">예상 CTR: <strong>${fakeCtrs[i]}%</strong></div>
+        <div class="ab-stat" style="margin-bottom:8px">예상 도달: <strong>${fakeViews[i].toLocaleString()}</strong></div>
+        <button class="btn btn-ghost" style="width:100%;font-size:11px;padding:5px" onclick="hgCopyHook(this,'${hook.replace(/'/g,"&#39;")}')">📋 이 훅 복사</button>
+      </div>`;
+  }).join('');
+
+  document.getElementById('hg-ab-section').style.display = '';
+}
+
+function longformExpand() {
+  const product = document.getElementById('hg-product').value.trim() || '이 제품';
+  const ht = HOOK_TYPES[hgSelectedType];
+  const hook = ht.templates[0].replace(/{product}/g, product).replace(/{benefit}/g,'효과').replace(/{price}/g,'이 가격').replace(/{category}/g,'제품').replace(/{n}/g,'47,820');
+
+  const scenes = [
+    {n:1,label:'훅 (0-3초)',desc:`"${hook}" — 임팩트 자막 + 강렬 BGM`},
+    {n:2,label:'문제 제기 (4-15초)',desc:`${product} 없을 때의 불편함/고통 공감. 시청자가 고개 끄덕이게`},
+    {n:3,label:'해결책 소개 (16-40초)',desc:`${product} 등장. Before 상태 → ${product} 사용 과정 클로즈업`},
+    {n:4,label:'증거·데이터 (41-90초)',desc:`리뷰 수, 성분, 전문가 의견, 수치 데이터로 신뢰 구축`},
+    {n:5,label:'사용 시연 (91-150초)',desc:`실제 사용 장면 상세 — 질감·사운드·결과 ASMR 연출`},
+    {n:6,label:'비교·가성비 (151-200초)',desc:`경쟁 제품 or 이전 제품과 가격/품질 비교. "이 가격이 말이 돼요?"`},
+    {n:7,label:'Before→After (201-250초)',desc:`명확한 전후 비교 영상 or 사진 슬라이드. 구체적 수치 오버레이`},
+    {n:8,label:'사회적 증명 (251-290초)',desc:`실제 구매 후기 읽기 + 구매자 수 언급. "○만 명이 선택한 이유"`},
+    {n:9,label:'가격/할인 CTA (291-320초)',desc:`할인 정보, 쿠폰, 마감 시간. 긴박감 조성`},
+    {n:10,label:'마무리 CTA (321-360초)',desc:`구독/좋아요 요청 + 제휴 링크 안내. 다음 영상 예고로 재방문 유도`}
+  ];
+
+  const el = document.getElementById('longform-result');
+  el.innerHTML = `
+    <div style="font-weight:700;font-size:13px;color:var(--pu);margin-bottom:8px">📹 롱폼 씬 구성 (3-6분)</div>
+    ${scenes.map(s=>`
+      <div style="display:flex;gap:10px;padding:6px 0;border-bottom:1px solid var(--bd)">
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--pu);min-width:28px;padding-top:2px">${String(s.n).padStart(2,'0')}</div>
+        <div>
+          <div style="font-weight:600;font-size:12px;color:var(--t1)">${s.label}</div>
+          <div style="font-size:11px;color:var(--t2);margin-top:2px">${s.desc}</div>
+        </div>
+      </div>`).join('')}`;
+  el.classList.add('visible');
+  el.style.display = 'block';
+}
+
+/* ══════════════════════════════════
+   SEASON CALENDAR
+══════════════════════════════════ */
+function renderSeasonCal() {
+  const grid = document.getElementById('sc-grid');
+  if (!grid) return;
+  const now = new Date();
+  const nowMs = now.getTime();
+
+  const events = SEASON_CAL.map(ev => {
+    const year = now.getFullYear();
+    let date = ev.day
+      ? new Date(year, ev.month-1, ev.day)
+      : new Date(year, ev.month-1, 15);
+    if (date.getTime() < nowMs) date = new Date(year+1, ev.month-1, ev.day||15);
+    const diffDays = Math.ceil((date-nowMs)/86400000);
+    return {...ev, date, diffDays};
+  }).sort((a,b) => a.diffDays - b.diffDays);
+
+  grid.innerHTML = events.map(ev => {
+    const isHot = ev.diffDays <= ev.lead*7;
+    const isUpcoming = ev.diffDays <= ev.lead*7*2;
+    const cls = isHot ? 'hot' : isUpcoming ? 'upcoming' : '';
+    const cntColor = isHot ? 'var(--wa)' : isUpcoming ? 'var(--cy)' : 'var(--t3)';
+    const catNames = {food:'🍑식품',beauty:'💄뷰티',electronics:'📱전자',fashion:'👗패션',home:'🏠홈',health:'💪건강'};
+    return `
+      <div class="sc-card ${cls}" onclick="scShowRec(${JSON.stringify(ev).replace(/"/g,'&quot;')})">
+        <div class="sc-emoji">${ev.emoji}</div>
+        <div class="sc-name">${ev.name}</div>
+        <div class="sc-date">${ev.month}월${ev.day?` ${ev.day}일`:'중'}</div>
+        <div class="sc-countdown" style="color:${cntColor}">${isHot?'🔥 지금 준비!':'D-'+ev.diffDays}</div>
+        <div class="sc-cats">${(ev.cats||[]).map(c=>`<span class="sc-cat-tag">${catNames[c]||c}</span>`).join('')}</div>
+      </div>`;
+  }).join('');
+}
+
+function scShowRec(ev) {
+  const rec = document.getElementById('sc-rec');
+  const body = document.getElementById('sc-rec-body');
+  if (!rec || !body) return;
+  const catNames = {food:'🍑 식품',beauty:'💄 뷰티',electronics:'📱 전자기기',fashion:'👗 패션',home:'🏠 홈/생활',health:'💪 건강'};
+  body.innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <span style="font-size:28px">${ev.emoji}</span>
+      <div>
+        <div style="font-weight:700;font-size:16px">${ev.name}</div>
+        <div style="font-size:12px;color:var(--t2)">${ev.month}월${ev.day?` ${ev.day}일`:'중'} · D-${ev.diffDays} · ${ev.lead}주 전 준비 권장</div>
+      </div>
+    </div>
+    <div style="padding:12px;background:var(--cyD);border:1px solid var(--cyM);border-radius:var(--rs);margin-bottom:12px">
+      <div style="font-weight:600;font-size:12px;color:var(--cy);margin-bottom:6px">💡 전략 포인트</div>
+      <div style="font-size:13px;color:var(--t1)">${ev.tip}</div>
+    </div>
+    <div style="font-weight:600;font-size:12px;color:var(--t2);margin-bottom:8px">추천 카테고리</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      ${(ev.cats||[]).map(c=>`<span style="padding:6px 14px;background:var(--s2);border:1px solid var(--bd);border-radius:20px;font-size:12px;cursor:pointer" onclick="hgQuickFill('${c}')">${catNames[c]||c} 훅 생성 →</span>`).join('')}
+    </div>`;
+  rec.style.display = '';
+}
+
+function hgQuickFill(cat) {
+  navGo('hook-gen', document.querySelector('[data-sec=hook-gen]'));
+  document.getElementById('hg-cat').value = cat;
+}
+
+/* ══════════════════════════════════
+   TREND HOOKS
+══════════════════════════════════ */
+let thActiveCat = 'food';
+function renderTrendHooks(cat) {
+  thActiveCat = cat || thActiveCat;
+  const catMap = {food:'🍑 식품',beauty:'💄 뷰티',electronics:'📱 전자기기',fashion:'👗 패션',home:'🏠 홈/생활',health:'💪 건강'};
+
+  const tabs = document.getElementById('th-cat-tabs');
+  const list = document.getElementById('th-hook-list');
+  if (!tabs || !list) return;
+
+  tabs.innerHTML = Object.keys(TREND_HOOKS).map(k => `
+    <button class="th-cat-tab${k===thActiveCat?' active':''}" onclick="renderTrendHooks('${k}')">
+      ${catMap[k]||k}
+    </button>`).join('');
+
+  const hooks = TREND_HOOKS[thActiveCat] || [];
+  list.innerHTML = hooks.map((h, i) => `
+    <div class="th-hook-item" onclick="thUseHook('${h.replace(/'/g,"&#39;")}')">
+      <span class="th-hook-rank">${String(i+1).padStart(2,'0')}</span>
+      <span class="th-hook-txt">${h}</span>
+      <span class="th-hook-fire">${i<2?'🔥 HOT':i<4?'⬆ 상승':'📋'}</span>
+    </div>`).join('');
+}
+
+function thUseHook(hookText) {
+  navGo('hook-gen', document.querySelector('[data-sec=hook-gen]'));
+  const product = hookText.replace(/\{[^}]+\}/g,'').trim();
+  document.getElementById('hg-product').value = product.slice(0,30);
+}
+
+/* ══════════════════════════════════
+   PLATFORM CHECKLIST (UF Step 4)
+══════════════════════════════════ */
+let pcActivePlatform = 'youtube';
+const pcChecked = {};
+
+function initPlatformChecklist() {
+  const wrap = document.getElementById('uf-platform-checklist');
+  if (!wrap) return;
+  const tabs = document.getElementById('pc-platform-tabs');
+  const list = document.getElementById('pc-checklist-body');
+  if (!tabs || !list) return;
+
+  tabs.innerHTML = Object.entries(PLATFORM_CHECKLIST).map(([k,v]) => `
+    <button class="pc-tab${k===pcActivePlatform?' active':''}" style="${k===pcActivePlatform?`border-color:var(--${v.cc});color:var(--${v.cc});background:var(--${v.cc}D)`:''}" onclick="pcSelectPlatform('${k}')">${v.icon} ${v.name}</button>`).join('');
+
+  renderPcChecklist();
+}
+
+function pcSelectPlatform(key) {
+  pcActivePlatform = key;
+  initPlatformChecklist();
+}
+
+function renderPcChecklist() {
+  const list = document.getElementById('pc-checklist-body');
+  if (!list) return;
+  const items = PLATFORM_CHECKLIST[pcActivePlatform]?.items || [];
+  if (!pcChecked[pcActivePlatform]) pcChecked[pcActivePlatform] = new Array(items.length).fill(false);
+
+  list.innerHTML = items.map((item, i) => `
+    <div class="pc-item${pcChecked[pcActivePlatform][i]?' done':''}" onclick="pcToggle(${i})">
+      <div class="pc-item-check">${pcChecked[pcActivePlatform][i]?'✓':''}</div>
+      <div class="pc-item-txt">${item}</div>
+    </div>`).join('');
+
+  const done = pcChecked[pcActivePlatform].filter(Boolean).length;
+  const total = items.length;
+  const pct = total ? Math.round(done/total*100) : 0;
+  const prog = document.getElementById('pc-progress');
+  const bar = document.getElementById('pc-progress-bar');
+  if (prog) { prog.style.display=''; bar.style.width = pct+'%'; }
+  const lbl = document.getElementById('pc-progress-lbl');
+  if (lbl) lbl.textContent = `${done}/${total} 완료 (${pct}%)`;
+}
+
+function pcToggle(i) {
+  if (!pcChecked[pcActivePlatform]) pcChecked[pcActivePlatform] = [];
+  pcChecked[pcActivePlatform][i] = !pcChecked[pcActivePlatform][i];
+  renderPcChecklist();
+}
+
+/* ══════════════════════════════════
    INIT
 ══════════════════════════════════ */
 function init() {
@@ -3779,6 +4339,11 @@ function init() {
   initFishCtaList();
   // Unified Flow
   ufRenderCatGrid();
+  // New features
+  initHookGen();
+  renderSeasonCal();
+  renderTrendHooks('food');
+  initPlatformChecklist();
 }
 
 init();
