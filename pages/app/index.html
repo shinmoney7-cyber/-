@@ -1,0 +1,912 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="사주마루">
+<meta name="theme-color" content="#07071A">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>사주마루 운영 센터</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Nanum+Gothic:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ── */
+:root {
+  --bg: #07071A; --bg2: #0E0E2C; --bg3: #141436; --bg4: #1A1A42;
+  --gold: #C9A227; --gold2: #F0CC6A; --gold3: rgba(201,162,39,.14);
+  --rose: #C9549A; --rose2: #E87DC0; --rose3: rgba(201,84,154,.14);
+  --fire: #F4923A; --fire2: #FFC07A; --fire3: rgba(244,146,58,.14);
+  --text: #EDE4CC; --muted: rgba(237,228,204,.5); --faint: rgba(237,228,204,.25);
+  --border: rgba(201,162,39,.18); --border2: rgba(201,162,39,.38);
+  --green: #52B06A; --red: #D0574A; --blue: #4A8FD9;
+  --r: 16px; --rS: 10px; --rL: 22px;
+  --font: 'Nanum Gothic', sans-serif; --fh: 'Black Han Sans', sans-serif;
+  --safe-t: env(safe-area-inset-top,0px);
+  --safe-b: env(safe-area-inset-bottom,0px);
+  --safe-l: env(safe-area-inset-left,0px);
+  --safe-r: env(safe-area-inset-right,0px);
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg:#F5F0E8; --bg2:#FFFFFF; --bg3:#F0EAD8; --bg4:#E8E0C8;
+    --text:#1A1408; --muted:rgba(26,20,8,.55); --faint:rgba(26,20,8,.2);
+    --border:rgba(140,100,20,.2); --border2:rgba(140,100,20,.4);
+  }
+}
+:root[data-theme="dark"] { --bg:#07071A; --bg2:#0E0E2C; --bg3:#141436; --bg4:#1A1A42; --text:#EDE4CC; --muted:rgba(237,228,204,.5); --faint:rgba(237,228,204,.25); --border:rgba(201,162,39,.18); --border2:rgba(201,162,39,.38); }
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { height:100%; -webkit-tap-highlight-color:transparent; }
+body {
+  min-height:100%; background:var(--bg); color:var(--text);
+  font-family:var(--font); font-size:15px; line-height:1.5;
+  padding-bottom:calc(72px + var(--safe-b));
+  padding-top:var(--safe-t);
+  overflow-x:hidden;
+}
+a { color:inherit; text-decoration:none; }
+button { font-family:var(--font); cursor:pointer; -webkit-appearance:none; }
+img { max-width:100%; display:block; }
+
+/* ── STATUS BAR FILL ── */
+body::before {
+  content:""; position:fixed; inset:0 0 auto; z-index:200;
+  height:var(--safe-t); background:rgba(7,7,26,.92);
+}
+
+/* ── TOP BAR ── */
+.topbar {
+  position:sticky; top:var(--safe-t); z-index:100;
+  background:rgba(7,7,26,.92); backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px max(16px, var(--safe-r)) 14px max(16px, var(--safe-l));
+}
+.topbar__logo { font-family:var(--fh); font-size:20px; color:var(--gold); letter-spacing:.06em; }
+.topbar__right { display:flex; gap:12px; align-items:center; }
+.topbar__icon { width:36px; height:36px; border-radius:50%; border:1px solid var(--border2); background:var(--bg3); display:flex; align-items:center; justify-content:center; font-size:16px; }
+
+/* ── BOTTOM NAV ── */
+.bottomnav {
+  position:fixed; bottom:0; left:0; right:0; z-index:100;
+  background:rgba(7,7,26,.95); backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border-top:1px solid var(--border);
+  display:flex;
+  padding-bottom:var(--safe-b);
+  padding-left:var(--safe-l); padding-right:var(--safe-r);
+}
+.nav-item {
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:10px 4px 12px; gap:4px; border:none; background:none; color:var(--muted);
+  font-size:11px; font-family:var(--font); transition:color .15s;
+}
+.nav-item.active { color:var(--gold); }
+.nav-item svg { width:22px; height:22px; }
+
+/* ── SCROLL CONTAINER ── */
+.page { display:none; padding:16px max(16px,var(--safe-r)) 8px max(16px,var(--safe-l)); }
+.page.active { display:block; }
+
+/* ── SECTION HEADER ── */
+.sec-hd { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.sec-hd h2 { font-family:var(--fh); font-size:16px; color:var(--text); }
+.sec-hd span { font-size:12px; color:var(--muted); }
+
+/* ── ACCOUNT CARDS ── */
+.acct-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:20px; }
+.acct-card {
+  background:var(--bg2); border:1px solid var(--border); border-radius:var(--r);
+  padding:14px 10px 12px; text-align:center; cursor:pointer;
+  transition:border-color .15s, transform .1s;
+}
+.acct-card:active { transform:scale(.97); }
+.acct-card.sm { --ac:var(--gold); --ac3:var(--gold3); }
+.acct-card.un { --ac:var(--rose); --ac3:var(--rose3); }
+.acct-card.s77 { --ac:var(--fire); --ac3:var(--fire3); }
+.acct-card.active-card { border-color:var(--ac); background:var(--ac3); }
+.acct-emoji { font-size:26px; margin-bottom:6px; }
+.acct-name { font-size:11px; font-weight:800; color:var(--ac,var(--gold)); letter-spacing:.04em; }
+.acct-status { font-size:10px; color:var(--muted); margin-top:3px; }
+.acct-dot { display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--green); margin-right:3px; vertical-align:middle; }
+.acct-dot.red { background:var(--red); }
+.acct-dot.grey { background:var(--faint); }
+
+/* ── STATUS SUMMARY ── */
+.stat-row { display:flex; gap:10px; margin-bottom:20px; }
+.stat-box {
+  flex:1; background:var(--bg2); border:1px solid var(--border); border-radius:var(--r);
+  padding:14px 12px; text-align:center;
+}
+.stat-num { font-family:var(--fh); font-size:28px; color:var(--gold); }
+.stat-label { font-size:11px; color:var(--muted); margin-top:2px; }
+
+/* ── NEXT POST TIMER ── */
+.timer-card {
+  background:linear-gradient(135deg,var(--bg2) 0%,var(--bg3) 100%);
+  border:1px solid var(--border2); border-radius:var(--rL);
+  padding:18px 16px; margin-bottom:20px;
+  display:flex; align-items:center; gap:14px;
+}
+.timer-icon { font-size:32px; flex-shrink:0; }
+.timer-info { flex:1; min-width:0; }
+.timer-label { font-size:12px; color:var(--muted); }
+.timer-val { font-family:var(--fh); font-size:22px; color:var(--gold2); margin:2px 0; }
+.timer-sub { font-size:12px; color:var(--muted); }
+.timer-btn {
+  padding:10px 16px; border-radius:var(--rS); border:none;
+  background:var(--gold); color:#07071A; font-size:13px; font-weight:800;
+  white-space:nowrap;
+}
+.timer-btn:active { opacity:.8; }
+
+/* ── RECENT POSTS ── */
+.post-card {
+  background:var(--bg2); border:1px solid var(--border); border-radius:var(--r);
+  padding:14px; margin-bottom:10px; cursor:pointer;
+  transition:border-color .15s;
+}
+.post-card:active { border-color:var(--border2); }
+.post-header { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.post-acct-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.post-acct-dot.sm { background:var(--gold); }
+.post-acct-dot.un { background:var(--rose); }
+.post-acct-dot.s77 { background:var(--fire); }
+.post-meta { font-size:12px; color:var(--muted); flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.post-slot { font-size:11px; color:var(--muted); background:var(--bg3); padding:2px 7px; border-radius:20px; white-space:nowrap; }
+.post-hook { font-size:14px; font-weight:700; color:var(--text); line-height:1.4; margin-bottom:6px; }
+.post-topic { font-size:12px; color:var(--muted); }
+.post-platforms { display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; }
+.plat-badge {
+  font-size:11px; padding:3px 8px; border-radius:20px;
+  border:1px solid var(--border); color:var(--muted); background:var(--bg3);
+}
+.plat-badge.ok { border-color:var(--green); color:var(--green); background:rgba(82,176,106,.1); }
+.plat-badge.fail { border-color:var(--red); color:var(--red); background:rgba(208,87,74,.1); }
+.post-img { width:100%; aspect-ratio:9/16; object-fit:cover; border-radius:var(--rS); margin-top:10px; max-height:200px; object-position:top; }
+
+/* ── IMAGE THUMB ROW ── */
+.slide-row { display:flex; gap:8px; margin-top:8px; overflow-x:auto; padding-bottom:4px; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; }
+.slide-row::-webkit-scrollbar { display:none; }
+.slide-thumb { width:80px; height:142px; border-radius:var(--rS); object-fit:cover; flex-shrink:0; scroll-snap-align:start; border:1px solid var(--border); }
+
+/* ── TRIGGER ── */
+.trigger-section { margin-bottom:20px; }
+.trig-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.trig-btn {
+  padding:16px 10px; border-radius:var(--r); border:1px solid var(--border2);
+  background:var(--bg2); color:var(--text); font-size:13px; font-weight:800;
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  transition:background .15s, border-color .15s;
+}
+.trig-btn:active { background:var(--bg3); }
+.trig-btn .trig-icon { font-size:24px; }
+.trig-btn .trig-acct { font-size:12px; }
+.trig-btn.sm .trig-icon { color:var(--gold); }
+.trig-btn.un .trig-icon { color:var(--rose); }
+.trig-btn.s77 .trig-icon { color:var(--fire); }
+.trig-btn.all { grid-column:1/-1; background:var(--gold3); border-color:var(--gold); }
+.trig-btn.all .trig-icon { color:var(--gold2); font-size:20px; }
+
+.slot-picker { display:flex; gap:8px; margin-bottom:12px; overflow-x:auto; padding-bottom:4px; -webkit-overflow-scrolling:touch; }
+.slot-picker::-webkit-scrollbar { display:none; }
+.slot-chip {
+  padding:8px 16px; border-radius:20px; border:1px solid var(--border);
+  background:var(--bg2); color:var(--muted); font-size:13px; font-weight:700; white-space:nowrap;
+  cursor:pointer; transition:all .15s; flex-shrink:0;
+}
+.slot-chip.sel { border-color:var(--gold); color:var(--gold); background:var(--gold3); }
+
+/* ── TRIGGER LOG ── */
+.trig-log {
+  background:var(--bg3); border-radius:var(--rS); padding:12px;
+  font-size:12px; color:var(--muted); min-height:60px; font-family:monospace;
+  margin-top:12px; white-space:pre-wrap; word-break:break-all; max-height:200px; overflow-y:auto;
+}
+.trig-log .ok { color:var(--green); }
+.trig-log .err { color:var(--red); }
+
+/* ── SETTINGS ── */
+.set-group { background:var(--bg2); border:1px solid var(--border); border-radius:var(--r); overflow:hidden; margin-bottom:16px; }
+.set-row {
+  display:flex; align-items:center; padding:15px 16px; gap:12px;
+  border-bottom:1px solid var(--border); cursor:pointer; transition:background .12s;
+}
+.set-row:last-child { border-bottom:none; }
+.set-row:active { background:var(--bg3); }
+.set-icon { font-size:20px; flex-shrink:0; width:32px; text-align:center; }
+.set-label { flex:1; min-width:0; }
+.set-label strong { display:block; font-size:14px; font-weight:700; }
+.set-label span { font-size:12px; color:var(--muted); }
+.set-arrow { color:var(--muted); font-size:16px; }
+.set-toggle { width:44px; height:26px; background:var(--faint); border-radius:13px; position:relative; border:none; transition:background .2s; flex-shrink:0; }
+.set-toggle.on { background:var(--gold); }
+.set-toggle::after { content:""; position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%; background:#fff; transition:transform .2s; }
+.set-toggle.on::after { transform:translateX(18px); }
+
+/* ── PAT MODAL ── */
+.modal-overlay {
+  position:fixed; inset:0; z-index:300; background:rgba(0,0,0,.7);
+  display:flex; align-items:flex-end; justify-content:center;
+  opacity:0; pointer-events:none; transition:opacity .2s;
+}
+.modal-overlay.open { opacity:1; pointer-events:auto; }
+.modal-sheet {
+  background:var(--bg2); border-radius:24px 24px 0 0;
+  width:100%; max-width:540px;
+  padding:24px max(20px,var(--safe-r)) max(24px,calc(var(--safe-b)+8px)) max(20px,var(--safe-l));
+  transform:translateY(100%); transition:transform .3s cubic-bezier(.32,.72,0,1);
+}
+.modal-overlay.open .modal-sheet { transform:translateY(0); }
+.modal-handle { width:36px; height:4px; border-radius:2px; background:var(--faint); margin:0 auto 20px; }
+.modal-title { font-family:var(--fh); font-size:18px; margin-bottom:6px; }
+.modal-sub { font-size:13px; color:var(--muted); margin-bottom:18px; line-height:1.5; }
+.modal-input {
+  width:100%; padding:14px 16px; border-radius:var(--r);
+  border:1px solid var(--border2); background:var(--bg3);
+  color:var(--text); font-size:15px; font-family:var(--font);
+  margin-bottom:14px;
+}
+.modal-input:focus { outline:none; border-color:var(--gold); }
+.modal-btn {
+  width:100%; padding:16px; border-radius:var(--r); border:none;
+  background:var(--gold); color:#07071A; font-size:16px; font-weight:800;
+  font-family:var(--fh);
+}
+.modal-btn:active { opacity:.85; }
+.modal-link { display:block; text-align:center; margin-top:12px; font-size:12px; color:var(--muted); }
+
+/* ── MONETIZATION ── */
+.mono-card {
+  background:linear-gradient(135deg,var(--gold3) 0%,var(--bg2) 100%);
+  border:1px solid var(--border2); border-radius:var(--rL);
+  padding:18px 16px; margin-bottom:12px; cursor:pointer;
+  display:flex; align-items:center; gap:14px; transition:border-color .15s;
+}
+.mono-card:active { border-color:var(--gold); }
+.mono-icon { font-size:32px; flex-shrink:0; }
+.mono-info { flex:1; min-width:0; }
+.mono-title { font-size:15px; font-weight:800; }
+.mono-sub { font-size:12px; color:var(--muted); margin-top:2px; }
+.mono-price { font-family:var(--fh); font-size:16px; color:var(--gold); white-space:nowrap; }
+
+/* ── SCHEDULE TABLE ── */
+.sch-row { display:flex; gap:10px; margin-bottom:8px; align-items:center; }
+.sch-time { font-family:var(--fh); font-size:16px; color:var(--gold); width:52px; flex-shrink:0; }
+.sch-bar { flex:1; min-width:0; background:var(--bg2); border:1px solid var(--border); border-radius:var(--rS); padding:10px 12px; }
+.sch-slot { font-size:13px; font-weight:700; }
+.sch-topics { font-size:12px; color:var(--muted); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+/* ── LOADING SPINNER ── */
+.spinner { display:inline-block; width:20px; height:20px; border:2px solid var(--faint); border-top-color:var(--gold); border-radius:50%; animation:spin .6s linear infinite; vertical-align:middle; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* ── TOAST ── */
+.toast {
+  position:fixed; bottom:calc(80px + var(--safe-b)); left:50%; transform:translateX(-50%) translateY(20px);
+  background:var(--bg4); border:1px solid var(--border2); border-radius:100px;
+  padding:10px 20px; font-size:13px; font-weight:700; color:var(--text);
+  white-space:nowrap; opacity:0; transition:opacity .2s, transform .2s; z-index:500;
+  max-width:calc(100vw - 40px);
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* ── EMPTY STATE ── */
+.empty { text-align:center; padding:40px 20px; color:var(--muted); font-size:14px; }
+.empty-icon { font-size:40px; margin-bottom:10px; }
+
+/* ── UPDATE BANNER ── */
+.update-bar {
+  background:rgba(82,176,106,.15); border:1px solid rgba(82,176,106,.4);
+  border-radius:var(--rS); padding:10px 14px; margin-bottom:14px;
+  font-size:13px; display:flex; align-items:center; gap:8px; display:none;
+}
+.update-bar.show { display:flex; }
+
+/* ── RESPONSIVE ── */
+@media (min-width:480px) {
+  .acct-grid { grid-template-columns:repeat(3,1fr); }
+  .trig-grid { grid-template-columns:repeat(3,1fr); }
+  .trig-btn.all { grid-column:1/-1; }
+}
+</style>
+</head>
+<body>
+
+<!-- STATUS BAR FILL handled by body::before -->
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar__logo">☯ 사주마루</div>
+  <div class="topbar__right">
+    <div id="onlineIndicator" class="topbar__icon" title="온라인 상태">🟢</div>
+    <button class="topbar__icon" onclick="openPatModal()" title="설정">⚙️</button>
+  </div>
+</div>
+
+<!-- UPDATE BANNER -->
+<div id="updateBar" class="update-bar" style="margin:8px 16px 0; display:none;">
+  <span>🔄</span>
+  <span>새 버전이 있어요.</span>
+  <button onclick="location.reload()" style="margin-left:auto;padding:4px 10px;border-radius:6px;border:1px solid var(--green);background:none;color:var(--green);font-size:12px;font-weight:700;">업데이트</button>
+</div>
+
+<!-- ───────── PAGE: HOME ───────── -->
+<div id="pageHome" class="page active">
+
+  <div class="sec-hd" style="margin-top:12px;">
+    <h2>계정 현황</h2>
+    <span id="lastRefresh">로딩 중...</span>
+  </div>
+
+  <div class="acct-grid">
+    <div class="acct-card sm" id="acctSm" onclick="switchAcct('sm')">
+      <div class="acct-emoji">☯</div>
+      <div class="acct-name">사주마루</div>
+      <div class="acct-status"><span class="acct-dot grey" id="dotSm"></span><span id="statusSm">-</span></div>
+    </div>
+    <div class="acct-card un" id="acctUn" onclick="switchAcct('un')">
+      <div class="acct-emoji">💜</div>
+      <div class="acct-name">사주언니</div>
+      <div class="acct-status"><span class="acct-dot grey" id="dotUn"></span><span id="statusUn">-</span></div>
+    </div>
+    <div class="acct-card s77" id="acctS77" onclick="switchAcct('s77')">
+      <div class="acct-emoji">🔥</div>
+      <div class="acct-name">마루77</div>
+      <div class="acct-status"><span class="acct-dot grey" id="dotS77"></span><span id="statusS77">-</span></div>
+    </div>
+  </div>
+
+  <!-- 다음 포스팅 타이머 -->
+  <div class="timer-card" id="timerCard">
+    <div class="timer-icon">⏰</div>
+    <div class="timer-info">
+      <div class="timer-label">다음 자동 포스팅</div>
+      <div class="timer-val" id="timerVal">계산 중...</div>
+      <div class="timer-sub" id="timerSub">KST 기준</div>
+    </div>
+    <button class="timer-btn" onclick="navTo('trigger')">지금 트리거</button>
+  </div>
+
+  <!-- 오늘 통계 -->
+  <div class="stat-row">
+    <div class="stat-box">
+      <div class="stat-num" id="todayCount">-</div>
+      <div class="stat-label">오늘 포스팅</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="weekCount">-</div>
+      <div class="stat-label">이번 주</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="totalCount">-</div>
+      <div class="stat-label">전체 로그</div>
+    </div>
+  </div>
+
+  <!-- 최근 포스트 -->
+  <div class="sec-hd">
+    <h2>최근 포스팅</h2>
+    <span id="curAcctLabel" style="color:var(--gold);">전체</span>
+  </div>
+  <div id="recentPosts"></div>
+</div>
+
+<!-- ───────── PAGE: TRIGGER ───────── -->
+<div id="pageTrigger" class="page">
+
+  <div class="sec-hd" style="margin-top:12px;">
+    <h2>포스팅 트리거</h2>
+    <span>수동 실행</span>
+  </div>
+
+  <!-- PAT 상태 표시 -->
+  <div id="patStatus" style="margin-bottom:14px;padding:10px 14px;border-radius:var(--rS);background:var(--bg2);border:1px solid var(--border);font-size:13px;color:var(--muted);">
+    ⚠️ GitHub PAT 미설정 — 트리거를 사용하려면 <button onclick="openPatModal()" style="background:none;border:none;color:var(--gold);font-size:13px;font-weight:700;font-family:var(--font);text-decoration:underline;">여기서 설정</button>
+  </div>
+
+  <!-- 시간대 선택 -->
+  <div class="sec-hd">
+    <h2>시간대</h2>
+  </div>
+  <div class="slot-picker">
+    <div class="slot-chip sel" data-slot="" onclick="selSlot(this,'')">⏰ 현재시각</div>
+    <div class="slot-chip" data-slot="08" onclick="selSlot(this,'08')">☀️ 08:00 아침</div>
+    <div class="slot-chip" data-slot="13" onclick="selSlot(this,'13')">🌤 13:00 점심</div>
+    <div class="slot-chip" data-slot="20" onclick="selSlot(this,'20')">🌙 20:00 저녁</div>
+  </div>
+
+  <!-- 계정 선택 -->
+  <div class="sec-hd" style="margin-top:16px;">
+    <h2>계정</h2>
+  </div>
+  <div class="trig-grid trigger-section">
+    <button class="trig-btn all" onclick="trigPost('all')">
+      <span class="trig-icon">🚀</span>
+      <span>전체 계정 실행</span>
+      <span class="trig-acct" style="color:var(--muted);">sm + un + s77</span>
+    </button>
+    <button class="trig-btn sm" onclick="trigPost('sm')">
+      <span class="trig-icon">☯</span>
+      <span>사주마루</span>
+    </button>
+    <button class="trig-btn un" onclick="trigPost('un')">
+      <span class="trig-icon" style="color:var(--rose);">💜</span>
+      <span>사주언니</span>
+    </button>
+    <button class="trig-btn s77" onclick="trigPost('s77')">
+      <span class="trig-icon" style="color:var(--fire);">🔥</span>
+      <span>마루77</span>
+    </button>
+  </div>
+
+  <div class="trig-log" id="trigLog">GitHub PAT 설정 후 트리거 버튼을 눌러봐.</div>
+</div>
+
+<!-- ───────── PAGE: LOG ───────── -->
+<div id="pageLog" class="page">
+
+  <div class="sec-hd" style="margin-top:12px;">
+    <h2>포스팅 로그</h2>
+    <button onclick="refreshAll()" style="background:none;border:none;color:var(--gold);font-size:13px;font-weight:700;font-family:var(--font);">새로고침 ↺</button>
+  </div>
+
+  <!-- 계정 필터 -->
+  <div class="slot-picker" style="margin-bottom:14px;">
+    <div class="slot-chip sel" onclick="filterLog(this,'all')">전체</div>
+    <div class="slot-chip" onclick="filterLog(this,'sm')">☯ 사주마루</div>
+    <div class="slot-chip" onclick="filterLog(this,'un')">💜 사주언니</div>
+    <div class="slot-chip" onclick="filterLog(this,'s77')">🔥 마루77</div>
+  </div>
+
+  <div id="logList"></div>
+</div>
+
+<!-- ───────── PAGE: MONEY ───────── -->
+<div id="pageMoney" class="page">
+
+  <div class="sec-hd" style="margin-top:12px;">
+    <h2>수익화 링크</h2>
+    <span style="color:var(--green);">활성</span>
+  </div>
+
+  <div class="mono-card" onclick="copyLink('https://pf.kakao.com/_saju')">
+    <div class="mono-icon">💬</div>
+    <div class="mono-info">
+      <div class="mono-title">카카오 무료상담</div>
+      <div class="mono-sub">pf.kakao.com/_saju · 탭해서 복사</div>
+    </div>
+    <div class="mono-price">무료</div>
+  </div>
+
+  <div class="mono-card" onclick="copyLink('https://forms.gle/t2sSNES5NYow77vz5')">
+    <div class="mono-icon">📋</div>
+    <div class="mono-info">
+      <div class="mono-title">무료 사주 신청폼</div>
+      <div class="mono-sub">forms.gle · 탭해서 복사</div>
+    </div>
+    <div class="mono-price">무료 퍼널</div>
+  </div>
+
+  <div class="mono-card" style="background:linear-gradient(135deg,var(--rose3),var(--bg2));border-color:var(--rose);" onclick="copyLink('https://smartstore.naver.com/sajumaru')">
+    <div class="mono-icon">🛒</div>
+    <div class="mono-info">
+      <div class="mono-title">네이버 스마트스토어</div>
+      <div class="mono-sub">sajumaru · 사주책/자료</div>
+    </div>
+    <div class="mono-price" style="color:var(--rose);">판매</div>
+  </div>
+
+  <div class="mono-card" style="background:linear-gradient(135deg,var(--fire3),var(--bg2));border-color:var(--fire);" onclick="copyLink('https://www.youtube.com/@sajumaru/join')">
+    <div class="mono-icon">▶️</div>
+    <div class="mono-info">
+      <div class="mono-title">유튜브 멤버십</div>
+      <div class="mono-sub">@sajumaru · 구독 전환</div>
+    </div>
+    <div class="mono-price" style="color:var(--fire);">월정액</div>
+  </div>
+
+  <div class="sec-hd" style="margin-top:20px;">
+    <h2>가격 안내</h2>
+  </div>
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
+    <div style="display:flex;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);">
+      <span>기본 사주 상담</span>
+      <span style="font-family:var(--fh);color:var(--gold);">30,000원</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;padding:14px 16px;">
+      <span>풀 사주 상담</span>
+      <span style="font-family:var(--fh);color:var(--gold);">90,000원</span>
+    </div>
+  </div>
+
+  <div class="sec-hd" style="margin-top:20px;">
+    <h2>자동 포스팅 일정</h2>
+  </div>
+  <div class="sch-row">
+    <div class="sch-time">08:00</div>
+    <div class="sch-bar">
+      <div class="sch-slot">☀️ 아침 운세</div>
+      <div class="sch-topics">띠별·재물·재회·합격·이직·사업·건강·궁합·이사·부모</div>
+    </div>
+  </div>
+  <div class="sch-row">
+    <div class="sch-time">13:00</div>
+    <div class="sch-bar">
+      <div class="sch-slot">🌤 점심 픽</div>
+      <div class="sch-topics">재물·재회·띠별·건강·이직·합격·사업·궁합·이사·부모</div>
+    </div>
+  </div>
+  <div class="sch-row">
+    <div class="sch-time">20:00</div>
+    <div class="sch-bar">
+      <div class="sch-slot">🌙 저녁 포춘</div>
+      <div class="sch-topics">재회·건강·합격·재물·이직·사업·부모·띠별·궁합·이사</div>
+    </div>
+  </div>
+</div>
+
+<!-- ───────── BOTTOM NAV ───────── -->
+<nav class="bottomnav">
+  <button class="nav-item active" id="navHome" onclick="navTo('home')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    홈
+  </button>
+  <button class="nav-item" id="navTrigger" onclick="navTo('trigger')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    트리거
+  </button>
+  <button class="nav-item" id="navLog" onclick="navTo('log')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    로그
+  </button>
+  <button class="nav-item" id="navMoney" onclick="navTo('money')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+    수익화
+  </button>
+</nav>
+
+<!-- ───────── PAT MODAL ───────── -->
+<div class="modal-overlay" id="patModal" onclick="closePatModal(event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🔑 GitHub PAT 설정</div>
+    <div class="modal-sub">포스팅 트리거를 쓰려면 GitHub Personal Access Token이 필요해.<br>이 기기에만 저장돼 (로컬 스토리지).</div>
+    <input class="modal-input" id="patInput" type="password" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off" spellcheck="false">
+    <div style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.6;">
+      ✅ 필요 권한: <strong style="color:var(--text);">workflow</strong><br>
+      📍 발급: github.com → Settings → Developer settings → Personal access tokens → Fine-grained
+    </div>
+    <button class="modal-btn" onclick="savePat()">저장</button>
+    <a class="modal-link" href="https://github.com/settings/tokens" target="_blank" rel="noopener">GitHub 토큰 발급 페이지 →</a>
+  </div>
+</div>
+
+<!-- ───────── TOAST ───────── -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── CONFIG ──
+const OWNER = 'shinmoney7-cyber';
+const REPO  = '-';
+const WORKFLOW = 'auto_post_2h.yml';
+const BASE_URL = 'https://shinmoney7-cyber.github.io/-';
+
+// ── STATE ──
+let allLogs = { sm:[], un:[], s77:[] };
+let curAcct = 'all';
+let logFilter = 'all';
+let selSlotVal = '';
+let pat = '';
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', () => {
+  loadPat();
+  updateOnline();
+  window.addEventListener('online',  updateOnline);
+  window.addEventListener('offline', updateOnline);
+
+  // PWA update check
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').then(reg => {
+      reg.addEventListener('updatefound', () => {
+        document.getElementById('updateBar').style.display = 'flex';
+      });
+    }).catch(() => {});
+  }
+
+  refreshAll();
+  updateTimer();
+  setInterval(updateTimer, 30000);
+
+  // URL param: tab
+  const params = new URLSearchParams(location.search);
+  if (params.get('tab')) navTo(params.get('tab'));
+  if (params.get('action') === 'post') navTo('trigger');
+});
+
+// ── ONLINE STATUS ──
+function updateOnline() {
+  const dot = document.getElementById('onlineIndicator');
+  dot.textContent = navigator.onLine ? '🟢' : '🔴';
+}
+
+// ── PAT ──
+function loadPat() {
+  try { pat = localStorage.getItem('gh_pat') || ''; } catch(e) { pat = ''; }
+  updatePatStatus();
+}
+function savePat() {
+  const v = document.getElementById('patInput').value.trim();
+  if (!v) { showToast('PAT를 입력해줘'); return; }
+  pat = v;
+  try { localStorage.setItem('gh_pat', v); } catch(e) {}
+  closePatModal();
+  updatePatStatus();
+  showToast('✅ PAT 저장 완료');
+}
+function updatePatStatus() {
+  const el = document.getElementById('patStatus');
+  if (pat) {
+    el.innerHTML = `✅ GitHub PAT 설정됨 — <button onclick="clearPat()" style="background:none;border:none;color:var(--red);font-size:13px;font-weight:700;font-family:var(--font);">초기화</button>`;
+    el.style.borderColor = 'rgba(82,176,106,.4)';
+    el.style.background = 'rgba(82,176,106,.08)';
+    el.style.color = 'var(--green)';
+  } else {
+    el.innerHTML = `⚠️ GitHub PAT 미설정 — 트리거를 사용하려면 <button onclick="openPatModal()" style="background:none;border:none;color:var(--gold);font-size:13px;font-weight:700;font-family:var(--font);text-decoration:underline;">여기서 설정</button>`;
+    el.style.borderColor = 'var(--border)';
+    el.style.background = 'var(--bg2)';
+    el.style.color = 'var(--muted)';
+  }
+}
+function clearPat() {
+  pat = '';
+  try { localStorage.removeItem('gh_pat'); } catch(e) {}
+  updatePatStatus();
+  showToast('PAT 초기화 완료');
+}
+function openPatModal() {
+  document.getElementById('patInput').value = pat;
+  document.getElementById('patModal').classList.add('open');
+}
+function closePatModal(e) {
+  if (!e || e.target === document.getElementById('patModal')) {
+    document.getElementById('patModal').classList.remove('open');
+  }
+}
+
+// ── FETCH LOGS ──
+async function fetchLog(acct) {
+  try {
+    const r = await fetch(`${BASE_URL}/data/posting_log_${acct}.json?t=${Date.now()}`, { cache:'no-store' });
+    if (!r.ok) return [];
+    return await r.json();
+  } catch(e) { return []; }
+}
+
+async function refreshAll() {
+  document.getElementById('lastRefresh').textContent = '로딩 중...';
+  const [sm, un, s77] = await Promise.all([fetchLog('sm'), fetchLog('un'), fetchLog('s77')]);
+  allLogs = { sm, un, s77 };
+
+  const now = new Date().toISOString().slice(0,10);
+  let todayN = 0, totalN = 0;
+  const accts = [
+    { id:'sm', logs:sm, dotId:'dotSm', statusId:'statusSm', cardId:'acctSm' },
+    { id:'un', logs:un, dotId:'dotUn', statusId:'statusUn', cardId:'acctUn' },
+    { id:'s77', logs:s77, dotId:'dotS77', statusId:'statusS77', cardId:'acctS77' }
+  ];
+  accts.forEach(a => {
+    const last = a.logs[0];
+    totalN += a.logs.length;
+    const todays = a.logs.filter(l => l.date === now);
+    todayN += todays.length;
+    const dot = document.getElementById(a.dotId);
+    const status = document.getElementById(a.statusId);
+    if (last) {
+      const hasFail = (last.platforms_fail||[]).length > 0;
+      dot.className = 'acct-dot ' + (hasFail ? 'red' : '');
+      status.textContent = last.slot || last.ts_kst?.slice(11,16) || '기록 있음';
+    } else {
+      dot.className = 'acct-dot grey';
+      status.textContent = '기록 없음';
+    }
+  });
+  document.getElementById('todayCount').textContent = todayN;
+  document.getElementById('totalCount').textContent = totalN;
+  // week
+  const weekAgo = new Date(Date.now() - 7*86400000).toISOString().slice(0,10);
+  const weekN = [...sm,...un,...s77].filter(l => l.date >= weekAgo).length;
+  document.getElementById('weekCount').textContent = weekN;
+
+  document.getElementById('lastRefresh').textContent = '방금 업데이트';
+  renderRecent();
+  renderLog();
+}
+
+// ── RENDER RECENT ──
+function renderRecent() {
+  const container = document.getElementById('recentPosts');
+  let logs = [];
+  if (curAcct === 'all') {
+    const sm = allLogs.sm.map(l=>({...l,_acct:'sm'}));
+    const un = allLogs.un.map(l=>({...l,_acct:'un'}));
+    const s77 = allLogs.s77.map(l=>({...l,_acct:'s77'}));
+    logs = [...sm,...un,...s77].sort((a,b)=>(b.ts_kst||'').localeCompare(a.ts_kst||'')).slice(0,10);
+  } else {
+    logs = (allLogs[curAcct]||[]).map(l=>({...l,_acct:curAcct})).slice(0,8);
+  }
+  if (!logs.length) {
+    container.innerHTML = `<div class="empty"><div class="empty-icon">📭</div>아직 포스팅 기록이 없어요</div>`;
+    return;
+  }
+  container.innerHTML = logs.map(l => renderPostCard(l)).join('');
+}
+
+function renderPostCard(l) {
+  const ok = (l.platforms_ok||[]).map(p=>`<span class="plat-badge ok">${platIcon(p)} ${p}</span>`).join('');
+  const fail = (l.platforms_fail||[]).map(p=>`<span class="plat-badge fail">✗ ${p}</span>`).join('');
+  const acctLabel = {sm:'사주마루',un:'사주언니',s77:'마루77'}[l._acct]||l._acct;
+  const acctColor = {sm:'var(--gold)',un:'var(--rose)',s77:'var(--fire)'}[l._acct]||'var(--gold)';
+
+  let imgHtml = '';
+  if (l.image_url) {
+    imgHtml = `<img class="post-img" src="${l.image_url}" loading="lazy" alt="포스팅 카드">`;
+  }
+  if (l.slide_urls && l.slide_urls.length) {
+    imgHtml = `<div class="slide-row">${l.slide_urls.map(u=>`<img class="slide-thumb" src="${u}" loading="lazy" alt="슬라이드">`).join('')}</div>`;
+  }
+
+  return `<div class="post-card">
+    <div class="post-header">
+      <div class="post-acct-dot ${l._acct}"></div>
+      <span class="post-meta" style="color:${acctColor};font-weight:700;">${acctLabel}</span>
+      <span class="post-meta">${l.date||''} ${l.ts_kst?.slice(11,16)||''}</span>
+      <span class="post-slot">${l.slot||''}</span>
+    </div>
+    <div class="post-hook">${escHtml(l.hook||l.topic||'')}</div>
+    <div class="post-topic" style="color:var(--muted);">${escHtml(l.topic||'')} · ${escHtml(l.theme||'')}</div>
+    <div class="post-platforms">${ok}${fail}</div>
+    ${imgHtml}
+  </div>`;
+}
+
+function platIcon(p) {
+  return {instagram:'📸',facebook:'👥',threads:'🧵',twitter:'🐦',tiktok:'🎵',youtube:'▶️',naver_blog:'📝',naver_clip:'🎬',naver_jisik:'❓'}[p]||'🌐';
+}
+
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── SWITCH ACCT ──
+function switchAcct(id) {
+  curAcct = id;
+  ['sm','un','s77'].forEach(a => {
+    const el = document.getElementById('acct'+a.charAt(0).toUpperCase()+a.slice(1).replace('77','S77').replace('un','Un').replace('sm','Sm'));
+  });
+  document.getElementById('acctSm').classList.toggle('active-card', id==='sm');
+  document.getElementById('acctUn').classList.toggle('active-card', id==='un');
+  document.getElementById('acctS77').classList.toggle('active-card', id==='s77');
+  const labels = {sm:'☯ 사주마루',un:'💜 사주언니',s77:'🔥 마루77',all:'전체'};
+  document.getElementById('curAcctLabel').textContent = labels[id]||'전체';
+  renderRecent();
+}
+
+// ── RENDER LOG ──
+function renderLog() {
+  const container = document.getElementById('logList');
+  let logs = [];
+  if (logFilter === 'all') {
+    logs = [
+      ...allLogs.sm.map(l=>({...l,_acct:'sm'})),
+      ...allLogs.un.map(l=>({...l,_acct:'un'})),
+      ...allLogs.s77.map(l=>({...l,_acct:'s77'}))
+    ].sort((a,b)=>(b.ts_kst||'').localeCompare(a.ts_kst||''));
+  } else {
+    logs = (allLogs[logFilter]||[]).map(l=>({...l,_acct:logFilter}));
+  }
+  if (!logs.length) {
+    container.innerHTML = `<div class="empty"><div class="empty-icon">📭</div>기록이 없어요</div>`;
+    return;
+  }
+  container.innerHTML = logs.map(l => renderPostCard(l)).join('');
+}
+
+function filterLog(el, val) {
+  document.querySelectorAll('#pageLog .slot-chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  logFilter = val;
+  renderLog();
+}
+
+// ── TIMER ──
+function updateTimer() {
+  const now = new Date();
+  const kstNow = new Date(now.getTime() + 9*3600000);
+  const h = kstNow.getUTCHours();
+  const m = kstNow.getUTCMinutes();
+  const curMin = h*60 + m;
+  const slots = [{min:8*60,label:'08:00 아침 운세'},{min:13*60,label:'13:00 점심 픽'},{min:20*60,label:'20:00 저녁 포춘'}];
+  let next = null;
+  for (const s of slots) { if (s.min > curMin) { next = s; break; } }
+  if (!next) next = { min: 8*60 + 24*60, label:'08:00 아침 운세 (내일)' };
+  const diff = next.min - curMin;
+  const hLeft = Math.floor(diff / 60), mLeft = diff % 60;
+  document.getElementById('timerVal').textContent = `${hLeft}시간 ${mLeft}분 후`;
+  document.getElementById('timerSub').textContent = next.label;
+}
+
+// ── TRIGGER ──
+function selSlot(el, val) {
+  document.querySelectorAll('.slot-picker .slot-chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  selSlotVal = val;
+}
+
+async function trigPost(acct) {
+  if (!pat) { openPatModal(); return; }
+  const log = document.getElementById('trigLog');
+  log.innerHTML = `<span class="spinner"></span> 트리거 요청 중... (${acct})`;
+
+  const body = { ref:'main', inputs:{ account_id: acct, hour_kst: selSlotVal } };
+  try {
+    const r = await fetch(
+      `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW}/dispatches`,
+      {
+        method:'POST',
+        headers:{ 'Authorization':`Bearer ${pat}`, 'Accept':'application/vnd.github+json', 'Content-Type':'application/json' },
+        body: JSON.stringify(body)
+      }
+    );
+    if (r.status === 204) {
+      log.innerHTML = `<span class="ok">✅ 트리거 성공! (${acct}) — GitHub Actions 실행 중...</span>\n\n약 2~3분 후 포스팅 로그에 반영돼.\n로그 탭에서 확인해봐.`;
+      showToast(`✅ ${acct} 트리거 완료`);
+      setTimeout(() => refreshAll(), 5000);
+    } else {
+      const txt = await r.text();
+      log.innerHTML = `<span class="err">❌ 오류 (${r.status}): ${txt}\n\nPAT 권한을 확인해봐 (workflow 권한 필요).</span>`;
+    }
+  } catch(e) {
+    log.innerHTML = `<span class="err">❌ 네트워크 오류: ${e.message}</span>`;
+  }
+}
+
+// ── COPY LINK ──
+function copyLink(url) {
+  try {
+    navigator.clipboard.writeText(url)
+      .then(() => showToast('✅ 링크 복사됨'))
+      .catch(() => { selectText(url); showToast('텍스트를 선택했어 — 직접 복사해줘'); });
+  } catch(e) { showToast(url); }
+}
+function selectText(txt) {
+  const t = document.createElement('textarea');
+  t.value = txt; t.style.position = 'fixed'; t.style.opacity = '0';
+  document.body.appendChild(t); t.focus(); t.select();
+  try { document.execCommand('copy'); } catch(e) {}
+  document.body.removeChild(t);
+}
+
+// ── NAV ──
+function navTo(page) {
+  ['home','trigger','log','money'].forEach(p => {
+    document.getElementById('page'+p.charAt(0).toUpperCase()+p.slice(1)).classList.toggle('active', p===page);
+    document.getElementById('nav'+p.charAt(0).toUpperCase()+p.slice(1)).classList.toggle('active', p===page);
+  });
+}
+
+// ── TOAST ──
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>
