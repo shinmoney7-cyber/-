@@ -296,6 +296,17 @@ body{padding:0 16px;padding-block:0;font-size:16px}
 .isa-중{background:rgba(100,100,120,.2);color:var(--fg3);border:1px solid var(--border)}
 .isa-timing{margin-top:12px;background:var(--bg3);border-radius:8px;padding:10px 12px}
 .isa-timing strong{color:var(--gold)}
+/* 시진(時辰) 선택 */
+.siji-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:10px}
+.siji-btn{background:var(--card);border:1.5px solid var(--border);border-radius:8px;padding:7px 3px;text-align:center;cursor:pointer;transition:all .15s;color:var(--fg);font-family:var(--fbody)}
+.siji-btn:hover{background:var(--card2);border-color:var(--border2)}
+.siji-btn.active{background:color-mix(in srgb,var(--accent) 18%,var(--card));border-color:var(--accent)}
+.sj-hanja{font-size:15px;font-weight:900;color:var(--accent);display:block}
+.sj-name{font-size:12px;font-weight:700;display:block;margin-top:1px}
+.sj-time{font-size:10px;color:var(--fg3);display:block}
+.time-slider-row{display:flex;align-items:center;gap:8px;margin:8px 0}
+.time-slider-row input[type=range]{flex:1;accent-color:var(--accent);cursor:pointer;height:20px}
+.time-display{background:var(--card);border:1.5px solid var(--border);border-radius:8px;padding:5px 10px;font-size:14px;font-weight:700;color:var(--fg);text-align:center;min-width:56px;white-space:nowrap;flex-shrink:0}
 </style>
 
 <!-- 긴급 배너 (동적 — 날짜별 자동 전환) -->
@@ -471,8 +482,18 @@ _rt=setInterval(function(){setReview((_ri+1)%4);},4500);
     </div>
     <div class="field">
       <label>출생 시간</label>
-      <div class="row2">
-        <input type="number" id="iHour" placeholder="시 (0~23)" min="0" max="23">
+      <!-- 12 시진(時辰) 버튼 — 모르면 시진으로 선택 -->
+      <div class="siji-grid" id="sijiGrid"></div>
+      <!-- 슬라이더 -->
+      <div class="time-slider-row">
+        <span style="font-size:11px;color:var(--fg3);white-space:nowrap">0시</span>
+        <input type="range" id="iHourSlider" min="0" max="23" step="1" value="">
+        <span style="font-size:11px;color:var(--fg3);white-space:nowrap">23시</span>
+        <div class="time-display" id="timeDisplay">—</div>
+      </div>
+      <!-- 직접 입력 -->
+      <div class="row2" style="margin-top:6px">
+        <input type="number" id="iHour" placeholder="시 직접입력 (0~23)" min="0" max="23">
         <input type="number" id="iMin" placeholder="분 (0~59)" min="0" max="59">
       </div>
       <div class="hint" style="display:flex;flex-wrap:wrap;gap:12px;margin-top:5px">
@@ -632,8 +653,8 @@ _rt=setInterval(function(){setReview((_ri+1)%4);},4500);
 <script>
 // ─── 상수 ───────────────────────────────────────────────────────────────
 const MENU=[
-  {name:"종합 분석",           price:35000,  pages:70, focus:"사주 명식·오행·성격·재물·직업·연애운·2026년 월별운 전체 보고서"},
   {name:"성향·기질 분석",      price:0,      pages:70, focus:"타고난 성격·강점·약점·적성"},
+  {name:"종합 분석",           price:35000,  pages:70, focus:"사주 명식·오행·성격·재물·직업·연애운·2026년 월별운 전체 보고서"},
   {name:"평생운",              price:29000,  pages:70, focus:"전반적 평생운·대운 흐름·핵심 기질"},
   {name:"연애운",              price:18000,  pages:70, focus:"연애·이성 인연·궁합·결혼 시기"},
   {name:"배우자운·결혼운",     price:18000,  pages:70, focus:"배우자 인연·결혼 시기·부부 궁합"},
@@ -926,6 +947,87 @@ function syncSubSections(){
   });
   document.getElementById("iUnknownTime")?.addEventListener("change",syncSubSections);
 })();
+
+// ─── 시진(時辰) 선택 UI ──────────────────────────────────────────────────
+(function initSijiPicker(){
+  const SIJI=[
+    {name:"자시",hanja:"子",start:23,range:"23-1시"},
+    {name:"축시",hanja:"丑",start:1, range:"1-3시"},
+    {name:"인시",hanja:"寅",start:3, range:"3-5시"},
+    {name:"묘시",hanja:"卯",start:5, range:"5-7시"},
+    {name:"진시",hanja:"辰",start:7, range:"7-9시"},
+    {name:"사시",hanja:"巳",start:9, range:"9-11시"},
+    {name:"오시",hanja:"午",start:11,range:"11-13시"},
+    {name:"미시",hanja:"未",start:13,range:"13-15시"},
+    {name:"신시",hanja:"申",start:15,range:"15-17시"},
+    {name:"유시",hanja:"酉",start:17,range:"17-19시"},
+    {name:"술시",hanja:"戌",start:19,range:"19-21시"},
+    {name:"해시",hanja:"亥",start:21,range:"21-23시"},
+  ];
+
+  function sijiIdx(h){
+    if(h===23||h===0) return 0;
+    return Math.ceil(h/2);
+  }
+
+  const grid=document.getElementById("sijiGrid");
+  if(!grid) return;
+
+  SIJI.forEach((s,i)=>{
+    const btn=document.createElement("button");
+    btn.type="button"; btn.className="siji-btn"; btn.dataset.idx=i;
+    btn.innerHTML=`<span class="sj-hanja">${s.hanja}</span><span class="sj-name">${s.name}</span><span class="sj-time">${s.range}</span>`;
+    btn.onclick=()=>{
+      const h=s.start;
+      document.getElementById("iHour").value=h;
+      document.getElementById("iHourSlider").value=h;
+      updateTimeDisplay(h,document.getElementById("iMin").value);
+      updateSijiActive(i);
+      syncSubSections();
+    };
+    grid.appendChild(btn);
+  });
+
+  function updateSijiActive(idx){
+    grid.querySelectorAll(".siji-btn").forEach((b,i)=>b.classList.toggle("active",i===idx));
+  }
+
+  function updateTimeDisplay(h,m){
+    const disp=document.getElementById("timeDisplay");
+    if(!disp) return;
+    disp.textContent=(h!=null&&h!=="")?(h+"시"+(m&&m!==""?" "+m+"분":"")):"—";
+  }
+
+  const slider=document.getElementById("iHourSlider");
+  const hourInput=document.getElementById("iHour");
+  const minInput=document.getElementById("iMin");
+
+  slider?.addEventListener("input",()=>{
+    const h=parseInt(slider.value);
+    hourInput.value=h;
+    updateTimeDisplay(h,minInput.value);
+    updateSijiActive(sijiIdx(h));
+    syncSubSections();
+  });
+
+  hourInput?.addEventListener("input",()=>{
+    const h=parseInt(hourInput.value);
+    if(!isNaN(h)&&h>=0&&h<=23){
+      slider.value=h;
+      updateTimeDisplay(h,minInput.value);
+      updateSijiActive(sijiIdx(h));
+    } else if(hourInput.value===""){
+      document.getElementById("timeDisplay").textContent="—";
+      updateSijiActive(-1);
+    }
+  });
+
+  minInput?.addEventListener("input",()=>{
+    const h=parseInt(hourInput.value);
+    if(!isNaN(h)) updateTimeDisplay(h,minInput.value);
+  });
+})();
+
 // ─── 섹션 nav 스크롤 추적 ────────────────────────────────────────────────
 (function initSecNav(){
   const secs=["sec-analyze","sec-simple","sec-theory","sec-hanja","sec-cheol"];
