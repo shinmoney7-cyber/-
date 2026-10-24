@@ -41,8 +41,8 @@
 html,body{background:var(--bg);color:var(--fg);font-family:var(--fbody);line-height:1.65}
 body{padding:0 16px;padding-block:0;font-size:16px}
 .app-header{text-align:center;padding:32px 0 20px;border-bottom:1px solid var(--border)}
-.eyebrow{font-size:clamp(26px,5vw,38px);letter-spacing:.04em;text-transform:none;color:var(--accent);font-weight:900;margin-bottom:4px}
-.app-header h1{font-family:var(--fdisp);font-size:clamp(26px,5vw,38px);font-weight:900;text-wrap:balance}
+.eyebrow{font-size:clamp(12px,3.2vw,16px);letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px;opacity:.85}
+.app-header h1{font-family:var(--fdisp);font-size:clamp(28px,7vw,44px);font-weight:900;text-wrap:balance;line-height:1.2}
 .app-header h1 em{color:var(--gold);font-style:normal}
 .app-header p{margin-top:7px;color:var(--fg2);font-size:15px}
 /* section anchor nav */
@@ -118,6 +118,17 @@ body{padding:0 16px;padding-block:0;font-size:16px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading p{color:var(--fg2);font-size:13px}
 .error-box{background:color-mix(in srgb,var(--red) 12%,var(--card));border:1.5px solid color-mix(in srgb,var(--red) 40%,transparent);border-radius:10px;padding:14px;color:var(--red);font-size:13px;margin-bottom:12px}
+.confirm-box{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:18px;font-size:13px;margin-bottom:12px;color:var(--fg)}
+.confirm-box h3{font-size:15px;font-weight:800;color:var(--accent);margin:0 0 14px;text-align:center}
+.confirm-row{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--border);gap:8px}
+.confirm-row:last-child{border-bottom:none}
+.confirm-label{color:var(--fg3);font-size:12px;white-space:nowrap;flex-shrink:0}
+.confirm-value{font-weight:600;text-align:right;word-break:break-all}
+.confirm-section{font-size:11px;font-weight:700;color:var(--fg3);letter-spacing:.05em;margin:12px 0 4px;text-transform:uppercase}
+.confirm-total{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding:10px 12px;background:color-mix(in srgb,var(--accent) 12%,var(--card));border-radius:8px}
+.confirm-total .label{font-size:13px;font-weight:700}
+.confirm-total .amount{font-size:18px;font-weight:900;color:var(--accent)}
+.confirm-bank{margin-top:10px;padding:10px 12px;background:var(--card2);border-radius:8px;font-size:12px;color:var(--fg2);line-height:1.8}
 .stype-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
 .stype-btn{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:12px;text-align:center;cursor:pointer;transition:all .15s}
 .stype-btn:hover{border-color:var(--border2)}
@@ -296,6 +307,17 @@ body{padding:0 16px;padding-block:0;font-size:16px}
 .isa-중{background:rgba(100,100,120,.2);color:var(--fg3);border:1px solid var(--border)}
 .isa-timing{margin-top:12px;background:var(--bg3);border-radius:8px;padding:10px 12px}
 .isa-timing strong{color:var(--gold)}
+/* 시진(時辰) 선택 */
+.siji-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:10px}
+.siji-btn{background:var(--card);border:1.5px solid var(--border);border-radius:8px;padding:7px 3px;text-align:center;cursor:pointer;transition:all .15s;color:var(--fg);font-family:var(--fbody)}
+.siji-btn:hover{background:var(--card2);border-color:var(--border2)}
+.siji-btn.active{background:color-mix(in srgb,var(--accent) 18%,var(--card));border-color:var(--accent)}
+.sj-hanja{font-size:15px;font-weight:900;color:var(--accent);display:block}
+.sj-name{font-size:12px;font-weight:700;display:block;margin-top:1px}
+.sj-time{font-size:10px;color:var(--fg3);display:block}
+.time-slider-row{display:flex;align-items:center;gap:8px;margin:8px 0}
+.time-slider-row input[type=range]{flex:1;accent-color:var(--accent);cursor:pointer;height:20px}
+.time-display{background:var(--card);border:1.5px solid var(--border);border-radius:8px;padding:5px 10px;font-size:14px;font-weight:700;color:var(--fg);text-align:center;min-width:56px;white-space:nowrap;flex-shrink:0}
 </style>
 
 <!-- 긴급 배너 (동적 — 날짜별 자동 전환) -->
@@ -471,8 +493,18 @@ _rt=setInterval(function(){setReview((_ri+1)%4);},4500);
     </div>
     <div class="field">
       <label>출생 시간</label>
-      <div class="row2">
-        <input type="number" id="iHour" placeholder="시 (0~23)" min="0" max="23">
+      <!-- 12 시진(時辰) 버튼 — 모르면 시진으로 선택 -->
+      <div class="siji-grid" id="sijiGrid"></div>
+      <!-- 슬라이더 -->
+      <div class="time-slider-row">
+        <span style="font-size:11px;color:var(--fg3);white-space:nowrap">0시</span>
+        <input type="range" id="iHourSlider" min="0" max="23" step="1" value="">
+        <span style="font-size:11px;color:var(--fg3);white-space:nowrap">23시</span>
+        <div class="time-display" id="timeDisplay">—</div>
+      </div>
+      <!-- 직접 입력 -->
+      <div class="row2" style="margin-top:6px">
+        <input type="number" id="iHour" placeholder="시 직접입력 (0~23)" min="0" max="23">
         <input type="number" id="iMin" placeholder="분 (0~59)" min="0" max="59">
       </div>
       <div class="hint" style="display:flex;flex-wrap:wrap;gap:12px;margin-top:5px">
@@ -632,8 +664,8 @@ _rt=setInterval(function(){setReview((_ri+1)%4);},4500);
 <script>
 // ─── 상수 ───────────────────────────────────────────────────────────────
 const MENU=[
-  {name:"종합 분석",           price:35000,  pages:70, focus:"사주 명식·오행·성격·재물·직업·연애운·2026년 월별운 전체 보고서"},
   {name:"성향·기질 분석",      price:0,      pages:70, focus:"타고난 성격·강점·약점·적성"},
+  {name:"종합 분석",           price:35000,  pages:70, focus:"사주 명식·오행·성격·재물·직업·연애운·2026년 월별운 전체 보고서"},
   {name:"평생운",              price:29000,  pages:70, focus:"전반적 평생운·대운 흐름·핵심 기질"},
   {name:"연애운",              price:18000,  pages:70, focus:"연애·이성 인연·궁합·결혼 시기"},
   {name:"배우자운·결혼운",     price:18000,  pages:70, focus:"배우자 인연·결혼 시기·부부 궁합"},
@@ -865,6 +897,9 @@ const SECTIONS_EXTRA=[
 let sampleCap=null, assetsCap=null, canUploadImages=false;
 let uploadedImgUrl=null, uploadedImgType=null;
 let reportType='20';
+const _utmFrom=(new URLSearchParams(location.search)).get("from")||"";
+const _isAdmin=(new URLSearchParams(location.search)).get("admin")==="1";
+if(_isAdmin){const rb=document.getElementById("tab-rebrand");if(rb)rb.style.display="block";}
 let selectedStype='warning';
 let selectedPlat='daangn';
 let orders=[];
@@ -926,6 +961,87 @@ function syncSubSections(){
   });
   document.getElementById("iUnknownTime")?.addEventListener("change",syncSubSections);
 })();
+
+// ─── 시진(時辰) 선택 UI ──────────────────────────────────────────────────
+(function initSijiPicker(){
+  const SIJI=[
+    {name:"자시",hanja:"子",start:23,range:"23-1시"},
+    {name:"축시",hanja:"丑",start:1, range:"1-3시"},
+    {name:"인시",hanja:"寅",start:3, range:"3-5시"},
+    {name:"묘시",hanja:"卯",start:5, range:"5-7시"},
+    {name:"진시",hanja:"辰",start:7, range:"7-9시"},
+    {name:"사시",hanja:"巳",start:9, range:"9-11시"},
+    {name:"오시",hanja:"午",start:11,range:"11-13시"},
+    {name:"미시",hanja:"未",start:13,range:"13-15시"},
+    {name:"신시",hanja:"申",start:15,range:"15-17시"},
+    {name:"유시",hanja:"酉",start:17,range:"17-19시"},
+    {name:"술시",hanja:"戌",start:19,range:"19-21시"},
+    {name:"해시",hanja:"亥",start:21,range:"21-23시"},
+  ];
+
+  function sijiIdx(h){
+    if(h===23||h===0) return 0;
+    return Math.ceil(h/2);
+  }
+
+  const grid=document.getElementById("sijiGrid");
+  if(!grid) return;
+
+  SIJI.forEach((s,i)=>{
+    const btn=document.createElement("button");
+    btn.type="button"; btn.className="siji-btn"; btn.dataset.idx=i;
+    btn.innerHTML=`<span class="sj-hanja">${s.hanja}</span><span class="sj-name">${s.name}</span><span class="sj-time">${s.range}</span>`;
+    btn.onclick=()=>{
+      const h=s.start;
+      document.getElementById("iHour").value=h;
+      document.getElementById("iHourSlider").value=h;
+      updateTimeDisplay(h,document.getElementById("iMin").value);
+      updateSijiActive(i);
+      syncSubSections();
+    };
+    grid.appendChild(btn);
+  });
+
+  function updateSijiActive(idx){
+    grid.querySelectorAll(".siji-btn").forEach((b,i)=>b.classList.toggle("active",i===idx));
+  }
+
+  function updateTimeDisplay(h,m){
+    const disp=document.getElementById("timeDisplay");
+    if(!disp) return;
+    disp.textContent=(h!=null&&h!=="")?(h+"시"+(m&&m!==""?" "+m+"분":"")):"—";
+  }
+
+  const slider=document.getElementById("iHourSlider");
+  const hourInput=document.getElementById("iHour");
+  const minInput=document.getElementById("iMin");
+
+  slider?.addEventListener("input",()=>{
+    const h=parseInt(slider.value);
+    hourInput.value=h;
+    updateTimeDisplay(h,minInput.value);
+    updateSijiActive(sijiIdx(h));
+    syncSubSections();
+  });
+
+  hourInput?.addEventListener("input",()=>{
+    const h=parseInt(hourInput.value);
+    if(!isNaN(h)&&h>=0&&h<=23){
+      slider.value=h;
+      updateTimeDisplay(h,minInput.value);
+      updateSijiActive(sijiIdx(h));
+    } else if(hourInput.value===""){
+      document.getElementById("timeDisplay").textContent="—";
+      updateSijiActive(-1);
+    }
+  });
+
+  minInput?.addEventListener("input",()=>{
+    const h=parseInt(hourInput.value);
+    if(!isNaN(h)) updateTimeDisplay(h,minInput.value);
+  });
+})();
+
 // ─── 섹션 nav 스크롤 추적 ────────────────────────────────────────────────
 (function initSecNav(){
   const secs=["sec-analyze","sec-simple","sec-theory","sec-hanja","sec-cheol"];
@@ -1077,12 +1193,29 @@ async function startAnalysis(){
 태어난 시간: ${timeVal}
 전달 방법: ${deliveryMethod}
 전달 받을 곳: ${deliveryContact}
+유입경로: ${_utmFrom||"직접방문"}
 
 신청 항목:
 ${itemLines}
 합계: ${totalStr}`;
     window.open("https://docs.google.com/forms/d/e/1FAIpQLSe-0ZMlvwxt8TP3Qj2liWyedoDZeQIgXLF2zTd4xpJAAm8ACg/viewform","_blank");
-    showError(`주문 신청 페이지가 열렸어요!<br><br>구글 폼에서 주문 내용을 작성해 주세요.<br><br>입금 계좌: <strong>신한은행 133-000-695010 (예금주: 신정희)</strong><br>합계: ${totalStr}<br><br>입금 확인 후 분석을 시작해드릴게요.<br>${deliveryContact!=="없음"?`결과는 ${deliveryContact} 로 보내드립니다.`:""}`);
+    const itemRowsHtml=selected.map(m=>`<div class="confirm-row"><span class="confirm-label">ㆍ${m.name}</span><span class="confirm-value">₩${m.price.toLocaleString()}</span></div>`).join("");
+    showConfirm(`<div class="confirm-box">
+  <h3>✅ 주문 내용 확인</h3>
+  <div class="confirm-section">신청자 정보</div>
+  <div class="confirm-row"><span class="confirm-label">성함</span><span class="confirm-value">${name} (${gender})</span></div>
+  <div class="confirm-row"><span class="confirm-label">생년월일</span><span class="confirm-value">${birthStr}</span></div>
+  <div class="confirm-row"><span class="confirm-label">태어난 시간</span><span class="confirm-value">${timeVal}</span></div>
+  <div class="confirm-row"><span class="confirm-label">결과 전달</span><span class="confirm-value">${deliveryMethod}${deliveryContact!=="없음"?`<br><span style="font-size:11px;font-weight:400;color:var(--fg3)">${deliveryContact}</span>`:""}</span></div>
+  <div class="confirm-section">신청 항목</div>
+  ${itemRowsHtml}
+  <div class="confirm-total"><span class="label">합계</span><span class="amount">${totalStr}</span></div>
+  <div class="confirm-bank">
+    🏦 입금 계좌: <strong>신한은행 133-000-695010</strong> (예금주: 신정희)<br>
+    📞 문의: 010-8386-3712<br>
+    입금 확인 후 분석을 시작해드릴게요.
+  </div>
+</div>`);
     return;
   }
 
@@ -1115,6 +1248,7 @@ ${SHINSAL_REF}
 출생지: ${city||"미입력"}${city?` (경도보정 +${CITY_CORR[city]||0}분 적용)`:""}
 야자시 처리: ${yajasiOn?"야자시 적용 — 23:00~24:00은 당일 子시로 처리":"표준 — 23:00 이후는 다음날 子시로 처리"}
 신청 항목: ${selectedItems}
+유입경로: ${_utmFrom||"직접방문"}
 
 ══════════════════════════════════════
 【사전 계산 — 반드시 먼저 계산 후 모든 섹션에 인용】
@@ -1252,6 +1386,13 @@ function copyResult(){
   });
 }
 
+function showConfirm(html){
+  hide("loadingView");
+  const e=document.getElementById("errorView");
+  e.innerHTML=html;
+  show("errorView");
+  show("doneActions");
+}
 function showError(msg){
   hide("loadingView");
   const e=document.getElementById("errorView");
@@ -3747,5 +3888,101 @@ function copyCheol(){
   </div>
 </div>
 
+<hr class="sec-divider">
+<!-- ══════════════════════════════════════
+     어드민: 리브랜딩 도구 (사주톡톡 → 사주마루)
+══════════════════════════════════════ -->
+<div class="tab-panel" id="tab-rebrand" style="padding-bottom:80px;display:none">
+<div id="sec-rebrand" style="scroll-margin-top:56px"></div>
+<div class="sec-section">
+  <div class="sec-heading">🔄 리브랜딩 도구 <span style="font-size:13px;font-weight:400;color:var(--fg3)">(내부 전용)</span></div>
+  <div style="background:color-mix(in srgb,var(--gold) 8%,var(--bg2));border:1px solid color-mix(in srgb,var(--gold) 30%,var(--border));border-radius:12px;padding:14px 16px;margin-bottom:20px;font-size:13px;color:var(--fg2);line-height:1.7">
+    사주표준랩에서 받은 결과물을 붙여넣으면 <strong style="color:var(--fg)">사주마루</strong> 브랜드로 자동 교체해줘.
+  </div>
+  <div class="field">
+    <label>원본 (사주표준랩/사주톡톡 결과 붙여넣기)</label>
+    <textarea id="rbInput" style="min-height:200px;font-size:13px;line-height:1.8" placeholder="여기에 사주표준랩에서 받은 결과물을 붙여넣으세요..."></textarea>
+  </div>
+  <!-- 추가 교체 규칙 -->
+  <div id="rbRulesWrap" style="margin-bottom:14px">
+    <div style="font-size:12px;font-weight:700;color:var(--fg2);margin-bottom:8px;letter-spacing:.05em;text-transform:uppercase">교체 규칙</div>
+    <div id="rbRules" style="display:flex;flex-direction:column;gap:6px"></div>
+    <button type="button" onclick="addRbRule()" style="margin-top:8px;padding:6px 14px;border-radius:8px;border:1.5px dashed var(--border2);background:transparent;color:var(--fg2);font-size:13px;cursor:pointer;font-family:var(--fbody)">+ 규칙 추가</button>
+  </div>
+  <button class="btn btn-primary" onclick="doRebrand()" style="margin-bottom:16px">🔄 브랜드 교체하기</button>
+  <div id="rbOutput" hidden>
+    <div class="field">
+      <label style="display:flex;justify-content:space-between;align-items:center">
+        교체 완료 결과
+        <button type="button" onclick="copyRb()" style="padding:4px 12px;font-size:11px;font-weight:700;background:var(--accent);border:none;border-radius:6px;color:#fff;cursor:pointer">📋 복사</button>
+      </label>
+      <textarea id="rbResult" readonly style="min-height:200px;font-size:13px;line-height:1.8;background:color-mix(in srgb,var(--green) 6%,var(--card));border-color:color-mix(in srgb,var(--green) 40%,var(--border))"></textarea>
+    </div>
+    <div id="rbSummary" style="font-size:13px;color:var(--fg2);margin-top:6px"></div>
+  </div>
+</div>
+</div>
+<script>
+// ─── 리브랜딩 도구 ──────────────────────────────────────────────────────────
+const DEFAULT_RB_RULES=[
+  {from:"사주톡톡",to:"사주마루"},
+  {from:"sajutalk",to:"sajumaru"},
+  {from:"SAJUTALK",to:"SAJUMARU"},
+];
+let rbRules=[...DEFAULT_RB_RULES];
+
+function renderRbRules(){
+  const wrap=document.getElementById("rbRules");
+  wrap.innerHTML="";
+  rbRules.forEach((r,i)=>{
+    const row=document.createElement("div");
+    row.style.cssText="display:flex;gap:6px;align-items:center";
+    row.innerHTML=`<input value="${r.from}" placeholder="찾을 텍스트" style="flex:1;padding:8px 10px;background:var(--card);border:1.5px solid var(--border);border-radius:8px;color:var(--fg);font-family:var(--fbody);font-size:13px">
+      <span style="color:var(--fg3);font-size:13px">→</span>
+      <input value="${r.to}" placeholder="교체할 텍스트" style="flex:1;padding:8px 10px;background:var(--card);border:1.5px solid var(--border);border-radius:8px;color:var(--fg);font-family:var(--fbody);font-size:13px">
+      <button type="button" onclick="removeRbRule(${i})" style="padding:4px 8px;border-radius:6px;border:1.5px solid var(--border);background:transparent;color:var(--red);font-size:12px;cursor:pointer">✕</button>`;
+    const [fIn,,tIn]=row.querySelectorAll("input");
+    fIn.oninput=()=>{rbRules[i].from=fIn.value;};
+    tIn.oninput=()=>{rbRules[i].to=tIn.value;};
+    wrap.appendChild(row);
+  });
+}
+
+function addRbRule(){rbRules.push({from:"",to:""});renderRbRules();}
+function removeRbRule(i){rbRules.splice(i,1);renderRbRules();}
+
+function doRebrand(){
+  const input=document.getElementById("rbInput").value;
+  if(!input.trim()){alert("원본 텍스트를 붙여넣어주세요.");return;}
+  let result=input;
+  let totalCount=0;
+  const log=[];
+  rbRules.forEach(r=>{
+    if(!r.from) return;
+    const regex=new RegExp(r.from.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),"g");
+    let cnt=0;
+    result=result.replace(regex,()=>{cnt++;return r.to;});
+    if(cnt>0) log.push(`"${r.from}" → "${r.to}" (${cnt}건)`);
+    totalCount+=cnt;
+  });
+  document.getElementById("rbResult").value=result;
+  document.getElementById("rbSummary").innerHTML=totalCount>0
+    ?`✅ 총 <strong>${totalCount}건</strong> 교체됨: ${log.join(", ")}`
+    :`<span style="color:var(--fg3)">교체된 항목 없음 — 원본에 해당 텍스트가 없을 수 있어요.</span>`;
+  document.getElementById("rbOutput").hidden=false;
+  document.getElementById("rbResult").scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+function copyRb(){
+  const t=document.getElementById("rbResult").value;
+  navigator.clipboard?.writeText(t).then(()=>{
+    const btn=event.target;btn.textContent="✅ 복사됨";setTimeout(()=>{btn.textContent="📋 복사";},1500);
+  }).catch(()=>{
+    document.getElementById("rbResult").select();document.execCommand("copy");
+  });
+}
+
+renderRbRules();
+</script>
 
 </body></html>
