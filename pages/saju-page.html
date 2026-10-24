@@ -118,6 +118,17 @@ body{padding:0 16px;padding-block:0;font-size:16px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading p{color:var(--fg2);font-size:13px}
 .error-box{background:color-mix(in srgb,var(--red) 12%,var(--card));border:1.5px solid color-mix(in srgb,var(--red) 40%,transparent);border-radius:10px;padding:14px;color:var(--red);font-size:13px;margin-bottom:12px}
+.confirm-box{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:18px;font-size:13px;margin-bottom:12px;color:var(--fg)}
+.confirm-box h3{font-size:15px;font-weight:800;color:var(--accent);margin:0 0 14px;text-align:center}
+.confirm-row{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--border);gap:8px}
+.confirm-row:last-child{border-bottom:none}
+.confirm-label{color:var(--fg3);font-size:12px;white-space:nowrap;flex-shrink:0}
+.confirm-value{font-weight:600;text-align:right;word-break:break-all}
+.confirm-section{font-size:11px;font-weight:700;color:var(--fg3);letter-spacing:.05em;margin:12px 0 4px;text-transform:uppercase}
+.confirm-total{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding:10px 12px;background:color-mix(in srgb,var(--accent) 12%,var(--card));border-radius:8px}
+.confirm-total .label{font-size:13px;font-weight:700}
+.confirm-total .amount{font-size:18px;font-weight:900;color:var(--accent)}
+.confirm-bank{margin-top:10px;padding:10px 12px;background:var(--card2);border-radius:8px;font-size:12px;color:var(--fg2);line-height:1.8}
 .stype-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
 .stype-btn{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:12px;text-align:center;cursor:pointer;transition:all .15s}
 .stype-btn:hover{border-color:var(--border2)}
@@ -1186,8 +1197,23 @@ async function startAnalysis(){
 ${itemLines}
 합계: ${totalStr}`;
     window.open("https://docs.google.com/forms/d/e/1FAIpQLSe-0ZMlvwxt8TP3Qj2liWyedoDZeQIgXLF2zTd4xpJAAm8ACg/viewform","_blank");
-    const itemHtml=selected.map(m=>`ㆍ${m.name}`).join("<br>");
-    showError(`주문 신청 페이지가 열렸어요!<br><br>구글 폼에서 주문 내용을 작성해 주세요.<br><br><strong>👤 신청자 정보</strong><br>성함: ${name} / 성별: ${gender}<br>생년월일: ${birthStr}<br>태어난 시간: ${timeVal}<br>전달: ${deliveryMethod}${deliveryContact!=="없음"?` → ${deliveryContact}`:""}<br><br><strong>📋 신청 항목</strong><br>${itemHtml}<br>합계: <strong>${totalStr}</strong><br><br>입금 계좌: <strong>신한은행 133-000-695010 (예금주: 신정희)</strong><br>문의 전화: <strong>010-8386-3712</strong><br><br>입금 확인 후 분석을 시작해드릴게요.`);
+    const itemRowsHtml=selected.map(m=>`<div class="confirm-row"><span class="confirm-label">ㆍ${m.name}</span><span class="confirm-value">₩${m.price.toLocaleString()}</span></div>`).join("");
+    showConfirm(`<div class="confirm-box">
+  <h3>✅ 주문 내용 확인</h3>
+  <div class="confirm-section">신청자 정보</div>
+  <div class="confirm-row"><span class="confirm-label">성함</span><span class="confirm-value">${name} (${gender})</span></div>
+  <div class="confirm-row"><span class="confirm-label">생년월일</span><span class="confirm-value">${birthStr}</span></div>
+  <div class="confirm-row"><span class="confirm-label">태어난 시간</span><span class="confirm-value">${timeVal}</span></div>
+  <div class="confirm-row"><span class="confirm-label">결과 전달</span><span class="confirm-value">${deliveryMethod}${deliveryContact!=="없음"?`<br><span style="font-size:11px;font-weight:400;color:var(--fg3)">${deliveryContact}</span>`:""}</span></div>
+  <div class="confirm-section">신청 항목</div>
+  ${itemRowsHtml}
+  <div class="confirm-total"><span class="label">합계</span><span class="amount">${totalStr}</span></div>
+  <div class="confirm-bank">
+    🏦 입금 계좌: <strong>신한은행 133-000-695010</strong> (예금주: 신정희)<br>
+    📞 문의: 010-8386-3712<br>
+    입금 확인 후 분석을 시작해드릴게요.
+  </div>
+</div>`);
     return;
   }
 
@@ -1358,6 +1384,13 @@ function copyResult(){
   });
 }
 
+function showConfirm(html){
+  hide("loadingView");
+  const e=document.getElementById("errorView");
+  e.innerHTML=html;
+  show("errorView");
+  show("doneActions");
+}
 function showError(msg){
   hide("loadingView");
   const e=document.getElementById("errorView");
