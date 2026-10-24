@@ -409,6 +409,55 @@ input[type=range]{width:100%;accent-color:var(--cy);height:4px;border-radius:4px
 .audio-wrap{background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:12px}
 .fish-textarea{width:100%;padding:9px 12px;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);color:var(--t1);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;resize:vertical;line-height:1.6;transition:.15s}
 .fish-textarea:focus{border-color:var(--cy);box-shadow:0 0 0 3px var(--cyD)}
+
+/* ── Unified Flow ── */
+.uf-steps{display:flex;gap:0;margin-bottom:0;overflow-x:auto}
+.uf-step{flex:1;min-width:120px;display:flex;flex-direction:column;align-items:center;padding:14px 8px;cursor:pointer;transition:.15s;border-bottom:3px solid var(--bd);position:relative;gap:4px}
+.uf-step:hover{background:var(--s2)}
+.uf-step.active{border-bottom-color:var(--cy);background:var(--cyD)}
+.uf-step-num{width:26px;height:26px;border-radius:50%;background:var(--s2);border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--t2);transition:.15s}
+.uf-step.active .uf-step-num{background:var(--cy);border-color:var(--cy);color:#0A1628}
+.uf-step.done .uf-step-num{background:var(--gn);border-color:var(--gn);color:#0A1628}
+.uf-step-label{font-size:11px;color:var(--t2);text-align:center;line-height:1.3}
+.uf-step.active .uf-step-label{color:var(--cy);font-weight:600}
+.uf-screen{display:none}
+.uf-screen.show{display:flex;flex-direction:column;gap:14px}
+.uf-rev-cats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:600px){.uf-rev-cats{grid-template-columns:repeat(2,1fr)}}
+.uf-rev-cat{background:var(--s2);border:2px solid var(--bd);border-radius:var(--r);padding:14px 10px;cursor:pointer;text-align:center;transition:.15s}
+.uf-rev-cat:hover{border-color:var(--bdL);background:var(--s3)}
+.uf-rev-cat.selected{border-color:var(--cy);background:var(--cyD)}
+.uf-rev-cat-emoji{font-size:28px;margin-bottom:6px}
+.uf-rev-cat-name{font-size:12px;font-weight:700;color:var(--t1);margin-bottom:4px}
+.uf-rev-cat-est{font-size:11px;color:var(--t2)}
+.uf-roi-preview{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px}
+@media(max-width:480px){.uf-roi-preview{grid-template-columns:1fr 1fr}}
+.uf-roi-tile{background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:10px;text-align:center}
+.uf-roi-num{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--cy)}
+.uf-roi-label{font-size:10px;color:var(--t2);margin-top:2px}
+.uf-bridge-card{background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);padding:14px;display:flex;align-items:flex-start;gap:12px}
+.uf-bridge-icon{font-size:22px;flex-shrink:0;margin-top:2px}
+.uf-bridge-title{font-size:13px;font-weight:700;color:var(--t1);margin-bottom:4px}
+.uf-bridge-body{font-size:12px;color:var(--t2);line-height:1.5}
+.uf-kw-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.uf-kw-tag{font-size:11px;padding:3px 10px;border-radius:12px;background:var(--waD);color:var(--wa);border:1px solid var(--waM);font-weight:600}
+.uf-action-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:500px){.uf-action-grid{grid-template-columns:1fr}}
+.uf-action-btn{background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);padding:14px;cursor:pointer;text-align:left;transition:.15s;display:flex;gap:10px;align-items:flex-start}
+.uf-action-btn:hover{border-color:var(--bdL);background:var(--s3)}
+.uf-action-icon{font-size:20px;flex-shrink:0}
+.uf-action-title{font-size:13px;font-weight:700;color:var(--t1);margin-bottom:2px}
+.uf-action-sub{font-size:11px;color:var(--t2)}
+.uf-psych-rec{background:var(--s2);border-left:3px solid var(--pk);border-radius:0 var(--rs) var(--rs) 0;padding:10px 14px;font-size:12px;color:var(--t2);line-height:1.6}
+.uf-psych-rec strong{color:var(--t1)}
+.roi-mini{background:var(--gnD);border:1px solid var(--gnM);border-radius:var(--rs);padding:12px 14px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:8px}
+.roi-mini-title{font-size:11px;color:var(--gn);font-weight:700;letter-spacing:.3px;flex-shrink:0}
+.roi-mini-tiles{display:flex;gap:10px;flex-wrap:wrap}
+.roi-mini-tile{text-align:center}
+.roi-mini-num{font-family:'DM Mono',monospace;font-size:14px;font-weight:700;color:var(--gn)}
+.roi-mini-lbl{font-size:10px;color:var(--t2)}
+.uf-flow-connector{display:flex;align-items:center;gap:8px;padding:4px 0;color:var(--t3);font-size:12px}
+.uf-flow-connector::before,.uf-flow-connector::after{content:'';flex:1;height:1px;background:var(--bd)}
 </style>
 </head>
 <body>
@@ -429,6 +478,12 @@ input[type=range]{width:100%;accent-color:var(--cy);height:4px;border-radius:4px
 <div class="layout">
 <!-- Sidebar -->
 <aside class="sidebar">
+  <div class="nav-sec">🏆 통합 최적화</div>
+  <button class="nav-btn" onclick="navGo('unified-flow',this)" data-sec="unified-flow" style="background:var(--cyD);color:var(--cy);border-left:2px solid var(--cy);font-weight:600">
+    <span class="nav-icon">🚀</span> <span>통합 수익 플로우</span>
+  </button>
+
+  <hr class="divider" style="margin:10px 16px">
   <div class="nav-sec" data-i18n="nav.tools">생성 도구</div>
   <button class="nav-btn" onclick="navGo('vid-method',this)" data-sec="vid-method">
     <span class="nav-icon">🎬</span> <span data-i18n="nav.vid-method">영상 AI 선택</span>
@@ -608,6 +663,11 @@ input[type=range]{width:100%;accent-color:var(--cy);height:4px;border-radius:4px
   <div id="ag-output" style="display:none">
     <div class="card">
       <div class="card-title" id="ag-out-title">생성 결과 <span class="card-sub" id="ag-out-cat"></span></div>
+      <div id="ag-roi-mini" style="display:none" class="roi-mini">
+        <span class="roi-mini-title">📈 예상 수익</span>
+        <div class="roi-mini-tiles" id="ag-roi-tiles"></div>
+        <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="navGo('unified-flow',document.querySelector('[data-sec=unified-flow]'));ufGoToStep(4)">전체 수익 분석 →</button>
+      </div>
       <div class="scenes-grid" id="ag-scenes-grid"></div>
       <div class="copy-all-wrap">
         <button class="btn btn-ghost btn-sm" onclick="agCopyAll()">📋 전체 복사</button>
@@ -616,6 +676,10 @@ input[type=range]{width:100%;accent-color:var(--cy);height:4px;border-radius:4px
     <div class="card" id="ag-tips-card">
       <div class="card-title">💡 카테고리 최적화 팁</div>
       <div id="ag-tip-text" class="tip-box"></div>
+      <div id="ag-rev-kw-row" style="margin-top:10px;display:none">
+        <div style="font-size:11px;color:var(--t2);margin-bottom:6px;font-weight:600">🔑 이 카테고리 수익 키워드</div>
+        <div id="ag-rev-kw-tags" class="uf-kw-row"></div>
+      </div>
     </div>
   </div>
 </section>
@@ -1121,6 +1185,190 @@ input[type=range]{width:100%;accent-color:var(--cy);height:4px;border-radius:4px
   </div>
 </section>
 
+<!-- 🚀 통합 최적화 플로우 -->
+<section class="section" id="unified-flow">
+  <div>
+    <div class="section-title">🚀 통합 수익 최적화 플로우</div>
+    <div class="section-sub">콘텐츠 제작 ↔ 수익 전략의 장단점을 상호 보완 — 4단계로 최고의 영상 + 최대 수익 실현</div>
+  </div>
+
+  <!-- Step bar -->
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="uf-steps" id="uf-steps">
+      <div class="uf-step active" onclick="ufGoToStep(1)" id="ufs-1">
+        <div class="uf-step-num">1</div>
+        <div class="uf-step-label">수익 카테고리<br>선택</div>
+      </div>
+      <div class="uf-step" onclick="ufGoToStep(2)" id="ufs-2">
+        <div class="uf-step-num">2</div>
+        <div class="uf-step-label">스킬 + AI<br>매칭</div>
+      </div>
+      <div class="uf-step" onclick="ufGoToStep(3)" id="ufs-3">
+        <div class="uf-step-num">3</div>
+        <div class="uf-step-label">수익 최적화<br>생성</div>
+      </div>
+      <div class="uf-step" onclick="ufGoToStep(4)" id="ufs-4">
+        <div class="uf-step-num">4</div>
+        <div class="uf-step-label">수익화<br>실행</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 1: 수익 카테고리 선택 -->
+  <div class="uf-screen show" id="uf-s1">
+    <div class="card">
+      <div class="card-title">💰 Step 1: 수익 카테고리 선택</div>
+      <div style="font-size:12px;color:var(--t2);margin-bottom:14px">카테고리별 예상 월 수익, CPC, 전환율을 보고 전략적으로 선택하세요. 선택한 카테고리의 고수익 키워드가 자동으로 영상 프롬프트에 삽입됩니다.</div>
+      <div class="uf-rev-cats" id="uf-cat-grid"></div>
+    </div>
+    <div class="card" id="uf-cat-detail" style="display:none">
+      <div class="card-title" id="uf-cat-detail-title">카테고리 수익 분석</div>
+      <div id="uf-roi-preview-grid" class="uf-roi-preview"></div>
+      <div style="margin-top:12px">
+        <div style="font-size:11px;color:var(--t2);font-weight:600;margin-bottom:6px">🔑 고수익 키워드 (프롬프트 자동 삽입)</div>
+        <div id="uf-cat-kws" class="uf-kw-row"></div>
+      </div>
+      <div style="margin-top:12px">
+        <div style="font-size:11px;color:var(--t2);font-weight:600;margin-bottom:4px">🎯 최고 훅 유형</div>
+        <div id="uf-cat-hooks" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:8px">
+        <button class="btn btn-primary" onclick="ufGoToStep(2)">다음: 스킬 매칭 →</button>
+        <button class="btn btn-ghost btn-sm" onclick="navGo('calculator',document.querySelector('[data-sec=calculator]'))">📊 상세 수익 계산</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: 스킬 + AI 매칭 -->
+  <div class="uf-screen" id="uf-s2">
+    <div class="card">
+      <div class="card-title">🎓 Step 2: 스킬채널 + AI 도구 매칭</div>
+      <div style="font-size:12px;color:var(--t2);margin-bottom:14px">선택한 수익 카테고리에 최적화된 스킬과 AI 도구 조합을 선택하세요.</div>
+      <div id="uf-skill-matches" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+    <div class="card" id="uf-skill-detail" style="display:none">
+      <div class="card-title" id="uf-skill-detail-title">매칭 스킬 분석</div>
+      <div id="uf-skill-detail-body"></div>
+      <div style="margin-top:12px">
+        <div style="font-size:11px;color:var(--t2);font-weight:600;margin-bottom:8px">🎬 추천 AI 도구</div>
+        <div id="uf-tool-picks" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:8px">
+        <button class="btn btn-primary" onclick="ufGoToStep(3)">다음: 수익 최적화 생성 →</button>
+        <button class="btn btn-ghost btn-sm" onclick="ufGoToStep(1)">← 카테고리 변경</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: 수익 최적화 생성 -->
+  <div class="uf-screen" id="uf-s3">
+    <div class="card">
+      <div class="card-title">⚡ Step 3: 수익 최적화 프롬프트 생성</div>
+      <div id="uf-gen-context" style="font-size:12px;color:var(--t2);margin-bottom:14px">선택된 카테고리의 고수익 키워드와 심리 훅이 자동으로 프롬프트에 삽입됩니다.</div>
+
+      <div class="uf-bridge-card" id="uf-psych-rec-card" style="margin-bottom:14px">
+        <div class="uf-bridge-icon">🧠</div>
+        <div>
+          <div class="uf-bridge-title">추천 심리 프로파일</div>
+          <div class="uf-psych-rec" id="uf-psych-rec-body">카테고리를 선택하면 최적 심리 프로파일이 표시됩니다.</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>제품명 *</label>
+        <input id="uf-name" type="text" placeholder="예: 제주 한라봉 3kg, PDRN 세럼..." oninput="ufDetect()">
+      </div>
+      <div class="row2">
+        <div class="field"><label>가격 (선택)</label><input id="uf-price" type="text" placeholder="예: 29,800원"></div>
+        <div class="field"><label>핵심 혜택 (선택)</label><input id="uf-benefit" type="text" placeholder="예: 당일수확 무료배송"></div>
+      </div>
+      <div class="field">
+        <label>쇼핑 URL (선택)</label>
+        <input id="uf-url" type="text" placeholder="https://coupang.com/...">
+      </div>
+
+      <div class="detect-row" id="uf-detect-row" style="display:none">
+        <span class="detect-label">감지 카테고리</span>
+        <span class="detect-badge" id="uf-detect-badge">감지 중…</span>
+        <span style="font-size:11px;color:var(--t3);margin-left:4px" id="uf-rev-override">수익 카테고리 우선 적용됨 ✓</span>
+      </div>
+
+      <button class="btn btn-primary" onclick="ufGen()" style="width:100%;margin-top:8px">🚀 수익 최적화 4-씬 생성</button>
+    </div>
+
+    <div id="uf-output" style="display:none">
+      <div class="card">
+        <div class="card-title" id="uf-out-title">수익 최적화 결과</div>
+        <div id="uf-roi-show" class="roi-mini" style="margin-bottom:12px">
+          <span class="roi-mini-title">📈 이 영상의 예상 수익</span>
+          <div class="roi-mini-tiles" id="uf-roi-tiles"></div>
+        </div>
+        <div class="scenes-grid" id="uf-scenes-grid"></div>
+        <div class="copy-all-wrap">
+          <button class="btn btn-ghost btn-sm" onclick="ufCopyAll()">📋 전체 복사</button>
+          <button class="btn btn-primary btn-sm" onclick="ufGoToStep(4)" style="margin-left:8px">다음: 수익화 실행 →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4: 수익화 실행 -->
+  <div class="uf-screen" id="uf-s4">
+    <div class="card">
+      <div class="card-title">💎 Step 4: 수익화 실행 플랜</div>
+      <div style="font-size:12px;color:var(--t2);margin-bottom:14px" id="uf-action-context">생성된 영상으로 수익을 극대화하는 실행 단계입니다.</div>
+    </div>
+
+    <div class="uf-flow-connector">수익화 실행 4단계</div>
+
+    <div class="uf-action-grid">
+      <div class="uf-action-btn" onclick="navGo('coupang',document.querySelector('[data-sec=coupang]'))">
+        <div class="uf-action-icon">🛒</div>
+        <div>
+          <div class="uf-action-title">쿠팡 딥링크 생성</div>
+          <div class="uf-action-sub">제품 URL → 파트너스 딥링크 자동 생성 → 수수료 극대화</div>
+        </div>
+      </div>
+      <div class="uf-action-btn" onclick="navGo('infolk',document.querySelector('[data-sec=infolk]'))">
+        <div class="uf-action-icon">🔗</div>
+        <div>
+          <div class="uf-action-title">인포크 허브 등록</div>
+          <div class="uf-action-sub">딥링크를 인포크 페이지에 추가 → 바이오 링크 허브 완성</div>
+        </div>
+      </div>
+      <div class="uf-action-btn" onclick="navGo('fish',document.querySelector('[data-sec=fish]'));fishRefreshScenes()">
+        <div class="uf-action-icon">🎙</div>
+        <div>
+          <div class="uf-action-title">Fish Audio 음성 생성</div>
+          <div class="uf-action-sub">생성된 스크립트로 TTS 음성 생성 → 아바타 영상에 적용</div>
+        </div>
+      </div>
+      <div class="uf-action-btn" onclick="navGo('psych',document.querySelector('[data-sec=psych]'))">
+        <div class="uf-action-icon">🧠</div>
+        <div>
+          <div class="uf-action-title">심리 CTA 최적화</div>
+          <div class="uf-action-sub">구매자 심리 프로파일 → CTR·전환율 극대화 CTA 선택</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="uf-platform-rec">
+      <div class="card-title">📱 추천 업로드 플랫폼</div>
+      <div id="uf-platform-body" style="font-size:13px;color:var(--t2);line-height:1.7"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📊 이번 달 목표 설정</div>
+      <div id="uf-monthly-goal-body" style="display:flex;flex-direction:column;gap:8px"></div>
+      <button class="btn btn-primary" style="margin-top:12px;width:100%" onclick="navGo('calculator',document.querySelector('[data-sec=calculator]'))">📊 상세 월 수익 계산기 열기</button>
+    </div>
+
+    <div style="text-align:center;padding:8px 0">
+      <button class="btn btn-ghost" onclick="ufGoToStep(1)">🔄 새 영상 시작</button>
+    </div>
+  </div>
+</section>
+
 </main>
 </div>
 
@@ -1444,12 +1692,15 @@ function vidGoToAutoGen() {
 /* build scenes by video method type */
 function buildScenesTyped(catKey, name, price, benefit, shopUrl, skillKey) {
   const pt = activeVidTool?.promptType || 't2v';
-  if (pt === 't2v') return buildScenes(catKey, name, price, benefit, shopUrl, null, null, null, null, null, skillKey);
   const c = CATS[catKey] || CATS.food;
+  // Revenue keyword injection: pick top 3 high-revenue keywords from category
+  const revKws = c.kw.slice(0, 3).join(' · ');
+  const revBenefit = benefit || revKws;
+  if (pt === 't2v') return buildScenes(catKey, name, price, revBenefit, shopUrl, null, null, null, null, null, skillKey);
   const sk = skillKey ? SKILLS[skillKey] : null;
   const tn = activeVidTool?.name || '';
   const pTx = price ? ' · 가격: '+price : '';
-  const bTx = benefit || '';
+  const bTx = revBenefit;
   const urlTx = shopUrl ? '\n구매링크: '+shopUrl : '';
   if (pt === 'i2v') return {
     s0:`[I2V 모션 1 / PRODUCT REVEAL]\n도구: ${tn}\n제품: ${name}${pTx}\n─\n이미지: 제품 정면 흰배경 or 라이프스타일 사진\n모션: zoom in slowly (0.3× speed) → subtle float\n카메라: Push-in + gentle float\n효과: highlight sweep\n지속: 3초\n메모: 고화질 제품 정면 사진 사용 권장`,
@@ -2346,10 +2597,12 @@ function agGen() {
 
   document.getElementById('ag-tip-text').textContent = cat.rt;
   document.getElementById('ag-output').style.display = '';
+  // show ROI mini tile + revenue keywords
+  agShowRoiMini(agCatKey);
   // update section sub-title to reflect selected method
   const subEl = document.querySelector('#auto-gen .section-sub');
   if (subEl && activeVidTool) {
-    subEl.textContent = `${ptIcon} ${activeVidTool.name} · ${VID_METHODS[activeVidTool.catKey].hint}`;
+    subEl.textContent = `${ptIcon} ${activeVidTool.name} · ${VID_METHODS[activeVidTool.catKey]?.hint || ''}`;
   }
 }
 
@@ -3153,6 +3406,353 @@ navGo = function(id, btn) {
 };
 
 /* ══════════════════════════════════
+   UNIFIED FLOW
+══════════════════════════════════ */
+let activeRevCat = null; // revenue category selected in unified flow
+let ufScenes = {};
+
+function ufGoToStep(n) {
+  // update step indicators
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById('ufs-' + i);
+    if (!el) continue;
+    el.classList.remove('active', 'done');
+    if (i < n) el.classList.add('done');
+    else if (i === n) el.classList.add('active');
+  }
+  // show/hide screens
+  for (let i = 1; i <= 4; i++) {
+    const sc = document.getElementById('uf-s' + i);
+    if (sc) sc.classList.toggle('show', i === n);
+  }
+  // re-render step content
+  if (n === 1) ufRenderCatGrid();
+  if (n === 2) ufRenderSkillMatches();
+  if (n === 3) ufRenderGenContext();
+  if (n === 4) ufRenderActionPlan();
+}
+
+function ufRenderCatGrid() {
+  const grid = document.getElementById('uf-cat-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  Object.entries(CATS).forEach(([k, c]) => {
+    const div = document.createElement('div');
+    div.className = 'uf-rev-cat' + (activeRevCat === k ? ' selected' : '');
+    div.id = 'uf-rc-' + k;
+    const cd = CALC_DATA[k] || {};
+    div.innerHTML = `<div class="uf-rev-cat-emoji">${c.emoji}</div>
+      <div class="uf-rev-cat-name">${c.label}</div>
+      <div class="uf-rev-cat-est">${c.rev.est}</div>
+      <div style="font-size:10px;color:var(--t3);margin-top:2px">CPC ${c.rev.cpc} · CR ${c.rev.cr}</div>`;
+    div.onclick = () => ufSelectRevCat(k);
+    grid.appendChild(div);
+  });
+}
+
+function ufSelectRevCat(k) {
+  activeRevCat = k;
+  document.querySelectorAll('.uf-rev-cat').forEach(el => el.classList.remove('selected'));
+  document.getElementById('uf-rc-' + k)?.classList.add('selected');
+
+  const c = CATS[k];
+  const cd = CALC_DATA[k] || {};
+
+  // ROI preview
+  const detail = document.getElementById('uf-cat-detail');
+  const titleEl = document.getElementById('uf-cat-detail-title');
+  titleEl.innerHTML = `${c.emoji} ${c.label} 수익 분석 <span class="card-sub">${c.rev.est}</span>`;
+
+  const previewGrid = document.getElementById('uf-roi-preview-grid');
+  const views = 100000;
+  const clicks = Math.round(views * 0.02);
+  const conv = Math.round(clicks * cd.cr);
+  const aff = Math.round(conv * cd.aov * cd.comm);
+  const yt = Math.round(views / 1000 * cd.rpm);
+  previewGrid.innerHTML = `
+    <div class="uf-roi-tile"><div class="uf-roi-num">${c.rev.cpc}</div><div class="uf-roi-label">CPC (클릭당 수익)</div></div>
+    <div class="uf-roi-tile"><div class="uf-roi-num">${c.rev.cr}</div><div class="uf-roi-label">전환율</div></div>
+    <div class="uf-roi-tile"><div class="uf-roi-num">${c.rev.aov}</div><div class="uf-roi-label">평균 주문금액</div></div>
+    <div class="uf-roi-tile"><div class="uf-roi-num">₩${(aff+yt).toLocaleString()}</div><div class="uf-roi-label">10만뷰 예상 수익</div></div>`;
+
+  // Keywords
+  const kwEl = document.getElementById('uf-cat-kws');
+  kwEl.innerHTML = c.kw.slice(0,8).map(kw => `<span class="uf-kw-tag">${kw}</span>`).join('');
+
+  // Best hooks
+  const hooksEl = document.getElementById('uf-cat-hooks');
+  hooksEl.innerHTML = c.bh.map(h => `<span class="detect-badge" style="background:var(--${CATS[k].cc}D);color:var(--${CATS[k].cc});border-color:var(--${CATS[k].cc}M)">${HOOKS[h]?.icon||'•'} ${HOOKS[h]?.name||h}</span>`).join('');
+
+  detail.style.display = '';
+
+  // Also update agGen revenue badge if catKey matches
+  agCatKey = k;
+  const agBadge = document.getElementById('ag-detect-badge');
+  if (agBadge && !document.getElementById('ag-name')?.value) {
+    agBadge.textContent = c.emoji + ' ' + c.label;
+    agBadge.style.background = `var(--${c.cc}D,var(--cyD))`;
+    agBadge.style.color = `var(--${c.cc},var(--cy))`;
+    agBadge.style.borderColor = `var(--${c.cc}M,var(--cyM))`;
+  }
+}
+
+function ufRenderSkillMatches() {
+  if (!activeRevCat) { ufGoToStep(1); return; }
+  const container = document.getElementById('uf-skill-matches');
+  if (!container) return;
+  container.innerHTML = '';
+
+  // find skills that include this revenue category
+  const matchedSkills = Object.entries(SKILLS).filter(([k, s]) => s.cats.includes(activeRevCat));
+  const cat = CATS[activeRevCat];
+
+  if (matchedSkills.length === 0) {
+    container.innerHTML = '<div class="tip-box">이 카테고리와 매칭되는 스킬이 없습니다. 카테고리를 변경하세요.</div>';
+    return;
+  }
+
+  matchedSkills.forEach(([k, s]) => {
+    const div = document.createElement('div');
+    div.className = 'uf-bridge-card';
+    div.style.cursor = 'pointer';
+    div.style.transition = '.15s';
+    const isActive = activeSkillKey === k;
+    if (isActive) div.style.borderColor = 'var(--cy)';
+    div.innerHTML = `<div class="uf-bridge-icon">${s.icon}</div>
+      <div style="flex:1">
+        <div class="uf-bridge-title">${s.persona} <span style="font-size:11px;color:var(--t2);font-weight:400">· ${s.label}</span></div>
+        <div class="uf-bridge-body">${s.angle}</div>
+        <div style="font-size:11px;color:var(--t2);margin-top:4px">훅: "${s.hook}"</div>
+      </div>
+      <div style="flex-shrink:0">${isActive ? '<span style="color:var(--gn);font-size:12px">✓ 선택됨</span>' : '<button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();ufSelectSkill(\''+k+'\')">선택</button>'}</div>`;
+    div.onclick = () => ufSelectSkill(k);
+    container.appendChild(div);
+  });
+}
+
+function ufSelectSkill(k) {
+  activeSkillKey = k;
+  updateSkillBadge();
+  const sk = SKILLS[k];
+  const cat = activeRevCat ? CATS[activeRevCat] : null;
+
+  const detailEl = document.getElementById('uf-skill-detail');
+  const titleEl = document.getElementById('uf-skill-detail-title');
+  const bodyEl = document.getElementById('uf-skill-detail-body');
+  const toolsEl = document.getElementById('uf-tool-picks');
+
+  titleEl.innerHTML = `${sk.icon} ${sk.persona} 스킬 분석`;
+  bodyEl.innerHTML = `<div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--t2)">
+    <div><strong style="color:var(--t1)">채널 앵글:</strong> ${sk.angle}</div>
+    <div><strong style="color:var(--t1)">채널 훅:</strong> "${sk.hook}"</div>
+    <div><strong style="color:var(--t1)">Veo 3 스타일:</strong> ${sk.veo3}</div>
+    ${cat ? `<div><strong style="color:var(--t1)">수익 카테고리:</strong> ${cat.emoji} ${cat.label} · ${cat.rev.est}</div>` : ''}
+  </div>`;
+
+  // Recommend tools — show first tool from each vid method category
+  toolsEl.innerHTML = '';
+  Object.entries(VID_METHODS).forEach(([mk, m]) => {
+    const t = m.tools[0];
+    if (!t || typeof t !== 'object') return;
+    const span = document.createElement('span');
+    span.className = 'detect-badge';
+    span.style.cursor = 'pointer';
+    span.style.padding = '4px 10px';
+    const isActive = activeVidTool?.id === t.id;
+    if (isActive) { span.style.background = 'var(--cy)'; span.style.color = '#0A1628'; }
+    span.textContent = (t.icon || '🎬') + ' ' + t.name;
+    span.title = m.label;
+    span.onclick = () => { selectVidTool(mk, t.id); updateVidBadge(); ufRenderSkillMatches(); };
+    toolsEl.appendChild(span);
+  });
+
+  detailEl.style.display = '';
+  ufRenderSkillMatches(); // re-render to show selected state
+}
+
+function ufRenderGenContext() {
+  if (!activeRevCat) { ufGoToStep(1); return; }
+  const cat = CATS[activeRevCat];
+  const sk = activeSkillKey ? SKILLS[activeSkillKey] : null;
+  const cd = CALC_DATA[activeRevCat] || {};
+
+  // Context description
+  const ctxEl = document.getElementById('uf-gen-context');
+  const kws = cat.kw.slice(0, 5).join(', ');
+  ctxEl.innerHTML = `<strong style="color:var(--t1)">${cat.emoji} ${cat.label}</strong> 카테고리 선택됨 · 수익 키워드 <strong style="color:var(--wa)">${kws}</strong> 등이 프롬프트에 자동 삽입됩니다.
+    ${sk ? `<br>🎓 스킬: <strong style="color:var(--cy)">${sk.persona}</strong> · 훅: "${sk.hook}"` : ''}`;
+
+  // Psych recommendation
+  const bestHook = cat.bh[0];
+  const psychMatch = PSYCH.find(p => p.hooks && p.hooks.includes(bestHook));
+  const psychEl = document.getElementById('uf-psych-rec-body');
+  if (psychMatch) {
+    psychEl.innerHTML = `<strong>${psychMatch.emoji} ${psychMatch.type}</strong> — ${psychMatch.sub}<br>
+      <span style="color:var(--t3);font-size:11px">스크립트 예: ${psychMatch.script.substring(0,80)}…</span>`;
+  }
+
+  // detect row
+  const dr = document.getElementById('uf-detect-row');
+  dr.style.display = '';
+  const badge = document.getElementById('uf-detect-badge');
+  badge.textContent = cat.emoji + ' ' + cat.label + ' (수익 카테고리)';
+  badge.style.background = `var(--${cat.cc}D,var(--cyD))`;
+  badge.style.color = `var(--${cat.cc},var(--cy))`;
+  badge.style.borderColor = `var(--${cat.cc}M,var(--cyM))`;
+}
+
+function ufDetect() {
+  const name = document.getElementById('uf-name')?.value || '';
+  const badge = document.getElementById('uf-detect-badge');
+  const overrideEl = document.getElementById('uf-rev-override');
+  if (!badge) return;
+  const cat = activeRevCat ? CATS[activeRevCat] : null;
+  if (cat) {
+    badge.textContent = cat.emoji + ' ' + cat.label + ' (수익 카테고리)';
+    badge.style.background = `var(--${cat.cc}D,var(--cyD))`;
+    badge.style.color = `var(--${cat.cc},var(--cy))`;
+    badge.style.borderColor = `var(--${cat.cc}M,var(--cyM))`;
+    if (overrideEl) overrideEl.style.display = '';
+  }
+}
+
+function ufGen() {
+  const name = document.getElementById('uf-name')?.value.trim();
+  if (!name) { alert('제품명을 입력해주세요'); return; }
+  const price = document.getElementById('uf-price')?.value.trim() || '';
+  const benefit = document.getElementById('uf-benefit')?.value.trim() || '';
+  const url = document.getElementById('uf-url')?.value.trim() || '';
+
+  const catKey = activeRevCat || smartDetect(name) || 'food';
+  const cat = CATS[catKey];
+
+  // Inject revenue keywords into benefit text
+  const revKws = cat.kw.slice(0, 3).join(' · ');
+  const enhancedBenefit = benefit || revKws;
+
+  ufScenes = buildScenesTyped(catKey, name, price, enhancedBenefit, url, activeSkillKey);
+
+  // ROI estimate
+  const cd = CALC_DATA[catKey] || {};
+  const views = 50000;
+  const clicks = Math.round(views * 0.02);
+  const conv = Math.round(clicks * cd.cr);
+  const aff = Math.round(conv * cd.aov * cd.comm);
+  const yt = Math.round(views / 1000 * cd.rpm);
+  const total = aff + yt;
+
+  const roiTiles = document.getElementById('uf-roi-tiles');
+  if (roiTiles) {
+    roiTiles.innerHTML = `
+      <div class="roi-mini-tile"><div class="roi-mini-num">₩${aff.toLocaleString()}</div><div class="roi-mini-lbl">제휴 수익</div></div>
+      <div class="roi-mini-tile"><div class="roi-mini-num">₩${yt.toLocaleString()}</div><div class="roi-mini-lbl">광고 수익</div></div>
+      <div class="roi-mini-tile"><div class="roi-mini-num">₩${total.toLocaleString()}</div><div class="roi-mini-lbl">5만뷰 합계</div></div>`;
+  }
+
+  // Render scenes
+  const grid = document.getElementById('uf-scenes-grid');
+  grid.innerHTML = '';
+  const slabs = getSceneLabels();
+  const labels = slabs.map((l,i) => `${['🔥','📸','🎬','✅'][i]} ${l}`);
+  ['s0','s1','s2','s3'].forEach((k,i) => {
+    const div = document.createElement('div');
+    div.className = 'scene-card';
+    div.innerHTML = `<div class="scene-head">
+      <span class="scene-label ${k}">${labels[i]}</span>
+      <button class="cp-btn" id="ufcp-${k}" onclick="ufCpScene('${k}')">복사</button>
+    </div>
+    <div class="scene-text">${escHtml(ufScenes[k])}</div>`;
+    grid.appendChild(div);
+  });
+
+  const titleEl = document.getElementById('uf-out-title');
+  if (titleEl) titleEl.innerHTML = `수익 최적화 결과 <span class="card-sub">${cat.emoji} ${cat.label} · ${activeVidTool ? activeVidTool.name : 'Veo 3'}</span>`;
+
+  document.getElementById('uf-output').style.display = '';
+  document.getElementById('uf-roi-show').style.display = '';
+}
+
+function ufCpScene(k) { cpText(ufScenes[k], document.getElementById('ufcp-'+k)); }
+
+function ufCopyAll() {
+  const name = document.getElementById('uf-name')?.value || '제품';
+  const all = `=== ${name} 수익 최적화 4-씬 ===\n\n` + ['s0','s1','s2','s3'].map(k => ufScenes[k]).join('\n\n---\n\n');
+  cpText(all, null);
+}
+
+function ufRenderActionPlan() {
+  const catKey = activeRevCat || agCatKey || 'food';
+  const cat = CATS[catKey];
+  const cd = CALC_DATA[catKey] || {};
+
+  // Platform recommendation
+  const platEl = document.getElementById('uf-platform-body');
+  const platMap = {
+    food: '① <strong>TikTok Shop</strong> 먹방·ASMR 영상 → 쿠팡 파트너스 딥링크 연동<br>② <strong>YouTube Shorts</strong> RPM ₩1,200/1,000뷰 · 계절성 타이밍 2주 앞서 업로드<br>③ <strong>인스타 Reels</strong> 선물세트 시즌 집중',
+    beauty: '① <strong>Instagram Reels</strong> Before/After + 올리브영 파트너 4~7%<br>② <strong>YouTube Shorts</strong> RPM ₩1,800/1,000뷰 · YouTube Shopping 연동<br>③ <strong>TikTok</strong> 뷰티 트렌딩 사운드 활용',
+    electronics: '① <strong>YouTube Shorts</strong> 비교 영상 RPM ₩2,200 최고<br>② <strong>쿠팡·다나와</strong> 2~4% 제휴 + 로켓배송 강조<br>③ 전문가 분석 영상으로 신뢰도 구축 후 전환',
+    fashion: '① <strong>Instagram Reels</strong> 착샷 + 무신사 5~8% 전환율 1위<br>② <strong>TikTok</strong> 아웃핏 트렌딩 챌린지 편승<br>③ 에이블리·지그재그 파트너 동시 운영',
+    home: '① <strong>YouTube Shorts</strong> 수납·정리 영상 전환율(3.5%) 최고<br>② <strong>쿠팡 로켓배송</strong> 3% 제휴 · 충동구매율 40%↑<br>③ 스마트스토어 직판 병행',
+    health: '① <strong>YouTube Shorts</strong> 전문가 분석 RPM ₩2,000 · CPC ₩70~140 최고<br>② <strong>아이허브 파트너</strong> + <strong>쿠팡 건강식품 4~6%</strong> 동시 운영<br>③ 성분 비교 콘텐츠로 전문성 구축 → 신뢰 전환'
+  };
+  if (platEl) platEl.innerHTML = platMap[catKey] || '플랫폼 전략을 확인하세요.';
+
+  // Monthly goal
+  const goalEl = document.getElementById('uf-monthly-goal-body');
+  if (goalEl) {
+    const views10 = 100000;
+    const clicks10 = Math.round(views10 * 0.02);
+    const conv10 = Math.round(clicks10 * cd.cr);
+    const aff10 = Math.round(conv10 * cd.aov * cd.comm);
+    const yt10 = Math.round(views10 / 1000 * cd.rpm);
+    const total10 = aff10 + yt10;
+    const views50 = 500000;
+    const aff50 = Math.round(Math.round(views50*0.02) * cd.cr * cd.aov * cd.comm);
+    const yt50 = Math.round(views50 / 1000 * cd.rpm);
+    goalEl.innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div class="uf-roi-tile"><div class="uf-roi-num">₩${total10.toLocaleString()}</div><div class="uf-roi-label">10만뷰 예상</div></div>
+        <div class="uf-roi-tile"><div class="uf-roi-num">₩${(aff50+yt50).toLocaleString()}</div><div class="uf-roi-label">50만뷰 예상</div></div>
+        <div class="uf-roi-tile"><div class="uf-roi-num">${cat.rev.est}</div><div class="uf-roi-label">월 수익 목표</div></div>
+      </div>
+      <div class="uf-bridge-card" style="margin-top:8px">
+        <div class="uf-bridge-icon">💡</div>
+        <div>
+          <div class="uf-bridge-title">최우선 실행 전략</div>
+          <div class="uf-bridge-body">${cat.note}<br>수수료: ${cat.rev.pl.join(' · ')}</div>
+        </div>
+      </div>`;
+  }
+}
+
+/* Revenue keywords injection for auto-gen agGen ROI mini tile */
+function agShowRoiMini(catKey) {
+  const cd = CALC_DATA[catKey] || {};
+  const views = 50000;
+  const clicks = Math.round(views * 0.02);
+  const conv = Math.round(clicks * cd.cr);
+  const aff = Math.round(conv * cd.aov * cd.comm);
+  const yt = Math.round(views / 1000 * cd.rpm);
+  const roiEl = document.getElementById('ag-roi-mini');
+  const tilesEl = document.getElementById('ag-roi-tiles');
+  if (!roiEl || !tilesEl) return;
+  tilesEl.innerHTML = `
+    <div class="roi-mini-tile"><div class="roi-mini-num">₩${aff.toLocaleString()}</div><div class="roi-mini-lbl">제휴 수익</div></div>
+    <div class="roi-mini-tile"><div class="roi-mini-num">₩${yt.toLocaleString()}</div><div class="roi-mini-lbl">광고 수익</div></div>
+    <div class="roi-mini-tile"><div class="roi-mini-num">₩${(aff+yt).toLocaleString()}</div><div class="roi-mini-lbl">5만뷰 합계</div></div>`;
+  roiEl.style.display = '';
+
+  // Show revenue keywords
+  const cat = CATS[catKey];
+  const kwRowEl = document.getElementById('ag-rev-kw-row');
+  const kwTagsEl = document.getElementById('ag-rev-kw-tags');
+  if (kwRowEl && kwTagsEl && cat) {
+    kwTagsEl.innerHTML = cat.kw.slice(0, 8).map(kw => `<span class="uf-kw-tag">${kw}</span>`).join('');
+    kwRowEl.style.display = '';
+  }
+}
+
+/* ══════════════════════════════════
    INIT
 ══════════════════════════════════ */
 function init() {
@@ -3177,6 +3777,8 @@ function init() {
   fishUpdateStatus();
   fishLoadVoiceIds();
   initFishCtaList();
+  // Unified Flow
+  ufRenderCatGrid();
 }
 
 init();
@@ -3184,17 +3786,17 @@ init();
 
 <!-- Bottom tab bar (mobile only) -->
 <nav class="btab-bar" id="btab-bar">
+  <button class="btab" data-sec="unified-flow" onclick="navGo('unified-flow',document.querySelector('[data-sec=unified-flow]'));btabActivate(this)" style="color:var(--cy)">
+    <span class="btab-icon">🚀</span>통합
+  </button>
   <button class="btab" data-sec="vid-method" onclick="navGo('vid-method',document.querySelector('[data-sec=vid-method]'));btabActivate(this)">
     <span class="btab-icon">🎬</span>AI선택
   </button>
   <button class="btab active" data-sec="auto-gen" onclick="navGo('auto-gen',document.querySelector('[data-sec=auto-gen]'));btabActivate(this)">
     <span class="btab-icon">⚡</span>생성
   </button>
-  <button class="btab" data-sec="wizard" onclick="navGo('wizard',document.querySelector('[data-sec=wizard]'));btabActivate(this)">
-    <span class="btab-icon">🎯</span>마법사
-  </button>
-  <button class="btab" data-sec="fish" onclick="navGo('fish',document.querySelector('[data-sec=fish]'));fishRefreshScenes();btabActivate(this)">
-    <span class="btab-icon">🎙</span>음성
+  <button class="btab" data-sec="calculator" onclick="navGo('calculator',document.querySelector('[data-sec=calculator]'));btabActivate(this)">
+    <span class="btab-icon">📊</span>수익
   </button>
   <button class="btab-more" onclick="toggleDrawer()">
     <span class="btab-icon">☰</span>더보기
