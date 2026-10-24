@@ -1187,7 +1187,7 @@ ${itemLines}
 합계: ${totalStr}`;
     window.open("https://docs.google.com/forms/d/e/1FAIpQLSe-0ZMlvwxt8TP3Qj2liWyedoDZeQIgXLF2zTd4xpJAAm8ACg/viewform","_blank");
     const itemHtml=selected.map(m=>`ㆍ${m.name}`).join("<br>");
-    showError(`주문 신청 페이지가 열렸어요!<br><br>구글 폼에서 주문 내용을 작성해 주세요.<br><br><strong>📋 신청 항목</strong><br>${itemHtml}<br>합계: <strong>${totalStr}</strong><br><br>입금 계좌: <strong>신한은행 133-000-695010 (예금주: 신정희)</strong><br>문의 전화: <strong>010-8386-3712</strong><br><br>입금 확인 후 분석을 시작해드릴게요.<br>${deliveryContact!=="없음"?`결과는 ${deliveryContact} 로 보내드립니다.`:""}`);
+    showError(`주문 신청 페이지가 열렸어요!<br><br>구글 폼에서 주문 내용을 작성해 주세요.<br><br><strong>👤 신청자 정보</strong><br>성함: ${name} / 성별: ${gender}<br>생년월일: ${birthStr}<br>태어난 시간: ${timeVal}<br>전달: ${deliveryMethod}${deliveryContact!=="없음"?` → ${deliveryContact}`:""}<br><br><strong>📋 신청 항목</strong><br>${itemHtml}<br>합계: <strong>${totalStr}</strong><br><br>입금 계좌: <strong>신한은행 133-000-695010 (예금주: 신정희)</strong><br>문의 전화: <strong>010-8386-3712</strong><br><br>입금 확인 후 분석을 시작해드릴게요.`);
     return;
   }
 
