@@ -200,6 +200,7 @@ input, select, textarea { font-family: var(--f); }
   <div class="login-box">
     <div class="login-logo">사주마루</div>
     <div class="login-sub">관리자 로그인</div>
+    <a href="/app/" style="display:block;margin-bottom:18px;padding:10px 14px;border-radius:10px;background:rgba(201,162,39,.12);border:1px solid rgba(201,162,39,.35);color:var(--gold);font-size:13px;font-weight:700;text-align:center;text-decoration:none;">📱 모바일 운영앱 열기 →</a>
     <input type="password" id="pwInput" placeholder="비밀번호" onkeydown="if(event.key==='Enter')tryLogin()">
     <div class="login-err" id="loginErr"></div>
     <button class="btn-login" onclick="tryLogin()">로그인</button>

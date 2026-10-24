@@ -69,25 +69,46 @@
   ],
   "time_slots": {
     "08": {
+      "key": "08",
       "type": "morning_fortune",
       "title": "아침 운세",
       "platforms": ["instagram", "facebook", "threads", "twitter", "tiktok"],
       "format": "image_carousel",
-      "topic_rotation": ["띠별운세", "재물운", "재회운", "수능운", "이직승진운", "부모운", "건강운"]
+      "topic_rotation": ["띠별운세", "재물운", "재회운", "합격운", "이직승진운", "사업운", "건강운", "궁합운", "이사운", "부모운"]
     },
     "13": {
+      "key": "13",
       "type": "midday_insight",
-      "title": "오후 인사이트",
+      "title": "점심 픽",
       "platforms": ["threads", "instagram", "twitter", "naver_blog", "naver_jisik"],
       "format": "text_image",
-      "topic_rotation": ["재물운", "재회운", "띠별운세", "건강운", "이직승진운", "수능운", "부모운"]
+      "topic_rotation": ["재물운", "재회운", "띠별운세", "건강운", "이직승진운", "합격운", "사업운", "궁합운", "이사운", "부모운"]
     },
     "20": {
+      "key": "20",
       "type": "evening_fortune",
-      "title": "저녁 운세",
+      "title": "저녁 포춘",
       "platforms": ["instagram", "threads", "twitter", "tiktok", "youtube", "naver_clip"],
       "format": "image_video",
-      "topic_rotation": ["재회운", "건강운", "수능운", "재물운", "이직승진운", "부모운", "띠별운세"]
+      "topic_rotation": ["재회운", "건강운", "합격운", "재물운", "이직승진운", "사업운", "부모운", "띠별운세", "궁합운", "이사운"]
+    },
+    "06": {
+      "key": "06",
+      "type": "morning_fortune",
+      "title": "아침 운세",
+      "platforms": ["instagram", "threads"],
+      "format": "image_carousel",
+      "topic_rotation": ["띠별운세", "재물운", "재회운", "합격운", "이직승진운", "사업운", "건강운"]
     }
+  },
+  "monetization": {
+    "kakao_channel": "https://pf.kakao.com/_saju",
+    "consultation_form": "https://forms.gle/t2sSNES5NYow77vz5",
+    "smartstore": "https://smartstore.naver.com/sajumaru",
+    "youtube_membership": "https://www.youtube.com/@sajumaru/join",
+    "price_basic": "30,000",
+    "price_full": "90,000",
+    "cta_kakao": "💬 카카오 무료상담 → pf.kakao.com/_saju",
+    "cta_form": "📋 무료 사주 신청 → forms.gle/t2sSNES5NYow77vz5"
   }
 }

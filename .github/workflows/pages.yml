@@ -3,7 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
-    paths: ['pages/**']
+    paths: ['pages/**', 'data/**']
   workflow_dispatch:
 
 permissions:
@@ -23,9 +23,17 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: data 폴더를 pages에 포함 (포스팅 로그 + 이미지)
+        run: |
+          cp -r data pages/ 2>/dev/null || true
+          echo "✅ data/ → pages/data/ 복사 완료"
+
       - uses: actions/configure-pages@v4
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: pages/
+
       - uses: actions/deploy-pages@v4
         id: deployment
