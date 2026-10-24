@@ -886,6 +886,7 @@ const SECTIONS_EXTRA=[
 let sampleCap=null, assetsCap=null, canUploadImages=false;
 let uploadedImgUrl=null, uploadedImgType=null;
 let reportType='20';
+const _utmFrom=(new URLSearchParams(location.search)).get("from")||"";
 let selectedStype='warning';
 let selectedPlat='daangn';
 let orders=[];
@@ -1179,6 +1180,7 @@ async function startAnalysis(){
 태어난 시간: ${timeVal}
 전달 방법: ${deliveryMethod}
 전달 받을 곳: ${deliveryContact}
+유입경로: ${_utmFrom||"직접방문"}
 
 신청 항목:
 ${itemLines}
@@ -1217,6 +1219,7 @@ ${SHINSAL_REF}
 출생지: ${city||"미입력"}${city?` (경도보정 +${CITY_CORR[city]||0}분 적용)`:""}
 야자시 처리: ${yajasiOn?"야자시 적용 — 23:00~24:00은 당일 子시로 처리":"표준 — 23:00 이후는 다음날 子시로 처리"}
 신청 항목: ${selectedItems}
+유입경로: ${_utmFrom||"직접방문"}
 
 ══════════════════════════════════════
 【사전 계산 — 반드시 먼저 계산 후 모든 섹션에 인용】
