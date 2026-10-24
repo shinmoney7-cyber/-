@@ -3852,5 +3852,101 @@ function copyCheol(){
   </div>
 </div>
 
+<hr class="sec-divider">
+<!-- ══════════════════════════════════════
+     어드민: 리브랜딩 도구 (사주톡톡 → 사주마루)
+══════════════════════════════════════ -->
+<div class="tab-panel" id="tab-rebrand" style="padding-bottom:80px">
+<div id="sec-rebrand" style="scroll-margin-top:56px"></div>
+<div class="sec-section">
+  <div class="sec-heading">🔄 리브랜딩 도구 <span style="font-size:13px;font-weight:400;color:var(--fg3)">(내부 전용)</span></div>
+  <div style="background:color-mix(in srgb,var(--gold) 8%,var(--bg2));border:1px solid color-mix(in srgb,var(--gold) 30%,var(--border));border-radius:12px;padding:14px 16px;margin-bottom:20px;font-size:13px;color:var(--fg2);line-height:1.7">
+    사주표준랩에서 받은 결과물을 붙여넣으면 <strong style="color:var(--fg)">사주마루</strong> 브랜드로 자동 교체해줘.
+  </div>
+  <div class="field">
+    <label>원본 (사주표준랩/사주톡톡 결과 붙여넣기)</label>
+    <textarea id="rbInput" style="min-height:200px;font-size:13px;line-height:1.8" placeholder="여기에 사주표준랩에서 받은 결과물을 붙여넣으세요..."></textarea>
+  </div>
+  <!-- 추가 교체 규칙 -->
+  <div id="rbRulesWrap" style="margin-bottom:14px">
+    <div style="font-size:12px;font-weight:700;color:var(--fg2);margin-bottom:8px;letter-spacing:.05em;text-transform:uppercase">교체 규칙</div>
+    <div id="rbRules" style="display:flex;flex-direction:column;gap:6px"></div>
+    <button type="button" onclick="addRbRule()" style="margin-top:8px;padding:6px 14px;border-radius:8px;border:1.5px dashed var(--border2);background:transparent;color:var(--fg2);font-size:13px;cursor:pointer;font-family:var(--fbody)">+ 규칙 추가</button>
+  </div>
+  <button class="btn btn-primary" onclick="doRebrand()" style="margin-bottom:16px">🔄 브랜드 교체하기</button>
+  <div id="rbOutput" hidden>
+    <div class="field">
+      <label style="display:flex;justify-content:space-between;align-items:center">
+        교체 완료 결과
+        <button type="button" onclick="copyRb()" style="padding:4px 12px;font-size:11px;font-weight:700;background:var(--accent);border:none;border-radius:6px;color:#fff;cursor:pointer">📋 복사</button>
+      </label>
+      <textarea id="rbResult" readonly style="min-height:200px;font-size:13px;line-height:1.8;background:color-mix(in srgb,var(--green) 6%,var(--card));border-color:color-mix(in srgb,var(--green) 40%,var(--border))"></textarea>
+    </div>
+    <div id="rbSummary" style="font-size:13px;color:var(--fg2);margin-top:6px"></div>
+  </div>
+</div>
+</div>
+<script>
+// ─── 리브랜딩 도구 ──────────────────────────────────────────────────────────
+const DEFAULT_RB_RULES=[
+  {from:"사주톡톡",to:"사주마루"},
+  {from:"sajutalk",to:"sajumaru"},
+  {from:"SAJUTALK",to:"SAJUMARU"},
+];
+let rbRules=[...DEFAULT_RB_RULES];
+
+function renderRbRules(){
+  const wrap=document.getElementById("rbRules");
+  wrap.innerHTML="";
+  rbRules.forEach((r,i)=>{
+    const row=document.createElement("div");
+    row.style.cssText="display:flex;gap:6px;align-items:center";
+    row.innerHTML=`<input value="${r.from}" placeholder="찾을 텍스트" style="flex:1;padding:8px 10px;background:var(--card);border:1.5px solid var(--border);border-radius:8px;color:var(--fg);font-family:var(--fbody);font-size:13px">
+      <span style="color:var(--fg3);font-size:13px">→</span>
+      <input value="${r.to}" placeholder="교체할 텍스트" style="flex:1;padding:8px 10px;background:var(--card);border:1.5px solid var(--border);border-radius:8px;color:var(--fg);font-family:var(--fbody);font-size:13px">
+      <button type="button" onclick="removeRbRule(${i})" style="padding:4px 8px;border-radius:6px;border:1.5px solid var(--border);background:transparent;color:var(--red);font-size:12px;cursor:pointer">✕</button>`;
+    const [fIn,,tIn]=row.querySelectorAll("input");
+    fIn.oninput=()=>{rbRules[i].from=fIn.value;};
+    tIn.oninput=()=>{rbRules[i].to=tIn.value;};
+    wrap.appendChild(row);
+  });
+}
+
+function addRbRule(){rbRules.push({from:"",to:""});renderRbRules();}
+function removeRbRule(i){rbRules.splice(i,1);renderRbRules();}
+
+function doRebrand(){
+  const input=document.getElementById("rbInput").value;
+  if(!input.trim()){alert("원본 텍스트를 붙여넣어주세요.");return;}
+  let result=input;
+  let totalCount=0;
+  const log=[];
+  rbRules.forEach(r=>{
+    if(!r.from) return;
+    const regex=new RegExp(r.from.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),"g");
+    let cnt=0;
+    result=result.replace(regex,()=>{cnt++;return r.to;});
+    if(cnt>0) log.push(`"${r.from}" → "${r.to}" (${cnt}건)`);
+    totalCount+=cnt;
+  });
+  document.getElementById("rbResult").value=result;
+  document.getElementById("rbSummary").innerHTML=totalCount>0
+    ?`✅ 총 <strong>${totalCount}건</strong> 교체됨: ${log.join(", ")}`
+    :`<span style="color:var(--fg3)">교체된 항목 없음 — 원본에 해당 텍스트가 없을 수 있어요.</span>`;
+  document.getElementById("rbOutput").hidden=false;
+  document.getElementById("rbResult").scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+function copyRb(){
+  const t=document.getElementById("rbResult").value;
+  navigator.clipboard?.writeText(t).then(()=>{
+    const btn=event.target;btn.textContent="✅ 복사됨";setTimeout(()=>{btn.textContent="📋 복사";},1500);
+  }).catch(()=>{
+    document.getElementById("rbResult").select();document.execCommand("copy");
+  });
+}
+
+renderRbRules();
+</script>
 
 </body></html>
