@@ -29,7 +29,8 @@ MODELS = [
     ("makeup_smile_tied", "ref_makeup_smile_tied.webp", "후", "묶은 머리", "블라우스 · 웃음"),
 ]
 
-# default photo per scene key ("A-0" = A안 1번); the user can change it in the app
+# default photo per scene key ("A-0" = A안 1번); the user can change it in the app.
+# D~F안(오픈·도포): 스킨케어 도포·윤기 장면은 생얼만, 메이크업 사진은 쿠션을 올린 뒤(F11~)부터
 SCENE_PHOTOS = {
     "A-0": "ref_cardigan_bare_loose.webp",
     "A-3": "ref_cardigan_bare_tied.webp",
@@ -40,6 +41,22 @@ SCENE_PHOTOS = {
     "C-0": "ref_bare_loose.webp",
     "C-2": "ref_bare.webp",
     "C-3": "ref_cardigan_makeup_tied.webp",
+    "D-3": "ref_cardigan_bare_tied.webp",
+    "D-4": "ref_cardigan_bare_loose.webp",
+    "D-5": "ref_cardigan_bare_loose.webp",
+    "E-4": "ref_cardigan_bare_tied.webp",
+    "E-5": "ref_cardigan_bare_tied.webp",
+    "E-6": "ref_cardigan_bare_tied.webp",
+    "E-7": "ref_cardigan_bare_loose.webp",
+    "E-8": "ref_cardigan_bare_loose.webp",
+    "F-5": "ref_cardigan_bare_tied.webp",
+    "F-6": "ref_cardigan_bare_tied.webp",
+    "F-7": "ref_cardigan_bare_tied.webp",
+    "F-8": "ref_cardigan_bare_tied.webp",
+    "F-9": "ref_cardigan_bare_loose.webp",
+    "F-10": "ref_cardigan_makeup_smile.webp",
+    "F-11": "ref_cardigan_makeup_tied.webp",
+    "F-12": "ref_cardigan_makeup_smile.webp",
 }
 
 

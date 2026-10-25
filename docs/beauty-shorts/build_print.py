@@ -18,7 +18,6 @@ HERE = Path(__file__).parent
 MD = HERE / "shinjh-serum-01_납품대본.md"
 FRAMES = HERE / "examples" / "frames"
 OUT = HERE / "shinjh-serum-01_납품대본_1차샘플.pdf"
-TIMES = {"A": ["0:00", "0:03", "0:06", "0:10", "0:15", "0:20"], "B": ["0:00", "0:03", "0:07", "0:12", "0:20"], "C": ["0:00", "0:03", "0:10", "0:20"]}
 
 
 def inline(t):
@@ -38,10 +37,10 @@ def table(rows):
     return "".join(out)
 
 
-def strip(v):
+def strip(v, times):
     items = "".join(
         f'<figure><img src="{(FRAMES / f"{v}{k + 1}.jpg").as_uri()}" alt=""><figcaption>{k + 1}번 · {t}</figcaption></figure>'
-        for k, t in enumerate(TIMES[v]))
+        for k, t in enumerate(times))
     return f'<div class="strip"><p class="cap">{v}안 장면 시안 — 고정 모델 실사(얼굴 장면) · 일러스트(제품·손 장면)</p><div class="frames">{items}</div></div>'
 
 
@@ -61,8 +60,9 @@ def convert(md):
             while i < len(lines) and lines[i].startswith("|"):
                 rows.append(lines[i]); i += 1
             out.append(table(rows))
-            if cur_v:
-                out.append(strip(cur_v)); cur_v = None
+            if cur_v:  # scene starts come from the version's script table
+                times = [r.strip().strip("|").split("|")[0].strip().split("–")[0] for r in rows[2:]]
+                out.append(strip(cur_v, times)); cur_v = None
             continue
         if l.startswith("```"):
             close_list(); i += 1; buf = []
@@ -85,7 +85,7 @@ def convert(md):
         if l.startswith("# "):
             out.append(f"<h1>{inline(l[2:])}</h1>")
         elif l.startswith("## "):
-            m = re.match(r"^## \d+\. ([ABC])안", l)
+            m = re.match(r"^## \d+\. ([A-F])안", l)
             cur_v = m.group(1) if m else None
             cls = ' class="ver"' if m else ""
             out.append(f"<h2{cls}>{inline(l[3:])}</h2>")
@@ -128,7 +128,7 @@ th { background: #f8e1ea; text-align: left; font-weight: 700; }
 th, td { border: 1px solid #b3869e; padding: 4px 6px; vertical-align: top; }
 .strip { break-inside: avoid; margin: 6px 0 4px; }
 .strip .cap { font-weight: 700; color: #8e244d; font-size: 9pt; margin-bottom: 4px; }
-.frames { display: flex; gap: 8px; }
+.frames { display: flex; flex-wrap: wrap; gap: 8px; }
 .frames figure { margin: 0; width: 26mm; text-align: center; }
 .frames img { width: 26mm; height: 46.2mm; object-fit: cover; border-radius: 3px; border: 1px solid #d6a9bf; }
 .frames figcaption { font-size: 7.5pt; color: #7a2f5a; }
