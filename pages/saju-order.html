@@ -1,0 +1,520 @@
+<title>사주 상담 신청</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<style>
+:root {
+  --bg: #1a0a3e;
+  --card: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.15);
+  --text: #f0e6ff;
+  --dim: #b8a0e0;
+  --accent: #a855f7;
+  --accent-soft: rgba(168,85,247,0.2);
+  --gold: #fbbf24;
+  --input-bg: rgba(255,255,255,0.06);
+  --kakao: #FEE500;
+  --kakao-text: #3C1E1E;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: radial-gradient(ellipse at top, #2d1066 0%, #1a0a3e 50%, #0d0520 100%);
+  color: var(--text);
+  min-height: 100vh;
+  padding-top: max(16px, env(safe-area-inset-top, 0px));
+  padding-bottom: max(40px, env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 440px; margin: 0 auto; }
+
+/* Header */
+.header { text-align: center; padding: 12px 0 18px; }
+.moon { font-size: 38px; display: block; margin-bottom: 6px; animation: float 4s ease-in-out infinite; }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+.brand { font-size: 12px; color: var(--dim); margin-bottom: 4px; letter-spacing: 0.1em; }
+.title { font-size: 22px; font-weight: 900; color: var(--text); margin-bottom: 2px; }
+
+/* Hours badge */
+.hours-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: rgba(251,191,36,0.12);
+  border: 1px solid rgba(251,191,36,0.3);
+  border-radius: 14px;
+  padding: 10px 16px;
+  margin: 12px 0 16px;
+}
+.hours-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 6px #4ade80;
+  animation: pulse 2s infinite;
+  flex-shrink: 0;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.hours-text { font-size: 13px; font-weight: 700; color: var(--gold); }
+.hours-sub { font-size: 11px; color: var(--dim); }
+
+/* Card */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 18px 16px;
+  margin-bottom: 10px;
+  backdrop-filter: blur(10px);
+}
+.card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  letter-spacing: 0.04em;
+}
+
+/* Price menu */
+.menu-list { display: flex; flex-direction: column; gap: 8px; }
+.menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 14px;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  gap: 10px;
+}
+.menu-item input[type="checkbox"] { display: none; }
+.menu-item.selected {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.menu-left { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.menu-emoji { font-size: 18px; flex-shrink: 0; }
+.menu-info { min-width: 0; }
+.menu-name { font-size: 14px; font-weight: 700; color: var(--text); }
+.menu-desc { font-size: 11px; color: var(--dim); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.menu-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.menu-price { font-size: 14px; font-weight: 900; color: var(--gold); }
+.check-icon {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.menu-item.selected .check-icon {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Form */
+.field { margin-bottom: 12px; }
+.field:last-child { margin-bottom: 0; }
+label {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--dim);
+  margin-bottom: 7px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+.req::after { content: ' *'; color: #f87171; }
+input[type="text"], select, textarea {
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--input-bg);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  font-size: 15px;
+  font-family: 'Noto Sans KR', sans-serif;
+  outline: none;
+  transition: border-color 0.2s;
+  -webkit-appearance: none;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.28); }
+select option { background: #1a0a3e; }
+textarea { resize: none; height: 70px; }
+
+.pills { display: flex; gap: 8px; flex-wrap: wrap; }
+.pill input { display: none; }
+.pill label {
+  display: inline-flex; align-items: center;
+  padding: 9px 15px;
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  font-size: 13px; font-weight: 700;
+  color: var(--dim);
+  cursor: pointer; transition: all 0.15s;
+  background: var(--input-bg);
+  margin: 0; text-transform: none; letter-spacing: normal;
+}
+.pill input:checked + label {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: #e9d5ff;
+}
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* Total */
+.total-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 16px;
+  background: rgba(251,191,36,0.1);
+  border: 1px solid rgba(251,191,36,0.25);
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+.total-label { font-size: 14px; font-weight: 700; color: var(--dim); }
+.total-amount { font-size: 20px; font-weight: 900; color: var(--gold); }
+
+/* Send btn */
+.send-btn {
+  width: 100%;
+  padding: 16px;
+  background: var(--kakao);
+  color: var(--kakao-text);
+  border: none;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 900;
+  font-family: 'Noto Sans KR', sans-serif;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: transform 0.1s;
+  letter-spacing: -0.02em;
+}
+.send-btn:active { transform: scale(0.97); }
+
+.hint {
+  text-align: center;
+  font-size: 11.5px;
+  color: var(--dim);
+  margin-top: 10px;
+  line-height: 1.8;
+}
+
+.toast {
+  position: fixed;
+  bottom: max(60px, calc(env(safe-area-inset-bottom,0px) + 20px));
+  left: 50%; transform: translateX(-50%) translateY(14px);
+  background: rgba(10,4,30,0.92);
+  border: 1px solid var(--border);
+  color: white;
+  padding: 11px 22px;
+  border-radius: 22px;
+  font-size: 13px; font-weight: 700;
+  opacity: 0; transition: all 0.25s;
+  pointer-events: none; white-space: nowrap; z-index: 999;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+
+<div class="wrap">
+  <div class="header">
+    <span class="moon">🔮</span>
+    <div class="brand">사주마루 · 사주보는언니</div>
+    <div class="title">사주 상담 신청서</div>
+  </div>
+
+  <!-- 운영시간 -->
+  <div class="hours-bar">
+    <div class="hours-dot"></div>
+    <div>
+      <div class="hours-text">운영시간 오전 8시 – 오후 7시</div>
+      <div class="hours-sub">운영시간 외 접수 → 다음 날 순서대로 답변</div>
+    </div>
+  </div>
+
+  <!-- 상담 메뉴 & 가격 -->
+  <div class="card">
+    <div class="card-title">✨ 상담 메뉴 선택 (복수 가능)</div>
+    <div class="menu-list" id="menuList">
+      <label class="menu-item" data-price="30000">
+        <input type="checkbox" value="💕 연애·결혼운" data-price="30000">
+        <div class="menu-left">
+          <span class="menu-emoji">💕</span>
+          <div class="menu-info">
+            <div class="menu-name">연애·결혼운</div>
+            <div class="menu-desc">인연 시기·상대 스타일·결혼 가능성</div>
+          </div>
+        </div>
+        <div class="menu-right">
+          <div class="menu-price">30,000원</div>
+          <div class="check-icon">✓</div>
+        </div>
+      </label>
+
+      <label class="menu-item" data-price="30000">
+        <input type="checkbox" value="💰 재물·사업운" data-price="30000">
+        <div class="menu-left">
+          <span class="menu-emoji">💰</span>
+          <div class="menu-info">
+            <div class="menu-name">재물·사업운</div>
+            <div class="menu-desc">돈 들어오는 시기·투자·창업 적합성</div>
+          </div>
+        </div>
+        <div class="menu-right">
+          <div class="menu-price">30,000원</div>
+          <div class="check-icon">✓</div>
+        </div>
+      </label>
+
+      <label class="menu-item" data-price="30000">
+        <input type="checkbox" value="💼 직업·취업운" data-price="30000">
+        <div class="menu-left">
+          <span class="menu-emoji">💼</span>
+          <div class="menu-info">
+            <div class="menu-name">직업·취업운</div>
+            <div class="menu-desc">이직·취업 시기·어울리는 직종</div>
+          </div>
+        </div>
+        <div class="menu-right">
+          <div class="menu-price">30,000원</div>
+          <div class="check-icon">✓</div>
+        </div>
+      </label>
+
+      <label class="menu-item" data-price="50000">
+        <input type="checkbox" value="👫 궁합 분석" data-price="50000">
+        <div class="menu-left">
+          <span class="menu-emoji">👫</span>
+          <div class="menu-info">
+            <div class="menu-name">궁합 분석</div>
+            <div class="menu-desc">상대방 사주 정보 필요 (질문란에 기재)</div>
+          </div>
+        </div>
+        <div class="menu-right">
+          <div class="menu-price">50,000원</div>
+          <div class="check-icon">✓</div>
+        </div>
+      </label>
+
+      <label class="menu-item" data-price="30000">
+        <input type="checkbox" value="🌿 건강·가족운" data-price="30000">
+        <div class="menu-left">
+          <span class="menu-emoji">🌿</span>
+          <div class="menu-info">
+            <div class="menu-name">건강·가족운</div>
+            <div class="menu-desc">건강 취약 부위·가족 관계 흐름</div>
+          </div>
+        </div>
+        <div class="menu-right">
+          <div class="menu-price">30,000원</div>
+          <div class="check-icon">✓</div>
+        </div>
+      </label>
+
+      <label class="menu-item" data-price="80000">
+        <input type="checkbox" value="🔮 종합 사주풀이" data-price="80000">
+        <div class="menu-left">
+          <span class="menu-emoji">🔮</span>
+          <div class="menu-info">
+            <div class="menu-name">종합 사주풀이</div>
+            <div class="menu-desc">오행 전체 분석·올해 대운·흐름 총정리</div>
+          </div>
+        </div>
+        <div class="menu-right">
+          <div class="menu-price">80,000원</div>
+          <div class="check-icon">✓</div>
+        </div>
+      </label>
+
+      <label class="menu-item" data-price="100000">
+        <input type="checkbox" value="⭐ 프리미엄 1:1 상담" data-price="100000">
+        <div class="menu-left">
+          <span class="menu-emoji">⭐</span>
+          <div class="menu-info">
+            <div class="menu-name">프리미엄 1:1 상담</div>
+            <div class="menu-desc">음성/영상 통화 30분 + 상세 풀이</div>
+          </div>
+        </div>
+        <div class="menu-right">
+          <div class="menu-price">100,000원</div>
+          <div class="check-icon">✓</div>
+        </div>
+      </label>
+    </div>
+  </div>
+
+  <!-- 의뢰인 정보 -->
+  <div class="card">
+    <div class="card-title">👤 의뢰인 정보</div>
+
+    <div class="field">
+      <label class="req">이름 <span style="font-weight:400;font-size:12px">(실명만 · 닉네임 불가)</span></label>
+      <input type="text" id="name" placeholder="예) 홍길동">
+    </div>
+
+    <div class="field">
+      <label class="req">성별</label>
+      <div class="pills">
+        <div class="pill"><input type="radio" name="gender" id="gf" value="여성"><label for="gf">👩 여성</label></div>
+        <div class="pill"><input type="radio" name="gender" id="gm" value="남성"><label for="gm">👨 남성</label></div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="req">생년월일</label>
+      <div class="row2">
+        <input type="text" id="birth" placeholder="예) 19930103">
+        <div class="pills">
+          <div class="pill"><input type="radio" name="cal" id="cy" value="양력" checked><label for="cy">양력</label></div>
+          <div class="pill"><input type="radio" name="cal" id="ce" value="음력"><label for="ce">음력</label></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>태어난 시간 <span style="font-weight:400;font-size:11px;text-transform:none;letter-spacing:0">(모르면 생략)</span></label>
+      <select id="btime">
+        <option value="">모름 / 생략</option>
+        <option>子시 (23:30~01:30)</option>
+        <option>丑시 (01:30~03:30)</option>
+        <option>寅시 (03:30~05:30)</option>
+        <option>卯시 (05:30~07:30)</option>
+        <option>辰시 (07:30~09:30)</option>
+        <option>巳시 (09:30~11:30)</option>
+        <option>午시 (11:30~13:30)</option>
+        <option>未시 (13:30~15:30)</option>
+        <option>申시 (15:30~17:30)</option>
+        <option>酉시 (17:30~19:30)</option>
+        <option>戌시 (19:30~21:30)</option>
+        <option>亥시 (21:30~23:30)</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>결과 받는 방법</label>
+      <div class="pills">
+        <div class="pill"><input type="radio" name="recv" id="rk" value="카카오톡" checked><label for="rk">💬 카카오톡</label></div>
+        <div class="pill"><input type="radio" name="recv" id="rs" value="문자(SMS)"><label for="rs">📱 문자</label></div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>궁금한 점 (선택)</label>
+      <textarea id="q" placeholder="예) 올해 이직 가능한가요? 궁합이면 상대방 정보도 여기에 써주세요."></textarea>
+    </div>
+  </div>
+
+  <!-- 합계 -->
+  <div class="total-bar">
+    <span class="total-label">💳 예상 금액</span>
+    <span class="total-amount" id="totalAmt">0원</span>
+  </div>
+
+  <button class="send-btn" onclick="send()">
+    <svg width="22" height="22" viewBox="0 0 24 24"><ellipse cx="12" cy="11" rx="10" ry="7.5" fill="#3C1E1E"/><path d="M8 15l-2 4 8-5" fill="#FEE500"/></svg>
+    카카오톡으로 신청하기
+  </button>
+
+  <p class="hint">
+    버튼을 누르면 메시지가 자동으로 만들어져요<br>
+    @사주마루 채널에 붙여넣기 후 전송하면 끝 🙏
+  </p>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const KAKAO_URL = 'https://pf.kakao.com/_xnKExn'; // ★ 실제 카카오 채널 링크로 교체
+
+// 메뉴 클릭 토글
+document.querySelectorAll('.menu-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const cb = item.querySelector('input[type="checkbox"]');
+    cb.checked = !cb.checked;
+    item.classList.toggle('selected', cb.checked);
+    updateTotal();
+  });
+});
+
+function updateTotal() {
+  const checked = [...document.querySelectorAll('.menu-item.selected')];
+  const total = checked.reduce((s, el) => s + parseInt(el.dataset.price), 0);
+  document.getElementById('totalAmt').textContent = total.toLocaleString() + '원';
+}
+
+function build() {
+  const name = document.getElementById('name').value.trim();
+  const gender = document.querySelector('input[name="gender"]:checked')?.value || '';
+  const birth = document.getElementById('birth').value.trim();
+  const cal = document.querySelector('input[name="cal"]:checked')?.value || '양력';
+  const btime = document.getElementById('btime').value;
+  const recv = document.querySelector('input[name="recv"]:checked')?.value || '카카오톡';
+  const types = [...document.querySelectorAll('.menu-item.selected input')].map(e => e.value);
+  const prices = [...document.querySelectorAll('.menu-item.selected')].map(el => `${el.querySelector('.menu-name').textContent} ${parseInt(el.dataset.price).toLocaleString()}원`);
+  const q = document.getElementById('q').value.trim();
+  const total = [...document.querySelectorAll('.menu-item.selected')].reduce((s,el) => s + parseInt(el.dataset.price), 0);
+  return { name, gender, birth, cal, btime, recv, types, prices, q, total };
+}
+
+function validate(d) {
+  if (!d.name) return '이름을 입력해줘요';
+  if (!d.gender) return '성별을 선택해줘요';
+  if (!d.birth) return '생년월일을 입력해줘요';
+  if (!d.types.length) return '상담 메뉴를 하나 이상 선택해줘요';
+  return null;
+}
+
+function fmt(d) {
+  let m = '📋 사주 상담 신청합니다\n';
+  m += '─────────────────\n';
+  m += `👤 이름: ${d.name}\n`;
+  m += `⚧ 성별: ${d.gender}\n`;
+  m += `🎂 생년월일: ${d.birth} (${d.cal})\n`;
+  if (d.btime) m += `⏰ 태어난 시: ${d.btime}\n`;
+  m += `📩 결과 방법: ${d.recv}\n`;
+  m += '─────────────────\n';
+  m += `🔮 신청 메뉴:\n`;
+  d.prices.forEach(p => m += `  • ${p}\n`);
+  m += `💳 합계: ${d.total.toLocaleString()}원\n`;
+  m += '─────────────────';
+  if (d.q) m += `\n💬 질문:\n${d.q}`;
+  return m;
+}
+
+function toast(msg, dur = 2500) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), dur);
+}
+
+async function send() {
+  const d = build();
+  const err = validate(d);
+  if (err) { toast('⚠️ ' + err); return; }
+  const text = fmt(d);
+
+  if (navigator.share) {
+    try { await navigator.share({ text }); return; }
+    catch(e) { if (e.name === 'AbortError') return; }
+  }
+
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch(e) {
+    const ta = Object.assign(document.createElement('textarea'), { value: text, style: 'position:fixed;opacity:0' });
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();
+  }
+  toast('📋 복사 완료! 카카오톡에 붙여넣기 후 전송해주세요', 3000);
+  setTimeout(() => window.open(KAKAO_URL, '_blank'), 600);
+}
+</script>

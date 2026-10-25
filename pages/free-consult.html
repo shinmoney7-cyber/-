@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>무료 기초 사주 신청 — 사주마루</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;900&display=swap">
+<style>
+:root {
+  --bg: #fff;
+  --bg2: #f8f5ff;
+  --fg: #1a0a3e;
+  --fg2: #4a3070;
+  --fg3: #9380b0;
+  --accent: #7b2fff;
+  --gold: #c8960a;
+  --border: #e8e0f5;
+  --green: #16a34a;
+  --card: #fff;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e0620; --bg2: #180a38; --fg: #f0e6ff; --fg2: #c9aeff;
+    --fg3: #8060b0; --accent: #a855f7; --gold: #fbbf24;
+    --border: #2d1a5e; --green: #4ade80; --card: #1a0a3e;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e0620; --bg2: #180a38; --fg: #f0e6ff; --fg2: #c9aeff;
+  --fg3: #8060b0; --accent: #a855f7; --gold: #fbbf24;
+  --border: #2d1a5e; --green: #4ade80; --card: #1a0a3e;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  min-height: 100vh;
+  padding: max(20px, env(safe-area-inset-top,0px)) max(16px, env(safe-area-inset-right,0px)) max(40px, env(safe-area-inset-bottom,0px)) max(16px, env(safe-area-inset-left,0px));
+}
+.wrap { max-width: 480px; margin: 0 auto; }
+.header { text-align: center; padding: 8px 0 20px; }
+.back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; color: var(--fg3); text-decoration: none;
+  padding: 6px 0; margin-bottom: 12px;
+}
+.header h1 { font-size: 24px; font-weight: 900; color: var(--fg); margin-bottom: 6px; }
+.header p { font-size: 14px; color: var(--fg2); line-height: 1.6; }
+.free-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(22,163,74,.12); border: 1.5px solid rgba(22,163,74,.4);
+  border-radius: 20px; padding: 5px 14px;
+  font-size: 13px; font-weight: 700; color: var(--green);
+  margin-bottom: 16px;
+}
+.card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 20px; margin-bottom: 16px;
+}
+.card h2 { font-size: 14px; font-weight: 800; color: var(--fg2); margin-bottom: 14px; text-transform: uppercase; letter-spacing: .05em; }
+.field { margin-bottom: 14px; }
+.field label { display: block; font-size: 13px; font-weight: 700; color: var(--fg2); margin-bottom: 6px; }
+.field input, .field select {
+  width: 100%; padding: 11px 14px; border: 1.5px solid var(--border);
+  border-radius: 10px; font-size: 15px; background: var(--bg2);
+  color: var(--fg); font-family: inherit; outline: none;
+  transition: border-color .15s;
+}
+.field input:focus, .field select:focus { border-color: var(--accent); }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.hint { font-size: 11px; color: var(--fg3); margin-top: 4px; }
+.info-box {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 14px 16px; margin-bottom: 16px;
+  font-size: 13px; color: var(--fg2); line-height: 1.7;
+}
+.info-box strong { color: var(--accent); }
+.btn-kakao {
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
+  background: #FEE500; color: #3C1E1E;
+  border: none; border-radius: 14px; padding: 16px;
+  font-size: 17px; font-weight: 900; cursor: pointer;
+  font-family: inherit; box-shadow: 0 4px 16px rgba(254,229,0,.4);
+  transition: transform .1s, box-shadow .1s;
+}
+.btn-kakao:active { transform: scale(.98); }
+.kakao-icon { width: 24px; height: 24px; }
+.notice { font-size: 12px; color: var(--fg3); text-align: center; margin-top: 10px; line-height: 1.6; }
+#toast {
+  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+  background: rgba(0,0,0,.85); color: #fff; padding: 10px 20px;
+  border-radius: 999px; font-size: 14px; font-weight: 600;
+  opacity: 0; transition: opacity .25s; pointer-events: none; white-space: nowrap; z-index: 999;
+}
+#toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <a href="./saju-page.html" class="back-btn">← 사주마루 메인으로</a>
+    <div class="free-badge">🎁 무료 신청</div>
+    <h1>기초 사주 무료 신청</h1>
+    <p>생년월일시를 입력하면<br>기초 사주 정보를 카카오톡으로 보내드립니다</p>
+  </div>
+
+  <div class="info-box">
+    📌 무료 신청으로 받을 수 있는 것<br>
+    <strong>• 사주 명식 (년·월·일·시 4기둥)</strong><br>
+    <strong>• 오행 비율 및 용신 방향</strong><br>
+    <strong>• 현재 대운 확인</strong><br>
+    <br>
+    자세한 분석은 유료 항목을 통해 받으실 수 있습니다.
+  </div>
+
+  <div class="card">
+    <h2>📋 기본 정보 입력</h2>
+    <div class="field">
+      <label>이름 (한글 · 실명만, 닉네임 불가)</label>
+      <input type="text" id="fName" placeholder="홍길동">
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>성별</label>
+        <select id="fGender">
+          <option value="">선택</option>
+          <option value="남">남성</option>
+          <option value="여">여성</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>양/음력</label>
+        <select id="fCal">
+          <option value="양">양력</option>
+          <option value="음">음력</option>
+        </select>
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>출생 연도</label>
+        <input type="number" id="fYear" placeholder="1990" min="1900" max="2025">
+      </div>
+      <div class="field">
+        <label>월</label>
+        <input type="number" id="fMonth" placeholder="1" min="1" max="12">
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>일</label>
+        <input type="number" id="fDay" placeholder="1" min="1" max="31">
+      </div>
+      <div class="field">
+        <label>출생 시간</label>
+        <input type="number" id="fHour" placeholder="14 (모르면 빈칸)" min="0" max="23">
+        <div class="hint">24시간 기준 (모르면 비워두세요)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📬 연락처</h2>
+    <div class="field">
+      <label>카카오톡 ID <span style="font-weight:400;color:var(--fg3)">(결과 전달용)</span></label>
+      <input type="text" id="fKakao" placeholder="카카오톡 아이디">
+    </div>
+    <div class="field">
+      <label>연락처 (선택)</label>
+      <input type="tel" id="fPhone" placeholder="010-0000-0000">
+    </div>
+  </div>
+
+  <button class="btn-kakao" onclick="sendToKakao()">
+    <svg class="kakao-icon" viewBox="0 0 24 24" fill="none">
+      <path d="M12 2C6.477 2 2 5.925 2 10.8c0 3.132 1.92 5.882 4.8 7.438L5.6 22l5.04-2.58A11.6 11.6 0 0012 19.6c5.523 0 10-3.925 10-8.8S17.523 2 12 2z" fill="#3C1E1E"/>
+    </svg>
+    카카오톡으로 무료 신청하기
+  </button>
+  <div class="notice">
+    신청 후 카카오톡 채널 <strong>@사주마루</strong>로 메시지가 전송됩니다<br>
+    운영시간: 오전 8시 ~ 오후 7시 · 당일 결과 전달
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const KAKAO_CH = 'https://pf.kakao.com/_xnKExn';
+
+function toast(msg, dur=2200){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), dur);
+}
+
+function v(id){ return (document.getElementById(id)?.value||'').trim(); }
+
+function buildText(){
+  const name=v('fName'), gender=v('fGender'), cal=v('fCal');
+  const year=v('fYear'), month=v('fMonth'), day=v('fDay'), hour=v('fHour');
+  const kakao=v('fKakao'), phone=v('fPhone');
+
+  if(!name) return {err:'이름을 입력해주세요'};
+  if(!gender) return {err:'성별을 선택해주세요'};
+  if(!year||!month||!day) return {err:'생년월일을 입력해주세요'};
+
+  let lines=[
+    '📋 사주마루 기초 무료 신청',
+    '─────────────────',
+    `이름: ${name} (${gender})`,
+    `생년월일: ${cal}력 ${year}년 ${month}월 ${day}일${hour?` ${hour}시`:''}`,
+  ];
+  if(kakao) lines.push(`카카오ID: ${kakao}`);
+  if(phone) lines.push(`연락처: ${phone}`);
+  lines.push('─────────────────');
+  lines.push('기초 사주 무료 분석 요청드립니다 🙏');
+  return {text: lines.join('\n')};
+}
+
+async function sendToKakao(){
+  const {err,text}=buildText();
+  if(err){ toast('⚠️ '+err); return; }
+  if(navigator.share){
+    try{ await navigator.share({text}); return; }
+    catch(e){ if(e.name==='AbortError') return; }
+  }
+  try{ await navigator.clipboard.writeText(text); }catch(e){}
+  toast('📋 복사 완료! 카카오톡에 붙여넣기 해주세요', 3000);
+  setTimeout(()=>window.open(KAKAO_CH,'_blank'),600);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__github__pull_request_read",
+      "mcp__github__list_pull_requests",
+      "mcp__github__actions_list",
+      "mcp__Typefully_-_Social_Media_Scheduler__list_drafts",
+      "mcp__Typefully_-_Social_Media_Scheduler__get_draft",
+      "mcp__Typefully_-_Social_Media_Scheduler__list_social_sets",
+      "mcp__Typefully_-_Social_Media_Scheduler__get_social_set_details",
+      "mcp__Gmail__search_threads",
+      "mcp__higgs__jobs_wait",
+      "mcp__higgs__show_generation_by_ids",
+      "mcp__Buffer__get_account",
+      "mcp__Buffer__list_channels"
+    ]
+  }
+}
