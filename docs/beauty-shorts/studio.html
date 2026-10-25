@@ -87,6 +87,11 @@ header.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-cont
 .check th, .check td { text-align: left; border-bottom: 1px solid var(--line); padding: 8px 10px; vertical-align: top; }
 .check th { color: var(--muted); font-weight: 500; font-size: 12px; letter-spacing: .04em; }
 
+.plan { margin-top: 28px; border-top: 1px solid var(--line); padding-top: 18px; }
+.plan-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.plan-head h2 { font-family: var(--display); font-weight: 400; font-size: 22px; margin: 0; }
+.plan-head small { font-family: var(--body); font-size: 13px; color: var(--muted); margin-left: 6px; }
+.plan .mk-card ul { user-select: text; }
 .maker { margin-top: 18px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; }
 .maker summary { cursor: pointer; padding: 14px 16px; font-family: var(--display); font-size: 20px; list-style-position: inside; }
 .maker summary span { font-family: var(--body); font-size: 13px; color: var(--muted); margin-left: 8px; }
@@ -134,7 +139,7 @@ header.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-cont
       <span class="chip">9:16 · 1080×1920</span>
       <span class="chip">15·25·50초</span>
       <span class="chip">제품 유형 8종</span>
-      <span class="chip">AIDA</span>
+      <span class="chip">AIDA(주의·흥미·욕망·행동)</span>
       <span class="chip">유료광고 표기</span>
     </div>
   </header>
@@ -178,6 +183,13 @@ header.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-cont
       </div>
     </aside>
   </div>
+
+  <section class="plan">
+    <div class="plan-head"><h2>기획안 <small>후킹 · 문제점과 전/후 변화 · SEO · GEO · 홍보 효과</small></h2><button class="btn primary" id="planCopy" type="button">기획안 글로 복사</button></div>
+    <p class="vnote" id="planTitle"></p>
+    <p class="vnote">SEO는 검색 최적화(유튜브·네이버 검색에 잘 걸리게), GEO는 AI 검색·답변 최적화(ChatGPT·Gemini 같은 AI가 답변할 때 인용되게)예요. 위에서 고른 제품 유형·길이와 지금 보고 있는 G1~G5 유형으로 바뀝니다.</p>
+    <div class="mk-grid" id="planBody"></div>
+  </section>
 
   <section class="output" id="output" hidden>
     <h2 id="outTitle">이미지</h2>
@@ -588,7 +600,7 @@ function select(idx, force) {
   document.querySelectorAll(".scene").forEach((n, k) => n.classList.toggle("active", k === idx));
   renderPreview();
 }
-function render() { renderTabs(); renderScenes(); renderPreview(); }
+function render() { renderTabs(); renderScenes(); renderPreview(); if (typeof renderPlan === "function" && document.getElementById("planBody")) renderPlan(); }
 function show(canvas, title, cls) {
   const img = $("outImg"); img.src = canvas.toDataURL("image/png"); img.className = cls; img.alt = title;
   $("outTitle").textContent = title; $("output").hidden = false;
@@ -625,6 +637,7 @@ const CTA = ["cta", "제품을 얼굴 옆에 들고 미소 + 하단 화살표 �
 const HERO = ["product", "{P} 정면, 빛 한 줄이 용기를 스치고 손이 들어와 집음", "{P}, 바르는 법 보여드릴게요.", "{P} 바르는 법", CAM.hero, "'톡' 내려놓는 소리"];
 const CATS = {
   skin: {
+    seo: {"kw": ["수분세럼", "세럼추천", "세럼 바르는 법", "보습 루틴", "스킨케어 순서"], "target": "세안 후 당김·화장 들뜸이 고민인 20~30대", "faq": [["세럼은 언제 바르나요?", "토너 다음, 크림 전에 발라요."], ["한 번에 얼마나 쓰나요?", "2~3방울이면 얼굴 전체에 충분해요."], ["메이크업 전에 써도 되나요?", "1~2분 흡수시킨 뒤 베이스를 올리면 돼요."]], "change": {"problem": "세안 후 당김, 각질 들뜸", "after": "바른 직후 촉촉하게 차오른 볼 결", "proof": "같은 조명·각도에서 바르기 전/직후 볼 클로즈업 + 손등 휴지 테스트"}},
     pain: { shot: "세안 직후 당기는 볼을 손끝으로 눌러 보며 살짝 찡그림, 들뜬 각질이 측광에 보임", sub: "세안하고 이렇게 당기면", say: "세안하고 얼굴 당기는 분들," },
     desire: { shot: "측광에 촉촉한 볼 결이 반짝, 손등으로 볼을 쓸어봄", sub: "이 촉촉함, 바르는 법부터", say: "이 촉촉한 결, 바르는 법부터 보세요." },
     name: "기초 스킨케어", sub: "토너 · 세럼 · 크림",
@@ -646,6 +659,7 @@ const CATS = {
       CTA],
   },
   functional: {
+    seo: {"kw": ["기능성화장품", "미백 세럼", "주름개선 크림", "기능성 화장품 사용법", "기능성 표시"], "target": "[고민 부위]가 신경 쓰이는 25~40대", "faq": [["기능성 화장품인지 어떻게 확인하나요?", "용기·상자에 '기능성화장품' 표시와 심사받은 효능 문구가 있어요."], ["얼마나 써야 하나요?", "꾸준히 사용해야 하고 느끼는 정도는 사람마다 달라요."], ["낮에도 써도 되나요?", "낮에는 마지막에 선크림을 꼭 함께 발라요."]], "change": {"problem": "[고민 부위] 고민", "after": "흡수·사용감 (효능 결과는 심사 문구 범위 안에서 표기만)", "proof": "'기능성화장품' 표시 클로즈업 + 손등 흡수 테스트"}},
     pain: { shot: "거울 앞에서 [고민 부위]를 손가락으로 가리키며 한숨", sub: "[고민 부위] 신경 쓰일 때", say: "[고민 부위] 신경 쓰이는 분들," },
     desire: { shot: "정돈된 피부결을 측광으로 천천히 훑음", sub: "기능성, 이렇게 써야 해요", say: "기능성 제품은 쓰는 법이 반이에요." },
     name: "기능성 화장품", sub: "미백 · 주름개선 · 자외선",
@@ -667,6 +681,7 @@ const CATS = {
       CTA],
   },
   sun: {
+    seo: {"kw": ["선크림추천", "백탁없는 선크림", "선크림 바르는 법", "선크림 양", "선크림 덧바르기"], "target": "백탁·눈시림 때문에 선크림을 거르는 20~30대", "faq": [["선크림은 얼마나 발라야 하나요?", "얼굴 기준 손가락 두 마디만큼 충분히 발라요."], ["언제 덧발라야 하나요?", "2~3시간마다 덧바르는 게 좋아요."], ["메이크업 순서는요?", "스킨케어 → 선크림 → 베이스 순서예요."]], "change": {"problem": "하얗게 뜨는 백탁, 눈시림", "after": "바른 직후 하얗게 뜨지 않는 마무리", "proof": "피부톤이 다른 손등 두 개에 같은 양을 발라 백탁 비교"}},
     pain: { shot: "선크림 바른 얼굴이 하얗게 뜬 백탁, 눈가를 비비며 찡그림", sub: "하얗게 뜨고 눈 시리죠?", say: "선크림만 바르면 하얗게 뜨는 분들," },
     desire: { shot: "산뜻하게 마무리된 얼굴, 햇빛 아래 미소", sub: "하얗게 안 뜨게 바르기", say: "하얗게 안 뜨게 바르는 법이에요." },
     name: "선케어", sub: "선크림 · 선스틱 · 선쿠션",
@@ -688,6 +703,7 @@ const CATS = {
       CTA],
   },
   base: {
+    seo: {"kw": ["쿠션추천", "쿠션 바르는 법", "마스크 안 묻는 쿠션", "파운데이션 추천", "쿠션 호수"], "target": "마스크 묻어남·오후 무너짐이 고민인 20~30대 직장인", "faq": [["호수는 어떻게 고르나요?", "턱선에 발라 목과 자연스럽게 이어지는 색을 골라요."], ["들뜨지 않게 바르려면?", "스킨케어 1~2분 흡수 후 얇게 두 번 두드려요."], ["지속력은 어느 정도인가요?", "[시간] 뒤 마스크 묻어남 테스트 장면으로 보여드려요."]], "change": {"problem": "마스크 묻어남, 오후 무너짐", "after": "얇고 매끈하게 밀착된 표현", "proof": "손등 반반 비교 + [시간] 경과 마스크 테스트(실제 시계 표시)"}},
     pain: { shot: "마스크 안쪽에 묻은 쿠션 자국을 카메라에 보여줌 / 오후에 무너진 콧볼 클로즈업", sub: "마스크에 다 묻어나죠?", say: "마스크만 쓰면 쿠션 다 묻어나는 분들," },
     desire: { shot: "매끈하게 표현된 볼을 측광으로 천천히", sub: "얇고 매끈하게 바르는 법", say: "얇고 매끈하게, 이렇게 발라요." },
     name: "베이스 메이크업", sub: "쿠션 · 파운데이션 · 컨실러",
@@ -709,6 +725,7 @@ const CATS = {
       CTA],
   },
   lip: {
+    seo: {"kw": ["틴트추천", "립 발색", "쿨톤 립", "웜톤 립", "묻어남 없는 틴트"], "target": "컵 묻어남·입술 각질이 신경 쓰이는 10~30대", "faq": [["쿨톤·웜톤 둘 다 어울리나요?", "손목 스와치로 톤별 차이를 보여드려요. 발색은 피부·조명마다 달라 보여요."], ["그라데이션은 어떻게 하나요?", "입술 안쪽에 콕 찍고 손가락으로 톡톡 펴요."], ["컵에 묻어나나요?", "컵 테스트 장면으로 묻어나는 정도를 그대로 보여드려요."]], "change": {"problem": "컵 묻어남, 각질 부각", "after": "입술에 고르게 남은 발색", "proof": "팔 안쪽 1회·2회 스와치 + 컵 테스트"}},
     pain: { shot: "컵 가장자리에 진하게 남은 립 자국 / 입술 각질이 부각된 클로즈업", sub: "컵마다 립 자국 남죠?", say: "컵마다 립 자국 남는 분들," },
     desire: { shot: "입술 익스트림 클로즈업, 발색이 차오르듯 채워짐", sub: "이 컬러, 이렇게 발라요", say: "이 컬러 바르는 법 보여드릴게요." },
     name: "립", sub: "틴트 · 립스틱 · 글로스", color: true,
@@ -730,6 +747,7 @@ const CATS = {
       CTA],
   },
   eye: {
+    seo: {"kw": ["섀도 팔레트", "아이메이크업 순서", "데일리 아이섀도", "번짐 없는 마스카라", "아이섀도 바르는 법"], "target": "오후 번짐·눈두덩 뭉침이 고민인 20~30대", "faq": [["섀도는 어떤 순서로 바르나요?", "연한 색 → 중간 색 → 진한 색 → 펄 순서예요."], ["펄은 어디에 바르나요?", "눈 앞머리와 눈두덩 가운데에 올려요."], ["번지지 않나요?", "[시간] 뒤 같은 조명에서 번짐 정도를 보여드려요."]], "change": {"problem": "오후 판다 눈, 섀도 뭉침", "after": "또렷한 그라데이션 눈매", "proof": "컬러별 스와치 + [시간] 경과 번짐 테스트"}},
     pain: { shot: "오후에 아래로 번진 마스카라·섀도(판다 눈) 클로즈업", sub: "오후만 되면 판다 눈?", say: "오후만 되면 눈 밑 번지는 분들," },
     desire: { shot: "눈을 뜨는 순간 펄이 반짝이는 눈매 클로즈업", sub: "이 눈매, 순서만 알면 돼요", say: "이 눈매, 순서만 알면 돼요." },
     name: "아이 메이크업", sub: "섀도 · 라이너 · 마스카라", color: true,
@@ -751,6 +769,7 @@ const CATS = {
       CTA],
   },
   cheek: {
+    seo: {"kw": ["블러셔 추천", "블러셔 위치", "하이라이터 바르는 법", "셰이딩 위치", "생기 메이크업"], "target": "블러셔 얼룩·과한 발색이 고민인 20~30대", "faq": [["블러셔는 어디에 바르나요?", "웃었을 때 볼록한 곳에서 바깥으로 둥글게 발라요."], ["진해지지 않게 하려면?", "브러시를 손등에 한 번 털고 소량씩 올려요."], ["하이라이터 위치는요?", "광대 위, 콧등, 턱 끝이에요."]], "change": {"problem": "얼룩진 블러셔 경계", "after": "경계 없이 자연스러운 생기", "proof": "손등 블렌딩 + 측광 펄 매크로"}},
     pain: { shot: "경계가 얼룩진 블러셔, 너무 진하게 올라간 볼 클로즈업", sub: "블러셔 얼룩질 때", say: "블러셔만 하면 얼룩지는 분들," },
     desire: { shot: "웃는 순간 생기 도는 볼 + 하이라이트 반짝", sub: "생기 볼, 위치 하나로", say: "생기 있는 볼, 위치 하나로 달라 보여요." },
     name: "치크 · 하이라이터 · 셰이딩", sub: "블러셔 · 하이라이터 · 컨투어", color: true,
@@ -772,6 +791,7 @@ const CATS = {
       CTA],
   },
   cleansing: {
+    seo: {"kw": ["클렌징오일 추천", "클렌징 순서", "워터프루프 지우기", "이중세안", "클렌징 사용법"], "target": "잔여물·눈가 자극이 고민인 20~30대", "faq": [["클렌징 오일은 어떻게 쓰나요?", "마른 얼굴에 1분 롤링 후 물을 조금 묻혀 유화시키고 헹궈요."], ["이중세안이 필요한가요?", "폼으로 한 번 더 씻는 걸 권해요."], ["워터프루프도 지워지나요?", "손등 워터프루프 스와치를 지우는 장면으로 보여드려요."]], "change": {"problem": "문질러도 남는 잔여물, 빨개진 눈가", "after": "문지르지 않고 녹여낸 맑은 피부", "proof": "손등 립·아이·쿠션 스와치 지우기"}},
     pain: { shot: "문질러도 남은 마스카라 잔여물, 빨개진 눈가 클로즈업", sub: "문질러도 안 지워질 때", say: "아무리 문질러도 안 지워지는 분들," },
     desire: { shot: "헹군 뒤 물방울 맺힌 맑은 얼굴, 수건으로 톡톡", sub: "문지르지 말고 녹이기", say: "문지르지 말고 이렇게 녹여 보세요." },
     name: "클렌징", sub: "오일 · 밤 · 폼 · 워터",
@@ -923,6 +943,67 @@ function shortSub(x) {
   return (cut > 4 ? out.slice(0, cut) : out.slice(0, 15)).replace(/[\s→,]+$/, "");
 }
 function buildAll() { TYPES.forEach((T, i) => { VERSIONS[T.key] = buildVersion(i); }); }
+
+// 기획안 — 후킹 · 문제점과 전/후 변화 · SEO(검색 최적화) · GEO(AI 검색·답변 최적화) · 홍보 효과 극대화
+function planData(ti) {
+  const c = CATS[MAKER.cat], T = TYPES[ti], L = [15, 25, 50][MAKER.len], P = MAKER.name.trim() || PRODUCT.name, o = c.seo, kw = o.kw;
+  const tag = x => "#" + x.replace(/\s/g, "");
+  const steps = c.howto.map(x => x.replace(/\s*\(.*?\)/g, ""));
+  return {
+    title: `${P} — ${T.name} ${L}초 기획안`,
+    sections: [
+      ["기획 의도", [`목표: ${o.target} 시청자가 0~2초 안에 '내 얘기'라고 느끼고 끝까지 본 뒤 프로필 링크를 누르게 한다.`, `유형: ${T.name} — ${T.desc}`, `핵심 메시지: ${o.change.problem} → ${o.change.after}`]],
+      ["후킹 문구 10개 (모두 0~2초 안에 끝나는 길이)", [c.pain.sub, c.desire.sub, `${kw[0]}, 이 순서 하나만`, `${P} 바르기 전에 이것부터`, `아직도 이렇게 바르세요?`, `${c.name} 고를 때 이것만 보세요`, `테스트 결과부터 보세요`, `같은 고민이면 끝까지 보세요`, `저장해 두고 따라 하는 ${c.name} 순서`, `${kw[2]}, ${steps.length}단계면 끝`]],
+      ["문제점 → 전/후 변화 구성", [
+        `전(문제): ${o.change.problem} — 0~2초 후킹 장면`,
+        `후(변화): ${o.change.after} — 장점 액션 3컷 장면`,
+        `근거 컷: ${o.change.proof}`,
+        "전/후 장면은 같은 장소·조명·각도·노출·보정으로. 가능하면 바르기 전부터 직후까지 한 번에 이어 찍기(중간 컷 없이)",
+        "자막에 '사용 직후 · 개인차 있음' 표기. 효능 결과(미백·주름·탄력 등) 전후는 기능성 심사와 실증 자료가 있을 때만",
+        ...(MAKER.ai ? ["AI 모델 제작: 전/후 변화 장면은 실제 사람·실제 제품으로 찍은 영상만 사용. AI로 만든 전후 비교는 쓰지 않는다"] : []),
+      ]],
+      ["SEO — 제목 후보 (핵심 키워드를 앞에, 40자 이내)", [`${kw[0]} | ${P} 바르는 법 ${L}초 정리`, `${c.pain.sub.replace(/[?!]$/, "")}? ${kw[2]}`, `${kw[1]} — ${steps.length}단계 순서 그대로`, `${kw[3]} | ${c.desire.sub}`, `${P} ${c.name} 사용법, 장점 3가지 액션으로`]],
+      ["SEO — 설명란 (첫 두 줄에 키워드와 고지)", [
+        "이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.",
+        ...(MAKER.ai ? ["이 영상에는 AI로 만든 가상 인물이 출연합니다."] : []),
+        `${P} — ${kw[2]}, ${steps.length}단계로 정리했어요.`,
+        ...steps.map((x, j) => `${j + 1}. ${x}`),
+        "※ 사용감과 발색은 피부 타입·조명에 따라 다를 수 있어요.",
+      ]],
+      ["SEO — 키워드 · 해시태그", [`핵심 키워드: ${kw.join(", ")}`, `자막과 내레이션에서 핵심 키워드 두 개를 한 번씩 말하기 (자동 자막·음성 인식에 잡히게): '${kw[0]}', '${kw[2]}'`, `해시태그: ${[...kw.map(tag), "#뷰티쇼츠", "#" + c.name.replace(/[\s·]/g, ""), "#쇼츠"].join(" ")}`, `파일명: ${kw[0].replace(/\s/g, "")}_${P.replace(/\s/g, "")}_${T.name.replace(/[\s·]/g, "")}_${L}초.mp4 (업로드 파일명에도 키워드)`]],
+      ["GEO — AI 검색·답변(ChatGPT·Gemini·네이버 AI 등)에 인용되게", [
+        "설명란 아래에 질문·답변을 그대로 적기 (AI가 그대로 인용하기 쉬운 형식):",
+        ...o.faq.map(([q, a]) => `Q. ${q} → A. ${a}`),
+        `제품 정보를 사실 위주로 한 줄씩: 제품명 ${P} · 용량 [ ] · 핵심 성분 [ ] · 사용 순서 ${steps.length}단계 (상세페이지와 똑같이)`,
+        "제품명 표기를 영상 자막·제목·설명란·고정 댓글에서 한 글자도 다르지 않게 통일",
+        "숫자로 말하기: 사용량(2~3방울 등), 단계 수, 시간(1~2분 흡수 등) — 모호한 형용사보다 인용되기 쉽다",
+        "고정 댓글에 같은 Q&A 요약 + 프로필 링크(인포크) 안내",
+      ]],
+      ["홍보 효과 극대화", [
+        `커버(썸네일) 문구 3개: "${c.pain.sub}" / "${c.desire.sub}" / "${kw[0]} ${steps.length}단계"`,
+        "커버는 얼굴 + 제품이 함께, 문구는 화면 위쪽 1/3에 2줄 이내",
+        "다섯 편(G1~G5)을 하루 한 편씩 순차 업로드 → 반응 좋은 유형의 후킹만 바꿔 재업로드(A/B 테스트)",
+        "업로드 시간: 출근 전(07~09시)·점심(12~13시)·퇴근 후(20~23시) 중 채널 통계가 가장 좋은 시간",
+        "업로드 후 첫 1시간: 고정 댓글 달기, 댓글마다 답글(질문은 짧은 답 영상으로 다시 만들기)",
+        "플랫폼별: 유튜브 쇼츠는 제목·설명 키워드, 인스타 릴스는 커버·첫 줄 캡션, 틱톡은 0~1초 후킹·트렌드 사운드",
+        "점검 지표: 3초 유지율 70% 이상 · 평균 시청 지속률 · 저장·공유 수 · 프로필 클릭 수 — 3초 유지율이 낮으면 후킹부터 교체",
+      ]],
+    ],
+  };
+}
+function planText(ti) { const d = planData(ti); return [d.title, "", ...d.sections.flatMap(([h, xs]) => ["■ " + h, ...xs.map(x => "- " + x), ""])].join("\n"); }
+function renderPlan() {
+  const box = $("planBody"); if (!box) return;
+  const ti = Math.max(0, TYPES.findIndex(T => T.key === state.v)), d = planData(ti);
+  $("planTitle").textContent = d.title + (TYPES.some(T => T.key === state.v) ? "" : " (G1 기준 — 유형 탭을 고르면 그 유형으로 바뀜)");
+  box.innerHTML = "";
+  for (const [h, xs] of d.sections) {
+    const sec = document.createElement("div"); sec.className = "mk-card";
+    const hh = document.createElement("h3"); hh.textContent = h; sec.appendChild(hh);
+    const ul = document.createElement("ul"); xs.forEach(x => { const li = document.createElement("li"); li.textContent = x; ul.appendChild(li); }); sec.appendChild(ul);
+    box.appendChild(sec);
+  }
+}
 function saveMaker() { try { localStorage.setItem("bs-studio-maker", JSON.stringify(MAKER)); } catch (e) {} }
 if (MAKER.built) {
   buildAll();
@@ -936,7 +1017,7 @@ function renderMaker() {
   for (const [k, v] of Object.entries(CATS)) {
     const b = document.createElement("button"); b.type = "button"; b.className = "cchip"; b.setAttribute("aria-pressed", String(k === MAKER.cat));
     b.innerHTML = `<b></b><small></small>`; b.querySelector("b").textContent = v.name; b.querySelector("small").textContent = v.sub;
-    b.onclick = () => { MAKER.cat = k; saveMaker(); renderMaker(); };
+    b.onclick = () => { MAKER.cat = k; saveMaker(); renderMaker(); renderPlan(); };
     $("catChips").appendChild(b);
   }
   document.querySelectorAll("#lenSeg button").forEach((b, i) => b.setAttribute("aria-pressed", String(i === MAKER.len)));
@@ -953,16 +1034,22 @@ function renderMaker() {
 }
 $("mkName").value = MAKER.name || ""; $("mkName").placeholder = PRODUCT.name;
 $("mkColor").value = MAKER.color; $("mkAiToggle").checked = MAKER.ai;
-$("mkName").addEventListener("input", e => { MAKER.name = e.target.value; saveMaker(); });
+$("mkName").addEventListener("input", e => { MAKER.name = e.target.value; saveMaker(); renderPlan(); });
 $("mkColor").addEventListener("input", e => { MAKER.color = PRODUCT.color = e.target.value; saveMaker(); renderPreview(); });
 $("mkAiToggle").addEventListener("change", e => { MAKER.ai = DISCLOSE.ai = e.target.checked; saveMaker(); renderMaker(); render(); });
-document.querySelectorAll("#lenSeg button").forEach((b, i) => b.addEventListener("click", () => { MAKER.len = i; saveMaker(); renderMaker(); }));
+document.querySelectorAll("#lenSeg button").forEach((b, i) => b.addEventListener("click", () => { MAKER.len = i; saveMaker(); renderMaker(); renderPlan(); }));
 $("mkBuild").addEventListener("click", () => {
   MAKER.built = true; saveMaker();
   buildAll(); state.v = "G1"; state.i = 0; persist(); render();
   $("tabs").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
 });
 renderMaker();
+renderPlan();
+$("planCopy").addEventListener("click", async () => {
+  const ti = Math.max(0, TYPES.findIndex(T => T.key === state.v)), txt = planText(ti);
+  try { await navigator.clipboard.writeText(txt); $("planCopy").textContent = "복사했어요"; } catch (e) { $("planCopy").textContent = "복사가 막혀 있어요 — 아래 글을 길게 눌러 복사"; }
+  setTimeout(() => { $("planCopy").textContent = "기획안 글로 복사"; }, 2000);
+});
 
 window.BS = { VERSIONS, sceneCanvas, boardCanvas, CATS, buildVersion, MAKER };
 render();

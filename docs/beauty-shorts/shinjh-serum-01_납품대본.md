@@ -8,7 +8,7 @@
 | 항목 | 내용 |
 |---|---|
 | 상품 | 수분 세럼 ABC (`[정식 상품명·용량]`) |
-| 채널 | 인포크 `shinjh` 연결 쇼츠 (YouTube Shorts / 인스타 릴스 / 틱톡 공용) |
+| 채널 | 인포크 `shinjh` 연결 쇼츠 (유튜브 쇼츠 / 인스타 릴스 / 틱톡 공용) |
 | 길이 | A·B·C·E안 25초, D안 15초, F안 50초 (각 ±2초) |
 | 화면비 / 해상도 | 9:16, 1080×1920, 30fps |
 | 구조 | AIDA — 주의 · 흥미 · 욕망 · 행동 (25초 기준 0~3 / 3~10 / 10~20 / 20~25초) |
@@ -172,16 +172,16 @@
 요즘 매일 아침 여는 세럼. 물처럼 맑은 제형이에요. 볼에 톡톡 올리고, 바깥으로 살살. 손으로 감싸주면 촉촉하게 마무리. 정보는 프로필 링크에 있어요.
 ```
 
-**D안 AI 영상 생성 프롬프트** — 장면마다 한 클립씩, 기준 사진(모델·제품)을 시작 이미지로 넣고 생성. 자막·고지는 영상에 넣지 말고 편집에서 합성.
+**D안 AI 영상 생성 프롬프트** — 장면마다 한 클립씩, 기준 사진(모델·제품)을 시작 이미지로 넣고 생성. 한국어 프롬프트를 못 읽는 도구라면 번역해서 넣는다. 자막·고지는 영상에 넣지 말고 편집에서 합성.
 
-| 장면 | 길이 | 프롬프트 (영문) |
+| 장면 | 길이 | 프롬프트 |
 |---|---|---|
-| 1번 | 2초 | Product hero: clear glass dropper serum bottle with light-blue serum and white label (use the product photo) on white marble, a hand places it down gently, a soft streak of window light glides across the glass, shallow depth of field, slow motion, 9:16 |
-| 2번 | 2초 | Close-up of manicured hands slowly twisting open the clear glass dropper serum bottle with light-blue serum and white label (use the product photo), lifting the dropper, serum swaying inside the pipette, soft side light, slow motion |
-| 3번 | 2초 | Extreme macro: one clear drop of serum forms at the dropper tip and falls onto a fingertip, dark background, backlit, 120fps slow motion |
-| 4번 | 4초 | Korean woman in her 20s, ash-brown long wavy hair, white tank top with pastel cardigan (use the fixed model reference photo), bare skin, hair tied back, dots serum on cheeks, forehead and chin, then gently spreads it outward with her ring finger, eyes softly closed, calm expression, soft window side light, front camera at eye level |
-| 5번 | 3초 | Korean woman in her 20s, ash-brown long wavy hair, white tank top with pastel cardigan (use the fixed model reference photo), bare skin, presses both palms over her cheeks for three seconds, removes hands to reveal a dewy glow on the cheek in side light, touches cheek with the back of her hand and smiles, no filter look |
-| 6번 | 2초 | Korean woman in her 20s, ash-brown long wavy hair, white tank top with pastel cardigan (use the fixed model reference photo), holds the clear glass dropper serum bottle with light-blue serum and white label (use the product photo) next to her cheek, label facing camera, gentle smile, slow push-in, final frame holds still |
+| 1번 | 2초 | 제품 히어로: 흰 대리석 위 연한 하늘색 세럼이 든 투명 유리 스포이드 병, 흰 라벨(제품 사진 사용), 손이 병을 살며시 내려놓고 창빛 한 줄이 유리를 스침, 얕은 심도, 슬로모션, 9:16 |
+| 2번 | 2초 | 정리된 손이 연한 하늘색 세럼이 든 투명 유리 스포이드 병, 흰 라벨(제품 사진 사용)의 캡을 천천히 돌려 열고 스포이드를 들어 올림, 스포이드 속 세럼이 출렁, 측면 소프트라이트, 슬로모션 |
+| 3번 | 2초 | 극접사: 스포이드 끝에 맑은 세럼 한 방울이 맺혀 손끝에 떨어짐, 어두운 배경, 역광, 120fps 슬로모션 |
+| 4번 | 4초 | 20대 한국 여성, 애쉬 브라운 긴 웨이브 머리, 흰 민소매 + 파스텔 가디건(고정 모델 기준 사진 사용), 생얼, 머리를 뒤로 묶음, 볼·이마·턱에 세럼을 톡톡 올린 뒤 약지로 바깥쪽으로 부드럽게 펴 바름, 눈은 살짝 감고 편안한 표정, 창 측광, 정면 눈높이 |
+| 5번 | 3초 | 20대 한국 여성, 애쉬 브라운 긴 웨이브 머리, 흰 민소매 + 파스텔 가디건(고정 모델 기준 사진 사용), 생얼, 양손바닥으로 볼을 3초 감쌌다 떼면 측광에 볼 윤기, 검지로 볼을 톡 눌렀다 떼며 촉촉하게 차오른 볼, 손등을 휴지로 눌러도 묻어나지 않음, 고개를 돌려 윤기 하이라이트, 필터 없는 느낌 |
+| 6번 | 2초 | 20대 한국 여성, 애쉬 브라운 긴 웨이브 머리, 흰 민소매 + 파스텔 가디건(고정 모델 기준 사진 사용), 연한 하늘색 세럼이 든 투명 유리 스포이드 병, 흰 라벨(제품 사진 사용)을(를) 볼 옆에 들고 라벨을 카메라 쪽으로, 은은한 미소, 천천히 다가가는 카메라, 마지막 프레임 정지 |
 
 ## 7. E안 — 25초 오픈·도포 (기본형)
 
@@ -219,19 +219,19 @@
 아침마다 손이 먼저 가는 세럼이 있어요. [정식 상품명], 상자부터 열어볼게요. 묽은데 손등에서 흐르지 않고 펴져요. 얼굴 다섯 군데에 콕콕 찍고, 안쪽에서 바깥으로, 결 따라 쓸어주면 손바닥으로 감싸서 지그시 눌러줘요. 바른 직후 피부가 촉촉해 보여요. 제품 정보는 프로필 링크에 있어요.
 ```
 
-**E안 AI 영상 생성 프롬프트** — 장면마다 한 클립씩, 기준 사진(모델·제품)을 시작 이미지로 넣고 생성. 자막·고지는 영상에 넣지 말고 편집에서 합성.
+**E안 AI 영상 생성 프롬프트** — 장면마다 한 클립씩, 기준 사진(모델·제품)을 시작 이미지로 넣고 생성. 한국어 프롬프트를 못 읽는 도구라면 번역해서 넣는다. 자막·고지는 영상에 넣지 말고 편집에서 합성.
 
-| 장면 | 길이 | 프롬프트 (영문) |
+| 장면 | 길이 | 프롬프트 |
 |---|---|---|
-| 1번 | 2초 | A hand lifts the clear glass dropper serum bottle with light-blue serum and white label (use the product photo) toward window light, serum gently swaying inside the glass, backlit sparkle, shallow depth of field, slow motion |
-| 2번 | 3초 | Top-down: hands open a minimal skincare box and take out the clear glass dropper serum bottle with light-blue serum and white label (use the product photo), then show the label to camera for one second, soft box light |
-| 3번 | 2초 | Macro of hands twisting open the clear glass dropper serum bottle with light-blue serum and white label (use the product photo) and slowly lifting the dropper, side soft light |
-| 4번 | 3초 | Macro side view of the back of a hand: one drop of serum is spread with a finger, the hand tilts and the serum does not run, glossy backlight |
-| 5번 | 3초 | Korean woman in her 20s, ash-brown long wavy hair, white tank top with pastel cardigan (use the fixed model reference photo), bare skin, hair tied back, places serum dots on forehead, both cheeks, nose and chin with the dropper, front view, soft window light |
-| 6번 | 4초 | Korean woman in her 20s, ash-brown long wavy hair, white tank top with pastel cardigan (use the fixed model reference photo), bare skin, spreads serum from the center outward and upward with ring and middle fingers, gently pats under the eyes, slow calm motion |
-| 7번 | 3초 | Korean woman in her 20s, ash-brown long wavy hair, white tank top with pastel cardigan (use the fixed model reference photo), bare skin, cups her face with both palms and presses gently, eyes closed, takes a slow breath, slow push-in |
-| 8번 | 3초 | Extreme close-up of Korean woman in her 20s, ash-brown long wavy hair, white tank top with pastel cardigan (use the fixed model reference photo)'s cheek in 45-degree side light, she slowly turns her head so the dewy highlight moves across the skin, then smiles |
-| 9번 | 2초 | Korean woman in her 20s, ash-brown long wavy hair, white tank top with pastel cardigan (use the fixed model reference photo), holds the clear glass dropper serum bottle with light-blue serum and white label (use the product photo) beside her face, label to camera, smiles, final frame holds |
+| 1번 | 2초 | 손이 연한 하늘색 세럼이 든 투명 유리 스포이드 병, 흰 라벨(제품 사진 사용)을(를) 창빛 쪽으로 들어 올림, 유리 속 세럼이 출렁이며 역광에 반짝, 얕은 심도, 슬로모션 |
+| 2번 | 3초 | 탑뷰: 손이 미니멀한 화장품 상자를 열고 연한 하늘색 세럼이 든 투명 유리 스포이드 병, 흰 라벨(제품 사진 사용)을(를) 꺼내 라벨을 1초 보여줌, 소프트박스 조명 |
+| 3번 | 2초 | 매크로: 손이 연한 하늘색 세럼이 든 투명 유리 스포이드 병, 흰 라벨(제품 사진 사용)의 캡을 돌려 열고 스포이드를 천천히 들어 올림, 측면 소프트라이트 |
+| 4번 | 3초 | 손등 측면 매크로: 세럼 한 방울을 손가락으로 펴고 손을 기울여도 흘러내리지 않음, 광택이 보이는 역광 |
+| 5번 | 3초 | 20대 한국 여성, 애쉬 브라운 긴 웨이브 머리, 흰 민소매 + 파스텔 가디건(고정 모델 기준 사진 사용), 생얼, 머리를 뒤로 묶음, 스포이드로 이마·양볼·코·턱에 세럼을 콕콕 올림, 정면, 창 자연광 |
+| 6번 | 4초 | 20대 한국 여성, 애쉬 브라운 긴 웨이브 머리, 흰 민소매 + 파스텔 가디건(고정 모델 기준 사진 사용), 생얼, 약지·중지로 안쪽에서 바깥쪽, 아래에서 위로 세럼을 펴 바르고 눈가는 톡톡, 느리고 차분한 손동작 |
+| 7번 | 3초 | 20대 한국 여성, 애쉬 브라운 긴 웨이브 머리, 흰 민소매 + 파스텔 가디건(고정 모델 기준 사진 사용), 생얼, 양손바닥으로 얼굴을 감싸 지그시 누르고 눈을 감은 채 천천히 숨을 들이쉼, 천천히 다가가는 카메라 |
+| 8번 | 3초 | 20대 한국 여성, 애쉬 브라운 긴 웨이브 머리, 흰 민소매 + 파스텔 가디건(고정 모델 기준 사진 사용)의 볼 익스트림 클로즈업, 45° 측광, 검지로 볼을 톡 눌렀다 떼며 촉촉하게 차오른 볼, 고개를 천천히 돌려 윤기 하이라이트가 움직이고 미소 |
+| 9번 | 2초 | 20대 한국 여성, 애쉬 브라운 긴 웨이브 머리, 흰 민소매 + 파스텔 가디건(고정 모델 기준 사진 사용), 연한 하늘색 세럼이 든 투명 유리 스포이드 병, 흰 라벨(제품 사진 사용)을(를) 얼굴 옆에 들고 라벨을 카메라 쪽으로, 미소, 마지막 프레임 정지 |
 
 ## 8. F안 — 50초 풀 루틴 + 솔직 후기
 
@@ -277,23 +277,23 @@
 아침마다 쓰는 세럼, 처음부터 보여드릴게요. [용량] 스포이드 타입이고요, 상자 열면 바로 이렇게. 제형은 물처럼 맑고 묽어요. 펴 발라보면 가볍고, 톡톡 두드려도 손에 달라붙지 않아요. 세안하고 물기만 살짝 닦은 다음, 두세 방울을 얼굴 다섯 군데에 나눠 올려요. 안쪽에서 바깥으로, 남은 건 목까지 쓸어내려 주고요. 손바닥으로 감싸서 3초, 이 순간이 제일 좋아요. 바로 촉촉해 보이죠? 당김 없이 편안해요. 1~2분 흡수시키고 쿠션 올리면 들뜸 없이 잘 붙어요. 향은 [향 정보]이고, 피부 타입마다 느낌은 다를 수 있어요. 제품 정보는 프로필 링크에 정리해뒀어요.
 ```
 
-**F안 AI 영상 생성 프롬프트** — 장면마다 한 클립씩, 기준 사진(모델·제품)을 시작 이미지로 넣고 생성. 자막·고지는 영상에 넣지 말고 편집에서 합성.
+**F안 AI 영상 생성 프롬프트** — 장면마다 한 클립씩, 기준 사진(모델·제품)을 시작 이미지로 넣고 생성. 한국어 프롬프트를 못 읽는 도구라면 번역해서 넣는다. 자막·고지는 영상에 넣지 말고 편집에서 합성.
 
-| 장면 | 길이 | 프롬프트 (영문) |
+| 장면 | 길이 | 프롬프트 |
 |---|---|---|
-| 1번 | 3초 | Dark background, a thin beam of light sweeps down over the clear glass dropper serum bottle with light-blue serum and white label (use the product photo), then a hand enters and picks it up, slow motion, product centered from the first frame |
-| 2번 | 4초 | Top-down unboxing: hands open the box, take out the clear glass dropper serum bottle with light-blue serum and white label (use the product photo), show label and volume to camera, soft box light |
-| 3번 | 3초 | Macro: hands slowly twist open the clear glass dropper serum bottle with light-blue serum and white label (use the product photo) and lift the dropper, serum swaying inside, side soft light |
-| 4번 | 4초 | Extreme macro slow motion: a drop of clear serum forms at the dropper tip and falls, dark background, backlight |
-| 5번 | 4초 | Top-down macro of the back of a hand: serum spread, hand tilts, fingertip taps and lifts off showing no stickiness, side light |
-| 6번 | 3초 | Korean woman in her 20s, ash-brown long wavy hair, white tank top with pastel cardigan (use the fixed model reference photo), bare skin right after face wash, hair tied back, pats water off with a towel, front view at eye level, soft window light |
-| 7번 | 4초 | Korean woman in her 20s, ash-brown long wavy hair, white tank top with pastel cardigan (use the fixed model reference photo), bare skin, places two or three drops of serum on forehead, cheeks, nose and chin with the dropper |
-| 8번 | 5초 | Korean woman in her 20s, ash-brown long wavy hair, white tank top with pastel cardigan (use the fixed model reference photo), bare skin, spreads serum from center outward and upward, pats under the eyes, then sweeps the rest down her neck, slow motion |
-| 9번 | 4초 | Korean woman in her 20s, ash-brown long wavy hair, white tank top with pastel cardigan (use the fixed model reference photo), bare skin, cups her face with both palms for three seconds, eyes closed, slow breath, slow push-in |
-| 10번 | 4초 | Close-up of Korean woman in her 20s, ash-brown long wavy hair, white tank top with pastel cardigan (use the fixed model reference photo)'s cheek in side light, dewy glow, she touches her cheek with the back of her hand and smiles |
-| 11번 | 4초 | Korean woman in her 20s, ash-brown long wavy hair, white tank top with pastel cardigan (use the fixed model reference photo), gently pats a cushion foundation puff on her cheek, makeup sitting smoothly, close-up |
-| 12번 | 4초 | Korean woman in her 20s, ash-brown long wavy hair, white tank top with pastel cardigan (use the fixed model reference photo), natural makeup, holds the clear glass dropper serum bottle with light-blue serum and white label (use the product photo) and talks to camera warmly, medium shot, ring light |
-| 13번 | 4초 | Korean woman in her 20s, ash-brown long wavy hair, white tank top with pastel cardigan (use the fixed model reference photo), holds the clear glass dropper serum bottle with light-blue serum and white label (use the product photo) beside her face, label to camera, smiles, slow push-in, final frame holds |
+| 1번 | 3초 | 어두운 배경, 가는 빛줄기가 연한 하늘색 세럼이 든 투명 유리 스포이드 병, 흰 라벨(제품 사진 사용) 위를 위에서 아래로 훑고 손이 들어와 병을 집음, 슬로모션, 첫 프레임부터 제품이 중앙 |
+| 2번 | 4초 | 탑뷰 언박싱: 손이 상자를 열고 연한 하늘색 세럼이 든 투명 유리 스포이드 병, 흰 라벨(제품 사진 사용)을(를) 꺼내 라벨과 용량을 카메라에 보여줌, 소프트박스 조명 |
+| 3번 | 3초 | 매크로: 손이 연한 하늘색 세럼이 든 투명 유리 스포이드 병, 흰 라벨(제품 사진 사용)의 캡을 천천히 돌려 열고 스포이드를 들어 올림, 스포이드 속 세럼이 출렁, 측면 소프트라이트 |
+| 4번 | 4초 | 극접사 슬로모션: 스포이드 끝에 맑은 세럼 방울이 맺혀 떨어짐, 어두운 배경, 역광 |
+| 5번 | 4초 | 손등 탑뷰 매크로: 세럼을 펴 바르고 손을 기울인 뒤 손가락으로 톡톡 두드렸다 떼도 끈적이지 않음, 측면 조명 |
+| 6번 | 3초 | 20대 한국 여성, 애쉬 브라운 긴 웨이브 머리, 흰 민소매 + 파스텔 가디건(고정 모델 기준 사진 사용), 세안 직후 생얼, 머리를 뒤로 묶음, 수건으로 물기만 톡톡, 정면 눈높이, 창 자연광 |
+| 7번 | 4초 | 20대 한국 여성, 애쉬 브라운 긴 웨이브 머리, 흰 민소매 + 파스텔 가디건(고정 모델 기준 사진 사용), 생얼, 스포이드로 세럼 두세 방울을 이마·양볼·코·턱에 나눠 올림 |
+| 8번 | 5초 | 20대 한국 여성, 애쉬 브라운 긴 웨이브 머리, 흰 민소매 + 파스텔 가디건(고정 모델 기준 사진 사용), 생얼, 안쪽에서 바깥쪽·아래에서 위로 세럼을 펴 바르고 눈가는 톡톡, 남은 세럼은 목까지 쓸어내림, 슬로모션 |
+| 9번 | 4초 | 20대 한국 여성, 애쉬 브라운 긴 웨이브 머리, 흰 민소매 + 파스텔 가디건(고정 모델 기준 사진 사용), 생얼, 양손바닥으로 얼굴을 3초 감싸고 눈을 감은 채 천천히 숨을 들이쉼, 천천히 다가가는 카메라 |
+| 10번 | 4초 | 20대 한국 여성, 애쉬 브라운 긴 웨이브 머리, 흰 민소매 + 파스텔 가디건(고정 모델 기준 사진 사용)의 볼 클로즈업, 측광에 윤기, 검지로 볼을 톡 눌렀다 떼며 촉촉하게 차오른 볼, 손등을 휴지로 눌러도 묻어나지 않음, 고개를 돌려 윤기 하이라이트, 미소 |
+| 11번 | 4초 | 20대 한국 여성, 애쉬 브라운 긴 웨이브 머리, 흰 민소매 + 파스텔 가디건(고정 모델 기준 사진 사용), 쿠션 퍼프로 볼을 톡톡, 메이크업이 매끈하게 밀착되는 클로즈업 |
+| 12번 | 4초 | 20대 한국 여성, 애쉬 브라운 긴 웨이브 머리, 흰 민소매 + 파스텔 가디건(고정 모델 기준 사진 사용), 내추럴 메이크업, 연한 하늘색 세럼이 든 투명 유리 스포이드 병, 흰 라벨(제품 사진 사용)을(를) 들고 카메라를 보며 다정하게 이야기, 미디엄 샷, 링라이트 |
+| 13번 | 4초 | 20대 한국 여성, 애쉬 브라운 긴 웨이브 머리, 흰 민소매 + 파스텔 가디건(고정 모델 기준 사진 사용), 연한 하늘색 세럼이 든 투명 유리 스포이드 병, 흰 라벨(제품 사진 사용)을(를) 얼굴 옆에 들고 라벨을 카메라 쪽으로, 미소, 천천히 다가가는 카메라, 마지막 프레임 정지 |
 
 ---
 
@@ -340,3 +340,94 @@
 
 #수분세럼 #세럼추천 #세럼바르는법 #화장들뜸 #스킨케어루틴 #뷰티쇼츠
 ```
+
+## 12. 기획안 — 후킹 · 문제점과 전/후 변화 · SEO · GEO · 홍보 효과
+
+> 수분 세럼 ABC(기초 스킨케어) · 25초 기준. 다른 제품 유형·길이·대본 유형은 대본 스튜디오 아래쪽 "기획안"에서 바로 만들고 글로 복사할 수 있다.
+> SEO는 검색 최적화(유튜브·네이버 검색에 잘 걸리게), GEO는 AI 검색·답변 최적화(ChatGPT·Gemini·네이버 AI 같은 AI가 답변할 때 인용되게)다.
+
+### 대본 유형 5종의 0~2초 후킹
+
+| 유형 | 0~2초 화면 | 첫 마디 | 자막 | 링크 멘트 |
+|---|---|---|---|---|
+| 욕망형 | [AI 연출 · 효과 단정 자막 금지] [후킹 0~2초 · 결과 먼저] 측광에 촉촉한 볼 결이 반짝, 손등으로 볼을 쓸어봄 | 이 촉촉한 결, 바르는 법부터 보세요. | 이 촉촉함, 바르는 법부터 | 이 느낌 원하면 제품은 프로필 링크에 있어요. |
+| 피해·불편형 | [AI 연출 · 전후 비교로 쓰지 않기] [후킹 0~2초 · 사용 전 불편한 점] 세안 직후 당기는 볼을 손끝으로 눌러 보며 살짝 찡그림, 들뜬 각질이 측광에 보임 | 세안하고 얼굴 당기는 분들, | 세안하고 이렇게 당기면 | 같은 고민이면 제품은 프로필 링크에 있어요. |
+| 전문가형 | [후킹 0~2초 · 정보 선언] 카메라 정면 응시, 손가락으로 '하나'를 세며 단호하게 | 바르는 순서, 이것만 기억하세요. | 이 순서만 기억하세요 | 순서 저장해 두시고, 제품은 프로필 링크에 있어요. |
+| 실험·비교형 | [실촬영] [후킹 0~2초 · 테스트 결과부터] 손등에 펴 바르고 기울이기 → 손가락으로 톡톡 두드려 마무리감 확인 | 테스트 결과부터 보여드릴게요. | 테스트 결과부터 | 결과 보고 고르세요, 제품은 프로필 링크에 있어요. |
+| 호기심형 | [후킹 0~2초 · 질문] 제품을 카메라 앞으로 쑥 내밀며 고개를 갸웃 | 기초 스킨케어, 이렇게 바르고 있나요? | 이렇게 바르고 있나요? | 저장해 두고 따라 해 보세요. 제품은 프로필 링크에. |
+
+### 기획 의도
+
+- 목표: 세안 후 당김·화장 들뜸이 고민인 20~30대 시청자가 0~2초 안에 '내 얘기'라고 느끼고 끝까지 본 뒤 프로필 링크를 누르게 한다.
+- 핵심 메시지: 세안 후 당김, 각질 들뜸 → 바른 직후 촉촉하게 차오른 볼 결
+
+### 후킹 문구 10개 (모두 0~2초 안에 끝나는 길이)
+
+- 세안하고 이렇게 당기면
+- 이 촉촉함, 바르는 법부터
+- 수분세럼, 이 순서 하나만
+- 수분 세럼 ABC 바르기 전에 이것부터
+- 아직도 이렇게 바르세요?
+- 기초 스킨케어 고를 때 이것만 보세요
+- 테스트 결과부터 보세요
+- 같은 고민이면 끝까지 보세요
+- 저장해 두고 따라 하는 기초 스킨케어 순서
+- 세럼 바르는 법, 6단계면 끝
+
+### 문제점 → 전/후 변화 구성
+
+- 전(문제): 세안 후 당김, 각질 들뜸 — 0~2초 후킹 장면
+- 후(변화): 바른 직후 촉촉하게 차오른 볼 결 — 장점 액션 3컷 장면
+- 근거 컷: 같은 조명·각도에서 바르기 전/직후 볼 클로즈업 + 손등 휴지 테스트
+- 전/후 장면은 같은 장소·조명·각도·노출·보정으로. 가능하면 바르기 전부터 직후까지 한 번에 이어 찍기(중간 컷 없이)
+- 자막에 '사용 직후 · 개인차 있음' 표기. 효능 결과(미백·주름·탄력 등) 전후는 기능성 심사와 실증 자료가 있을 때만
+- AI 모델 제작: 전/후 변화 장면은 실제 사람·실제 제품으로 찍은 영상만 사용. AI로 만든 전후 비교는 쓰지 않는다
+
+### SEO — 제목 후보 (핵심 키워드를 앞에, 40자 이내)
+
+- 수분세럼 | 수분 세럼 ABC 바르는 법 25초 정리
+- 세안하고 이렇게 당기면? 세럼 바르는 법
+- 세럼추천 — 6단계 순서 그대로
+- 보습 루틴 | 이 촉촉함, 바르는 법부터
+- 수분 세럼 ABC 기초 스킨케어 사용법, 장점 3가지 액션으로
+
+### SEO — 설명란 (첫 두 줄에 키워드와 고지)
+
+- 이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.
+- 이 영상에는 AI로 만든 가상 인물이 출연합니다.
+- 수분 세럼 ABC — 세럼 바르는 법, 6단계로 정리했어요.
+- 1. 세안 후 물기만 톡톡 정리
+- 2. 적당량 덜기
+- 3. 다섯 군데에 올리기
+- 4. 결 따라 안에서 밖으로 펴기
+- 5. 눈가는 약지로 톡톡
+- 6. 양손바닥으로 감싸 지그시 눌러 흡수
+- ※ 사용감과 발색은 피부 타입·조명에 따라 다를 수 있어요.
+
+### SEO — 키워드 · 해시태그
+
+- 핵심 키워드: 수분세럼, 세럼추천, 세럼 바르는 법, 보습 루틴, 스킨케어 순서
+- 자막과 내레이션에서 핵심 키워드 두 개를 한 번씩 말하기 (자동 자막·음성 인식에 잡히게): '수분세럼', '세럼 바르는 법'
+- 해시태그: #수분세럼 #세럼추천 #세럼바르는법 #보습루틴 #스킨케어순서 #뷰티쇼츠 #기초스킨케어 #쇼츠
+- 파일명: 수분세럼_수분세럼ABC_25초.mp4 (업로드 파일명에도 키워드)
+
+### GEO — AI 검색·답변(ChatGPT·Gemini·네이버 AI 등)에 인용되게
+
+- 설명란 아래에 질문·답변을 그대로 적기 (AI가 그대로 인용하기 쉬운 형식):
+- Q. 세럼은 언제 바르나요? → A. 토너 다음, 크림 전에 발라요.
+- Q. 한 번에 얼마나 쓰나요? → A. 2~3방울이면 얼굴 전체에 충분해요.
+- Q. 메이크업 전에 써도 되나요? → A. 1~2분 흡수시킨 뒤 베이스를 올리면 돼요.
+- 제품 정보를 사실 위주로 한 줄씩: 제품명 수분 세럼 ABC · 용량 [ ] · 핵심 성분 [ ] · 사용 순서 6단계 (상세페이지와 똑같이)
+- 제품명 표기를 영상 자막·제목·설명란·고정 댓글에서 한 글자도 다르지 않게 통일
+- 숫자로 말하기: 사용량(2~3방울 등), 단계 수, 시간(1~2분 흡수 등) — 모호한 형용사보다 인용되기 쉽다
+- 고정 댓글에 같은 Q&A 요약 + 프로필 링크(인포크) 안내
+
+### 홍보 효과 극대화
+
+- 커버(썸네일) 문구 3개: "세안하고 이렇게 당기면" / "이 촉촉함, 바르는 법부터" / "수분세럼 6단계"
+- 커버는 얼굴 + 제품이 함께, 문구는 화면 위쪽 1/3에 2줄 이내
+- 다섯 편(G1~G5)을 하루 한 편씩 순차 업로드 → 반응 좋은 유형의 후킹만 바꿔 재업로드(A/B 테스트)
+- 업로드 시간: 출근 전(07~09시)·점심(12~13시)·퇴근 후(20~23시) 중 채널 통계가 가장 좋은 시간
+- 업로드 후 첫 1시간: 고정 댓글 달기, 댓글마다 답글(질문은 짧은 답 영상으로 다시 만들기)
+- 플랫폼별: 유튜브 쇼츠는 제목·설명 키워드, 인스타 릴스는 커버·첫 줄 캡션, 틱톡은 0~1초 후킹·트렌드 사운드
+- 점검 지표: 3초 유지율 70% 이상 · 평균 시청 지속률 · 저장·공유 수 · 프로필 클릭 수 — 3초 유지율이 낮으면 후킹부터 교체
