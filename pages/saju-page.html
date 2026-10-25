@@ -347,9 +347,9 @@ body{padding:0 16px;padding-block:0;font-size:16px}
 
 <!-- 스티키 하단 CTA (모바일) -->
 <div id="bottomCta" style="position:fixed;bottom:0;left:0;right:0;z-index:300;padding:12px 16px;background:linear-gradient(0deg,var(--bg) 0%,transparent 100%);padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));display:none">
-  <a href="#step1" onclick="document.getElementById('step1').scrollIntoView({behavior:'smooth'});return false;"
+  <a href="#step1" onclick="switchTab('analyze');document.getElementById('step1').scrollIntoView({behavior:'smooth'});return false;"
      style="display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#b87fff,#7b2fff);color:#fff;border-radius:14px;padding:15px;font-size:16px;font-weight:800;text-decoration:none;box-shadow:0 4px 20px rgba(123,47,255,.5);letter-spacing:.02em">
-    🔮 <span>무료 상담 신청하기</span> <span style="font-size:12px;opacity:.85;font-weight:600">(기질 분석 무료)</span>
+    🔮 <span>사주 상담 신청하기</span>
   </a>
 </div>
 <script>
@@ -374,11 +374,11 @@ body{padding:0 16px;padding-block:0;font-size:16px}
 <!-- 헤더 -->
 <div class="app-header">
   <div class="eyebrow">✦ 명리 분석 시스템 ✦</div>
-  <h1><em>사주마루</em> 스튜디오</h1>
-  <div style="display:inline-flex;align-items:center;gap:8px;margin-top:14px;background:color-mix(in srgb,var(--green) 12%,var(--bg2));border:1.5px solid color-mix(in srgb,var(--green) 40%,transparent);border-radius:10px;padding:8px 16px">
-    <span style="font-size:18px">✅</span>
-    <span style="font-size:14px;font-weight:700;color:var(--green)">기질·성향 분석 <strong style="font-size:16px">무료</strong> 제공</span>
-    <span style="font-size:12px;color:var(--fg3)">· 추가 항목 선택 가능</span>
+  <h1><em>사주마루</em></h1>
+  <div style="display:inline-flex;align-items:center;gap:8px;margin-top:14px;background:color-mix(in srgb,var(--gold) 12%,var(--bg2));border:1.5px solid color-mix(in srgb,var(--gold) 40%,transparent);border-radius:10px;padding:8px 16px">
+    <span style="font-size:18px">🔮</span>
+    <span style="font-size:14px;font-weight:700;color:var(--gold)">개별 항목 18,000원부터 · 종합 35,000원</span>
+    <span style="font-size:12px;color:var(--fg3)">· 입금 확인 후 당일 전달</span>
   </div>
   <a id="app-header-bottom" class="btn btn-gold" href="#step1" onclick="document.getElementById('step1').scrollIntoView({behavior:'smooth'});return false;" style="max-width:320px;margin:18px auto 0;display:block;text-decoration:none">🔮 사주 분석 신청하기</a>
   <div style="font-size:12px;color:var(--fg3);margin-top:8px">종합 분석 35,000원 · 개별 항목 15,000원부터 · 입금 확인 후 결과 전달</div>
@@ -457,7 +457,7 @@ _rt=setInterval(function(){setReview((_ri+1)%4);},4500);
     <li style="font-size:14px;color:var(--fg2)">⚡ 지금 이직해야 할지, 기다려야 할지</li>
   </ul>
   <button class="btn btn-primary" style="max-width:280px;margin:0 auto;display:block" onclick="quickSelectChueop()">💼 취업운 분석 신청하기</button>
-  <div style="font-size:12px;color:var(--fg3);margin-top:10px">₩18,000 · 입금 확인 후 결과 전달 · 기질 분석 무료 포함</div>
+  <div style="font-size:12px;color:var(--fg3);margin-top:10px">₩18,000 · 입금 확인 후 결과 전달</div>
 </div>
 
 <!-- ══════════════════════════════════════
@@ -567,13 +567,6 @@ _rt=setInterval(function(){setReview((_ri+1)%4);},4500);
       <input type="text" id="iName" placeholder="홍길동">
     </div>
     <div class="field">
-      <label>한자이름 <span style="font-weight:400;color:var(--fg3)">(선택)</span>
-        <button type="button" onclick="switchTab('hanja');syncHanjaFromForm()" style="margin-left:6px;padding:2px 9px;font-size:11px;font-weight:700;background:var(--bg3);border:1.5px solid var(--border2);border-radius:6px;color:var(--accent);cursor:pointer">🔡 한자 찾기</button>
-      </label>
-      <input type="text" id="iHanjaName" placeholder="洪吉童 (한자 탭에서 자동 입력 가능)">
-      <div class="hint">한자이름 입력 시 성명학·획수·오행 분석이 보고서에 포함됩니다</div>
-    </div>
-    <div class="field">
       <label>현재 거주 지역 <span style="font-weight:400;color:var(--fg3)">(선택)</span></label>
       <input type="text" id="iRegion" placeholder="예: 서울 강남구, 부산 해운대구, 경기 성남시">
       <div class="hint">이사 방향 분석에 활용됩니다</div>
@@ -664,7 +657,6 @@ _rt=setInterval(function(){setReview((_ri+1)%4);},4500);
 <script>
 // ─── 상수 ───────────────────────────────────────────────────────────────
 const MENU=[
-  {name:"성향·기질 분석",      price:0,      pages:70, focus:"타고난 성격·강점·약점·적성"},
   {name:"종합 분석",           price:35000,  pages:70, focus:"사주 명식·오행·성격·재물·직업·연애운·2026년 월별운 전체 보고서"},
   {name:"평생운",              price:29000,  pages:70, focus:"전반적 평생운·대운 흐름·핵심 기질"},
   {name:"연애운",              price:18000,  pages:70, focus:"연애·이성 인연·궁합·결혼 시기"},
@@ -672,7 +664,7 @@ const MENU=[
   {name:"재물운",              price:18000,  pages:70, focus:"재물 흐름·투자 시기·사업 재물"},
   {name:"건강운",              price:18000,  pages:70, focus:"건강 취약점·주의할 시기·관리법"},
   {name:"대운·세운",           price:25000,  pages:70, focus:"대운 10년 흐름·올해 세운"},
-  {name:"직장운",              price:18000,  pages:70, focus:"직장 운·이직 시기·승진 가능성"},
+  {name:"직장·취업운",         price:18000,  pages:70, focus:"직장운·이직·취업·합격 시기·직업 유형 분석"},
   {name:"사업운",              price:25000,  pages:70, focus:"사업 시기·파트너·성패 요인"},
   {name:"부모운",              price:18000,  pages:70, focus:"부모와의 인연·부모 건강·덕"},
   {name:"자식운",              price:18000,  pages:70, focus:"자식 인연·자녀 수·자녀 성향"},
@@ -682,7 +674,6 @@ const MENU=[
   {name:"월별운세",            price:22000,  pages:70, focus:"2026년 월별 상세 운세"},
   {name:"수능·입시운",         price:18000,  pages:70, focus:"학업 운·시험 시기·합격 가능성"},
   {name:"재회운",              price:18000,  pages:70, focus:"전 연인 재회 가능성·시기"},
-  {name:"취업운",              price:18000,  pages:70, focus:"취업·이직·합격 시기·직업 유형 분석"},
   {name:"이혼·결별운",         price:18000,  pages:70, focus:"이별·이혼 시기·원인·향후 운"},
   {name:"도화살 전문분석",     price:18000,  pages:70, focus:"도화살 종류·발현 시기·활용법"},
   {name:"이런 사람 만나지 마라",price:15000, pages:70, focus:"피해야 할 인연 유형·특징"},
@@ -941,8 +932,8 @@ function switchTab(name){
 function syncSubSections(){
   const g=id=>document.getElementById(id);
   const fv=id=>g(id)?.value||"";
-  const pairs=[["simName","iName"],["simHanja","iHanjaName"],["simYear","iYear"],["simMonth","iMonth"],["simDay","iDay"],["simHour","iHour"],["simMin","iMin"],
-               ["cheolName","iName"],["cheolHanja","iHanjaName"],["cheolYear","iYear"],["cheolMonth","iMonth"],["cheolDay","iDay"],["cheolHour","iHour"],["cheolMin","iMin"]];
+  const pairs=[["simName","iName"],["simYear","iYear"],["simMonth","iMonth"],["simDay","iDay"],["simHour","iHour"],["simMin","iMin"],
+               ["cheolName","iName"],["cheolYear","iYear"],["cheolMonth","iMonth"],["cheolDay","iDay"],["cheolHour","iHour"],["cheolMin","iMin"]];
   pairs.forEach(([t,s])=>{const te=g(t);const sv=fv(s);if(te)te.value=sv;});
   ["simGender","cheolGender"].forEach(id=>{const e=g(id);if(e)e.value=fv("iGender");});
   ["simCal","cheolCal"].forEach(id=>{const e=g(id);if(e)e.value=fv("iCal");});
@@ -1114,7 +1105,7 @@ async function onImageSelect(e){
 }
 
 function quickSelectChueop(){
-  const idx=MENU.findIndex(m=>m.name==='취업운');
+  const idx=MENU.findIndex(m=>m.name==='직장·취업운');
   if(idx>=0){
     const cb=document.querySelectorAll('#menuGrid .menu-item')[idx]?.querySelector('input');
     if(cb&&!cb.checked){ cb.checked=true; const d=cb.closest('.menu-item'); if(d){ d.classList.add('selected'); } }
@@ -3984,5 +3975,19 @@ function copyRb(){
 
 renderRbRules();
 </script>
+
+<!-- 사주마루명리분석신청서 링크 배너 -->
+<div style="max-width:640px;margin:32px auto 16px;padding:0 16px">
+  <a href="./saju-order.html" style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:linear-gradient(135deg,rgba(184,127,255,.15),rgba(245,200,66,.10));border:1.5px solid rgba(184,127,255,.4);border-radius:16px;padding:18px 20px;text-decoration:none;transition:transform .15s">
+    <div style="display:flex;align-items:center;gap:12px">
+      <span style="font-size:28px">📋</span>
+      <div>
+        <div style="font-family:var(--fdisp);font-size:16px;font-weight:900;color:var(--accent);line-height:1.2">사주마루 명리분석 신청서</div>
+        <div style="font-size:12px;color:var(--fg3);margin-top:3px">항목 선택 → 카카오톡으로 바로 신청</div>
+      </div>
+    </div>
+    <span style="font-size:20px;color:var(--accent)">→</span>
+  </a>
+</div>
 
 </body></html>
