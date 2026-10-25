@@ -7,7 +7,10 @@ Buffer 초안에는 이미지가 없어서 인스타그램 게시가 막혀 있�
   NotoSansKR.ttf, NotoSerifKR.ttf  (가변 폰트)
 
 사용법:
-  python instagram/sajumaru/make_cards.py --fonts <폰트 폴더>
+  python instagram/sajumaru/make_cards.py --fonts <폰트 폴더> [--cards <cards.json>]
+
+cards.json 은 카드 목록이거나, 다른 계정용으로 {"brand", "handle", "theme", "cards"} 객체다.
+이미지는 cards.json 옆의 images/ 에 저장된다.
 """
 
 from __future__ import annotations
@@ -53,9 +56,15 @@ class Fonts:
         return font
 
 
-def background(seed: int) -> Image.Image:
+THEMES = {
+    "night": {"top": (14, 18, 44), "bottom": (34, 28, 66), "accent": GOLD},
+    "rose": {"top": (40, 16, 40), "bottom": (78, 32, 66), "accent": (238, 176, 164)},
+}
+
+
+def background(seed: int, theme: dict) -> Image.Image:
     img = Image.new("RGB", (W, H))
-    top, bottom = (14, 18, 44), (34, 28, 66)
+    top, bottom = theme["top"], theme["bottom"]
     px = img.load()
     for y in range(H):
         t = y / H
@@ -108,14 +117,17 @@ def centered(draw, y, text, font, fill, max_w=920, spacing=1.35):
     return y
 
 
-def render(card: dict, fonts: Fonts, seed: int) -> Image.Image:
-    img = background(seed)
+def render(card: dict, fonts: Fonts, seed: int, brand: str, handle: str, theme: dict) -> Image.Image:
+    img = background(seed, theme)
     d = ImageDraw.Draw(img)
+    accent = theme["accent"]
     color, _ = ELEMENT[card["element"]]
+    if color == GOLD:
+        color = accent
 
     # 상단 브랜드
-    centered(d, 70, "사 주 마 루", fonts.get("serif", 34, 700), GOLD)
-    d.line([(W / 2 - 60, 128), (W / 2 + 60, 128)], fill=GOLD, width=2)
+    centered(d, 70, " ".join(brand), fonts.get("serif", 34, 700), accent)
+    d.line([(W / 2 - 60, 128), (W / 2 + 60, 128)], fill=accent, width=2)
     if card.get("kicker"):
         centered(d, 148, card["kicker"], fonts.get("sans", 30, 500), MUTED)
 
@@ -131,7 +143,7 @@ def render(card: dict, fonts: Fonts, seed: int) -> Image.Image:
     # 제목
     y = centered(d, 530, card["title"], fonts.get("serif", 72, 800), WHITE, spacing=1.3)
     if card.get("subtitle"):
-        y = centered(d, y + 14, card["subtitle"], fonts.get("sans", 36, 500), GOLD) + 10
+        y = centered(d, y + 14, card["subtitle"], fonts.get("sans", 36, 500), accent) + 10
 
     # 본문 박스
     points = card.get("points", [])
@@ -156,8 +168,8 @@ def render(card: dict, fonts: Fonts, seed: int) -> Image.Image:
     # 하단 CTA
     footer = card.get("footer", "무료 사주 신청은 프로필 링크에서")
     d.line([(90, H - 150), (W - 90, H - 150)], fill=(255, 255, 255, 40), width=1)
-    centered(d, H - 125, footer, fonts.get("sans", 32, 600), GOLD)
-    centered(d, H - 75, "@sajumaru77", fonts.get("sans", 26, 400), MUTED)
+    centered(d, H - 125, footer, fonts.get("sans", 32, 600), accent)
+    centered(d, H - 75, handle, fonts.get("sans", 26, 400), MUTED)
     if card.get("page"):
         d.text((W - 150, 72), card["page"], font=fonts.get("sans", 28, 600), fill=MUTED)
     return img
@@ -166,13 +178,19 @@ def render(card: dict, fonts: Fonts, seed: int) -> Image.Image:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--fonts", type=Path, required=True)
+    ap.add_argument("--cards", type=Path, default=HERE / "cards.json")
     args = ap.parse_args()
     fonts = Fonts(args.fonts)
-    cards = json.loads((HERE / "cards.json").read_text(encoding="utf-8"))
-    out = HERE / "images"
+    data = json.loads(args.cards.read_text(encoding="utf-8"))
+    if isinstance(data, list):
+        data = {"cards": data}
+    brand = data.get("brand", "사주마루")
+    handle = data.get("handle", "@sajumaru77")
+    theme = THEMES[data.get("theme", "night")]
+    out = args.cards.parent / "images"
     out.mkdir(exist_ok=True)
-    for i, card in enumerate(cards):
-        render(card, fonts, seed=i).save(out / f"{card['file']}.jpg", quality=92)
+    for i, card in enumerate(data["cards"]):
+        render(card, fonts, i, brand, handle, theme).save(out / f"{card['file']}.jpg", quality=92)
         print(card["file"])
 
 
