@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>무료 기초 사주 신청 — 사주마루</title>
+<title>무료 기초 사주 — 사주마루</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;900&display=swap">
 <style>
 :root {
@@ -17,20 +17,21 @@
   --border: #e8e0f5;
   --green: #16a34a;
   --card: #fff;
+  --red: #dc2626;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #0e0620; --bg2: #180a38; --fg: #f0e6ff; --fg2: #c9aeff;
     --fg3: #8060b0; --accent: #a855f7; --gold: #fbbf24;
-    --border: #2d1a5e; --green: #4ade80; --card: #1a0a3e;
+    --border: #2d1a5e; --green: #4ade80; --card: #1a0a3e; --red: #f87171;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #0e0620; --bg2: #180a38; --fg: #f0e6ff; --fg2: #c9aeff;
   --fg3: #8060b0; --accent: #a855f7; --gold: #fbbf24;
-  --border: #2d1a5e; --green: #4ade80; --card: #1a0a3e;
+  --border: #2d1a5e; --green: #4ade80; --card: #1a0a3e; --red: #f87171;
   color-scheme: dark;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -39,7 +40,7 @@ body {
   background: var(--bg);
   color: var(--fg);
   min-height: 100vh;
-  padding: max(20px, env(safe-area-inset-top,0px)) max(16px, env(safe-area-inset-right,0px)) max(40px, env(safe-area-inset-bottom,0px)) max(16px, env(safe-area-inset-left,0px));
+  padding: max(20px, env(safe-area-inset-top,0px)) max(16px, env(safe-area-inset-right,0px)) max(60px, env(safe-area-inset-bottom,0px)) max(16px, env(safe-area-inset-left,0px));
 }
 .wrap { max-width: 480px; margin: 0 auto; }
 .header { text-align: center; padding: 8px 0 20px; }
@@ -79,17 +80,78 @@ body {
   font-size: 13px; color: var(--fg2); line-height: 1.7;
 }
 .info-box strong { color: var(--accent); }
-.btn-kakao {
+.btn-confirm {
   width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
-  background: #FEE500; color: #3C1E1E;
+  background: var(--accent); color: #fff;
   border: none; border-radius: 14px; padding: 16px;
   font-size: 17px; font-weight: 900; cursor: pointer;
-  font-family: inherit; box-shadow: 0 4px 16px rgba(254,229,0,.4);
+  font-family: inherit; box-shadow: 0 4px 16px rgba(123,47,255,.35);
   transition: transform .1s, box-shadow .1s;
+  margin-bottom: 12px;
 }
-.btn-kakao:active { transform: scale(.98); }
-.kakao-icon { width: 24px; height: 24px; }
-.notice { font-size: 12px; color: var(--fg3); text-align: center; margin-top: 10px; line-height: 1.6; }
+.btn-confirm:active { transform: scale(.98); }
+
+/* 결과 섹션 */
+.result-section {
+  display: none;
+  background: var(--card); border: 1.5px solid var(--accent);
+  border-radius: 16px; padding: 20px; margin-bottom: 16px;
+}
+.result-section.show { display: block; }
+.result-title {
+  font-size: 16px; font-weight: 900; color: var(--accent);
+  margin-bottom: 16px; text-align: center;
+}
+.result-name-row {
+  text-align: center; font-size: 15px; font-weight: 700; color: var(--fg2);
+  margin-bottom: 18px;
+}
+.pillars-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+  margin-bottom: 18px;
+}
+.pillar-box {
+  background: var(--bg2); border-radius: 12px; padding: 12px 6px;
+  text-align: center;
+}
+.pillar-label { font-size: 11px; color: var(--fg3); margin-bottom: 6px; font-weight: 600; }
+.pillar-hanja { font-size: 22px; font-weight: 900; color: var(--accent); line-height: 1.2; }
+.pillar-hangul { font-size: 13px; color: var(--fg2); margin-top: 4px; }
+.pillar-element { font-size: 11px; margin-top: 3px; }
+
+.ohang-section { margin-bottom: 18px; }
+.ohang-title { font-size: 13px; font-weight: 700; color: var(--fg2); margin-bottom: 10px; }
+.ohang-bars { display: flex; flex-direction: column; gap: 6px; }
+.ohang-row { display: flex; align-items: center; gap: 10px; }
+.ohang-name { width: 28px; font-size: 13px; font-weight: 700; }
+.ohang-bar-wrap { flex: 1; background: var(--border); border-radius: 99px; height: 10px; overflow: hidden; }
+.ohang-bar { height: 100%; border-radius: 99px; transition: width .6s; }
+.ohang-count { font-size: 12px; color: var(--fg3); width: 20px; text-align: right; }
+
+.daewoon-section { }
+.daewoon-title { font-size: 13px; font-weight: 700; color: var(--fg2); margin-bottom: 10px; }
+.daewoon-list { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+.daewoon-item {
+  flex: 0 0 64px; background: var(--bg2); border-radius: 10px; padding: 10px 6px;
+  text-align: center; border: 1.5px solid transparent;
+}
+.daewoon-item.current { border-color: var(--accent); background: rgba(123,47,255,.1); }
+.daewoon-age { font-size: 11px; color: var(--fg3); margin-bottom: 4px; }
+.daewoon-hanja { font-size: 16px; font-weight: 900; color: var(--fg); }
+.daewoon-hangul { font-size: 11px; color: var(--fg2); margin-top: 2px; }
+
+.result-note {
+  margin-top: 16px; font-size: 12px; color: var(--fg3);
+  text-align: center; line-height: 1.6;
+  border-top: 1px solid var(--border); padding-top: 14px;
+}
+.btn-order {
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+  background: var(--bg2); color: var(--accent); border: 1.5px solid var(--accent);
+  border-radius: 12px; padding: 13px; font-size: 15px; font-weight: 800;
+  cursor: pointer; font-family: inherit; text-decoration: none;
+  margin-top: 14px;
+}
 #toast {
   position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
   background: rgba(0,0,0,.85); color: #fff; padding: 10px 20px;
@@ -103,24 +165,24 @@ body {
 <div class="wrap">
   <div class="header">
     <a href="./saju-page.html" class="back-btn">← 사주마루 메인으로</a>
-    <div class="free-badge">🎁 무료 신청</div>
-    <h1>기초 사주 무료 신청</h1>
-    <p>생년월일시를 입력하면<br>기초 사주 정보를 카카오톡으로 보내드립니다</p>
+    <div class="free-badge">🎁 무료 분석</div>
+    <h1>기초 사주 무료 분석</h1>
+    <p>생년월일시를 입력하면<br>사주 명식과 오행, 대운을 바로 확인할 수 있어요</p>
   </div>
 
   <div class="info-box">
-    📌 무료 신청으로 받을 수 있는 것<br>
+    📌 무료로 확인할 수 있는 것<br>
     <strong>• 사주 명식 (년·월·일·시 4기둥)</strong><br>
-    <strong>• 오행 비율 및 용신 방향</strong><br>
-    <strong>• 현재 대운 확인</strong><br>
+    <strong>• 오행 구성 비율</strong><br>
+    <strong>• 현재 대운 흐름</strong><br>
     <br>
-    자세한 분석은 유료 항목을 통해 받으실 수 있습니다.
+    용신·격국·심층 운세 분석은 <a href="./saju-order.html" style="color:var(--accent);font-weight:700">유료 상담 신청</a>으로 받을 수 있어요
   </div>
 
   <div class="card">
     <h2>📋 기본 정보 입력</h2>
     <div class="field">
-      <label>이름 (한글 · 실명만, 닉네임 불가)</label>
+      <label>이름 <span style="font-weight:400;color:var(--fg3)">(한글 · 실명만, 닉네임 불가)</span></label>
       <input type="text" id="fName" placeholder="홍길동">
     </div>
     <div class="row2">
@@ -156,82 +218,284 @@ body {
         <input type="number" id="fDay" placeholder="1" min="1" max="31">
       </div>
       <div class="field">
-        <label>출생 시간</label>
-        <input type="number" id="fHour" placeholder="14 (모르면 빈칸)" min="0" max="23">
-        <div class="hint">24시간 기준 (모르면 비워두세요)</div>
+        <label>출생 시간 <span style="font-weight:400;font-size:11px">(선택)</span></label>
+        <select id="fHour">
+          <option value="">모름 / 생략</option>
+          <option value="0">子시 (23:30~01:30)</option>
+          <option value="2">丑시 (01:30~03:30)</option>
+          <option value="4">寅시 (03:30~05:30)</option>
+          <option value="6">卯시 (05:30~07:30)</option>
+          <option value="8">辰시 (07:30~09:30)</option>
+          <option value="10">巳시 (09:30~11:30)</option>
+          <option value="12">午시 (11:30~13:30)</option>
+          <option value="14">未시 (13:30~15:30)</option>
+          <option value="16">申시 (15:30~17:30)</option>
+          <option value="18">酉시 (17:30~19:30)</option>
+          <option value="20">戌시 (19:30~21:30)</option>
+          <option value="22">亥시 (21:30~23:30)</option>
+        </select>
       </div>
     </div>
   </div>
 
-  <div class="card">
-    <h2>📬 연락처</h2>
-    <div class="field">
-      <label>카카오톡 ID <span style="font-weight:400;color:var(--fg3)">(결과 전달용)</span></label>
-      <input type="text" id="fKakao" placeholder="카카오톡 아이디">
-    </div>
-    <div class="field">
-      <label>연락처 (선택)</label>
-      <input type="tel" id="fPhone" placeholder="010-0000-0000">
-    </div>
-  </div>
-
-  <button class="btn-kakao" onclick="sendToKakao()">
-    <svg class="kakao-icon" viewBox="0 0 24 24" fill="none">
-      <path d="M12 2C6.477 2 2 5.925 2 10.8c0 3.132 1.92 5.882 4.8 7.438L5.6 22l5.04-2.58A11.6 11.6 0 0012 19.6c5.523 0 10-3.925 10-8.8S17.523 2 12 2z" fill="#3C1E1E"/>
-    </svg>
-    카카오톡으로 무료 신청하기
+  <button class="btn-confirm" onclick="calcSaju()">
+    ✨ 확인 — 기초 사주 분석 보기
   </button>
-  <div class="notice">
-    신청 후 카카오톡 채널 <strong>@사주마루</strong>로 메시지가 전송됩니다<br>
-    운영시간: 오전 8시 ~ 오후 7시 · 당일 결과 전달
+
+  <!-- 결과 영역 -->
+  <div class="result-section" id="resultSection">
+    <div class="result-title">🔮 기초 사주 분석 결과</div>
+    <div class="result-name-row" id="resNameRow"></div>
+
+    <div class="pillars-grid" id="pillarsGrid"></div>
+
+    <div class="ohang-section">
+      <div class="ohang-title">🌊 오행 구성</div>
+      <div class="ohang-bars" id="ohangBars"></div>
+    </div>
+
+    <div class="daewoon-section">
+      <div class="daewoon-title">⏳ 대운 흐름</div>
+      <div class="daewoon-list" id="daewoonList"></div>
+    </div>
+
+    <div class="result-note">
+      이 분석은 기초 명식 정보입니다.<br>
+      용신·격국·심층 운세 해석은 전문 상담을 통해 받아보세요.
+    </div>
+    <a class="btn-order" href="./saju-order.html">📋 심층 유료 상담 신청하기 →</a>
   </div>
 </div>
 
 <div id="toast"></div>
 
 <script>
-const KAKAO_CH = 'https://pf.kakao.com/_xnKExn';
+// ─── 기초 데이터 ───────────────────────────────────────────
+const 천간 = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+const 천간음 = ['갑','을','병','정','무','기','경','신','임','계'];
+const 지지 = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+const 지지음 = ['자','축','인','묘','진','사','오','미','신','유','술','해'];
+const 천간오행 = ['木','木','火','火','土','土','金','金','水','水'];
+const 지지오행 = ['水','土','木','木','土','火','火','土','金','金','土','水'];
+const 오행색 = { '木':'#16a34a', '火':'#dc2626', '土':'#ca8a04', '金':'#9ca3af', '水':'#2563eb' };
+const 오행이모지 = { '木':'🌳', '火':'🔥', '土':'🌍', '金':'⚙️', '水':'💧' };
 
-function toast(msg, dur=2200){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), dur);
+// 절기 기준 월주 계산을 위한 절기일 (양력, 간략화 — 실용 근사)
+const 절기월 = [
+  { m:1,  d:6  }, // 소한
+  { m:2,  d:4  }, // 입춘
+  { m:3,  d:6  }, // 경칩
+  { m:4,  d:5  }, // 청명
+  { m:5,  d:6  }, // 입하
+  { m:6,  d:6  }, // 망종
+  { m:7,  d:7  }, // 소서
+  { m:8,  d:7  }, // 입추
+  { m:9,  d:8  }, // 백로
+  { m:10, d:8  }, // 한로
+  { m:11, d:7  }, // 입동
+  { m:12, d:7  }, // 대설
+];
+
+function 연주계산(year) {
+  const idx = (year - 4) % 60;
+  const t = ((idx % 10) + 10) % 10;
+  const z = ((idx % 12) + 12) % 12;
+  return { h: 천간[t], z: 지지[z], ho: 천간음[t], zo: 지지음[z],
+           he: 천간오행[t], ze: 지지오행[z] };
 }
 
-function v(id){ return (document.getElementById(id)?.value||'').trim(); }
+function 월주계산(year, month, day) {
+  // 절기 기준으로 달 인덱스 결정
+  let jMonth = month - 1; // 0-based
+  const 절기 = 절기월[month - 1];
+  if (day < 절기.d) jMonth = ((month - 2) + 12) % 12;
 
-function buildText(){
-  const name=v('fName'), gender=v('fGender'), cal=v('fCal');
-  const year=v('fYear'), month=v('fMonth'), day=v('fDay'), hour=v('fHour');
-  const kakao=v('fKakao'), phone=v('fPhone');
+  // 인월(寅)이 1월(index 0)
+  // 연간 천간에 따라 월간 산출 (오호둔년법)
+  const 연간idx = (year - 4) % 10;
+  // 甲己 → 인월 丙寅, 乙庚 → 무인, 丙辛 → 경인, 丁壬 → 임인, 戊癸 → 갑인
+  const 월간시작 = [2, 4, 6, 8, 0]; // 丙,戊,庚,壬,甲
+  const 시작천간 = 월간시작[연간idx % 5];
 
-  if(!name) return {err:'이름을 입력해주세요'};
-  if(!gender) return {err:'성별을 선택해주세요'};
-  if(!year||!month||!day) return {err:'생년월일을 입력해주세요'};
-
-  let lines=[
-    '📋 사주마루 기초 무료 신청',
-    '─────────────────',
-    `이름: ${name} (${gender})`,
-    `생년월일: ${cal}력 ${year}년 ${month}월 ${day}일${hour?` ${hour}시`:''}`,
-  ];
-  if(kakao) lines.push(`카카오ID: ${kakao}`);
-  if(phone) lines.push(`연락처: ${phone}`);
-  lines.push('─────────────────');
-  lines.push('기초 사주 무료 분석 요청드립니다 🙏');
-  return {text: lines.join('\n')};
+  const t = (시작천간 + jMonth) % 10;
+  const z = (2 + jMonth) % 12; // 寅(2)부터 시작
+  return { h: 천간[t], z: 지지[z], ho: 천간음[t], zo: 지지음[z],
+           he: 천간오행[t], ze: 지지오행[z] };
 }
 
-async function sendToKakao(){
-  const {err,text}=buildText();
-  if(err){ toast('⚠️ '+err); return; }
-  if(navigator.share){
-    try{ await navigator.share({text}); return; }
-    catch(e){ if(e.name==='AbortError') return; }
+function 일주계산(year, month, day) {
+  // 갑자일 기준: 2000-01-07 (양력) = 갑자
+  const base = new Date(2000, 0, 7);
+  const target = new Date(year, month - 1, day);
+  const diff = Math.round((target - base) / 86400000);
+  const idx = ((diff % 60) + 60) % 60;
+  const t = idx % 10;
+  const z = idx % 12;
+  return { h: 천간[t], z: 지지[z], ho: 천간음[t], zo: 지지음[z],
+           he: 천간오행[t], ze: 지지오행[z] };
+}
+
+function 시주계산(일주h, hourVal) {
+  if (hourVal === '') return null;
+  const h = parseInt(hourVal);
+  // 시지: 자(0)=0, 축(2)=1, ..., 해(22)=11
+  const zIdx = Math.floor(h / 2) % 12;
+  // 자시 천간 = 일간에 따른 오자둔일법
+  const 일간idx = 천간.indexOf(일주h);
+  const 자시천간 = [0, 2, 4, 6, 8][일간idx % 5]; // 甲→甲, 乙→丙, 丙→戊, 丁→庚, 戊→壬
+  const tIdx = (자시천간 + zIdx) % 10;
+  return { h: 천간[tIdx], z: 지지[zIdx], ho: 천간음[tIdx], zo: 지지음[zIdx],
+           he: 천간오행[tIdx], ze: 지지오행[zIdx] };
+}
+
+function 오행집계(pillars) {
+  const cnt = { '木':0, '火':0, '土':0, '金':0, '水':0 };
+  pillars.forEach(p => {
+    if (p) { cnt[p.he]++; cnt[p.ze]++; }
+  });
+  return cnt;
+}
+
+function 대운계산(year, month, day, gender, 월주p) {
+  // 순행/역행: 양남음녀 순행, 음남양녀 역행
+  const 연간idx = (year - 4) % 10;
+  const 양간 = 연간idx % 2 === 0; // 甲丙戊庚壬 = 양간
+  const 순행 = (양간 && gender === '남') || (!양간 && gender === '여');
+
+  // 대운 시작 나이: 생일~다음(이전) 절기까지 일수 / 3 (반올림)
+  const birthDate = new Date(year, month - 1, day);
+  let 절기날;
+  if (순행) {
+    // 다음 절기 찾기
+    const monthIdx = month - 1;
+    const 이번절기 = 절기월[monthIdx];
+    if (day < 이번절기.d) {
+      절기날 = new Date(year, monthIdx, 이번절기.d);
+    } else {
+      const nextM = (monthIdx + 1) % 12;
+      const nextY = nextM === 0 ? year + 1 : year;
+      절기날 = new Date(nextY, nextM, 절기월[nextM].d);
+    }
+  } else {
+    // 이전 절기 찾기
+    const monthIdx = month - 1;
+    const 이번절기 = 절기월[monthIdx];
+    if (day >= 이번절기.d) {
+      절기날 = new Date(year, monthIdx, 이번절기.d);
+    } else {
+      const prevM = (monthIdx - 1 + 12) % 12;
+      const prevY = monthIdx === 0 ? year - 1 : year;
+      절기날 = new Date(prevY, prevM, 절기월[prevM].d);
+    }
   }
-  try{ await navigator.clipboard.writeText(text); }catch(e){}
-  toast('📋 복사 완료! 카카오톡에 붙여넣기 해주세요', 3000);
-  setTimeout(()=>window.open(KAKAO_CH,'_blank'),600);
+  const dayDiff = Math.abs(Math.round((절기날 - birthDate) / 86400000));
+  const startAge = Math.round(dayDiff / 3) || 1;
+
+  // 월주에서 이어지는 대운 10개
+  const 월zIdx = 지지.indexOf(월주p.z);
+  const 월hIdx = 천간.indexOf(월주p.h);
+  const result = [];
+  for (let i = 1; i <= 10; i++) {
+    const offset = 순행 ? i : -i;
+    const zi = ((월zIdx + offset) % 12 + 12) % 12;
+    const hi = ((월hIdx + offset) % 10 + 10) % 10;
+    result.push({
+      age: startAge + (i - 1) * 10,
+      h: 천간[hi], z: 지지[zi],
+      ho: 천간음[hi], zo: 지지음[zi],
+    });
+  }
+  return { startAge, list: result };
+}
+
+// ─── 유효성 검사 & 계산 ────────────────────────────────────
+function toast(msg, dur = 2500) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), dur);
+}
+
+function calcSaju() {
+  const name = document.getElementById('fName').value.trim();
+  const gender = document.getElementById('fGender').value;
+  const cal = document.getElementById('fCal').value;
+  const year = parseInt(document.getElementById('fYear').value);
+  const month = parseInt(document.getElementById('fMonth').value);
+  const day = parseInt(document.getElementById('fDay').value);
+  const hourVal = document.getElementById('fHour').value;
+
+  if (!name) { toast('⚠️ 이름을 입력해줘요'); return; }
+  if (!gender) { toast('⚠️ 성별을 선택해줘요'); return; }
+  if (!year || !month || !day) { toast('⚠️ 생년월일을 입력해줘요'); return; }
+  if (year < 1900 || year > 2025) { toast('⚠️ 연도는 1900~2025 사이로 입력해줘요'); return; }
+  if (month < 1 || month > 12) { toast('⚠️ 월을 1~12 사이로 입력해줘요'); return; }
+  if (day < 1 || day > 31) { toast('⚠️ 일을 1~31 사이로 입력해줘요'); return; }
+  if (cal === '음') { toast('⚠️ 음력은 현재 양력으로 변환 후 입력해주세요'); return; }
+
+  const 연p = 연주계산(year);
+  const 월p = 월주계산(year, month, day);
+  const 일p = 일주계산(year, month, day);
+  const 시p = 시주계산(일p.h, hourVal);
+
+  const pillars = [연p, 월p, 일p, 시p].filter(Boolean);
+  const oh = 오행집계([연p, 월p, 일p, 시p]);
+  const dw = 대운계산(year, month, day, gender, 월p);
+  const currentYear = new Date().getFullYear();
+  const currentAge = currentYear - year;
+
+  // ─ 결과 렌더링 ─
+  document.getElementById('resNameRow').textContent =
+    `${name} (${gender === '남' ? '남성' : '여성'}) · ${year}년 ${month}월 ${day}일`;
+
+  // 4주 그리드
+  const labels = ['연주 年柱', '월주 月柱', '일주 日柱', '시주 時柱'];
+  const allP = [연p, 월p, 일p, 시p];
+  const grid = document.getElementById('pillarsGrid');
+  grid.innerHTML = '';
+  allP.forEach((p, i) => {
+    if (!p) { grid.innerHTML += `<div class="pillar-box" style="opacity:.4"><div class="pillar-label">${labels[i]}</div><div class="pillar-hanja" style="font-size:14px">—</div><div class="pillar-hangul">모름</div></div>`; return; }
+    grid.innerHTML += `
+      <div class="pillar-box">
+        <div class="pillar-label">${labels[i]}</div>
+        <div class="pillar-hanja" style="color:${오행색[p.he]}">${p.h}</div>
+        <div class="pillar-element" style="color:${오행색[p.he]}">${오행이모지[p.he]}${p.he}</div>
+        <div class="pillar-hanja" style="color:${오행색[p.ze]};margin-top:8px">${p.z}</div>
+        <div class="pillar-hangul">${p.ho}${p.zo}</div>
+        <div class="pillar-element" style="color:${오행색[p.ze]}">${오행이모지[p.ze]}${p.ze}</div>
+      </div>`;
+  });
+
+  // 오행 바
+  const total = Object.values(oh).reduce((s,v)=>s+v,0)||1;
+  const bars = document.getElementById('ohangBars');
+  bars.innerHTML = '';
+  ['木','火','土','金','水'].forEach(e => {
+    const pct = Math.round(oh[e]/total*100);
+    bars.innerHTML += `
+      <div class="ohang-row">
+        <span class="ohang-name">${오행이모지[e]}</span>
+        <div class="ohang-bar-wrap"><div class="ohang-bar" style="width:${pct}%;background:${오행색[e]}"></div></div>
+        <span class="ohang-count">${oh[e]}</span>
+      </div>`;
+  });
+
+  // 대운
+  const dl = document.getElementById('daewoonList');
+  dl.innerHTML = '';
+  dw.list.forEach(d => {
+    const isCurrent = currentAge >= d.age && currentAge < d.age + 10;
+    dl.innerHTML += `
+      <div class="daewoon-item${isCurrent?' current':''}">
+        <div class="daewoon-age">${d.age}세~</div>
+        <div class="daewoon-hanja">${d.h}</div>
+        <div class="daewoon-hanja">${d.z}</div>
+        <div class="daewoon-hangul">${d.ho}${d.zo}</div>
+      </div>`;
+  });
+
+  const sec = document.getElementById('resultSection');
+  sec.classList.add('show');
+  sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 </script>
 </body>
