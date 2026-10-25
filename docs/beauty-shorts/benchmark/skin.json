@@ -8,6 +8,7 @@
  "videos": [
   {
    "desc": "#longevity #antiaging #serum #NAD #tiktokshopstockup @Eqqualberry @EQQUALBERRY",
+   "desc_ko": "NAD+ 안티에이징 세럼 소개",
    "sec": 71.9,
    "plays": 805744,
    "gmv": 33644.31,
@@ -19,6 +20,7 @@
   },
   {
    "desc": "Nina knows best 👏👏 #ninalin #evelynortiz #wendyortiz #medicubeskincare #moisturizer",
+   "desc_ko": "역시 니나가 제일 잘 안다는 보습크림",
    "sec": 42.0,
    "plays": 237805,
    "gmv": 14786,
@@ -30,6 +32,7 @@
   },
   {
    "desc": "Si puedes ver el pequeño carro amarillo en la esquina inferior izquierda, significa que tienes suerte, todavía hay en stock, porque he estad",
+   "desc_ko": "노란 장바구니 보이면 아직 재고 있다는 아이마스크",
    "sec": 28.1,
    "plays": 2208225,
    "gmv": 11608.87,
@@ -41,6 +44,7 @@
   },
   {
    "desc": "Her glowup is unreal 🤩 #amandasolis #ninalin #evelynortiz #skincaretips #moisturizer",
+   "desc_ko": "피부 변신이 놀라운 인물 클립과 보습크림",
    "sec": 51.5,
    "plays": 160305,
    "gmv": 8757,
@@ -52,6 +56,7 @@
   },
   {
    "desc": "Dr Melaxin Calcium Skin 5 piece set @Dr.Melaxin #drmelaxin #koreanskincare #toner #eyepatches #moisturizer",
+   "desc_ko": "Dr.Melaxin 칼슘 스킨케어 5종 세트",
    "sec": 47.0,
    "plays": 132590,
    "gmv": 8016.8,
@@ -63,6 +68,7 @@
   },
   {
    "desc": "[mixsoon Official] Glass Skin Essential Skincare Routine Set @TikTok Shop 🇺🇸 #cleanser #Moisturizer #dehydratedskin #DeepGlow #SmoothCare",
+   "desc_ko": "mixsoon 유리알 피부 필수 스킨케어 루틴 세트",
    "sec": 24.0,
    "plays": 144444,
    "gmv": 6714.75,
@@ -74,6 +80,7 @@
   },
   {
    "desc": "#Collagen #Nicotinamide #serumfacial #serum #beauty",
+   "desc_ko": "콜라겐·나이아신아마이드 페이셜 세럼",
    "sec": 34.7,
    "plays": 147107,
    "gmv": 5431.6,
@@ -85,6 +92,7 @@
   },
   {
    "desc": "Our SUMMER SALE IS ON!!! Take 20% off all orders, or 30% off orders over $90 ‼️ We'd love to know what's in your 🛒! #watercream #skincaresal",
+   "desc_ko": "여름 세일: 전 주문 20%, $90 이상 30% 할인",
    "sec": 64.6,
    "plays": 130713,
    "gmv": 5007.96,
@@ -96,6 +104,7 @@
   },
   {
    "desc": "#serum #NAD #longevity #antiaging #tiktokshopdealsforyoudays",
+   "desc_ko": "NAD+ 안티에이징 세럼 소개",
    "sec": 70.5,
    "plays": 63025,
    "gmv": 4968.88,
@@ -107,6 +116,7 @@
   },
   {
    "desc": "Replying to @Jenny Parra #longevity #antiaging #NAD #serum #skincareroutine @Eqqualberry @EQQUALBERRY",
+   "desc_ko": "댓글 질문에 답하는 NAD+ 세럼 후속 영상",
    "sec": 59.6,
    "plays": 55478,
    "gmv": 4834.01,
@@ -125,12 +135,12 @@
   "share_over60s": 30
  },
  "patterns": [
-  "#serum 해시태그 GMV 상위는 속눈썹 세럼(gabytipsalud, 최고 $78.5K)·발모 세럼이 차지해 페이스 세럼만 남기면 데이터가 얇음. 상위 10개 중 30~60초가 50%, 중앙값 49.2초로 '짧을수록 잘 팔린다'는 패턴은 보이지 않음.",
-  "1위(juanvanetok NAD+ 안티에이징 세럼, $33.6K)는 댓글 1,868개로 상위권 중 댓글 비중이 가장 높음. 같은 크리에이터가 'Replying to @Jenny Parra' 댓글 답장 영상을 이어 올려 RPM 87.1(10개 중 최고)을 기록 → 댓글 질문에 답하는 후속 영상이 1,000회 재생당 매출이 가장 높았음.",
-  "셀럽/인물 클립형: 'Nina knows best', 'Her glowup is unreal', 'NINA puts TIANAS chat on to what MOISTURIZER she uses' 같은 남의 루틴 엿보기 프레이밍이 cookie3lg 2개(합계 $23.5K, CVR 0.24~0.27%)로 반복 등장. 국내에선 실존 인물 언급이 사실 확인·초상권 문제가 되므로 '촉촉한 피부결, 순서가 비결'처럼 인물 없이 각색.",
-  "가격대: 상위 영상 평균 단가는 대부분 $15~$55 구간. $6 아이마스크(hester.pymer)는 220만 재생에 3,636 댓글로 화제성은 컸지만 RPM 5.3으로 가장 낮음 → 저가·대량 노출형은 매출 효율이 떨어짐.",
-  "재고/희소성 훅: 스페인어 'Si puedes ver el pequeño carro amarillo… todavía hay en stock'(노란 장바구니가 보이면 아직 재고 있다는 뜻) → '장바구니 보이면 아직 재고 있어요'로 각색 가능. 세일 공지형(cocokind 'SUMMER SALE IS ON')도 상위권.",
-  "K-뷰티 세트(Dr.Melaxin 5종, mixsoon 세트 $90.7)는 단가가 높아 RPM 46~60으로 준수함. 세트·번들 구성은 객단가를 끌어올리는 장치로 확인됨."
+  "세럼 해시태그 매출 상위는 속눈썹 세럼(gabytipsalud, 최고 $78.5K)·발모 세럼이 차지해 페이스 세럼만 남기면 데이터가 얇음. 상위 10개 중 30~60초가 50%, 중앙값 49.2초로 '짧을수록 잘 팔린다'는 패턴은 보이지 않음.",
+  "1위(juanvanetok NAD+ 안티에이징 세럼, $33.6K)는 댓글 1,868개로 상위권 중 댓글 비중이 가장 높음. 같은 크리에이터가 '@Jenny Parra님 댓글에 답장' 형식의 후속 영상을 올려 1천 회당 매출 87.1(10개 중 최고)을 기록 → 댓글 질문에 답하는 후속 영상이 1천 회 재생당 매출이 가장 높았음.",
+  "셀럽/인물 클립형: '역시 니나가 제일 잘 알아', '저 사람 피부 변신 실화야?', '니나가 티아나한테 자기가 쓰는 보습크림을 알려줬대' 같은 남의 루틴 엿보기 프레이밍이 cookie3lg 2개(합계 $23.5K, 전환율 0.24~0.27%)로 반복 등장. 국내에선 실존 인물 언급이 사실 확인·초상권 문제가 되므로 '촉촉한 피부결, 순서가 비결'처럼 인물 없이 각색.",
+  "가격대: 상위 영상 평균 단가는 대부분 $15~$55 구간. $6 아이마스크(hester.pymer)는 220만 재생에 3,636 댓글로 화제성은 컸지만 1천 회당 매출 5.3으로 가장 낮음 → 저가·대량 노출형은 매출 효율이 떨어짐.",
+  "재고/희소성 훅: 스페인어 원문 '왼쪽 아래에 작은 노란 장바구니가 보이면 운이 좋은 거예요, 아직 재고가 있다는 뜻이에요' → '장바구니 보이면 아직 재고 있어요'로 각색 가능. 세일 공지형(cocokind '여름 세일 시작했어요!')도 상위권.",
+  "K-뷰티 세트(Dr.Melaxin 5종, mixsoon 세트 $90.7)는 단가가 높아 1천 회당 매출 46~60으로 준수함. 세트·번들 구성은 객단가를 끌어올리는 장치로 확인됨."
  ],
  "hooks_ko": [
   "촉촉한 피부결, 순서가 비결",

@@ -8,6 +8,7 @@
  "videos": [
   {
    "desc": "@tarte cosmetics Holiday Set #tiktokshopcreatorpicks #tiktokshopstockup #tarte #tartecosmetics #mascara",
+   "desc_ko": "tarte 홀리데이 세트",
    "sec": 39.2,
    "plays": 812542,
    "gmv": 153296,
@@ -19,6 +20,7 @@
   },
   {
    "desc": "The tarte Eyes on Me Mascara & Liner Clutch comes with the tartelette tubing mascara, tartelette XL tubing mascara, and Quick Stick eyeliner",
+   "desc_ko": "tarte 마스카라 2종·아이라이너 파우치 세트, 구성 혜자",
    "sec": 19.4,
    "plays": 422012,
    "gmv": 74712,
@@ -30,6 +32,7 @@
   },
   {
    "desc": "Are we SEEEEINGGG how gorgeous this black honey shade is??? #mascara #Eyeliner #tiktokshopcreatorpicks #tiktokshopblackfriday #discoveryourg",
+   "desc_ko": "이 블랙 허니 색상 너무 예쁘지 않아요? Clinique 마스카라",
    "sec": 30.4,
    "plays": 642510,
    "gmv": 51369.79,
@@ -41,6 +44,7 @@
   },
   {
    "desc": "Replying to @Abby Suarez iykyk @tarte cosmetics is the actual tea when it comes to length and volume. This duo is 🤌 #mascarareview #lashestu",
+   "desc_ko": "댓글에 답장: 길이·볼륨은 tarte 마스카라 듀오",
    "sec": 68.3,
    "plays": 1583642,
    "gmv": 49928,
@@ -52,6 +56,7 @@
   },
   {
    "desc": "NEW L’Oreal Paris Volume Liberte Mascara @loréal paris usa #mascara #mascarareview #volumemascara #bestmascara #lorealparispartner",
+   "desc_ko": "새로 나온 로레알 볼륨 리베르테 마스카라",
    "sec": 39.9,
    "plays": 7178171,
    "gmv": 48935.66,
@@ -63,6 +68,7 @@
   },
   {
    "desc": "Replying to @ALF hope this helps! #fyp #makeup #mascara",
+   "desc_ko": "댓글에 답장: 도움이 되길 바라는 마스카라 팁",
    "sec": 24.1,
    "plays": 2226264,
    "gmv": 40335,
@@ -74,6 +80,7 @@
   },
   {
    "desc": "My NEW favorite mascara…!!! The @loréal paris usa Volume Liberté is next level!!! 😱 #BeautyTok #mascara #jeffreestar #loreal #viral Duet. w ",
+   "desc_ko": "새 최애 마스카라, 로레알 볼륨 리베르테 듀엣 영상",
    "sec": 120.1,
    "plays": 1430093,
    "gmv": 28511.3,
@@ -85,6 +92,7 @@
   },
   {
    "desc": "The side by side is WILD #volumizingmascara #firstimpression #mascara #loreal #fullerlashes @loréal paris usa",
+   "desc_ko": "나란히 비교하니 차이가 엄청난 로레알 볼륨 마스카라",
    "sec": 89.2,
    "plays": 1327743,
    "gmv": 25065.55,
@@ -96,6 +104,7 @@
   },
   {
    "desc": "✨✨💕I got rid of all my grape mascara and fake lashes at home and switched to this instead - I absolutely love it✨✨👇👇#TikTokShop #beauty #bea",
+   "desc_ko": "집에 있던 마스카라·인조 속눈썹 버리고 갈아탄 마스카라",
    "sec": 38.9,
    "plays": 1513829,
    "gmv": 23072.95,
@@ -107,6 +116,7 @@
   },
   {
    "desc": "回复 @layasiaThank you for sharing such a great mascara, wishing you more and more beauty💞🫶❤️‍🔥💞#loveyou #mascara #tiktokshop #tiktokmademebuy",
+   "desc_ko": "좋은 마스카라 공유해 줘서 고맙다는 댓글 답장",
    "sec": 45.5,
    "plays": 1253160,
    "gmv": 22125.75,
@@ -125,12 +135,12 @@
   "share_over60s": 30
  },
  "patterns": [
-  "아이 카테고리는 #mascara가 #eyeshadow보다 GMV가 커서 상위 10개가 모두 마스카라. 아이섀도 최고는 Kat James 'As we get older, we often give up on makeup, but that's actually the time we need it most!'($20.3K)로 11위.",
-  "홀리데이 세트가 압도적: tarte 홀리데이 세트(ericakate_, 단가 $143, $153.3K, RPM 188.7)와 'The value on this set is SO good!'(_dashandluna_ 19초, $74.7K, RPM 177.0). 고단가 세트는 짧은 영상으로도 1,000회당 매출이 가장 높음.",
-  "비교·첫인상형: 'The side by side is WILD'(lily_luann, #firstimpression), Jeffree Star 듀엣 'My NEW favorite mascara…!!!' → 비포/애프터 나란히 보여주기. 한국어: '한쪽만 발라봤어요, 차이 보세요'.",
-  "대형 브랜드 파트너 영상(L'Oréal, alexisleianna)은 718만 재생으로 최대 노출이지만 RPM 6.8·CVR 0.04% → 재생 수와 매출 효율은 별개.",
-  "댓글 답장형 'Replying to @ALF hope this helps!'(24초, $40.3K), 'Replying to @Abby Suarez iykyk'(68초, $49.9K) → 질문에 답하는 형식이 상위 10개 중 3개.",
-  "반복 게시: luket2448이 저가($9.5~$13.8) 마스카라를 2번 올려 합계 $45.2K. 'I got rid of all my … fake lashes … and switched to this instead' → '속눈썹 속눈썹 연장 대신 이거?'로 각색 가능."
+  "아이 카테고리는 마스카라 해시태그가 아이섀도 해시태그보다 매출이 커서 상위 10개가 모두 마스카라. 아이섀도 최고는 Kat James '나이가 들면 화장을 포기하곤 하지만, 사실 그때가 화장이 가장 필요한 때예요!'($20.3K)로 11위.",
+  "홀리데이 세트가 압도적: tarte 홀리데이 세트(ericakate_, 단가 $143, $153.3K, 1천 회당 매출 188.7)와 '이 세트 구성 진짜 혜자예요!'(_dashandluna_ 19초, $74.7K, 1천 회당 매출 177.0). 고단가 세트는 짧은 영상으로도 1천 회당 매출이 가장 높음.",
+  "비교·첫인상형: '나란히 비교하니까 차이가 미쳤어'(lily_luann, 첫인상 리뷰), Jeffree Star 듀엣 '새로 찾은 최애 마스카라…!!!' → 비포/애프터 나란히 보여주기. 한국어: '한쪽만 발라봤어요, 차이 보세요'.",
+  "대형 브랜드 파트너 영상(L'Oréal, alexisleianna)은 718만 재생으로 최대 노출이지만 1천 회당 매출 6.8·전환율 0.04% → 재생 수와 매출 효율은 별개.",
+  "댓글 답장형 '@ALF님 댓글에 답장 — 도움이 되면 좋겠어요!'(24초, $40.3K), '@Abby Suarez님 댓글에 답장 — 아는 사람은 다 알지'(68초, $49.9K) → 질문에 답하는 형식이 상위 10개 중 3개.",
+  "반복 게시: luket2448이 저가($9.5~$13.8) 마스카라를 2번 올려 합계 $45.2K. '집에 있던 마스카라랑 인조 속눈썹 다 버리고 이걸로 갈아탔어요' → '속눈썹 연장 대신 이거?'로 각색 가능."
  ],
  "hooks_ko": [
   "한쪽만 바르고 비교해볼게요",

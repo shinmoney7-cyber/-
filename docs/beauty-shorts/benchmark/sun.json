@@ -8,6 +8,7 @@
  "videos": [
   {
    "desc": "Respuesta a @Alicia #sunscreen #sadoerprotectorsolar #tiktokshopsummersale #blackfriday",
+   "desc_ko": "@Alicia님 댓글에 답하는 선크림 소개",
    "sec": 70.0,
    "plays": 3823125,
    "gmv": 48472.68,
@@ -19,6 +20,7 @@
   },
   {
    "desc": "I’m reposting this for all my besties because WHAT DO YOU MEAN ITS ONLY 1/3 of what I paid for it?!! ALL of this for that price?!?? Click th",
+   "desc_ko": "내가 산 가격의 3분의 1이라니, 못 믿겠으면 링크 확인",
    "sec": 70.4,
    "plays": 254946,
    "gmv": 24150.34,
@@ -30,6 +32,7 @@
   },
   {
    "desc": "#skin1004 #sunscreen #hyperpigmentation",
+   "desc_ko": "SKIN1004 선크림, 색소 고민",
    "sec": 54.4,
    "plays": 1616451,
    "gmv": 18967.09,
@@ -41,6 +44,7 @@
   },
   {
    "desc": "Get ready with me for the gym… waking up ugly as hell lol 🤓 #morningroutine #skincare #spf #facetape #grwm",
+   "desc_ko": "헬스 가기 전 같이 준비해요, 아침 선크림 루틴",
    "sec": 96.2,
    "plays": 477704,
    "gmv": 18235.8,
@@ -52,6 +56,7 @@
   },
   {
    "desc": "#sunscreen 🙇🏻‍♀️✨",
+   "desc_ko": "선크림 소개",
    "sec": 10.1,
    "plays": 599526,
    "gmv": 16837.93,
@@ -63,6 +68,7 @@
   },
   {
    "desc": "#sunscreen #koreansunscreen #kbeauty #skin1004 #sunprotection @SKIN1004 US",
+   "desc_ko": "SKIN1004 한국 선크림",
    "sec": 63.4,
    "plays": 646902,
    "gmv": 15288.99,
@@ -74,6 +80,7 @@
   },
   {
    "desc": "#tiktokshopsummersale #tiktokshopcreatorpicks #sunscreen #koreansunscreen #sunprotection Results may vary Do your own research Based on my e",
+   "desc_ko": "한국 선크림 소개, 개인 경험 기준이며 결과는 다를 수 있음",
    "sec": 94.5,
    "plays": 593555,
    "gmv": 13140.4,
@@ -85,6 +92,7 @@
   },
   {
    "desc": "How are they doing this?!? #nakedsundays #suncare #suitcase #spf #giftset",
+   "desc_ko": "이 구성이 어떻게 이 가격이죠? 선케어 선물 세트",
    "sec": 96.7,
    "plays": 454978,
    "gmv": 7207.2,
@@ -96,6 +104,7 @@
   },
   {
    "desc": "I might tell a joke, but I will never tell a lie. 😏 #GrabIt #fyp #sunscreen",
+   "desc_ko": "농담은 해도 거짓말은 안 해요, 선크림 추천",
    "sec": 39.1,
    "plays": 245706,
    "gmv": 6903.37,
@@ -107,6 +116,7 @@
   },
   {
    "desc": "@MISTINE SKINCARE #mistine #sunscreen#TikTokshopbacktoschool #spf50 #nowhitecast",
+   "desc_ko": "MISTINE 백탁 없는 자외선 차단 지수 50 선크림",
    "sec": 29.4,
    "plays": 824240,
    "gmv": 6864.53,
@@ -125,12 +135,12 @@
   "share_over60s": 60
  },
  "patterns": [
-  "선케어는 상위 10개 중 60%가 60초 초과(중앙값 66.7초)로 8개 카테고리 중 가장 긴 편. 1위 silvanitavacan(70초, 382만 재생, $48.5K)은 'Respuesta a @Alicia'로 시작하는 스페인어 댓글 답장 영상.",
-  "가격 충격 훅: 'WHAT DO YOU MEAN ITS ONLY 1/3 of what I paid for it?!! … Click the link if you don't believe me'(alexdegasperis, Naked Sundays 세트 $65.6) → RPM 94.7로 선케어 최고. 한국어 각색: '이 가격에 이 구성?' (가격 비교는 실제 가격 근거가 있을 때만)",
-  "GRWM/일상형: 'Get ready with me for the gym… waking up ugly as hell lol'(itsdrayamichele, 96초) → 참여율 4.19%, $18.2K. 제품 소개 대신 운동 전 준비 루틴 안에 SPF를 넣는 구조.",
-  "참여율 높다고 잘 팔리지는 않음: selena_reyez(MISTINE, 댓글 2,222개, 참여율 5.96%)는 RPM 8.3·CVR 0.04%로 효율이 낮고, 해시태그 하나뿐인 10초 영상(yusniela0)은 참여율 5.17%에 RPM 28.1.",
+  "선케어는 상위 10개 중 60%가 60초 초과(중앙값 66.7초)로 8개 카테고리 중 가장 긴 편. 1위 silvanitavacan(70초, 382만 재생, $48.5K)은 '@Alicia님 댓글에 답장'으로 시작하는 스페인어 댓글 답장 영상.",
+  "가격 충격 훅: '내가 산 가격의 3분의 1밖에 안 한다고?!! … 못 믿겠으면 링크 눌러 봐'(alexdegasperis, Naked Sundays 세트 $65.6) → 1천 회당 매출 94.7로 선케어 최고. 한국어 각색: '이 가격에 이 구성?' (가격 비교는 실제 가격 근거가 있을 때만)",
+  "같이 준비해요(GRWM)/일상형: '헬스 가기 전 같이 준비해요… 일어났더니 얼굴 상태 최악ㅋㅋ'(itsdrayamichele, 96초) → 참여율 4.19%, $18.2K. 제품 소개 대신 운동 전 준비 루틴 안에 선크림을 넣는 구조.",
+  "참여율 높다고 잘 팔리지는 않음: selena_reyez(MISTINE, 댓글 2,222개, 참여율 5.96%)는 1천 회당 매출 8.3·전환율 0.04%로 효율이 낮고, 해시태그 하나뿐인 10초 영상(yusniela0)은 참여율 5.17%에 1천 회당 매출 28.1.",
   "K-선크림 강세: SKIN1004(roxytiktokshopaffiliate, beusa01 2개)가 상위 10개 중 3개, 단가 $17~$20. beusa01은 같은 제품을 연달아 올려 각각 $15.3K·$13.1K.",
-  "셀링 포인트 문구는 'no white cast', 'Neither sticky or greasy'(백탁·끈적임 없음)로 반복됨 → '백탁 없이 끈적임 없이' 같은 사용감 중심 표현이 안전하게 각색 가능."
+  "셀링 포인트 문구는 '백탁 없음', '끈적이지도 번들거리지도 않아요'로 반복됨 → '백탁 없이 끈적임 없이' 같은 사용감 중심 표현이 안전하게 각색 가능."
  ],
  "hooks_ko": [
   "이 가격에 이 구성?",
