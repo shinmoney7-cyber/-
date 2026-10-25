@@ -87,6 +87,29 @@ header.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-cont
 .check th, .check td { text-align: left; border-bottom: 1px solid var(--line); padding: 8px 10px; vertical-align: top; }
 .check th { color: var(--muted); font-weight: 500; font-size: 12px; letter-spacing: .04em; }
 
+.maker { margin-top: 18px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; }
+.maker summary { cursor: pointer; padding: 14px 16px; font-family: var(--display); font-size: 20px; list-style-position: inside; }
+.maker summary span { font-family: var(--body); font-size: 13px; color: var(--muted); margin-left: 8px; }
+.mk-body { padding: 0 16px 16px; display: grid; gap: 14px; }
+.cchips { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.cchip { border: 1px solid var(--line); background: var(--bg); color: var(--fg); border-radius: 10px; padding: 8px 10px; text-align: left; cursor: pointer; font: inherit; }
+.cchip b { display: block; font-size: 14px; }
+.cchip small { color: var(--muted); font-size: 12px; }
+.cchip[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.mk-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.lenseg { display: flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.lenseg button { border: 0; background: var(--panel); color: var(--fg); padding: 8px 14px; font: 500 14px var(--body); cursor: pointer; }
+.lenseg button[aria-pressed="true"] { background: var(--accent); color: var(--bg); }
+.mk-field { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
+.mk-field input[type=text] { font: 500 14px var(--body); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 7px 9px; width: 180px; max-width: 100%; }
+.mk-field input[type=color] { width: 40px; height: 32px; border: 1px solid var(--line); border-radius: 8px; padding: 2px; background: var(--bg); }
+.mk-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.mk-card { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; min-width: 0; }
+.mk-card.wide { grid-column: 1 / -1; }
+.mk-card h3 { margin: 0 0 6px; font-size: 13px; color: var(--accent); letter-spacing: .03em; }
+.mk-card ul, .mk-card ol { margin: 0; padding-left: 18px; font-size: 14px; display: grid; gap: 3px; }
+.mk-risky { margin: 0 0 6px; color: var(--warn); font-weight: 700; font-size: 14px; }
+@media (max-width: 860px) { .mk-grid { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 860px) {
   .grid { grid-template-columns: minmax(0, 1fr); }
   .monitor { position: static; justify-items: center; order: -1; }
@@ -110,10 +133,35 @@ header.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-cont
     <div class="spec">
       <span class="chip">9:16 · 1080×1920</span>
       <span class="chip">15·25·50초</span>
+      <span class="chip">제품 유형 8종</span>
       <span class="chip">AIDA</span>
       <span class="chip">유료광고 표기</span>
     </div>
   </header>
+
+  <details class="maker" open>
+    <summary>제품 유형으로 대본 만들기 <span>기능 포인트 · 화장법 · 주의 표현 · AI 모델 체크</span></summary>
+    <div class="mk-body">
+      <div class="cchips" id="catChips" role="group" aria-label="제품 유형"></div>
+      <div class="mk-row">
+        <div class="lenseg" id="lenSeg" role="group" aria-label="길이"><button type="button">15초</button><button type="button">25초</button><button type="button">50초</button></div>
+        <label class="mk-field">제품명 <input type="text" id="mkName" autocomplete="off"></label>
+        <label class="mk-field" id="mkColorRow">대표 색상 <input type="color" id="mkColor"></label>
+        <label class="toggle"><input type="checkbox" id="mkAiToggle"> AI 모델로 제작</label>
+        <button class="btn primary" id="mkBuild" type="button">대본 5종 만들기 (G1~G5)</button>
+      </div>
+      <div class="mk-grid">
+        <div class="mk-card"><h3>꼭 보여줄 기능 포인트</h3><ul id="mkPoints"></ul></div>
+        <div class="mk-card"><h3>바르는 법 · 화장법 순서 <small>— 대본에 단계마다 영상 컷으로 들어감</small></h3><ol id="mkHow"></ol></div>
+        <div class="mk-card"><h3>이 유형의 주의 표현</h3><p class="mk-risky" id="mkRisky"></p><p class="vnote" id="mkRiskyNote"></p></div>
+        <div class="mk-card"><h3>대본 유형 5종 (한 번에 생성)</h3><ul id="mkTypes"></ul></div>
+        <div class="mk-card"><h3>이 제품의 2초 후킹 소재</h3><ul id="mkHooks"></ul></div>
+        <div class="mk-card"><h3>&nbsp;</h3><p class="vnote">후킹은 무조건 0~2초. 욕망(결과 먼저) 또는 불편한 점(사용 전 오염·무너짐·백탁·번짐)으로 시작하고, 바로 다음 컷에서 제품을 보여준다.</p></div>
+        <div class="mk-card wide"><h3>카메라 구도 · 위치 · 촬영법</h3><ul id="mkCam"></ul></div>
+        <div class="mk-card wide" id="mkAiBox"><h3>AI 모델로 만들 때 추가로 넣을 것</h3><ul id="mkAi"></ul></div>
+      </div>
+    </div>
+  </details>
 
   <div class="tabs" role="tablist" id="tabs"></div>
   <p class="vnote" id="vnote"></p>
@@ -257,7 +305,9 @@ const W = 1080, H = 1920;
 const SUB_STYLE = { font: "'Black Han Sans', sans-serif", weight: 400, size: 92, fill1: "#ffffff", fill2: "#ffe36e", stroke: "#111111", pos: "auto" };
 function rr(ctx, x, y, w, h, r) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); }
 // 제품 정보 (모바일 앱의 제품 패널이 바꾼다). img가 있으면 일러스트 병 대신 제품 사진을 그린다
-const PRODUCT = { name: "수분 세럼 ABC", url: "", img: null };
+const PRODUCT = { name: "수분 세럼 ABC", url: "", img: null, color: "#c8566e" };
+// 화면 고지: AI 모델로 만든 영상이면 '유료광고 포함' 옆에 'AI 가상 모델'도 표기한다
+const DISCLOSE = { ai: true };
 function bottle(ctx, cx, cy, s, open) {
   if (PRODUCT.img) {
     const im = PRODUCT.img, bw = 340 * s, bh = 600 * s, r = Math.min(bw / im.naturalWidth, bh / im.naturalHeight);
@@ -289,6 +339,43 @@ function dropper(ctx, cx, cy, s) { // 병에서 들어 올린 스포이드
   rr(ctx, -46, -140, 92, 70, 14); ctx.fillStyle = "#2a1e24"; ctx.fill();
   rr(ctx, -16, -72, 32, 300, 16); ctx.fillStyle = "rgba(255,255,255,.7)"; ctx.fill();
   rr(ctx, -10, 90, 20, 130, 10); ctx.fillStyle = "rgba(90,190,205,.75)"; ctx.fill();
+  ctx.restore();
+}
+function skin(ctx) { bg(ctx, "#f4dccd", "#dcae98"); }
+function swatchArm(ctx) { // 팔 안쪽 발색 스와치 시안 (색은 PRODUCT.color)
+  skin(ctx);
+  ctx.fillStyle = "#ebc3ae"; rr(ctx, -60, H * .34, W + 120, 520, 260); ctx.fill();
+  [[.62, 1], [.42, .55]].forEach(([y, a], k) => {
+    ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = PRODUCT.color; ctx.lineCap = "round";
+    rr(ctx, W * .16, H * (y - .02) + k * 10, W * .68, 70, 35); ctx.fill(); ctx.restore();
+  });
+  ctx.fillStyle = "rgba(255,255,255,.35)"; rr(ctx, W * .2, H * .6, W * .5, 14, 7); ctx.fill();
+  ctx.fillStyle = "#5a3a2e"; ctx.font = "500 40px 'IBM Plex Sans KR', sans-serif"; ctx.textAlign = "left";
+  ctx.fillText("1회", W * .16, H * .4 - 18); ctx.fillText("2회", W * .16, H * .6 - 18);
+}
+function lips(ctx) {
+  skin(ctx);
+  const cx = W / 2, cy = H * .56;
+  ctx.save(); ctx.fillStyle = PRODUCT.color;
+  ctx.beginPath(); ctx.moveTo(cx - 300, cy);
+  ctx.bezierCurveTo(cx - 200, cy - 120, cx - 80, cy - 140, cx, cy - 80);
+  ctx.bezierCurveTo(cx + 80, cy - 140, cx + 200, cy - 120, cx + 300, cy);
+  ctx.bezierCurveTo(cx + 180, cy + 190, cx - 180, cy + 190, cx - 300, cy); ctx.fill();
+  ctx.strokeStyle = "rgba(60,20,30,.45)"; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(cx - 290, cy); ctx.quadraticCurveTo(cx, cy + 30, cx + 290, cy); ctx.stroke();
+  ctx.fillStyle = "rgba(255,255,255,.4)"; ctx.beginPath(); ctx.ellipse(cx + 40, cy + 70, 90, 22, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+}
+function eyeLid(ctx) {
+  skin(ctx);
+  const cx = W / 2, cy = H * .58;
+  ctx.save();
+  const g = ctx.createLinearGradient(cx - 320, 0, cx + 320, 0); g.addColorStop(0, "rgba(255,255,255,.0)"); g.addColorStop(.35, PRODUCT.color + "66"); g.addColorStop(1, PRODUCT.color);
+  ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(cx - 330, cy); ctx.bezierCurveTo(cx - 200, cy - 330, cx + 220, cy - 330, cx + 360, cy - 40); ctx.lineTo(cx + 330, cy); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = "#fbf3ef"; ctx.beginPath(); ctx.moveTo(cx - 300, cy); ctx.bezierCurveTo(cx - 150, cy - 170, cx + 170, cy - 170, cx + 320, cy - 10); ctx.bezierCurveTo(cx + 160, cy + 120, cx - 150, cy + 120, cx - 300, cy); ctx.fill();
+  ctx.fillStyle = "#4a2f26"; ctx.beginPath(); ctx.arc(cx + 10, cy - 20, 92, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = "#1a0f0c"; ctx.beginPath(); ctx.arc(cx + 10, cy - 20, 40, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(cx + 40, cy - 50, 16, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = "#1a0f0c"; ctx.lineWidth = 12; ctx.beginPath(); ctx.moveTo(cx - 300, cy); ctx.bezierCurveTo(cx - 150, cy - 170, cx + 170, cy - 170, cx + 340, cy - 30); ctx.stroke();
   ctx.restore();
 }
 function drop(ctx, x, y, r, a) {
@@ -345,6 +432,11 @@ function drawScene(ctx, v, idx, opts = {}) {
       drop(ctx, W * .7, H * .4, 40, .9); break;
     }
     case "product": bg(ctx, "#f7e3ea", "#e6b6c6"); bottle(ctx, W * .5, H * .56, 1.4); break;
+    case "label": bg(ctx, "#f7e3ea", "#e6b6c6"); bottle(ctx, W * .5, H * .5, 2.1);
+      ctx.save(); ctx.strokeStyle = "#ffd23f"; ctx.lineWidth = 10; ctx.setLineDash([26, 16]); rr(ctx, W * .5 - 230, H * .5 + 190, 460, 300, 30); ctx.stroke(); ctx.restore(); break;
+    case "swatch": swatchArm(ctx); break;
+    case "lip": lips(ctx); break;
+    case "eye": eyeLid(ctx); break;
     case "open": bg(ctx, "#f9ece0", "#e9c3ae"); bottle(ctx, W * .4, H * .62, 1.1, true); dropper(ctx, W * .64, H * .38, 1.1); drop(ctx, W * .7, H * .53, 30, .9); break;
     case "cta": {
       bg(ctx, "#2b1d24", "#5a2f42"); bottle(ctx, W * .5, H * .52, 1.1);
@@ -359,6 +451,10 @@ function drawScene(ctx, v, idx, opts = {}) {
   // ad disclosure (top-left)
   ctx.fillStyle = "rgba(0,0,0,.55)"; rr(ctx, 48, 120, 236, 64, 14); ctx.fill();
   ctx.fillStyle = "#fff"; ctx.textAlign = "left"; ctx.font = "700 32px 'IBM Plex Sans KR', sans-serif"; ctx.fillText("유료광고 포함", 70, 164);
+  if (DISCLOSE.ai) {
+    ctx.fillStyle = "rgba(0,0,0,.55)"; rr(ctx, 48, 196, 236, 64, 14); ctx.fill();
+    ctx.fillStyle = "#fff"; ctx.fillText("AI 가상 모델", 74, 240);
+  }
   // subtitle — style comes from SUB_STYLE (font, colors, size, position)
   const st = SUB_STYLE, fs = st.size;
   ctx.font = `${st.weight} ${fs}px ${st.font}`; ctx.textAlign = "center";
@@ -438,7 +534,7 @@ function renderTabs() {
     b.onclick = () => { state.v = k; state.i = 0; persist(); render(); };
     $("tabs").appendChild(b);
   }
-  $("vnote").textContent = VERSIONS[state.v].note;
+  $("vnote").textContent = VERSIONS[state.v].note + (DISCLOSE.ai && state.v === "C" ? " ⚠ AI 모델로는 만들 수 없는 버전 — 실제로 7일 쓴 사람의 기록이 필요." : DISCLOSE.ai && "ADEF".includes(state.v) ? " ⚠ AI 모델로 만들 때는 1인칭 사용 후기 내레이션을 시연형으로 바꿀 것 (장면의 검수 표시 참고)." : "");
 }
 function renderScenes() {
   const box = $("scenes"); box.innerHTML = "";
@@ -472,7 +568,7 @@ function renderScenes() {
     });
     clr.addEventListener("click", e => { e.stopPropagation(); delete PHOTOS[key]; syncPhoto(); select(idx, true); });
     const check = () => {
-      const hits = risky(ta.value);
+      const hits = [...risky(ta.value), ...(DISCLOSE.ai ? AI_RISKY.filter(w => (ta.value + " " + s.say).includes(w)).map(w => w + " (AI 모델 사용 경험 표현)") : [])];
       flag.hidden = !hits.length;
       flag.textContent = hits.length ? `검수 필요: "${hits.join('", "')}" — 아래 표현 검수 기준 확인` : "";
       const n = [...ta.value.replace(/\s/g, "")].length;
@@ -505,7 +601,321 @@ $("exportFrame").addEventListener("click", () => {
 });
 $("exportBoard").addEventListener("click", () => show(boardCanvas(state.v), `${state.v}안 스토리보드 · ${VERSIONS[state.v].name}`, "board"));
 
-window.BS = { VERSIONS, sceneCanvas, boardCanvas };
+/* ---------- 제품 유형별 대본 메이커 ---------- */
+// 길이별 장면 칸: [15초, 25초, 50초] 초 단위, 0이면 그 길이에서는 뺀다. 각 유형은 이 10칸 순서대로 장면을 채운다
+// (후킹 2초 → 열기 → 제형 → 테스트 → 바르기 → 결과 → 50초 전용 3칸 → 링크). 첫 칸은 대본 유형(욕망·피해 등)이 바꾼다
+const SLOT_SEC = [[2, 2, 2], [0, 3, 4], [3, 3, 4], [0, 3, 5], [4, 5, 7], [3, 4, 6], [0, 0, 6], [0, 0, 5], [0, 0, 6], [3, 5, 5]];
+const STAGE_OF = ["주의", "흥미", "흥미", "흥미", "욕망", "욕망", "욕망", "행동", "행동", "행동"];
+const CAM = {
+  hero: "제품 정면 · 2x · 삼각대 · 창 역광 + 정면 반사판으로 윤곽 하이라이트 · 60fps → 80% 속도 · 첫 프레임부터 제품이 화면 중앙",
+  open: "손+용기 매크로 · 3x · 45° 측면 소프트라이트 · 누드톤 네일 · 평소 절반 속도 · 60fps",
+  macro: "극접사 매크로 · 삼각대 · 어두운 배경 + 백라이트 · 120fps 슬로 · 수동 초점",
+  hand: "손등 측면 매크로 · 삼각대 · 백라이트로 광택 · 60fps · 소리는 핀마이크 근접 녹음",
+  swatch: "팔 안쪽·손목 탑다운 · 오버헤드 암 · 창 자연광(정오 전후) · 화이트밸런스 고정 · 색보정·필터 금지 · 실물 색과 화면 색 대조",
+  face: "얼굴 클로즈업 · 2x · 정면 눈높이 삼각대 · 창 자연광 측광 + 반사판 · 화이트밸런스 5000K 고정 · 30fps",
+  glow: "볼 클로즈업 3x · 45° 측광 · 고개를 살짝 돌려 하이라이트 이동 · 보정·필터 금지 · 30fps",
+  lip: "입술 익스트림 클로즈업 · 3x · 정면 + 링라이트 · 립 라인이 화면 60% · 30fps",
+  eye: "눈 익스트림 클로즈업 · 3x · 위에서 15° 내려다보기(눈 감은 컷) → 정면(눈 뜬 컷) · 링라이트 · 30fps",
+  talk: "바스트샷 · 1x · 정면 눈높이 · 링라이트 · 말하는 동안 고정 · 30fps",
+  label: "라벨 매크로 · 3x · 반사 없게 조명 각도 조절 · 문구가 2초 이상 읽히게 · 30fps",
+};
+// [kind, shot, say, sub, cam, fx, flag] — flag "real" = 실제 제품 실촬영 필수, "fxs" = 효과처럼 보이는 장면(단정 자막 금지)
+const CTA = ["cta", "제품을 얼굴 옆에 들고 미소 + 하단 화살표 그래픽", "제품 정보는 프로필 링크에 있어요.", "정보는 프로필 링크에 ↑", "바스트샷 · 1x · 천천히 푸시인 · 라벨 정면 · 마지막 1.5초 정지 화면 · 30fps", "BGM 페이드아웃"];
+const HERO = ["product", "{P} 정면, 빛 한 줄이 용기를 스치고 손이 들어와 집음", "{P}, 바르는 법 보여드릴게요.", "{P} 바르는 법", CAM.hero, "'톡' 내려놓는 소리"];
+const CATS = {
+  skin: {
+    pain: { shot: "세안 직후 당기는 볼을 손끝으로 눌러 보며 살짝 찡그림, 들뜬 각질이 측광에 보임", sub: "세안하고 이렇게 당기면", say: "세안하고 얼굴 당기는 분들," },
+    desire: { shot: "측광에 촉촉한 볼 결이 반짝, 손등으로 볼을 쓸어봄", sub: "이 촉촉함, 바르는 법부터", say: "이 촉촉한 결, 바르는 법부터 보세요." },
+    name: "기초 스킨케어", sub: "토너 · 세럼 · 크림",
+    points: ["제형: 묽기·색·투명도·향", "흡수 속도와 마무리감(산뜻/촉촉/쫀쫀)", "1회 사용량과 사용 순서(토너 → 세럼 → 크림)", "어울리는 피부 타입"],
+    howto: ["세안 후 물기만 톡톡 정리", "적당량 덜기 (세럼 2~3방울 · 크림 진주알 1~2개)", "다섯 군데(이마·양볼·코·턱)에 올리기", "결 따라 안에서 밖으로 펴기 (약지·중지로, 아래에서 위로)", "눈가는 약지로 톡톡", "양손바닥으로 감싸 지그시 눌러 흡수"],
+    risky: ["치료", "재생", "진정 효과", "피부장벽 개선", "여드름", "트러블", "미백", "주름", "탄력"],
+    riskyNote: "보습·피부결 정돈·사용감까지만. 진정·장벽은 실증 자료가 있을 때만, 미백·주름은 기능성 심사 제품만.",
+    extra: ["사용 순서 그래픽(토너 → 세럼 → 크림)", "아침·저녁 사용 여부"],
+    scenes: [HERO,
+      ["open", "캡을 천천히 열어 내용물을 보여줌", "(여는 소리만)", "열어볼게요", CAM.open, "'딸깍'"],
+      ["drop", "제형 매크로 — 스포이드 방울 또는 스패출러로 덜기", "제형은 [묽기·색]이에요.", "[제형 한 줄]", CAM.macro, "방울 '똑'", "real"],
+      ["hand", "손등에 펴 바르고 기울이기 → 손가락으로 톡톡 두드려 마무리감 확인", "손등에 펴 보면 [산뜻/촉촉]하게 마무리돼요.", "[산뜻/촉촉] 마무리", CAM.hand, "펴바르는 소리", "real"],
+      ["face", "세안 후 생얼, 다섯 군데에 올리고 약지로 안쪽에서 바깥쪽으로 결 따라 펴기", "다섯 군데에 올리고 안쪽에서 바깥으로 펴 주세요.", "다섯 군데, 안에서 밖으로", CAM.face, "잔잔한 BGM 시작"],
+      ["glow", "양손바닥으로 감싸 지그시 → 측광에 피부결", "손바닥으로 감싸 흡수시키면 끝이에요.", "손바닥으로 지그시", CAM.glow, "숨소리 ASMR", "fxs"],
+      ["face", "사용 순서 그래픽: 토너 → {P} → 크림", "토너 다음, 크림 전에 쓰는 단계예요.", "토너 → 세럼 → 크림", CAM.face, "—"],
+      ["face", "사용량·횟수 안내", "한 번에 [사용량], 아침저녁으로 쓰면 돼요.", "[사용량] · 아침·저녁", CAM.talk, "—"],
+      ["face", "어울리는 피부 타입 + 개인차 고지", "[피부 타입]에 잘 맞고, 피부마다 느낌은 다를 수 있어요.", "[피부 타입] · 개인차 있음", CAM.talk, "—"],
+      CTA],
+  },
+  functional: {
+    pain: { shot: "거울 앞에서 [고민 부위]를 손가락으로 가리키며 한숨", sub: "[고민 부위] 신경 쓰일 때", say: "[고민 부위] 신경 쓰이는 분들," },
+    desire: { shot: "정돈된 피부결을 측광으로 천천히 훑음", sub: "기능성, 이렇게 써야 해요", say: "기능성 제품은 쓰는 법이 반이에요." },
+    name: "기능성 화장품", sub: "미백 · 주름개선 · 자외선",
+    points: ["용기·상자의 '기능성화장품' 표시", "식약처 심사(보고)받은 효능 문구 — 한 글자도 바꾸지 않고 그대로", "사용법·사용량·사용 기간", "주의사항(패치 테스트, 이상 시 중단)"],
+    howto: ["세안 후 토너로 결 정리", "정해진 양만 덜기", "고민 부위부터 얇게 펴 바르기", "가볍게 두드려 흡수", "낮에는 마지막에 선크림"],
+    risky: ["치료", "재생", "즉시", "완전히", "사라", "없어", "영구", "100%", "기미 제거", "주름 제거"],
+    riskyNote: "효능은 심사받은 문구 범위 안에서만. '제거·사라짐·즉시' 같은 단정, 기간 보장 금지.",
+    extra: ["'기능성화장품' 표시 클로즈업 2초 이상", "효능 문구 원문을 상세페이지에서 복사해 [ ]에 그대로"],
+    scenes: [HERO,
+      ["label", "용기·상자의 '기능성화장품' 표시와 심사받은 효능 문구 클로즈업", "기능성 화장품이에요. [심사받은 효능 문구 그대로].", "기능성 · [효능 문구]", CAM.label, "—"],
+      ["drop", "제형 매크로", "제형은 [묽기·색]이에요.", "[제형 한 줄]", CAM.macro, "방울 '똑'", "real"],
+      ["hand", "손등에 펴 발라 흡수감 확인", "손등에 펴 보면 [마무리감]이에요.", "[마무리감]", CAM.hand, "펴바르는 소리", "real"],
+      ["face", "세안 후 생얼, 고민 부위부터 얇게 펴 바르기", "고민 부위부터 얇게 펴 발라 주세요.", "고민 부위부터 얇게", CAM.face, "잔잔한 BGM 시작"],
+      ["glow", "가볍게 두드려 흡수 — 효과 장면처럼 보이지 않게 사용감만", "가볍게 두드려 흡수시켜요.", "가볍게 두드려 흡수", CAM.glow, "—", "fxs"],
+      ["face", "꾸준히 사용 안내 + 개인차", "기능성 제품은 꾸준히 써야 하고, 느끼는 정도는 사람마다 달라요.", "꾸준히 · 개인차 있음", CAM.talk, "—"],
+      ["face", "주의사항 — 귀 뒤 패치 테스트, 이상 시 사용 중단", "처음엔 귀 뒤에 조금 발라 보고 쓰세요.", "처음엔 패치 테스트", CAM.talk, "—"],
+      ["face", "낮 루틴 마지막 선크림", "낮에는 마지막에 선크림까지 발라 주세요.", "낮엔 선크림까지", CAM.face, "—"],
+      CTA],
+  },
+  sun: {
+    pain: { shot: "선크림 바른 얼굴이 하얗게 뜬 백탁, 눈가를 비비며 찡그림", sub: "하얗게 뜨고 눈 시리죠?", say: "선크림만 바르면 하얗게 뜨는 분들," },
+    desire: { shot: "산뜻하게 마무리된 얼굴, 햇빛 아래 미소", sub: "하얗게 안 뜨게 바르기", say: "하얗게 안 뜨게 바르는 법이에요." },
+    name: "선케어", sub: "선크림 · 선스틱 · 선쿠션",
+    points: ["SPF·PA 표기 클로즈업", "충분한 사용량 시연(손가락 두 마디)", "백탁·발림 — 밝은 피부·어두운 피부 손등 둘 다", "덧바르기 방법(선스틱·선쿠션)", "메이크업 전 순서"],
+    howto: ["스킨케어 마지막 단계", "손가락 두 마디만큼 덜기", "다섯 군데 → 펴 바르기", "목·귀·헤어라인까지", "2~3시간마다 덧바르기"],
+    risky: ["100% 차단", "완벽 차단", "완벽", "기미 예방", "미백", "하루종일", "절대", "피부암"],
+    riskyNote: "차단 지수는 표기 그대로. 워터프루프·내수성은 시험 결과가 있을 때만.",
+    extra: ["SPF·PA 표기 2초 이상", "사용량 장면은 실제 양 그대로(줄여 보이게 편집 금지)"],
+    scenes: [HERO,
+      ["label", "SPF·PA 표기 클로즈업", "SPF[ ], PA[ ] 선크림이에요.", "SPF[ ] · PA[ ]", CAM.label, "—"],
+      ["drop", "손가락 두 마디만큼 짜기 — 사용량 시연", "얼굴엔 손가락 두 마디만큼 충분히.", "손가락 두 마디만큼", CAM.macro, "짜는 소리", "real"],
+      ["hand", "손등에 펴서 백탁·발림 확인 (피부톤이 다른 손등 두 개)", "펴 보면 백탁은 [정도]예요.", "백탁 [정도]", CAM.hand, "펴바르는 소리", "real"],
+      ["face", "스킨케어 마지막에 다섯 군데 → 펴기 → 목·귀까지", "스킨케어 마지막에, 목이랑 귀까지 발라 주세요.", "목·귀까지 꼼꼼히", CAM.face, "잔잔한 BGM 시작"],
+      ["glow", "마무리감 — 측광", "마무리는 [산뜻/촉촉]해요.", "[마무리감]", CAM.glow, "—", "fxs"],
+      ["face", "메이크업 위에 선스틱·선쿠션 덧바르기", "2~3시간마다 덧발라 주는 게 좋아요.", "2~3시간마다 덧바르기", CAM.face, "톡톡 소리"],
+      ["face", "메이크업 순서 그래픽: 선크림 → 베이스", "선크림 다음에 베이스를 올리면 돼요.", "선크림 → 베이스", CAM.face, "—"],
+      ["face", "눈가 주의 + 개인차", "눈에 들어가지 않게 조심하고, 느낌은 피부마다 달라요.", "눈가 주의 · 개인차", CAM.talk, "—"],
+      CTA],
+  },
+  base: {
+    pain: { shot: "마스크 안쪽에 묻은 쿠션 자국을 카메라에 보여줌 / 오후에 무너진 콧볼 클로즈업", sub: "마스크에 다 묻어나죠?", say: "마스크만 쓰면 쿠션 다 묻어나는 분들," },
+    desire: { shot: "매끈하게 표현된 볼을 측광으로 천천히", sub: "얇고 매끈하게 바르는 법", say: "얇고 매끈하게, 이렇게 발라요." },
+    name: "베이스 메이크업", sub: "쿠션 · 파운데이션 · 컨실러",
+    points: ["호수(색상) 고르는 법 — 턱선 스와치", "커버력 — 손등·얼굴 반반 비교(같은 조명)", "마무리(매트·세미매트·글로우)", "밀착·지속 — 시간 표시 + 마스크·티슈 묻어남", "어울리는 피부 타입"],
+    howto: ["1~2분 흡수 후 시작 (스킨케어·선크림 다음)", "퍼프에 소량", "넓은 볼부터 두드리기 (안 → 밖으로)", "얇게 두 번 레이어링", "잡티만 컨실러 브러시로 톡톡", "필요하면 파우더·픽서"],
+    risky: ["24시간", "무너짐 제로", "완벽 커버", "피부가 좋아", "모공 삭제", "흉터"],
+    riskyNote: "지속 시간은 시험 결과가 있을 때만 숫자로. 커버·지속은 실제 촬영으로만 보여주기.",
+    extra: ["호수 표기와 턱선 스와치를 같은 화면에", "지속력 장면은 실제 경과 시간 표시"],
+    scenes: [HERO,
+      ["open", "쿠션 열기 → 퍼프와 호수 표기", "[호수] 호수, [마무리] 타입이에요.", "[호수] · [마무리]", CAM.open, "'딸깍'"],
+      ["swatch", "턱선에 호수별 스와치 2~3줄 — 자연광", "턱선에 발라 보면 색이 이렇게 맞아요.", "턱선 스와치로 호수 고르기", CAM.swatch, "—", "real"],
+      ["hand", "손등 반쪽만 바르기 → 커버·밀착 비교", "손등 반만 발라 보면 커버는 이 정도예요.", "반반 비교 · [커버 정도]", CAM.hand, "두드리는 소리", "real"],
+      ["face", "퍼프에 소량 → 넓은 볼부터 안에서 밖으로 두드리기 → 얇게 두 번", "볼부터 안에서 밖으로, 얇게 두 번 두드려요.", "얇게 두 번, 두드리기", CAM.face, "퍼프 '톡톡' + BGM 시작"],
+      ["glow", "측광 마무리 — 피부결 표현", "마무리는 [매트/글로우]예요.", "[마무리] 마무리", CAM.glow, "—", "fxs"],
+      ["face", "잡티 부분만 컨실러 브러시로 톡톡", "가리고 싶은 곳만 한 번 더 톡톡.", "필요한 곳만 한 번 더", CAM.face, "—"],
+      ["face", "지속력 — [시간] 뒤 마스크·티슈 대고 묻어남 확인 (시계 화면 표시)", "[시간] 지나고 마스크에 묻는 정도예요.", "[시간] 후 묻어남 체크", CAM.face, "—", "real"],
+      ["face", "어울리는 피부 타입 + 개인차", "[피부 타입]에 잘 맞고, 피부마다 달라 보일 수 있어요.", "[피부 타입] · 개인차", CAM.talk, "—"],
+      CTA],
+  },
+  lip: {
+    pain: { shot: "컵 가장자리에 진하게 남은 립 자국 / 입술 각질이 부각된 클로즈업", sub: "컵마다 립 자국 남죠?", say: "컵마다 립 자국 남는 분들," },
+    desire: { shot: "입술 익스트림 클로즈업, 발색이 차오르듯 채워짐", sub: "이 컬러, 이렇게 발라요", say: "이 컬러 바르는 법 보여드릴게요." },
+    name: "립", sub: "틴트 · 립스틱 · 글로스", color: true,
+    points: ["발색 — 팔 안쪽 1회·2회 스와치", "쿨톤·웜톤 피부 비교", "바르는 법 두 가지(그라데이션·풀립)", "마무리(매트·벨벳·글로시)", "묻어남 — 티슈·컵 테스트"],
+    howto: ["립밤으로 각질 정리 (바른 뒤 닦아내기)", "그라데이션: 안쪽에 콕 → 손가락으로 톡톡 바깥으로", "풀립: 윗입술 산부터 → 아랫입술 가운데 → 입꼬리까지", "입술을 다물었다 떼며 블렌딩", "글로스는 아랫입술 가운데만 포인트"],
+    risky: ["입술 재생", "각질 제거", "착색 없음", "100%", "하루종일", "절대"],
+    riskyNote: "발색은 조명·피부톤에 따라 달라 보인다는 문구. 화면 색보정 금지.",
+    extra: ["컬러명·호수 자막", "발색 장면은 같은 조명·화이트밸런스", "대표 색상으로 스와치·입술 시안 표시"],
+    scenes: [HERO,
+      ["open", "캡을 열어 팁·불렛 클로즈업", "(여는 소리만)", "[컬러명]", CAM.open, "'딸깍'"],
+      ["swatch", "팔 안쪽 스와치 — 1번·2번 덧발라 비교", "한 번, 두 번 바르면 이 정도 발색이에요.", "1회 · 2회 발색", CAM.swatch, "—", "real"],
+      ["swatch", "쿨톤·웜톤 손목에 나란히 스와치", "쿨톤, 웜톤 피부에서는 이렇게 달라 보여요.", "쿨톤 · 웜톤 비교", CAM.swatch, "—", "real"],
+      ["lip", "그라데이션 — 입술 안쪽에 콕 → 손가락으로 톡톡 펴기", "안쪽에 찍고 손가락으로 톡톡 펴면 그라데이션.", "안쪽 콕 → 톡톡", CAM.lip, "톡톡 소리 + BGM 시작"],
+      ["lip", "풀립 — 윗입술 산 → 아랫입술 → 입 다물어 블렌딩 → 미소", "꽉 채우면 풀립, 두 가지로 써요.", "풀립도 가능", CAM.lip, "—"],
+      ["lip", "묻어남 — 티슈·컵에 대보기", "컵에 묻는 정도는 이 정도예요.", "컵 묻어남 체크", CAM.lip, "—", "real"],
+      ["face", "어울리는 조합 — 치크를 같은 톤으로", "치크는 같은 톤으로 맞추면 자연스러워요.", "치크는 같은 톤으로", CAM.face, "—"],
+      ["face", "컬러 라인업 + 발색 개인차", "컬러는 [개수]가지, 발색은 피부·조명마다 달라 보여요.", "[개수]컬러 · 발색 개인차", CAM.talk, "—"],
+      CTA],
+  },
+  eye: {
+    pain: { shot: "오후에 아래로 번진 마스카라·섀도(판다 눈) 클로즈업", sub: "오후만 되면 판다 눈?", say: "오후만 되면 눈 밑 번지는 분들," },
+    desire: { shot: "눈을 뜨는 순간 펄이 반짝이는 눈매 클로즈업", sub: "이 눈매, 순서만 알면 돼요", say: "이 눈매, 순서만 알면 돼요." },
+    name: "아이 메이크업", sub: "섀도 · 라이너 · 마스카라", color: true,
+    points: ["팔레트 전체 + 컬러별 스와치(매트·펄 구분)", "레이어링 순서(연한 색 → 중간 → 진한 → 펄)", "가루날림·밀착", "눈 뜬 컷·감은 컷 둘 다", "번짐 — 시간 경과 테스트"],
+    howto: ["아이 프라이머로 유분 정리", "가장 연한 색을 아이홀 전체", "중간 색을 쌍꺼풀 라인까지", "진한 색은 눈꼬리 1/3", "펄은 눈 앞머리·눈두덩 가운데", "언더는 눈꼬리만 이어주기", "라이너로 속눈썹 사이 채우기 → 마스카라 지그재그"],
+    risky: ["속눈썹 성장", "속눈썹이 자라", "탈모", "24시간", "절대 안 번", "100%"],
+    riskyNote: "마스카라·영양제의 '속눈썹 성장' 표현은 의약품 오인. 번짐은 실제 시간 경과로만.",
+    extra: ["컬러별 이름 자막", "눈 장면은 손 그림자 없게 링라이트 정면"],
+    scenes: [HERO,
+      ["open", "팔레트 열기 — 전체 컬러 탑뷰", "(여는 소리만)", "[팔레트명] 전 컬러", CAM.open, "'딸깍'"],
+      ["swatch", "손가락 스와치 — 컬러별 한 줄씩(매트·펄 구분)", "매트 [n]개, 펄 [n]개 구성이에요.", "매트 · 펄 스와치", CAM.swatch, "—", "real"],
+      ["hand", "브러시로 쓸고 털어 가루날림·밀착 확인", "브러시로 쓸어도 가루날림은 이 정도예요.", "가루날림 체크", CAM.hand, "브러시 소리", "real"],
+      ["eye", "연한 색 아이홀 전체 → 중간 색 쌍꺼풀 라인 (눈 감은 컷)", "연한 색은 아이홀 전체, 중간 색은 쌍꺼풀 라인까지.", "연한 색 → 중간 색", CAM.eye, "브러시 소리 + BGM 시작"],
+      ["eye", "진한 색 눈꼬리 1/3 → 펄 눈 앞머리 → 눈 뜨기", "진한 색은 눈꼬리에, 펄은 눈 앞머리에.", "포인트는 눈꼬리 1/3", CAM.eye, "반짝 효과(약하게)"],
+      ["eye", "언더 — 눈꼬리만 이어주기, 애교살 펄", "언더는 눈꼬리만 이어 주면 또렷해요.", "언더는 눈꼬리만", CAM.eye, "—"],
+      ["eye", "라이너 → 마스카라 지그재그", "라이너는 속눈썹 사이를 채우고, 마스카라는 지그재그로.", "라이너 · 마스카라", CAM.eye, "—"],
+      ["face", "번짐 — [시간] 뒤 같은 조명에서", "[시간] 지나고 번짐은 이 정도예요.", "[시간] 후 번짐 체크", CAM.face, "—", "real"],
+      CTA],
+  },
+  cheek: {
+    pain: { shot: "경계가 얼룩진 블러셔, 너무 진하게 올라간 볼 클로즈업", sub: "블러셔 얼룩질 때", say: "블러셔만 하면 얼룩지는 분들," },
+    desire: { shot: "웃는 순간 생기 도는 볼 + 하이라이트 반짝", sub: "생기 볼, 위치 하나로", say: "생기 있는 볼, 위치 하나로 달라 보여요." },
+    name: "치크 · 하이라이터 · 셰이딩", sub: "블러셔 · 하이라이터 · 컨투어", color: true,
+    points: ["컬러·펄 입자 — 측광 매크로", "바르는 위치(사과존·광대 사선·하이라이트 포인트)", "양 조절(손등에 털기)", "블렌딩 경계"],
+    howto: ["손등에 한 번 털기 (브러시에 묻힌 뒤)", "사과존에서 바깥으로 둥글게 (웃었을 때 볼록한 곳)", "차분한 인상은 광대 따라 사선", "하이라이터: 광대 위·콧등·턱 끝", "셰이딩은 광대 아래·턱선만 살짝"],
+    risky: ["얼굴이 작아", "브이라인", "리프팅", "100%"],
+    riskyNote: "윤곽·리프팅 효과 단정 금지 — '그림자 표현' 수준으로.",
+    extra: ["펄 장면은 45° 측광", "바르는 위치 그래픽(점선)"],
+    scenes: [HERO,
+      ["open", "케이스 열기 — 컬러·펄 입자 매크로", "(여는 소리만)", "[컬러명]", CAM.open, "'딸깍'"],
+      ["swatch", "손가락·브러시 스와치 — 측광에서 펄 입자", "측광에서 보면 펄은 이 정도예요.", "[펄 정도] · [컬러]", CAM.swatch, "—", "real"],
+      ["hand", "브러시에 묻혀 손등에 한 번 털어 양 조절", "브러시는 손등에 한 번 털고 쓰세요.", "손등에 한 번 털기", CAM.hand, "브러시 소리", "real"],
+      ["face", "웃었을 때 볼록한 곳(사과존)에서 바깥으로 둥글게", "웃었을 때 올라오는 곳에서 바깥으로 둥글게.", "사과존에서 바깥으로", CAM.face, "BGM 시작"],
+      ["glow", "하이라이터 광대 위·콧등·턱 끝 → 고개 돌려 하이라이트", "하이라이터는 광대 위, 콧등, 턱 끝에.", "광대 · 콧등 · 턱 끝", CAM.glow, "반짝 효과(약하게)", "fxs"],
+      ["face", "셰이딩 — 광대 아래·턱선", "셰이딩은 광대 아래랑 턱선만 살짝.", "셰이딩은 살짝만", CAM.face, "—"],
+      ["face", "광대 사선 vs 사과존 — 인상 비교", "사선으로 바르면 차분하고, 둥글게 바르면 생기 있어 보여요.", "사선 vs 둥글게", CAM.face, "—"],
+      ["face", "어울리는 립 조합 + 개인차", "립은 같은 톤으로, 발색은 피부마다 달라 보여요.", "립과 같은 톤 · 개인차", CAM.talk, "—"],
+      CTA],
+  },
+  cleansing: {
+    pain: { shot: "문질러도 남은 마스카라 잔여물, 빨개진 눈가 클로즈업", sub: "문질러도 안 지워질 때", say: "아무리 문질러도 안 지워지는 분들," },
+    desire: { shot: "헹군 뒤 물방울 맺힌 맑은 얼굴, 수건으로 톡톡", sub: "문지르지 말고 녹이기", say: "문지르지 말고 이렇게 녹여 보세요." },
+    name: "클렌징", sub: "오일 · 밤 · 폼 · 워터",
+    points: ["메이크업이 녹는 장면 — 손등 스와치 지우기", "유화(물 섞으면 하얗게)", "헹군 뒤 마무리감", "사용량·사용 순서(1차·2차 세안)"],
+    howto: ["마른 손·마른 얼굴에서 시작", "펌프 2~3번(밤은 스패출러 한 번)", "원을 그리며 1분 롤링", "눈가는 지그시 눌러 녹이기", "물 조금 묻혀 유화 → 미온수 헹굼", "폼으로 2차 세안"],
+    risky: ["모공 속 노폐물 100%", "블랙헤드 제거", "피지 제거", "여드름", "자극 0", "완벽"],
+    riskyNote: "'메이크업 잔여물 세정' 수준으로. 피지·블랙헤드 제거 단정은 실증 필요.",
+    extra: ["손등 스와치는 립·아이·쿠션 세 가지를 같은 조건으로", "물 온도·롤링 시간 자막"],
+    scenes: [HERO,
+      ["open", "펌프·뚜껑 열기", "(여는 소리만)", "열어볼게요", CAM.open, "'딸깍'"],
+      ["drop", "제형 매크로 — 오일 흐름·밤 녹는 모습", "제형은 [오일/밤/폼]이에요.", "[제형]", CAM.macro, "—", "real"],
+      ["hand", "손등에 립·아이·쿠션 스와치 → 문질러 녹이기", "손등 메이크업에 문지르면 이렇게 녹아요.", "문지르면 스르륵", CAM.hand, "문지르는 소리", "real"],
+      ["face", "마른 얼굴에 원을 그리며 1분 롤링", "마른 얼굴에 원을 그리며 1분 정도 롤링해요.", "마른 얼굴에 1분 롤링", CAM.face, "BGM 시작"],
+      ["face", "물 조금 묻혀 하얗게 유화 → 헹굼", "물을 조금 묻혀 하얗게 변하면 헹궈 주세요.", "하얗게 유화 → 헹굼", CAM.face, "물소리"],
+      ["face", "눈가는 지그시 눌러 녹이기", "눈가는 문지르지 말고 지그시 눌러 주세요.", "눈가는 지그시", CAM.eye, "—"],
+      ["face", "헹군 뒤 수건으로 톡톡 — 마무리감", "헹군 뒤엔 [마무리감]이에요.", "[마무리감]", CAM.face, "—"],
+      ["face", "2차 세안 안내 + 개인차", "폼으로 한 번 더 씻고, 느낌은 피부마다 달라요.", "2차 세안 · 개인차", CAM.talk, "—"],
+      CTA],
+  },
+};
+// 대본 유형 5종 — 같은 제품으로 다섯 편. 첫 2초 후킹과 링크 멘트가 유형마다 다르다
+const HOOK_CAM = "첫 프레임부터 피사체가 화면 중앙 · 2초 안에 컷 · 3x 클로즈업 · 정면 눈높이 · 소리(효과음)가 0초에 바로";
+const TYPES = [
+  { key: "G1", name: "욕망형", desc: "결과(윤기·발색)를 먼저 보여주고 '나도 저렇게' 욕구를 만든다.",
+    hook: c => [c.color ? "lip" : "glow", "[후킹 0~2초 · 결과 먼저] " + c.desire.shot, c.desire.say, c.desire.sub, HOOK_CAM + " · 45° 측광으로 윤기·발색 하이라이트", "'반짝' 효과음", "fxs"],
+    cta: ["이 느낌 원하면 제품은 프로필 링크에 있어요.", "원하면 프로필 링크 ↑"] },
+  { key: "G2", name: "피해·불편형", desc: "사용 전 불편한 점(오염·무너짐·백탁·번짐)으로 시작해 공감을 잡는다.",
+    hook: c => ["face", "[후킹 0~2초 · 사용 전 불편한 점] " + c.pain.shot, c.pain.say, c.pain.sub, HOOK_CAM + " · 문제 부위 익스트림 클로즈업 · 차가운 톤 조명(5600K)으로 불편함 강조", "'띵' 경고음", "pain"],
+    cta: ["같은 고민이면 제품은 프로필 링크에 있어요.", "같은 고민이면 링크 ↑"] },
+  { key: "G3", name: "전문가형", desc: "사용 순서·양·위치를 정확히 짚어주는 정보형. 자격을 자처하지 않는다.",
+    hook: c => ["face", "[후킹 0~2초 · 정보 선언] 카메라 정면 응시, 손가락으로 '하나'를 세며 단호하게", "바르는 순서, 이것만 기억하세요.", "이 순서만 기억하세요", HOOK_CAM + " · 바스트샷 1x · 정면 눈높이 · 링라이트 정면 · 손동작이 화면 안에", "'딩' 효과음"],
+    cta: ["순서 저장해 두시고, 제품은 프로필 링크에 있어요.", "저장 · 제품은 링크 ↑"] },
+  { key: "G4", name: "실험·비교형", desc: "테스트 결과를 첫 2초에 보여주고 과정을 따라가게 한다. 실제 촬영 필수.",
+    hook: c => { const t = c.scenes[3]; return [t[0], "[후킹 0~2초 · 테스트 결과부터] " + t[1], "테스트 결과부터 보여드릴게요.", "테스트 결과부터", HOOK_CAM + " · " + t[4], "'촥' 효과음", "real"]; },
+    cta: ["결과 보고 고르세요, 제품은 프로필 링크에 있어요.", "직접 보고 고르기 · 링크 ↑"] },
+  { key: "G5", name: "호기심형", desc: "질문으로 시작해 '정답'을 끝까지 보게 만든다. 반복 재생·저장 유도.",
+    hook: c => ["face", "[후킹 0~2초 · 질문] 제품을 카메라 앞으로 쑥 내밀며 고개를 갸웃", `${c.name}, 이렇게 바르고 있나요?`, "이렇게 바르고 있나요?", HOOK_CAM + " · 제품이 렌즈 쪽으로 다가오는 푸시(손 이동) · 1x 광각으로 원근감", "'뿅' 효과음"],
+    cta: ["저장해 두고 따라 해 보세요. 제품은 프로필 링크에.", "저장하고 따라 하기 ↑"] },
+];
+// 촬영 구도·카메라 위치 가이드 (메이커 카드)
+const CAMERA_GUIDE = [
+  "첫 2초: 0프레임부터 피사체가 중앙, 로고·인사·검은 화면 금지. 소리도 0초에 시작",
+  "9:16 안전영역: 상단 15%(채널명)·하단 20%(설명·버튼)·오른쪽 15%(좋아요 버튼)엔 얼굴·제품·자막을 두지 않기",
+  "얼굴 구도: 눈이 위에서 1/3 선에. 헤드룸은 손가락 한 마디. 클로즈업은 이마~턱이 화면 80%",
+  "카메라 위치: 얼굴=정면 눈높이 삼각대 · 제품=테이블 높이 로우앵글 · 손·제형=오버헤드 탑뷰 · 피부결=45° 측면",
+  "렌즈: 얼굴 2x(약 50mm, 왜곡 적음) · 제형·발색 3x 또는 접사 · 디지털 줌 금지 — 카메라를 직접 가까이",
+  "조명: 창가 자연광을 얼굴 45° 측면 + 반대편 흰 반사판. 실내는 링라이트 정면 + 소프트박스 45°. 화이트밸런스 고정",
+  "움직임: 줌 대신 천천히 밀기(푸시인)·수평 패닝. 손 동작은 평소 절반 속도",
+  "컷 길이: 1.5~3초마다 컷 또는 앵글 변화. 같은 구도 4초 이상 금지(이탈 구간)",
+  "프레임: 기본 30fps, 제형·방울 120fps 슬로, 4K로 찍어 크롭 여유",
+  "끝: 마지막 1.5초 정지 + 첫 컷과 비슷한 구도로 끝내 반복 재생(루프) 유도",
+];
+// AI 모델로 만들 때 공통으로 추가할 것
+const AI_CHECK = [
+  "첫 화면 '유료광고 포함' 옆에 'AI 가상 모델' 표기 + 설명란에 \"AI로 만든 가상 인물이 출연합니다\" (AI 생성 광고 표시 의무화가 추진 중 — 납품 시점 기준 확인)",
+  "플랫폼 AI 라벨: 유튜브 '변경되거나 합성된 콘텐츠' 예 · 틱톡 'AI 생성 콘텐츠' · 인스타그램 'AI 정보'",
+  "AI 모델은 실제 사용자가 아니다 — '써봤어요·일주일 써보니·인생템' 같은 사용 경험 대신 '이렇게 발라요' 시연형 내레이션",
+  "제형·발색·커버·지속·백탁처럼 제품 성능이 보이는 장면은 실제 제품을 실제로 촬영 (아래 [실촬영] 표시 장면). AI가 만든 효과를 실제 효과처럼 쓰면 기만 광고",
+  "전후 비교를 AI로 만들지 않기",
+  "제품은 실제 제품 사진을 그대로 합성 — AI가 라벨 글자·용기 모양·색을 바꾸지 않았는지 확대 확인",
+  "색조는 화면 색과 실물 스와치를 대조, 색보정·필터 금지",
+  "손가락 개수·손 모양·눈동자·치아·머리카락 경계가 이상한 프레임 삭제",
+  "같은 모델 얼굴 유지(Soul ID 고정) · 실존 연예인·인플루언서를 닮게 만들지 않기",
+  "전문가형도 AI 모델이 의사·약사·피부 전문가를 자처하지 않기(가운·자격 언급 금지) — 사용법 정보 전달까지만",
+  "피해·불편형의 '사용 전' 장면은 연출 — 사용 후 장면과 나란히 놓아 효과 비교처럼 쓰지 않기",
+  "AI 음성(TTS)을 쓰면 설명란에 표기, 실제 후기처럼 연기하지 않기",
+];
+const AI_RISKY = ["써봤", "써보니", "써 보니", "써본", "발라봤", "인생템", "제 피부", "제가", "일주일", "한 달", "추가했", "손이 먼저", "아침마다 쓰는", "매일 아침 여는"];
+let MAKER = { cat: "skin", len: 1, name: "", color: "#c8566e", ai: true, built: false };
+try { const m = JSON.parse(localStorage.getItem("bs-studio-maker") || "null"); if (m && CATS[m.cat]) MAKER = { ...MAKER, ...m }; } catch (e) {}
+DISCLOSE.ai = MAKER.ai;
+const fmt = s => Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+function buildVersion(ti) {
+  const c = CATS[MAKER.cat], T = TYPES[ti], L = [15, 25, 50][MAKER.len], P = MAKER.name.trim() || PRODUCT.name;
+  const scenes = []; let t = 0;
+  c.scenes.forEach((base, k) => {
+    const d = SLOT_SEC[k][MAKER.len]; if (!d) return;
+    let row = k === 0 ? T.hook(c) : base;
+    if (k === c.scenes.length - 1) row = [...base.slice(0, 2), T.cta[0], T.cta[1], ...base.slice(4)];
+    const [kind, shot, say, sub, cam, fx, flag] = row, put = x => x.split("{P}").join(P);
+    if (k === 4) { // 바르는 법·화장법은 카드가 아니라 영상 컷으로 — 단계마다 한 컷, 순서대로
+      const steps = c.howto, n = Math.min(steps.length, d), groups = Array.from({ length: n }, () => []);
+      steps.forEach((x, j) => groups[Math.floor(j * n / steps.length)].push(x));
+      groups.forEach((g, j) => {
+        const sd = Math.floor(d / n) + (j < d % n ? 1 : 0), first = g[0].replace(/\s*\(.*?\)/g, "");
+        scenes.push({ t: fmt(t) + "–" + fmt(t + sd), stage: STAGE_OF[k], kind,
+          shot: `[화장법 ${j + 1}/${n} · 영상 시연] ` + g.join(" → ") + (j === 0 ? ` (${shot})` : ""),
+          say: g.map(x => x.replace(/\s*\(.*?\)/g, "")).join(", ") + ".",
+          sub: shortSub(first),
+          cam: cam + " · 단계마다 컷 · 손이 닿는 부위를 화면 중앙에 · 같은 위치·조명 유지", fx: j === 0 ? fx : "단계 전환 '톡'" });
+        t += sd;
+      });
+      return;
+    }
+    const tag = flag === "real" ? (MAKER.ai ? "[실촬영] " : "[실제 제품] ") : !MAKER.ai ? "" : flag === "fxs" ? "[AI 연출 · 효과 단정 자막 금지] " : flag === "pain" ? "[AI 연출 · 전후 비교로 쓰지 않기] " : "";
+    scenes.push({ t: fmt(t) + "–" + fmt(t + d), stage: STAGE_OF[k], kind, shot: tag + put(shot), say: put(say), sub: put(sub), cam, fx });
+    t += d;
+  });
+  // 후킹 직후 제품을 바로 보여준다 (15초는 열기 칸이 없으니 제형 칸에 제품 등장)
+  if (scenes[1]) scenes[1].shot += " — 첫 장면 직후 " + P + " 등장";
+  return { name: `${T.name} ${L}초`, note: `${T.name} — ${T.desc} ${c.name}(${c.sub}) · ${L}초. [ ]는 실제 상품 정보로 교체.${MAKER.ai ? " AI 모델 제작용: [실촬영] 장면은 실제 제품을 촬영해 합성." : ""}`, scenes };
+}
+// 단계 문장을 자막 한 줄(14자 안팎)로 — 말줄임표 없이 띄어쓰기에서 자른다
+function shortSub(x) {
+  const segs = x.split(/\s*:\s*/).filter(Boolean);
+  const out = segs.length > 1 && segs[0].length <= 6 ? segs[0] + " " + segs[1] : segs[0];
+  if (out.length <= 17) return out;
+  const cut = out.slice(0, 17).lastIndexOf(" ");
+  return (cut > 4 ? out.slice(0, cut) : out.slice(0, 15)).replace(/[\s→,]+$/, "");
+}
+function buildAll() { TYPES.forEach((T, i) => { VERSIONS[T.key] = buildVersion(i); }); }
+function saveMaker() { try { localStorage.setItem("bs-studio-maker", JSON.stringify(MAKER)); } catch (e) {} }
+if (MAKER.built) {
+  buildAll();
+  try { const s = JSON.parse(localStorage.getItem("bs-studio") || "null"); for (const T of TYPES) { const a = s && s.subs && s.subs[T.key]; if (a && a.length === VERSIONS[T.key].scenes.length) a.forEach((x, j) => VERSIONS[T.key].scenes[j].sub = x); } if (s && VERSIONS[s.v]) state.v = s.v; } catch (e) {}
+}
+if (MAKER.color) PRODUCT.color = MAKER.color;
+
+function renderMaker() {
+  const c = CATS[MAKER.cat];
+  $("catChips").innerHTML = "";
+  for (const [k, v] of Object.entries(CATS)) {
+    const b = document.createElement("button"); b.type = "button"; b.className = "cchip"; b.setAttribute("aria-pressed", String(k === MAKER.cat));
+    b.innerHTML = `<b></b><small></small>`; b.querySelector("b").textContent = v.name; b.querySelector("small").textContent = v.sub;
+    b.onclick = () => { MAKER.cat = k; saveMaker(); renderMaker(); };
+    $("catChips").appendChild(b);
+  }
+  document.querySelectorAll("#lenSeg button").forEach((b, i) => b.setAttribute("aria-pressed", String(i === MAKER.len)));
+  $("mkColorRow").hidden = !c.color;
+  const li = (box, arr) => { box.innerHTML = ""; arr.forEach(x => { const e = document.createElement("li"); e.textContent = x; box.appendChild(e); }); };
+  li($("mkPoints"), [...c.points, ...c.extra.map(x => "추가: " + x)]);
+  li($("mkHow"), c.howto);
+  $("mkRisky").textContent = c.risky.join(" · "); $("mkRiskyNote").textContent = c.riskyNote;
+  $("mkAiBox").hidden = !MAKER.ai; li($("mkAi"), AI_CHECK);
+  li($("mkTypes"), TYPES.map(T => `${T.key} ${T.name} — ${T.desc}`));
+  li($("mkCam"), CAMERA_GUIDE);
+  li($("mkHooks"), [`욕망: "${c.desire.sub}" — ${c.desire.shot}`, `불편: "${c.pain.sub}" — ${c.pain.shot}`]);
+}
+$("mkName").value = MAKER.name || ""; $("mkName").placeholder = PRODUCT.name;
+$("mkColor").value = MAKER.color; $("mkAiToggle").checked = MAKER.ai;
+$("mkName").addEventListener("input", e => { MAKER.name = e.target.value; saveMaker(); });
+$("mkColor").addEventListener("input", e => { MAKER.color = PRODUCT.color = e.target.value; saveMaker(); renderPreview(); });
+$("mkAiToggle").addEventListener("change", e => { MAKER.ai = DISCLOSE.ai = e.target.checked; saveMaker(); renderMaker(); render(); });
+document.querySelectorAll("#lenSeg button").forEach((b, i) => b.addEventListener("click", () => { MAKER.len = i; saveMaker(); renderMaker(); }));
+$("mkBuild").addEventListener("click", () => {
+  MAKER.built = true; saveMaker();
+  buildAll(); state.v = "G1"; state.i = 0; persist(); render();
+  $("tabs").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+});
+renderMaker();
+
+window.BS = { VERSIONS, sceneCanvas, boardCanvas, CATS, buildVersion, MAKER };
 render();
 (document.fonts ? Promise.all([
   document.fonts.load("92px 'Black Han Sans'"), document.fonts.load("500 30px 'IBM Plex Mono'"),

@@ -281,7 +281,9 @@ const W = 1080, H = 1920;
 const SUB_STYLE = { font: "'Black Han Sans', sans-serif", weight: 400, size: 92, fill1: "#ffffff", fill2: "#ffe36e", stroke: "#111111", pos: "auto" };
 function rr(ctx, x, y, w, h, r) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); }
 // 제품 정보 (모바일 앱의 제품 패널이 바꾼다). img가 있으면 일러스트 병 대신 제품 사진을 그린다
-const PRODUCT = { name: "수분 세럼 ABC", url: "", img: null };
+const PRODUCT = { name: "수분 세럼 ABC", url: "", img: null, color: "#c8566e" };
+// 화면 고지: AI 모델로 만든 영상이면 '유료광고 포함' 옆에 'AI 가상 모델'도 표기한다
+const DISCLOSE = { ai: true };
 function bottle(ctx, cx, cy, s, open) {
   if (PRODUCT.img) {
     const im = PRODUCT.img, bw = 340 * s, bh = 600 * s, r = Math.min(bw / im.naturalWidth, bh / im.naturalHeight);
@@ -313,6 +315,43 @@ function dropper(ctx, cx, cy, s) { // 병에서 들어 올린 스포이드
   rr(ctx, -46, -140, 92, 70, 14); ctx.fillStyle = "#2a1e24"; ctx.fill();
   rr(ctx, -16, -72, 32, 300, 16); ctx.fillStyle = "rgba(255,255,255,.7)"; ctx.fill();
   rr(ctx, -10, 90, 20, 130, 10); ctx.fillStyle = "rgba(90,190,205,.75)"; ctx.fill();
+  ctx.restore();
+}
+function skin(ctx) { bg(ctx, "#f4dccd", "#dcae98"); }
+function swatchArm(ctx) { // 팔 안쪽 발색 스와치 시안 (색은 PRODUCT.color)
+  skin(ctx);
+  ctx.fillStyle = "#ebc3ae"; rr(ctx, -60, H * .34, W + 120, 520, 260); ctx.fill();
+  [[.62, 1], [.42, .55]].forEach(([y, a], k) => {
+    ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = PRODUCT.color; ctx.lineCap = "round";
+    rr(ctx, W * .16, H * (y - .02) + k * 10, W * .68, 70, 35); ctx.fill(); ctx.restore();
+  });
+  ctx.fillStyle = "rgba(255,255,255,.35)"; rr(ctx, W * .2, H * .6, W * .5, 14, 7); ctx.fill();
+  ctx.fillStyle = "#5a3a2e"; ctx.font = "500 40px 'IBM Plex Sans KR', sans-serif"; ctx.textAlign = "left";
+  ctx.fillText("1회", W * .16, H * .4 - 18); ctx.fillText("2회", W * .16, H * .6 - 18);
+}
+function lips(ctx) {
+  skin(ctx);
+  const cx = W / 2, cy = H * .56;
+  ctx.save(); ctx.fillStyle = PRODUCT.color;
+  ctx.beginPath(); ctx.moveTo(cx - 300, cy);
+  ctx.bezierCurveTo(cx - 200, cy - 120, cx - 80, cy - 140, cx, cy - 80);
+  ctx.bezierCurveTo(cx + 80, cy - 140, cx + 200, cy - 120, cx + 300, cy);
+  ctx.bezierCurveTo(cx + 180, cy + 190, cx - 180, cy + 190, cx - 300, cy); ctx.fill();
+  ctx.strokeStyle = "rgba(60,20,30,.45)"; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(cx - 290, cy); ctx.quadraticCurveTo(cx, cy + 30, cx + 290, cy); ctx.stroke();
+  ctx.fillStyle = "rgba(255,255,255,.4)"; ctx.beginPath(); ctx.ellipse(cx + 40, cy + 70, 90, 22, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+}
+function eyeLid(ctx) {
+  skin(ctx);
+  const cx = W / 2, cy = H * .58;
+  ctx.save();
+  const g = ctx.createLinearGradient(cx - 320, 0, cx + 320, 0); g.addColorStop(0, "rgba(255,255,255,.0)"); g.addColorStop(.35, PRODUCT.color + "66"); g.addColorStop(1, PRODUCT.color);
+  ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(cx - 330, cy); ctx.bezierCurveTo(cx - 200, cy - 330, cx + 220, cy - 330, cx + 360, cy - 40); ctx.lineTo(cx + 330, cy); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = "#fbf3ef"; ctx.beginPath(); ctx.moveTo(cx - 300, cy); ctx.bezierCurveTo(cx - 150, cy - 170, cx + 170, cy - 170, cx + 320, cy - 10); ctx.bezierCurveTo(cx + 160, cy + 120, cx - 150, cy + 120, cx - 300, cy); ctx.fill();
+  ctx.fillStyle = "#4a2f26"; ctx.beginPath(); ctx.arc(cx + 10, cy - 20, 92, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = "#1a0f0c"; ctx.beginPath(); ctx.arc(cx + 10, cy - 20, 40, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(cx + 40, cy - 50, 16, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = "#1a0f0c"; ctx.lineWidth = 12; ctx.beginPath(); ctx.moveTo(cx - 300, cy); ctx.bezierCurveTo(cx - 150, cy - 170, cx + 170, cy - 170, cx + 340, cy - 30); ctx.stroke();
   ctx.restore();
 }
 function drop(ctx, x, y, r, a) {
@@ -369,6 +408,11 @@ function drawScene(ctx, v, idx, opts = {}) {
       drop(ctx, W * .7, H * .4, 40, .9); break;
     }
     case "product": bg(ctx, "#f7e3ea", "#e6b6c6"); bottle(ctx, W * .5, H * .56, 1.4); break;
+    case "label": bg(ctx, "#f7e3ea", "#e6b6c6"); bottle(ctx, W * .5, H * .5, 2.1);
+      ctx.save(); ctx.strokeStyle = "#ffd23f"; ctx.lineWidth = 10; ctx.setLineDash([26, 16]); rr(ctx, W * .5 - 230, H * .5 + 190, 460, 300, 30); ctx.stroke(); ctx.restore(); break;
+    case "swatch": swatchArm(ctx); break;
+    case "lip": lips(ctx); break;
+    case "eye": eyeLid(ctx); break;
     case "open": bg(ctx, "#f9ece0", "#e9c3ae"); bottle(ctx, W * .4, H * .62, 1.1, true); dropper(ctx, W * .64, H * .38, 1.1); drop(ctx, W * .7, H * .53, 30, .9); break;
     case "cta": {
       bg(ctx, "#2b1d24", "#5a2f42"); bottle(ctx, W * .5, H * .52, 1.1);
@@ -383,6 +427,10 @@ function drawScene(ctx, v, idx, opts = {}) {
   // ad disclosure (top-left)
   ctx.fillStyle = "rgba(0,0,0,.55)"; rr(ctx, 48, 120, 236, 64, 14); ctx.fill();
   ctx.fillStyle = "#fff"; ctx.textAlign = "left"; ctx.font = "700 32px 'IBM Plex Sans KR', sans-serif"; ctx.fillText("유료광고 포함", 70, 164);
+  if (DISCLOSE.ai) {
+    ctx.fillStyle = "rgba(0,0,0,.55)"; rr(ctx, 48, 196, 236, 64, 14); ctx.fill();
+    ctx.fillStyle = "#fff"; ctx.fillText("AI 가상 모델", 74, 240);
+  }
   // subtitle — style comes from SUB_STYLE (font, colors, size, position)
   const st = SUB_STYLE, fs = st.size;
   ctx.font = `${st.weight} ${fs}px ${st.font}`; ctx.textAlign = "center";
