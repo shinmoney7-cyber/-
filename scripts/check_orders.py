@@ -128,6 +128,9 @@ def parse_order_email(body: str, account: str = "sm", email_uid: str = "") -> li
     if not products:
         return []
 
+    # 연락처가 이메일이면 customer_email로 사용, 아니면 운영자 이메일
+    cust_email = contact.strip() if contact and "@" in contact else OPERATOR_EMAIL
+
     return [
         {
             "account":          account,
@@ -140,7 +143,7 @@ def parse_order_email(body: str, account: str = "sm", email_uid: str = "") -> li
             "hour":             hour,
             "minute":           0,
             "product":          p,
-            "customer_email":   OPERATOR_EMAIL,
+            "customer_email":   cust_email,
             "delivery_method":  delivery_method,
             "delivery_contact": contact,
             "email_uid":        email_uid,
@@ -251,6 +254,44 @@ def run():
 
     mail.close()
     mail.logout()
+
+    # 주문 처리 완료 후 소셜 미디어 포스팅 트리거 (처리된 주문이 있을 때만)
+    if email_ids:
+        _trigger_social_posting()
+
+
+def _trigger_social_posting():
+    """주문 처리 후 소셜 미디어 포스팅 트리거 (오케스트레이터 호출)"""
+    import subprocess, datetime as _dt
+    try:
+        scripts_dir = Path(__file__).parent
+        orchestrator = scripts_dir / "orchestrator.py"
+        if not orchestrator.exists():
+            print("[소셜] orchestrator.py 없음 — 건너뜀")
+            return
+
+        # 현재 KST 시간 기준으로 적절한 시간대 선택
+        now_kst = _dt.datetime.utcnow() + _dt.timedelta(hours=9)
+        hour = now_kst.hour
+        # 낮 시간대(6~22시)에만 포스팅
+        if not (6 <= hour <= 22):
+            print(f"[소셜] 야간({hour}시) — 포스팅 건너뜀")
+            return
+
+        print(f"\n[소셜] 주문 처리 완료 → 소셜 포스팅 트리거 ({hour}시)")
+        result = subprocess.run(
+            [sys.executable, str(orchestrator)],
+            env={**os.environ, "HOUR_KST": str(hour)},
+            capture_output=True,
+            text=True,
+            timeout=300,
+        )
+        if result.returncode == 0:
+            print("[소셜] 포스팅 완료")
+        else:
+            print(f"[소셜] 포스팅 실패: {result.stderr[:200]}")
+    except Exception as e:
+        print(f"[소셜] 트리거 오류 (무시): {e}")
 
 
 if __name__ == "__main__":

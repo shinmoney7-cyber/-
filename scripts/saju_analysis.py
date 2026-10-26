@@ -138,7 +138,7 @@ def analyze_saju(order: dict) -> str:
 
 
 def send_analysis_email(order: dict, analysis_text: str) -> bool:
-    """분석 결과를 운영자 이메일로 발송"""
+    """분석 결과를 고객 + 운영자 이메일로 발송"""
     if not GMAIL_APP_PASSWORD or not analysis_text:
         return False
 
@@ -147,7 +147,13 @@ def send_analysis_email(order: dict, analysis_text: str) -> bool:
     dm      = order.get("delivery_method", "이메일")
     dc      = order.get("delivery_contact", "")
 
-    subject = f"[사주분석 완료] {name}님 - {product}"
+    # 수신자: 운영자 필수 + 고객 이메일 있으면 추가
+    recipients = [OPERATOR_EMAIL]
+    cust_email = dc.strip() if dc and "@" in dc else ""
+    if cust_email and cust_email != OPERATOR_EMAIL:
+        recipients.append(cust_email)
+
+    subject = f"[사주마루] {name}님 {product} 분석 결과입니다"
 
     html = f"""
 <html><body style="font-family:'Malgun Gothic',sans-serif;max-width:680px;margin:0 auto;padding:24px;background:#f9f6ff;">
@@ -169,7 +175,7 @@ def send_analysis_email(order: dict, analysis_text: str) -> bool:
 </div>
 
 <div style="margin-top:32px;padding-top:16px;border-top:1px solid #e8e0ff;font-size:12px;color:#aaa;text-align:center;">
-  사주마루 AI 분석 시스템 · 고객 전달 후 이 메일은 보관하세요
+  사주마루 · 문의: shinmoney7@gmail.com
 </div>
 </div>
 </body></html>
@@ -178,14 +184,15 @@ def send_analysis_email(order: dict, analysis_text: str) -> bool:
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
     msg["From"]    = GMAIL_USER
-    msg["To"]      = OPERATOR_EMAIL
+    msg["To"]      = ", ".join(recipients)
     msg.attach(MIMEText(html, "html", "utf-8"))
 
     try:
         with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=30) as server:
             server.login(GMAIL_USER, GMAIL_APP_PASSWORD)
-            server.sendmail(GMAIL_USER, OPERATOR_EMAIL, msg.as_string())
-        print(f"[분석메일] {name} / {product} → 발송 완료")
+            server.sendmail(GMAIL_USER, recipients, msg.as_string())
+        sent_to = f"{name} → {', '.join(recipients)}"
+        print(f"[분석메일] {sent_to} 발송 완료")
         return True
     except Exception as e:
         print(f"[분석메일] 발송 실패: {e}")
