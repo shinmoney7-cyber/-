@@ -22,9 +22,9 @@ if _env.exists():
 from orders_db   import create_order, update_status, update_field, find_by_email_uid
 from kakao_notify import notify_new_order, notify_error, send_customer_guide
 
-GMAIL_USER         = os.getenv("GMAIL_USER", "shinmoney7@gmail.com")
+GMAIL_USER         = os.getenv("GMAIL_USER", "sajumaru7@gmail.com")
 GMAIL_APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD", "")
-OPERATOR_EMAIL     = "shinmoney7@gmail.com"
+OPERATOR_EMAIL     = "sajumaru7@gmail.com"
 
 # 제목 → 계정 ID 매핑
 SUBJECT_ACCOUNT_MAP = {

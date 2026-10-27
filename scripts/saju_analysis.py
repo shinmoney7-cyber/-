@@ -17,9 +17,9 @@ if _env.exists():
             os.environ.setdefault(k.strip(), v.strip())
 
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
-GMAIL_USER        = os.getenv("GMAIL_USER", "shinmoney7@gmail.com")
+GMAIL_USER        = os.getenv("GMAIL_USER", "sajumaru7@gmail.com")
 GMAIL_APP_PASSWORD= os.getenv("GMAIL_APP_PASSWORD", "")
-OPERATOR_EMAIL    = "shinmoney7@gmail.com"
+OPERATOR_EMAIL    = "sajumaru7@gmail.com"
 
 # 지지(地支) → 오행·특성
 SIJIN = {
@@ -175,7 +175,7 @@ def send_analysis_email(order: dict, analysis_text: str) -> bool:
 </div>
 
 <div style="margin-top:32px;padding-top:16px;border-top:1px solid #e8e0ff;font-size:12px;color:#aaa;text-align:center;">
-  사주마루 · 문의: shinmoney7@gmail.com
+  사주마루 · 문의: sajumaru7@gmail.com
 </div>
 </div>
 </body></html>

@@ -26,9 +26,9 @@ if _env.exists():
 from orders_db    import find_pending_for_name_product, mark_claude_verified, mark_delivered, list_orders
 from kakao_notify import notify_verified_and_sending, notify_delivered, notify_error
 
-GMAIL_USER         = os.getenv("GMAIL_USER", "shinmoney7@gmail.com")
+GMAIL_USER         = os.getenv("GMAIL_USER", "sajumaru7@gmail.com")
 GMAIL_APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD", "")
-OPERATOR_EMAIL     = "shinmoney7@gmail.com"
+OPERATOR_EMAIL     = "sajumaru7@gmail.com"
 ADD_COVER_SCRIPT   = Path(__file__).parent / "add_cover.py"
 ANTHROPIC_API_KEY  = os.getenv("ANTHROPIC_API_KEY", "")
 

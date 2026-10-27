@@ -4,7 +4,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 
-GMAIL_USER = os.environ.get("GMAIL_USER", "shinmoney7@gmail.com")
+GMAIL_USER = os.environ.get("GMAIL_USER", "sajumaru7@gmail.com")
 GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD", "")
 
 with open("scripts/sns_output/meta.json", encoding="utf-8") as f:
