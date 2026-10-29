@@ -61,16 +61,16 @@ STORE_URL  = mono.get("smartstore", "smartstore.naver.com/sajumaru")
 # ── 계정 × 토픽 차별화 (탑 크리에이터 전략) ─────────────────
 TOPIC_ANGLE = {
     "sm": {
-        "띠별운세":  "자평명리학 기반 12지지 오행 생극제화 분석. 오늘 특히 강한 지지와 그 영향.",
-        "재물운":    "재성(財星) 위치·대운 흐름으로 재물 피크와 손재 위험 시기 심층 분석.",
-        "재회운":    "연애궁(연지·도화살·홍란성·천을귀인) 분석. 재회·새인연 타이밍.",
-        "합격운":    "문창성(文昌星)·인성(印星)으로 시험·합격운 피크 시기와 대비책.",
-        "이직승진운": "관성(官星)·인성(印星) 조화와 세운 흐름으로 직장·승진 최적 타이밍.",
-        "사업운":    "식신(食神)·재성(財星) 구조로 창업·사업 성공 조건과 위험 요인.",
-        "건강운":    "오행(목화토금수) 허실로 신체 취약 부위·건강운 피크 및 주의 시기.",
-        "궁합운":    "일주 충합·형파·원진 분석으로 궁합 호환성과 관계 개선 포인트.",
-        "이사운":    "택일(擇日) 원리와 방위(方位) 기반 이사 최적 시기·방향 분석.",
-        "부모운":    "부모궁(년주·월주) 분석. 부모 건강운·가족 화합·효도 타이밍.",
+        "오늘의픽":      "오늘 가장 핫한 쇼핑 픽 1개. 가격 대비 만족도 최고. 지금 안 사면 후회.",
+        "주방용품":      "주방 필수템 솔직 리뷰. 설거지/요리 효율 UP. 직접 써본 레얼 후기.",
+        "뷰티/스킨케어": "피부 고민 해결템. 성분 분석. 가성비 vs 프리미엄 비교. 전성분 확인 팁.",
+        "생활소품":      "집 정리/청소 꿀템. 수납 아이디어. 1만원대 인생템 발굴.",
+        "패션/의류":     "이번 시즌 핫 아이템. 코디 활용 팁. 사이즈 정보 + 가격 비교.",
+        "식품/건강식품": "건강 보조제 성분 팩트체크. 다이어트식품 솔직 후기. 구독 서비스 가성비.",
+        "전자기기":      "가전/소형기기 스펙 비교. 실사용 장단점. 최저가 구매 타이밍.",
+        "반려동물":      "반려동물 필수템. 간식/용품 성분 확인. 보호자 만족도 높은 아이템.",
+        "인테리어":      "집 꾸미기 소품. 저렴하게 감성 인테리어 만드는 법. IKEA 대체템.",
+        "다이어트/운동": "운동 용품 솔직 리뷰. 홈트레이닝 필수템. 단백질/보충제 가성비 비교.",
     },
     "un": {
         "띠별운세":  "언니가 오늘 우리 띠별 에너지 솔직하게 봐줄게 🥰 진짜 맞아서 소름 돋을 거야.",
@@ -99,6 +99,15 @@ TOPIC_ANGLE = {
 }
 
 TOPIC_GUIDE = TOPIC_ANGLE.get(ACCOUNT_ID, {}).get(TOPIC, TOPIC)
+
+channel_type = account.get("channel_type", "saju")
+
+# 쇼핑 채널은 account["topics"] 사용, saju는 time_slot 기반
+if channel_type == "shopping":
+    _topics = account.get("topics", ["오늘의픽"])
+    TOPIC = _topics[WEEKDAY % len(_topics)]
+    TOPIC_GUIDE = TOPIC_ANGLE.get(ACCOUNT_ID, {}).get(TOPIC, TOPIC)
+    FORM_URL = account.get("shopping_links", {}).get("coupang_partners", "coupang.com/sabolkka")
 
 # ── 탑 수익 크리에이터 훅 공식 ───────────────────────────────
 HOOK_FORMULAS = """
@@ -194,18 +203,76 @@ CTA 링크:
   "hashtags": "#사주 #운세 #무료사주 #오늘운세 #사주상담 #사주팔자 #운세2026 #AI사주 #{account['handle']} #사주보기 #{TOPIC.replace(' ','')} #오늘의운세 #사주풀이 #무료운세 #생년월일사주"
 }}"""
 
+SHOPPING_PROMPT = f"""당신은 {account['name']} 채널의 한국 최고 쇼핑 쇼츠 크리에이터입니다.
+직접 써본 진짜 후기, 핫딜 발굴, 가성비 분석으로 월 1000만원 이상 버는 전략으로 콘텐츠를 작성하세요.
+
+페르소나: {account['persona']}
+오늘: {TODAY_KR}
+카테고리: {TOPIC}
+시간대: {time_slot['title']}
+
+훅 공식 (쇼핑 크리에이터 바이럴 패턴):
+1. 가격 충격형: "이거 {TOPIC} 분야 가성비 끝판왕이에요", "3만원인데 10만원짜리보다 나아요"
+2. 솔직 후기형: "직접 3개월 써봤는데 솔직히 말할게요", "이거 유명한데 진짜 맞아요?"
+3. 비교형: "쿠팡 vs 네이버쇼핑 어디가 더 싸요?", "비싼 거 vs 싼 거 차이 있어요?"
+4. 급박형: "오늘만 이 가격이에요", "재고 얼마 없어요"
+5. 정보형: "{TOPIC} 고를 때 이것만 봐요", "이거 모르고 사면 후회해요"
+
+아래 JSON만 출력 (```없이, 설명없이):
+
+{{
+  "product_name": "오늘 소개할 대표 상품명 (구체적, 예: 코렐 접시 6P세트 / 닥터자르트 세라마이딘 세럼)",
+  "price_range": "가격대 (예: 12,900원~28,000원)",
+  "where_to_buy": "구매처 (쿠팡/네이버쇼핑/올리브영 등)",
+  "hook": "첫 3초 훅 문구 (15자 이내, 숫자나 결론 포함)",
+  "key_points": ["포인트1 (20자 이내)", "포인트2 (20자 이내)", "포인트3 (20자 이내)"],
+  "honest_review": "솔직 한줄 평 (30자 이내, 단점 포함 필수 — 단점 없으면 신뢰 하락)",
+
+  "instagram_caption": "인스타 캡션 250자: 저장 유도 오프닝 + 상품 핵심 + 가격 + #쇼핑 #쇼핑추천 #가성비 #오늘의픽 #쇼핑스타그램 #살까말까 #{account['handle']} #핫딜 #쿠팡 #{TOPIC.replace('/','').replace(' ','')} 포함",
+  "threads_post": "쓰레드 200자: 대화체 + 구매 고민 공감 + '댓글에 써주세요' 유도",
+
+  "tiktok_hook": "틱톡 첫 3초 자막 (8자 이내, 결론 먼저)",
+  "tiktok_script": "틱톡/릴스 60초 스크립트 (한 문장씩 줄바꿈)\\n[0-3초] 훅: 이게 얼마인줄 알아요?\\n[4-45초] 상품 소개+핵심 포인트 3가지\\n[46-55초] 솔직 후기 (단점 포함해야 신뢰)\\n[56-60초] 구매 링크 CTA",
+
+  "youtube_title": "유튜브 제목 50자: 가격+상품+클릭유도 (예: 이거 9,900원이라고요? {TOPIC} 인생템 발굴했어요)",
+  "youtube_script": "유튜브 쇼츠 대본 60초 (TTS 구어체)\\n[0-5초] '안녕하세요 {account['name']}입니다' + 오늘 상품 예고\\n[6-50초] 상품 소개 + 장단점 + 가격 비교\\n[51-60초] 구매 링크 + 구독 CTA",
+
+  "naver_blog_title": "네이버 블로그 SEO 제목 45자: '{TODAY_KR}' + 상품명 + '솔직후기' or '가성비' + '{TOPIC}' 포함",
+  "naver_blog_content": "블로그 본문 1500자:\\n## {TODAY_KR} {TOPIC} 추천 아이템\\n(도입: 왜 이 상품인지 200자)\\n## 상품 스펙 & 가격\\n(스펙 + 가격 + 구매처 300자)\\n## 솔직 후기 (장점 3개 + 단점 1개)\\n(진짜 후기 500자: 단점 숨기면 신뢰 하락)\\n## 이런 분께 추천해요\\n(타겟 독자층 200자)\\n## 구매 링크\\n(CTA + 쿠팡/네이버쇼핑 유도)\\n\\n※ {account.get('shopping_links', {{}}).get('affiliate_notice', '')}",
+
+  "naver_clip_hook": "네이버 클립 훅 (6자 이내, 가격이나 특징 강조)",
+
+  "slide_texts": [
+    "슬라이드1: 상품명 + 가격 (10자 이내)",
+    "슬라이드2: 핵심 포인트1 (15자 이내)",
+    "슬라이드3: 핵심 포인트2 (15자 이내)",
+    "슬라이드4: 솔직 단점 (10자 이내)",
+    "슬라이드5: 구매 유도 CTA (10자 이내)"
+  ],
+  "hashtags": "#쇼핑 #쇼핑추천 #가성비 #{TOPIC.replace('/','').replace(' ','')} #핫딜 #쿠팡 #네이버쇼핑 #{account['handle']} #살까말까 #오늘의픽 #쇼핑스타그램 #가성비템 #리뷰 #쇼츠"
+}}"""
+
 # API 호출
 msg = client.messages.create(
     model="claude-haiku-4-5",
     max_tokens=3000,
-    messages=[{"role": "user", "content": PROMPT}]
+    messages=[{"role": "user", "content": SHOPPING_PROMPT if channel_type == "shopping" else PROMPT}]
 )
 
 raw = msg.content[0].text.strip()
 raw = re.sub(r"^```json?\s*", "", raw)
 raw = re.sub(r"```\s*$", "", raw)
 content = json.loads(raw.strip())
-print(f"✅ 콘텐츠 생성 완료: {content.get('theme', '')} | 훅: {content.get('hook', '')[:20]}")
+
+# 쇼핑 채널: 이미지 생성 함수 호환용 필드 정규화
+if channel_type == "shopping":
+    content.setdefault("main_text", "\n".join(content.get("key_points", [])))
+    content.setdefault("zodiac_sign", "자")
+    content.setdefault("lucky_element", content.get("honest_review", ""))
+    content.setdefault("cta", f"💰 {content.get('price_range', '')}  {content.get('where_to_buy', '쿠팡')}")
+    print(f"✅ 콘텐츠 생성 완료: {content.get('product_name', '')} | 훅: {content.get('hook', '')[:20]}")
+else:
+    print(f"✅ 콘텐츠 생성 완료: {content.get('theme', '')} | 훅: {content.get('hook', '')[:20]}")
 
 # ── 프리미엄 이미지 카드 생성 (황금빛 신비 스타일) ───────────
 def hex_to_rgb(h):
@@ -386,7 +453,7 @@ def make_vertical_slides(content: dict, account: dict) -> list:
     paths = []
     zodiac_map = {"자":"🐭","축":"🐂","인":"🐯","묘":"🐰","진":"🐲","사":"🐍",
                   "오":"🐴","미":"🐑","신":"🐒","유":"🐓","술":"🐕","해":"🐗"}
-    zodiac_emoji = zodiac_map.get(content.get("zodiac_sign", "자"), "⭐")
+    zodiac_emoji = "🛍️" if account.get("channel_type") == "shopping" else zodiac_map.get(content.get("zodiac_sign", "자"), "⭐")
 
     for idx, slide_text in enumerate(default_slides):
         base = Image.new("RGBA", (W, H), (*bg, 255))

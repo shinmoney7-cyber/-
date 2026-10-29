@@ -2,24 +2,31 @@
   "accounts": [
     {
       "id": "sm",
-      "name": "사주마루",
-      "handle": "sajumaru",
-      "theme": "gold_purple",
-      "accent": "#c9a227",
-      "bg": "#070714",
+      "name": "사볼까",
+      "handle": "sabolkka",
+      "theme": "coral_orange",
+      "accent": "#ff6b35",
+      "bg": "#0d0d0d",
       "typefully_social_set_id": 348526,
-      "persona": "신비롭고 권위있는 사주 전문가. 학문적이고 깊이있는 운세 분석. 오랜 경험과 지혜.",
+      "persona": "직접 써본 쇼핑 큐레이터. 쿠팡·네이버쇼핑 핫딜 탐정. 30초 안에 살지 말지 결론부터. 솔직한 리뷰어.",
+      "channel_type": "shopping",
+      "topics": ["오늘의픽", "주방용품", "뷰티/스킨케어", "생활소품", "패션/의류", "식품/건강식품", "전자기기", "반려동물", "인테리어", "다이어트/운동"],
+      "shopping_links": {
+        "coupang_partners": "https://link.coupang.com/sabolkka",
+        "naver_shopping": "https://search.shopping.naver.com",
+        "affiliate_notice": "이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다."
+      },
       "env_prefix": "SM",
       "platforms": {
         "instagram": true,
-        "facebook": true,
+        "facebook": false,
         "threads": true,
-        "twitter": true,
+        "twitter": false,
         "tiktok": true,
         "youtube": true,
         "naver_blog": true,
         "naver_clip": true,
-        "naver_jisik": true
+        "naver_jisik": false
       }
     },
     {
