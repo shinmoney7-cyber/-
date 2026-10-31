@@ -9,7 +9,7 @@
   TYPEFULLY_API_KEY=your_key_here
 
 계정 정보:
-  사주마루: social_set_id=348526, pages/carousel-sm.html
+  사볼까: social_set_id=348526, pages/carousel-sm.html
   사주보는언니: social_set_id=349146, pages/carousel-un.html
   사주마루77: social_set_id=349162, pages/carousel-77.html
 """
@@ -39,10 +39,16 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 ACCOUNTS = [
     {
-        "name": "사주마루",
+        "name": "사볼까",
         "social_set_id": 348526,
         "html_file": PAGES_DIR / "carousel-sm.html",
-        "caption": "오늘의 사주 운세 🌟 #사주 #운세 #사주마루",
+        "caption": "오늘의 생활픽 🏠 #생활용품 #주방용품 #인테리어 #사볼까 #가성비 #꿀템",
+    },
+    {
+        "name": "사볼까뉴스",
+        "social_set_id": 0,
+        "html_file": PAGES_DIR / "carousel-nw.html",
+        "caption": "오늘의 뷰티픽 💄 #뷰티 #스킨케어 #화장품추천 #사볼까뉴스 #올리브영 #가성비뷰티",
     },
     {
         "name": "사주보는언니",

@@ -88,7 +88,7 @@ def _send_admin_email(subject: str, html_body: str):
     import smtplib
     from email.mime.multipart import MIMEMultipart
     from email.mime.text import MIMEText
-    gmail_user = os.getenv("GMAIL_USER", "shinmoney7@gmail.com")
+    gmail_user = os.getenv("GMAIL_USER", "sajumaru7@gmail.com")
     gmail_pw   = os.getenv("GMAIL_APP_PASSWORD", "")
     if not gmail_pw or not NOTIFY_EMAIL:
         return
@@ -182,7 +182,7 @@ def notify_new_order(order: dict, order_id: str):
             f"{name}님, #{order_id}\n"
             f"상품: {product}\n"
             f"입금 확인 후 사주 분석을 시작합니다.\n"
-            f"문의: shinmoney7@gmail.com"
+            f"문의: sajumaru7@gmail.com"
         )
         _kakao_or_sms(customer_phone, customer_text)
 
@@ -342,7 +342,7 @@ def _send_guide_email(to_email: str, name: str, order_id: str, guide_text: str, 
     from email.mime.text import MIMEText
     from email.mime.multipart import MIMEMultipart
 
-    gmail_user = os.getenv("GMAIL_USER", "shinmoney7@gmail.com")
+    gmail_user = os.getenv("GMAIL_USER", "sajumaru7@gmail.com")
     gmail_pw   = os.getenv("GMAIL_APP_PASSWORD", "")
     if not gmail_pw:
         return

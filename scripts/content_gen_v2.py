@@ -61,16 +61,28 @@ STORE_URL  = mono.get("smartstore", "smartstore.naver.com/sajumaru")
 # ── 계정 × 토픽 차별화 (탑 크리에이터 전략) ─────────────────
 TOPIC_ANGLE = {
     "sm": {
-        "띠별운세":  "자평명리학 기반 12지지 오행 생극제화 분석. 오늘 특히 강한 지지와 그 영향.",
-        "재물운":    "재성(財星) 위치·대운 흐름으로 재물 피크와 손재 위험 시기 심층 분석.",
-        "재회운":    "연애궁(연지·도화살·홍란성·천을귀인) 분석. 재회·새인연 타이밍.",
-        "합격운":    "문창성(文昌星)·인성(印星)으로 시험·합격운 피크 시기와 대비책.",
-        "이직승진운": "관성(官星)·인성(印星) 조화와 세운 흐름으로 직장·승진 최적 타이밍.",
-        "사업운":    "식신(食神)·재성(財星) 구조로 창업·사업 성공 조건과 위험 요인.",
-        "건강운":    "오행(목화토금수) 허실로 신체 취약 부위·건강운 피크 및 주의 시기.",
-        "궁합운":    "일주 충합·형파·원진 분석으로 궁합 호환성과 관계 개선 포인트.",
-        "이사운":    "택일(擇日) 원리와 방위(方位) 기반 이사 최적 시기·방향 분석.",
-        "부모운":    "부모궁(년주·월주) 분석. 부모 건강운·가족 화합·효도 타이밍.",
+        "생활용품":   "일상 필수 생활용품 가성비 발굴. 직접 써본 솔직 리뷰. 쿠팡 vs 다이소 비교.",
+        "주방용품":   "주방 효율 높이는 아이템. 요리·설거지 시간 단축 템. 내구성·가격 팩트체크.",
+        "인테리어소품": "저렴하게 감성 인테리어 완성. IKEA 대체 아이템. 공간별 활용 소품 추천.",
+        "수납정리":   "집 정리 완성하는 수납템. 공간 활용 극대화. 사이즈·재질 비교 팁.",
+        "청소용품":   "청소 시간 반으로 줄이는 도구. 친환경 세제 성분 분석. 브랜드별 세정력 비교.",
+        "욕실용품":   "욕실 공간 깔끔하게 만드는 수납·도구. 습기 곰팡이 방지 아이템. 가격 비교.",
+        "소형가전":   "주방·생활 소형가전 스펙 비교. 실사용 에너지 절약 효과. 최저가 구매 타이밍.",
+        "침구/커튼":  "수면 질 높이는 침구 선택법. 계절별 소재 추천. 세탁 편의성·내구성 비교.",
+        "조명":       "공간 분위기 바꾸는 조명 추천. 색온도·밝기 선택법. DIY 셀프 조명 교체 팁.",
+        "식물/원예":  "초보 식물 키우기 필수 아이템. 물주기 자동화 도구. 공기정화 식물 추천 & 관리법.",
+    },
+    "nw": {
+        "스킨케어/세럼":    "피부 고민별 세럼 성분 분석. EWG 등급 확인법. 가성비 vs 프리미엄 비교. 화해 평점 팩트체크.",
+        "선크림/자외선차단": "SPF/PA 등급 차이 설명. 백탁 없는 선크림 찾기. 실내·야외 용도별 추천.",
+        "클렌징":           "저자극 성분 클렌저 비교. 이중세안 필요/불필요 판단. 피부 타입별 클렌징 방법.",
+        "토너/미스트":      "수분 공급 루틴 정립. 토너패드 vs 일반 토너 차이. 성분 흡수율 높이는 순서.",
+        "마스크팩":         "시트팩 vs 워시오프 팩 비교. 주 몇 회 사용이 맞는지. 가성비 마스크팩 순위.",
+        "메이크업":         "피부 표현 제품 성분·지속력 비교. 톤업·쿠션·파운데이션 차이. 메이크업 순서 꿀팁.",
+        "헤어케어":         "두피 건강 샴푸 성분 분석. 머리 빠짐·손상모 케어 아이템. 쿠팡 vs 올리브영 가격 비교.",
+        "향수/바디케어":    "향수 지속력 테스트 결과. 바디로션·오일 흡수 속도 비교. 데일리 vs 특별일 향 추천.",
+        "뷰티기기":         "LED 마스크·갈바닉·초음파 기기 효과 팩트체크. 가정용 뷰티기기 가성비 순위.",
+        "네일아트":         "젤네일 키트 성분 안전성. 초보 네일 팁. 올리브영 단독 vs 쿠팡 가격 비교.",
     },
     "un": {
         "띠별운세":  "언니가 오늘 우리 띠별 에너지 솔직하게 봐줄게 🥰 진짜 맞아서 소름 돋을 거야.",
@@ -99,6 +111,15 @@ TOPIC_ANGLE = {
 }
 
 TOPIC_GUIDE = TOPIC_ANGLE.get(ACCOUNT_ID, {}).get(TOPIC, TOPIC)
+
+channel_type = account.get("channel_type", "saju")
+
+# 쇼핑 채널은 account["topics"] 사용, saju는 time_slot 기반
+if channel_type == "shopping":
+    _topics = account.get("topics", ["오늘의픽"])
+    TOPIC = _topics[WEEKDAY % len(_topics)]
+    TOPIC_GUIDE = TOPIC_ANGLE.get(ACCOUNT_ID, {}).get(TOPIC, TOPIC)
+    FORM_URL = account.get("shopping_links", {}).get("coupang_partners", "coupang.com/sabolkka")
 
 # ── 탑 수익 크리에이터 훅 공식 ───────────────────────────────
 HOOK_FORMULAS = """
@@ -194,18 +215,76 @@ CTA 링크:
   "hashtags": "#사주 #운세 #무료사주 #오늘운세 #사주상담 #사주팔자 #운세2026 #AI사주 #{account['handle']} #사주보기 #{TOPIC.replace(' ','')} #오늘의운세 #사주풀이 #무료운세 #생년월일사주"
 }}"""
 
+SHOPPING_PROMPT = f"""당신은 {account['name']} 채널의 한국 최고 쇼핑 쇼츠 크리에이터입니다.
+직접 써본 진짜 후기, 핫딜 발굴, 가성비 분석으로 월 1000만원 이상 버는 전략으로 콘텐츠를 작성하세요.
+
+페르소나: {account['persona']}
+오늘: {TODAY_KR}
+카테고리: {TOPIC}
+시간대: {time_slot['title']}
+
+훅 공식 (쇼핑 크리에이터 바이럴 패턴):
+1. 가격 충격형: "이거 {TOPIC} 분야 가성비 끝판왕이에요", "3만원인데 10만원짜리보다 나아요"
+2. 솔직 후기형: "직접 3개월 써봤는데 솔직히 말할게요", "이거 유명한데 진짜 맞아요?"
+3. 비교형: "쿠팡 vs 네이버쇼핑 어디가 더 싸요?", "비싼 거 vs 싼 거 차이 있어요?"
+4. 급박형: "오늘만 이 가격이에요", "재고 얼마 없어요"
+5. 정보형: "{TOPIC} 고를 때 이것만 봐요", "이거 모르고 사면 후회해요"
+
+아래 JSON만 출력 (```없이, 설명없이):
+
+{{
+  "product_name": "오늘 소개할 대표 상품명 (구체적, 예: 코렐 접시 6P세트 / 닥터자르트 세라마이딘 세럼)",
+  "price_range": "가격대 (예: 12,900원~28,000원)",
+  "where_to_buy": "구매처 (쿠팡/네이버쇼핑/올리브영 등)",
+  "hook": "첫 3초 훅 문구 (15자 이내, 숫자나 결론 포함)",
+  "key_points": ["포인트1 (20자 이내)", "포인트2 (20자 이내)", "포인트3 (20자 이내)"],
+  "honest_review": "솔직 한줄 평 (30자 이내, 단점 포함 필수 — 단점 없으면 신뢰 하락)",
+
+  "instagram_caption": "인스타 캡션 250자: 저장 유도 오프닝 + 상품 핵심 + 가격 + #쇼핑 #쇼핑추천 #가성비 #오늘의픽 #쇼핑스타그램 #살까말까 #{account['handle']} #핫딜 #쿠팡 #{TOPIC.replace('/','').replace(' ','')} 포함",
+  "threads_post": "쓰레드 200자: 대화체 + 구매 고민 공감 + '댓글에 써주세요' 유도",
+
+  "tiktok_hook": "틱톡 첫 3초 자막 (8자 이내, 결론 먼저)",
+  "tiktok_script": "틱톡/릴스 60초 스크립트 (한 문장씩 줄바꿈)\\n[0-3초] 훅: 이게 얼마인줄 알아요?\\n[4-45초] 상품 소개+핵심 포인트 3가지\\n[46-55초] 솔직 후기 (단점 포함해야 신뢰)\\n[56-60초] 구매 링크 CTA",
+
+  "youtube_title": "유튜브 제목 50자: 가격+상품+클릭유도 (예: 이거 9,900원이라고요? {TOPIC} 인생템 발굴했어요)",
+  "youtube_script": "유튜브 쇼츠 대본 60초 (TTS 구어체)\\n[0-5초] '안녕하세요 {account['name']}입니다' + 오늘 상품 예고\\n[6-50초] 상품 소개 + 장단점 + 가격 비교\\n[51-60초] 구매 링크 + 구독 CTA",
+
+  "naver_blog_title": "네이버 블로그 SEO 제목 45자: '{TODAY_KR}' + 상품명 + '솔직후기' or '가성비' + '{TOPIC}' 포함",
+  "naver_blog_content": "블로그 본문 1500자:\\n## {TODAY_KR} {TOPIC} 추천 아이템\\n(도입: 왜 이 상품인지 200자)\\n## 상품 스펙 & 가격\\n(스펙 + 가격 + 구매처 300자)\\n## 솔직 후기 (장점 3개 + 단점 1개)\\n(진짜 후기 500자: 단점 숨기면 신뢰 하락)\\n## 이런 분께 추천해요\\n(타겟 독자층 200자)\\n## 구매 링크\\n(CTA + 쿠팡/네이버쇼핑 유도)\\n\\n※ {account.get('shopping_links', {{}}).get('affiliate_notice', '')}",
+
+  "naver_clip_hook": "네이버 클립 훅 (6자 이내, 가격이나 특징 강조)",
+
+  "slide_texts": [
+    "슬라이드1: 상품명 + 가격 (10자 이내)",
+    "슬라이드2: 핵심 포인트1 (15자 이내)",
+    "슬라이드3: 핵심 포인트2 (15자 이내)",
+    "슬라이드4: 솔직 단점 (10자 이내)",
+    "슬라이드5: 구매 유도 CTA (10자 이내)"
+  ],
+  "hashtags": "#쇼핑 #쇼핑추천 #가성비 #{TOPIC.replace('/','').replace(' ','')} #핫딜 #쿠팡 #네이버쇼핑 #{account['handle']} #살까말까 #오늘의픽 #쇼핑스타그램 #가성비템 #리뷰 #쇼츠"
+}}"""
+
 # API 호출
 msg = client.messages.create(
     model="claude-haiku-4-5",
     max_tokens=3000,
-    messages=[{"role": "user", "content": PROMPT}]
+    messages=[{"role": "user", "content": SHOPPING_PROMPT if channel_type == "shopping" else PROMPT}]
 )
 
 raw = msg.content[0].text.strip()
 raw = re.sub(r"^```json?\s*", "", raw)
 raw = re.sub(r"```\s*$", "", raw)
 content = json.loads(raw.strip())
-print(f"✅ 콘텐츠 생성 완료: {content.get('theme', '')} | 훅: {content.get('hook', '')[:20]}")
+
+# 쇼핑 채널: 이미지 생성 함수 호환용 필드 정규화
+if channel_type == "shopping":
+    content.setdefault("main_text", "\n".join(content.get("key_points", [])))
+    content.setdefault("zodiac_sign", "자")
+    content.setdefault("lucky_element", content.get("honest_review", ""))
+    content.setdefault("cta", f"💰 {content.get('price_range', '')}  {content.get('where_to_buy', '쿠팡')}")
+    print(f"✅ 콘텐츠 생성 완료: {content.get('product_name', '')} | 훅: {content.get('hook', '')[:20]}")
+else:
+    print(f"✅ 콘텐츠 생성 완료: {content.get('theme', '')} | 훅: {content.get('hook', '')[:20]}")
 
 # ── 프리미엄 이미지 카드 생성 (황금빛 신비 스타일) ───────────
 def hex_to_rgb(h):
@@ -386,7 +465,7 @@ def make_vertical_slides(content: dict, account: dict) -> list:
     paths = []
     zodiac_map = {"자":"🐭","축":"🐂","인":"🐯","묘":"🐰","진":"🐲","사":"🐍",
                   "오":"🐴","미":"🐑","신":"🐒","유":"🐓","술":"🐕","해":"🐗"}
-    zodiac_emoji = zodiac_map.get(content.get("zodiac_sign", "자"), "⭐")
+    zodiac_emoji = "🛍️" if account.get("channel_type") == "shopping" else zodiac_map.get(content.get("zodiac_sign", "자"), "⭐")
 
     for idx, slide_text in enumerate(default_slides):
         base = Image.new("RGBA", (W, H), (*bg, 255))

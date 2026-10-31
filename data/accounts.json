@@ -2,25 +2,45 @@
   "accounts": [
     {
       "id": "sm",
-      "name": "사주마루",
-      "handle": "sajumaru",
-      "theme": "gold_purple",
-      "accent": "#c9a227",
-      "bg": "#070714",
+      "name": "사볼까",
+      "handle": "sabolkka",
+      "theme": "coral_orange",
+      "accent": "#ff6b35",
+      "bg": "#0d0d0d",
       "typefully_social_set_id": 348526,
-      "persona": "신비롭고 권위있는 사주 전문가. 학문적이고 깊이있는 운세 분석. 오랜 경험과 지혜.",
+      "persona": "생활용품·주방·인테리어 정보 큐레이터. 실생활 꿀팁과 가성비 아이템을 뉴스 형식으로 빠르게 정리. 직접 써본 솔직 리뷰.",
+      "channel_type": "shopping",
+      "topics": [
+        "생활용품",
+        "주방용품",
+        "인테리어소품",
+        "수납정리",
+        "청소용품",
+        "욕실용품",
+        "소형가전",
+        "침구/커튼",
+        "조명",
+        "식물/원예"
+      ],
+      "shopping_links": {
+        "coupang_partners": "https://link.coupang.com/sabolkka",
+        "naver_shopping": "https://search.shopping.naver.com",
+        "affiliate_notice": "이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다."
+      },
       "env_prefix": "SM",
       "platforms": {
         "instagram": true,
-        "facebook": true,
+        "facebook": false,
         "threads": true,
-        "twitter": true,
+        "twitter": false,
         "tiktok": true,
         "youtube": true,
         "naver_blog": true,
         "naver_clip": true,
-        "naver_jisik": true
-      }
+        "naver_jisik": false
+      },
+      "logo_file": "assets/brand/logo-sm.png",
+      "banner_file": "assets/brand/banner-sm.png"
     },
     {
       "id": "un",
@@ -42,7 +62,9 @@
         "naver_blog": true,
         "naver_clip": true,
         "naver_jisik": true
-      }
+      },
+      "logo_file": "assets/brand/logo-un.png",
+      "banner_file": "assets/brand/banner-un.png"
     },
     {
       "id": "s77",
@@ -64,7 +86,52 @@
         "naver_blog": false,
         "naver_clip": true,
         "naver_jisik": false
-      }
+      },
+      "logo_file": "assets/brand/logo-s77.png",
+      "banner_file": "assets/brand/banner-s77.png"
+    },
+    {
+      "id": "nw",
+      "name": "사볼까뉴스",
+      "handle": "sabolkka_news",
+      "theme": "steel_blue",
+      "accent": "#4a9eff",
+      "bg": "#0a0f1a",
+      "typefully_social_set_id": 0,
+      "persona": "직접 써본 뷰티 큐레이터. 올리브영·화해 앱 단골. 성분 분석+솔직 후기 전문. 30초 안에 살지 말지 결론부터.",
+      "channel_type": "shopping",
+      "topics": [
+        "스킨케어/세럼",
+        "선크림/자외선차단",
+        "클렌징",
+        "토너/미스트",
+        "마스크팩",
+        "메이크업",
+        "헤어케어",
+        "향수/바디케어",
+        "뷰티기기",
+        "네일아트"
+      ],
+      "shopping_links": {
+        "coupang_partners": "https://link.coupang.com/sabolkka",
+        "oliveyoung": "https://www.oliveyoung.co.kr",
+        "naver_shopping": "https://search.shopping.naver.com",
+        "affiliate_notice": "이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다."
+      },
+      "env_prefix": "NW",
+      "platforms": {
+        "instagram": true,
+        "facebook": false,
+        "threads": true,
+        "twitter": false,
+        "tiktok": true,
+        "youtube": true,
+        "naver_blog": true,
+        "naver_clip": true,
+        "naver_jisik": false
+      },
+      "logo_file": "assets/brand/logo-nw.png",
+      "banner_file": "assets/brand/banner-nw.png"
     }
   ],
   "time_slots": {
@@ -72,33 +139,96 @@
       "key": "08",
       "type": "morning_fortune",
       "title": "아침 운세",
-      "platforms": ["instagram", "facebook", "threads", "twitter", "tiktok"],
+      "platforms": [
+        "instagram",
+        "facebook",
+        "threads",
+        "twitter",
+        "tiktok"
+      ],
       "format": "image_carousel",
-      "topic_rotation": ["띠별운세", "재물운", "재회운", "합격운", "이직승진운", "사업운", "건강운", "궁합운", "이사운", "부모운"]
+      "topic_rotation": [
+        "띠별운세",
+        "재물운",
+        "재회운",
+        "합격운",
+        "이직승진운",
+        "사업운",
+        "건강운",
+        "궁합운",
+        "이사운",
+        "부모운"
+      ]
     },
     "13": {
       "key": "13",
       "type": "midday_insight",
       "title": "점심 픽",
-      "platforms": ["threads", "instagram", "twitter", "naver_blog", "naver_jisik"],
+      "platforms": [
+        "threads",
+        "instagram",
+        "twitter",
+        "naver_blog",
+        "naver_jisik"
+      ],
       "format": "text_image",
-      "topic_rotation": ["재물운", "재회운", "띠별운세", "건강운", "이직승진운", "합격운", "사업운", "궁합운", "이사운", "부모운"]
+      "topic_rotation": [
+        "재물운",
+        "재회운",
+        "띠별운세",
+        "건강운",
+        "이직승진운",
+        "합격운",
+        "사업운",
+        "궁합운",
+        "이사운",
+        "부모운"
+      ]
     },
     "20": {
       "key": "20",
       "type": "evening_fortune",
       "title": "저녁 포춘",
-      "platforms": ["instagram", "threads", "twitter", "tiktok", "youtube", "naver_clip"],
+      "platforms": [
+        "instagram",
+        "threads",
+        "twitter",
+        "tiktok",
+        "youtube",
+        "naver_clip"
+      ],
       "format": "image_video",
-      "topic_rotation": ["재회운", "건강운", "합격운", "재물운", "이직승진운", "사업운", "부모운", "띠별운세", "궁합운", "이사운"]
+      "topic_rotation": [
+        "재회운",
+        "건강운",
+        "합격운",
+        "재물운",
+        "이직승진운",
+        "사업운",
+        "부모운",
+        "띠별운세",
+        "궁합운",
+        "이사운"
+      ]
     },
     "06": {
       "key": "06",
       "type": "morning_fortune",
       "title": "아침 운세",
-      "platforms": ["instagram", "threads"],
+      "platforms": [
+        "instagram",
+        "threads"
+      ],
       "format": "image_carousel",
-      "topic_rotation": ["띠별운세", "재물운", "재회운", "합격운", "이직승진운", "사업운", "건강운"]
+      "topic_rotation": [
+        "띠별운세",
+        "재물운",
+        "재회운",
+        "합격운",
+        "이직승진운",
+        "사업운",
+        "건강운"
+      ]
     }
   },
   "monetization": {

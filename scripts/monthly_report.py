@@ -23,7 +23,7 @@ if _env.exists():
 
 from kakao_notify import _kakao_or_sms, _auth_header, NOTIFY_PHONE, NOTIFY_EMAIL
 
-GMAIL_USER         = os.getenv("GMAIL_USER", "shinmoney7@gmail.com")
+GMAIL_USER         = os.getenv("GMAIL_USER", "sajumaru7@gmail.com")
 GMAIL_APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD", "")
 
 ORDERS_FILE = Path(__file__).parent / "orders_data" / "orders.json"
@@ -206,7 +206,7 @@ def build_html(label: str, data: dict, since: datetime, until: datetime) -> str:
     </table>
 
     <p style="color:#555;font-size:12px;margin-top:16px;text-align:center">
-      자동 생성 보고서 · shinmoney7@gmail.com
+      자동 생성 보고서 · sajumaru7@gmail.com
     </p>
   </div>
 </div>
