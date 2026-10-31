@@ -42,13 +42,13 @@ ACCOUNTS = [
         "name": "사볼까",
         "social_set_id": 348526,
         "html_file": PAGES_DIR / "carousel-sm.html",
-        "caption": "오늘의 뷰티픽 💄 #뷰티 #스킨케어 #화장품추천 #사볼까 #올리브영 #가성비뷰티",
+        "caption": "오늘의 생활픽 🏠 #생활용품 #주방용품 #인테리어 #사볼까 #가성비 #꿀템",
     },
     {
         "name": "사볼까뉴스",
         "social_set_id": 0,
         "html_file": PAGES_DIR / "carousel-nw.html",
-        "caption": "오늘의 생활픽 🏠 #생활용품 #주방용품 #인테리어 #사볼까뉴스 #가성비 #꿀템",
+        "caption": "오늘의 뷰티픽 💄 #뷰티 #스킨케어 #화장품추천 #사볼까뉴스 #올리브영 #가성비뷰티",
     },
     {
         "name": "사주보는언니",

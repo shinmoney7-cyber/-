@@ -8,12 +8,11 @@
       "accent": "#ff6b35",
       "bg": "#0d0d0d",
       "typefully_social_set_id": 348526,
-      "persona": "직접 써본 뷰티 큐레이터. 올리브영·화해 앱 단골. 성분 분석+솔직 후기 전문. 30초 안에 살지 말지 결론부터.",
+      "persona": "생활용품·주방·인테리어 정보 큐레이터. 실생활 꿀팁과 가성비 아이템을 뉴스 형식으로 빠르게 정리. 직접 써본 솔직 리뷰.",
       "channel_type": "shopping",
-      "topics": ["스킨케어/세럼", "선크림/자외선차단", "클렌징", "토너/미스트", "마스크팩", "메이크업", "헤어케어", "향수/바디케어", "뷰티기기", "네일아트"],
+      "topics": ["생활용품", "주방용품", "인테리어소품", "수납정리", "청소용품", "욕실용품", "소형가전", "침구/커튼", "조명", "식물/원예"],
       "shopping_links": {
         "coupang_partners": "https://link.coupang.com/sabolkka",
-        "oliveyoung": "https://www.oliveyoung.co.kr",
         "naver_shopping": "https://search.shopping.naver.com",
         "affiliate_notice": "이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다."
       },
@@ -82,11 +81,12 @@
       "accent": "#4a9eff",
       "bg": "#0a0f1a",
       "typefully_social_set_id": 0,
-      "persona": "생활용품·주방·인테리어 정보 큐레이터. 실생활 꿀팁과 가성비 아이템을 뉴스 형식으로 빠르게 정리. 직접 써본 솔직 리뷰.",
+      "persona": "직접 써본 뷰티 큐레이터. 올리브영·화해 앱 단골. 성분 분석+솔직 후기 전문. 30초 안에 살지 말지 결론부터.",
       "channel_type": "shopping",
-      "topics": ["생활용품", "주방용품", "인테리어소품", "수납정리", "청소용품", "욕실용품", "소형가전", "침구/커튼", "조명", "식물/원예"],
+      "topics": ["스킨케어/세럼", "선크림/자외선차단", "클렌징", "토너/미스트", "마스크팩", "메이크업", "헤어케어", "향수/바디케어", "뷰티기기", "네일아트"],
       "shopping_links": {
         "coupang_partners": "https://link.coupang.com/sabolkka",
+        "oliveyoung": "https://www.oliveyoung.co.kr",
         "naver_shopping": "https://search.shopping.naver.com",
         "affiliate_notice": "이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다."
       },
