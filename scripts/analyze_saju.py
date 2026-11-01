@@ -28,7 +28,7 @@ if _env.exists():
             os.environ.setdefault(k.strip(), v.strip())
 
 ANTHROPIC_API_KEY  = os.getenv("ANTHROPIC_API_KEY", "")
-GMAIL_USER         = os.getenv("GMAIL_USER", "shinmoney7@gmail.com")
+GMAIL_USER         = os.getenv("GMAIL_USER", "sajumaru7@gmail.com")
 GMAIL_APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD", "")
 
 KST = timezone(timedelta(hours=9))

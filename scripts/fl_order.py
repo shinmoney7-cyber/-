@@ -160,7 +160,7 @@ if __name__ == "__main__":
         "day":            20,
         "hour":           None,  # 시간 모름
         "product":        "연애운",
-        "customer_email": "shinmoney7@gmail.com",
+        "customer_email": "sajumaru7@gmail.com",
     }
     if len(sys.argv) > 1:
         sample = json.loads(sys.argv[1])

@@ -20,7 +20,7 @@ if _env.exists():
 from orders_db    import list_orders, mark_paid, update_status
 from kakao_notify import notify_payment_confirmed, notify_analysis_started
 
-GMAIL_USER         = os.getenv("GMAIL_USER", "shinmoney7@gmail.com")
+GMAIL_USER         = os.getenv("GMAIL_USER", "sajumaru7@gmail.com")
 GMAIL_APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD", "")
 
 # 입금 이메일 발신자/제목 키워드
