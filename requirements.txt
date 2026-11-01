@@ -3,6 +3,10 @@ python-dotenv>=1.0
 click>=8.1
 playwright>=1.40
 
+# shorts video rendering (tools/shorts_render.py)
+numpy>=1.26
+Pillow>=10.0
+
 # dev/test
 pytest>=8.0
 requests-mock>=1.11
