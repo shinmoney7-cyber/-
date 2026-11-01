@@ -85,6 +85,11 @@ python -m shopping_shorts_sync script select --product-id harujin-vacuum-01 \
 JSON 파일이라 직접 열어서 수정하면 된다. 수정 후에는 `script select`를 다시 실행해서
 반영한다.
 
+## 여행 쇼핑쇼츠 운영 가이드
+
+수익화 조건, 만들 것 전체 목록, 첫 4주 캘린더는
+[docs/travel-shorts/MASTER_GUIDE.md](docs/travel-shorts/MASTER_GUIDE.md) 참고.
+
 ## 입력 파일 형식
 
 `data/products.example.json` / `data/products.example.csv` 참고. 각 상품은
