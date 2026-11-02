@@ -297,6 +297,79 @@ def vending_run(settings_path, blacklist_path, db_path, out_dir, dry_run, discor
         time.sleep(loop_min * 60)
 
 
+@vending.command("discover")
+@click.option("--settings", "settings_path", default="data/vending/settings.json", show_default=True)
+@click.option("--out-dir", default="output", show_default=True)
+@click.option("--limit", type=int, default=0, help="Max 품번 to search (0 = all). Naver API allows 25,000 calls/day.")
+@click.option("--top", type=int, default=20, show_default=True)
+@click.option("--dry-run/--live", "dry_run", default=True, help="Dry-run uses fixtures/vending/naver_search.json.")
+@click.option("--apply", "apply_", is_flag=True,
+              help="Append new candidates to the naver_shop stores list in data/vending/settings.json.")
+@click.option("--min-profitable", type=int, default=2, show_default=True,
+              help="--apply only adds sellers with at least this many profitable 품번.")
+def vending_discover(settings_path, out_dir, limit, top, dry_run, apply_, min_profitable):
+    """소싱처 발굴: rank Naver sellers that sell market 품번 below market price."""
+    import os
+    from datetime import datetime
+    from pathlib import Path
+
+    from .vending.discover import FixtureSearcher, NaverSearcher, rank_malls, search_codes, write_discovery_xlsx
+    from .vending.settings import load_settings
+    from .vending.sources import build_sources
+
+    config = load_config()
+    _setup_logging(config)
+    if not Path(settings_path).exists():
+        settings_path = "data/vending/settings.example.json"
+    settings = load_settings(settings_path)
+
+    fixture_dir = "fixtures/vending" if dry_run else None
+    cache_dir = None if dry_run else "data/vending/cache"
+    market_sources = build_sources(settings.market_sources, fixture_dir, settings.request_delay_sec,
+                                   cache_dir, settings.cache_ttl_minutes)
+    excluded = {b.replace(" ", "") for b in settings.excluded_brands}
+    brands = [b for b in settings.brands if b.lower().replace(" ", "") not in excluded]
+    market_items = []
+    for src in market_sources:
+        for brand in brands:
+            try:
+                market_items.extend(src.fetch_brand(brand))
+            except Exception as exc:
+                click.echo(f"  [{src.name}] {brand}: 수집 실패 ({exc})")
+
+    searcher = (FixtureSearcher("fixtures/vending/naver_search.json") if dry_run
+                else NaverSearcher(os.environ.get("NAVER_CLIENT_ID", ""), os.environ.get("NAVER_CLIENT_SECRET", "")))
+    results = search_codes(market_items, searcher, limit or None, echo=click.echo)
+    known = [s for spec in settings.sources if spec.type == "naver_shop" for s in spec.stores]
+    ranking = rank_malls(results, settings, known)
+
+    click.echo(f"\n[소싱처 순위] 상위 {min(top, len(ranking))}곳 (수익 품번 / 시세보다 싼 품번 / 평균 할인율)")
+    for i, st in enumerate(ranking[:top], 1):
+        tag = "기존" if st.known else "★신규"
+        click.echo(f"  {i:>2}. [{tag}] {st.mall}: {st.codes_profitable} / {st.codes_cheaper} / {st.avg_discount:.0%}"
+                   + (f"  예) {st.examples[0]}" if st.examples else ""))
+    new = [st.mall for st in ranking if not st.known and st.codes_profitable]
+    if new:
+        click.echo(f"\n  stores 목록에 추가할 후보: {json_list(new)}")
+    path = write_discovery_xlsx(ranking, results, Path(out_dir) / f"discover_{datetime.now():%Y%m%d_%H%M}.xlsx")
+    click.echo(f"  -> {path}")
+
+    if apply_:
+        from .vending.discover import add_stores
+
+        chosen = [st.mall for st in ranking if not st.known and st.codes_profitable >= min_profitable]
+        target = "data/vending/settings.json"
+        added = add_stores(settings_path, target, chosen)
+        click.echo(f"\n  {target}에 소싱처 {len(added)}곳 추가: {json_list(added)}" if added
+                   else f"\n  추가할 소싱처 없음 (수익 품번 {min_profitable}개 이상 기준)")
+
+
+def json_list(names):
+    import json
+
+    return json.dumps(names, ensure_ascii=False)
+
+
 @cli.group()
 def instagram():
     """Instagram feed posting via Meta Graph API.

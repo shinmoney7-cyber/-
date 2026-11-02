@@ -18,6 +18,22 @@
 
 검증된 브랜드 정품을 같은 품번으로 파는 구조라 상세페이지를 따로 만들지 않아도 된다.
 
+## 소싱처 발굴
+
+무신사·29cm에서 파는 품번마다 네이버 쇼핑에서 `브랜드 품번`을 검색한다. 상품명에 그 품번이
+실제로 들어 있는 판매처만 남긴 뒤, **시세보다 싸게 파는 품번 수와 쿠폰 적용 후 마진**으로
+판매처 순위를 매긴다. 무신사·29cm 같은 판매 플랫폼 자체와 가격비교 묶음("네이버")은 순위에서 뺀다.
+
+```bash
+python -m shopping_shorts_sync vending discover            # dry-run (fixtures)
+python -m shopping_shorts_sync vending discover --live --apply --min-profitable 2
+```
+
+결과는 `output/discover_*.xlsx`에 저장된다. 시트는 "소싱처 순위"(★신규 후보는 노란색 표시)와
+"품번별 최저가" 두 개다. `--apply`를 주면 수익 품번이 기준 개수 이상인 신규 판매처를
+`data/vending/settings.json`의 `stores`에 자동으로 추가한다. 네이버 검색 API는 하루 25,000회까지
+호출할 수 있으니 품번이 많으면 `--limit`으로 나눠서 돌릴 것.
+
 ## 실행
 
 ```bash

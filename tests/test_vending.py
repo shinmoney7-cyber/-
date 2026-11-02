@@ -194,3 +194,49 @@ def test_discord_notifier_batches_embeds(requests_mock):
     assert requests_mock.call_count == 2
     body = requests_mock.request_history[0].json()
     assert len(body["embeds"]) == 10 and body["username"] == "Kick Monitor"
+
+
+def _discovery(tmp_path=None):
+    from shopping_shorts_sync.vending.discover import FixtureSearcher, rank_malls, search_codes
+    from shopping_shorts_sync.vending.sources import build_sources
+
+    s = load_settings(SETTINGS)
+    market = [i for src in build_sources(s.market_sources, "fixtures/vending", 0)
+              for b in s.brands for i in src.fetch_brand(b)]
+    results = search_codes(market, FixtureSearcher("fixtures/vending/naver_search.json"), echo=lambda *_: None)
+    known = [x for spec in s.sources if spec.type == "naver_shop" for x in spec.stores]
+    return s, results, rank_malls(results, s, known)
+
+
+def test_discovery_filters_and_ranks_sellers():
+    s, results, ranking = _discovery()
+    malls = {st.mall for st in ranking}
+    assert "무신사" not in malls          # market platform never suggested
+    assert "네이버" not in malls          # price-comparison bundle skipped
+    assert "다른상품샵" not in malls      # title lacks the 품번
+    top = ranking[0]
+    assert not top.known and top.codes_profitable == 3
+    assert {st.mall for st in ranking[:2]} == {"밀라노스토어", "유로부티크"}
+    known = {st.mall: st.known for st in ranking}
+    assert known["나우NOW"] is True and known["명품창고A"] is False
+    # cheapest listing first per 품번
+    stone = next(r for r in results if r.style_code == "K2S155100026")
+    assert stone.listings[0].mall == "밀라노스토어"
+
+
+def test_discovery_xlsx_and_add_stores(tmp_path):
+    from openpyxl import load_workbook
+
+    from shopping_shorts_sync.vending.discover import add_stores, write_discovery_xlsx
+
+    _, results, ranking = _discovery()
+    path = write_discovery_xlsx(ranking, results, tmp_path / "d.xlsx")
+    wb = load_workbook(path)
+    assert wb.sheetnames == ["소싱처 순위", "품번별 최저가"]
+    assert wb["소싱처 순위"]["C2"].value == "★신규 후보"
+
+    target = tmp_path / "settings.json"
+    assert add_stores(SETTINGS, target, ["밀라노스토어", "럭스 보이"]) == ["밀라노스토어"]  # 럭스보이 already known
+    assert add_stores(SETTINGS, target, ["밀라노스토어"]) == []                          # idempotent
+    stores = load_settings(target).sources[0].stores
+    assert stores[-1] == "밀라노스토어"
