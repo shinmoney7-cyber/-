@@ -1,0 +1,1639 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="사주마루">
+<meta name="theme-color" content="#07071A">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>사주마루 운영 센터</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Nanum+Gothic:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ── */
+:root {
+  --bg: #07071A; --bg2: #0E0E2C; --bg3: #141436; --bg4: #1A1A42;
+  --gold: #C9A227; --gold2: #F0CC6A; --gold3: rgba(201,162,39,.14);
+  --rose: #C9549A; --rose2: #E87DC0; --rose3: rgba(201,84,154,.14);
+  --fire: #F4923A; --fire2: #FFC07A; --fire3: rgba(244,146,58,.14);
+  --text: #EDE4CC; --muted: rgba(237,228,204,.5); --faint: rgba(237,228,204,.25);
+  --border: rgba(201,162,39,.18); --border2: rgba(201,162,39,.38);
+  --green: #52B06A; --red: #D0574A; --blue: #4A8FD9;
+  --r: 16px; --rS: 10px; --rL: 22px;
+  --font: 'Nanum Gothic', sans-serif; --fh: 'Black Han Sans', sans-serif;
+  --safe-t: env(safe-area-inset-top,0px);
+  --safe-b: env(safe-area-inset-bottom,0px);
+  --safe-l: env(safe-area-inset-left,0px);
+  --safe-r: env(safe-area-inset-right,0px);
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg:#F5F0E8; --bg2:#FFFFFF; --bg3:#F0EAD8; --bg4:#E8E0C8;
+    --text:#1A1408; --muted:rgba(26,20,8,.55); --faint:rgba(26,20,8,.2);
+    --border:rgba(140,100,20,.2); --border2:rgba(140,100,20,.4);
+  }
+}
+:root[data-theme="dark"] { --bg:#07071A; --bg2:#0E0E2C; --bg3:#141436; --bg4:#1A1A42; --text:#EDE4CC; --muted:rgba(237,228,204,.5); --faint:rgba(237,228,204,.25); --border:rgba(201,162,39,.18); --border2:rgba(201,162,39,.38); }
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { height:100%; -webkit-tap-highlight-color:transparent; }
+body {
+  min-height:100%; background:var(--bg); color:var(--text);
+  font-family:var(--font); font-size:15px; line-height:1.5;
+  padding-bottom:calc(72px + var(--safe-b));
+  padding-top:var(--safe-t);
+  overflow-x:hidden;
+}
+a { color:inherit; text-decoration:none; }
+button { font-family:var(--font); cursor:pointer; -webkit-appearance:none; }
+img { max-width:100%; display:block; }
+
+/* ── STATUS BAR FILL ── */
+body::before {
+  content:""; position:fixed; inset:0 0 auto; z-index:200;
+  height:var(--safe-t); background:rgba(7,7,26,.92);
+}
+
+/* ── TOP BAR ── */
+.topbar {
+  position:sticky; top:var(--safe-t); z-index:100;
+  background:rgba(7,7,26,.92); backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px max(16px, var(--safe-r)) 12px max(16px, var(--safe-l));
+}
+.topbar__logo {
+  display:flex; align-items:center; gap:8px;
+  font-family:var(--fh); font-size:18px; color:var(--gold); letter-spacing:.06em;
+}
+.topbar__logo-badge {
+  width:32px; height:32px; border-radius:50%;
+  background:linear-gradient(135deg,#c9a227,#e8c85a);
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+.topbar__right { display:flex; gap:10px; align-items:center; }
+.topbar__icon { width:36px; height:36px; border-radius:50%; border:1px solid var(--border2); background:var(--bg3); display:flex; align-items:center; justify-content:center; font-size:16px; }
+
+/* ── BOTTOM NAV ── */
+.bottomnav {
+  position:fixed; bottom:0; left:0; right:0; z-index:100;
+  background:rgba(7,7,26,.95); backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border-top:1px solid var(--border);
+  display:flex;
+  padding-bottom:var(--safe-b);
+  padding-left:var(--safe-l); padding-right:var(--safe-r);
+}
+.nav-item {
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:10px 4px 12px; gap:4px; border:none; background:none; color:var(--muted);
+  font-size:11px; font-family:var(--font); transition:color .15s;
+}
+.nav-item.active { color:var(--gold); }
+.nav-item svg { width:22px; height:22px; }
+
+/* ── SCROLL CONTAINER ── */
+.page { display:none; padding:16px max(16px,var(--safe-r)) 8px max(16px,var(--safe-l)); }
+.page.active { display:block; }
+
+/* ── SECTION HEADER ── */
+.sec-hd { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.sec-hd h2 { font-family:var(--fh); font-size:16px; color:var(--text); }
+.sec-hd span { font-size:12px; color:var(--muted); }
+
+/* ── ACCOUNT LOGO BADGE ── */
+.acct-logo-wrap {
+  width:50px; height:50px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  margin:0 auto 8px; flex-shrink:0;
+  position:relative; overflow:hidden;
+}
+.acct-logo-wrap.sm { background:linear-gradient(135deg,#c9a227,#e8c85a); }
+.acct-logo-wrap.un { background:linear-gradient(135deg,#c9549a,#f4a8cc); }
+.acct-logo-wrap.s77 { background:linear-gradient(135deg,#c43700,#f4923a); }
+
+/* ── ACCOUNT CARDS ── */
+.acct-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:20px; }
+.acct-card {
+  background:var(--bg2); border:1px solid var(--border); border-radius:var(--r);
+  padding:14px 8px 12px; text-align:center; cursor:pointer;
+  transition:border-color .15s, transform .1s;
+}
+.acct-card:active { transform:scale(.97); }
+.acct-card.sm { --ac:var(--gold); --ac3:var(--gold3); }
+.acct-card.un { --ac:var(--rose); --ac3:var(--rose3); }
+.acct-card.s77 { --ac:var(--fire); --ac3:var(--fire3); }
+.acct-card.active-card { border-color:var(--ac); background:var(--ac3); }
+.acct-name { font-size:10px; font-weight:800; color:var(--ac,var(--gold)); letter-spacing:.04em; line-height:1.3; }
+.acct-status { font-size:10px; color:var(--muted); margin-top:3px; }
+.acct-dot { display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--green); margin-right:3px; vertical-align:middle; }
+.acct-dot.red { background:var(--red); }
+.acct-dot.grey { background:var(--faint); }
+
+/* ── TRIG LOGO (small inline) ── */
+.trig-logo {
+  width:32px; height:32px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+.trig-logo.sm { background:linear-gradient(135deg,#c9a227,#e8c85a); }
+.trig-logo.un { background:linear-gradient(135deg,#c9549a,#f4a8cc); }
+.trig-logo.s77 { background:linear-gradient(135deg,#c43700,#f4923a); }
+
+/* ── STATUS SUMMARY ── */
+.stat-row { display:flex; gap:10px; margin-bottom:20px; }
+.stat-box {
+  flex:1; background:var(--bg2); border:1px solid var(--border); border-radius:var(--r);
+  padding:14px 12px; text-align:center;
+}
+.stat-num { font-family:var(--fh); font-size:28px; color:var(--gold); }
+.stat-label { font-size:11px; color:var(--muted); margin-top:2px; }
+
+/* ── NEXT POST TIMER ── */
+.timer-card {
+  background:linear-gradient(135deg,var(--bg2) 0%,var(--bg3) 100%);
+  border:1px solid var(--border2); border-radius:var(--rL);
+  padding:18px 16px; margin-bottom:20px;
+  display:flex; align-items:center; gap:14px;
+}
+.timer-icon { font-size:32px; flex-shrink:0; }
+.timer-info { flex:1; min-width:0; }
+.timer-label { font-size:12px; color:var(--muted); }
+.timer-val { font-family:var(--fh); font-size:22px; color:var(--gold2); margin:2px 0; }
+.timer-sub { font-size:12px; color:var(--muted); }
+.timer-btn {
+  padding:10px 16px; border-radius:var(--rS); border:none;
+  background:var(--gold); color:#07071A; font-size:13px; font-weight:800;
+  white-space:nowrap;
+}
+.timer-btn:active { opacity:.8; }
+
+/* ── RECENT POSTS ── */
+.post-card {
+  background:var(--bg2); border:1px solid var(--border); border-radius:var(--r);
+  padding:14px; margin-bottom:10px; cursor:pointer;
+  transition:border-color .15s;
+}
+.post-card:active { border-color:var(--border2); }
+.post-header { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.post-acct-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.post-acct-dot.sm { background:var(--gold); }
+.post-acct-dot.un { background:var(--rose); }
+.post-acct-dot.s77 { background:var(--fire); }
+.post-meta { font-size:12px; color:var(--muted); flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.post-slot { font-size:11px; color:var(--muted); background:var(--bg3); padding:2px 7px; border-radius:20px; white-space:nowrap; }
+.post-hook { font-size:14px; font-weight:700; color:var(--text); line-height:1.4; margin-bottom:6px; }
+.post-topic { font-size:12px; color:var(--muted); }
+.post-platforms { display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; }
+.plat-badge {
+  font-size:11px; padding:3px 8px; border-radius:20px;
+  border:1px solid var(--border); color:var(--muted); background:var(--bg3);
+}
+.plat-badge.ok { border-color:var(--green); color:var(--green); background:rgba(82,176,106,.1); }
+.plat-badge.fail { border-color:var(--red); color:var(--red); background:rgba(208,87,74,.1); }
+.post-img { width:100%; aspect-ratio:9/16; object-fit:cover; border-radius:var(--rS); margin-top:10px; max-height:200px; object-position:top; }
+
+/* ── IMAGE THUMB ROW ── */
+.slide-row { display:flex; gap:8px; margin-top:8px; overflow-x:auto; padding-bottom:4px; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; }
+.slide-row::-webkit-scrollbar { display:none; }
+.slide-thumb { width:80px; height:142px; border-radius:var(--rS); object-fit:cover; flex-shrink:0; scroll-snap-align:start; border:1px solid var(--border); }
+
+/* ── TRIGGER ── */
+.trigger-section { margin-bottom:20px; }
+.trig-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.trig-btn {
+  padding:16px 10px; border-radius:var(--r); border:1px solid var(--border2);
+  background:var(--bg2); color:var(--text); font-size:13px; font-weight:800;
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  transition:background .15s, border-color .15s;
+}
+.trig-btn:active { background:var(--bg3); }
+.trig-btn .trig-acct { font-size:12px; color:var(--muted); }
+.trig-btn.all { grid-column:1/-1; background:var(--gold3); border-color:var(--gold); }
+.trig-btn.all .trig-icon { color:var(--gold2); font-size:20px; }
+
+.slot-picker { display:flex; gap:8px; margin-bottom:12px; overflow-x:auto; padding-bottom:4px; -webkit-overflow-scrolling:touch; }
+.slot-picker::-webkit-scrollbar { display:none; }
+.slot-chip {
+  padding:8px 16px; border-radius:20px; border:1px solid var(--border);
+  background:var(--bg2); color:var(--muted); font-size:13px; font-weight:700; white-space:nowrap;
+  cursor:pointer; transition:all .15s; flex-shrink:0;
+}
+.slot-chip.sel { border-color:var(--gold); color:var(--gold); background:var(--gold3); }
+
+/* ── TRIGGER LOG ── */
+.trig-log {
+  background:var(--bg3); border-radius:var(--rS); padding:12px;
+  font-size:12px; color:var(--muted); min-height:60px; font-family:monospace;
+  margin-top:12px; white-space:pre-wrap; word-break:break-all; max-height:200px; overflow-y:auto;
+}
+.trig-log .ok { color:var(--green); }
+.trig-log .err { color:var(--red); }
+
+/* ── SETTINGS / EDIT ── */
+.set-group { background:var(--bg2); border:1px solid var(--border); border-radius:var(--r); overflow:hidden; margin-bottom:16px; }
+.set-row {
+  display:flex; align-items:center; padding:15px 16px; gap:12px;
+  border-bottom:1px solid var(--border); transition:background .12s;
+}
+.set-row:last-child { border-bottom:none; }
+.set-row:active { background:var(--bg3); }
+.set-icon { font-size:20px; flex-shrink:0; width:32px; text-align:center; }
+.set-label { flex:1; min-width:0; }
+.set-label strong { display:block; font-size:14px; font-weight:700; }
+.set-label span { font-size:12px; color:var(--muted); }
+.set-arrow { color:var(--muted); font-size:16px; }
+.set-toggle { width:44px; height:26px; background:var(--faint); border-radius:13px; position:relative; border:none; transition:background .2s; flex-shrink:0; }
+.set-toggle.on { background:var(--gold); }
+.set-toggle::after { content:""; position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%; background:#fff; transition:transform .2s; }
+.set-toggle.on::after { transform:translateX(18px); }
+
+/* ── PAT MODAL ── */
+.modal-overlay {
+  position:fixed; inset:0; z-index:300; background:rgba(0,0,0,.7);
+  display:flex; align-items:flex-end; justify-content:center;
+  opacity:0; pointer-events:none; transition:opacity .2s;
+}
+.modal-overlay.open { opacity:1; pointer-events:auto; }
+.modal-sheet {
+  background:var(--bg2); border-radius:24px 24px 0 0;
+  width:100%; max-width:540px;
+  padding:24px max(20px,var(--safe-r)) max(24px,calc(var(--safe-b)+8px)) max(20px,var(--safe-l));
+  transform:translateY(100%); transition:transform .3s cubic-bezier(.32,.72,0,1);
+  max-height:90vh; overflow-y:auto;
+}
+.modal-overlay.open .modal-sheet { transform:translateY(0); }
+.modal-handle { width:36px; height:4px; border-radius:2px; background:var(--faint); margin:0 auto 20px; }
+.modal-title { font-family:var(--fh); font-size:18px; margin-bottom:6px; }
+.modal-sub { font-size:13px; color:var(--muted); margin-bottom:18px; line-height:1.5; }
+.modal-input {
+  width:100%; padding:14px 16px; border-radius:var(--r);
+  border:1px solid var(--border2); background:var(--bg3);
+  color:var(--text); font-size:15px; font-family:var(--font);
+  margin-bottom:14px;
+}
+.modal-input:focus { outline:none; border-color:var(--gold); }
+.modal-input-label { font-size:12px; color:var(--muted); margin-bottom:6px; display:block; }
+.modal-btn {
+  width:100%; padding:16px; border-radius:var(--r); border:none;
+  background:var(--gold); color:#07071A; font-size:16px; font-weight:800;
+  font-family:var(--fh);
+}
+.modal-btn:active { opacity:.85; }
+.modal-btn.secondary {
+  background:var(--bg3); color:var(--muted); border:1px solid var(--border);
+  margin-top:10px; font-size:14px;
+}
+.modal-link { display:block; text-align:center; margin-top:12px; font-size:12px; color:var(--muted); }
+
+/* ── MONETIZATION ── */
+.mono-card {
+  background:linear-gradient(135deg,var(--gold3) 0%,var(--bg2) 100%);
+  border:1px solid var(--border2); border-radius:var(--rL);
+  padding:16px; margin-bottom:12px;
+  display:flex; align-items:center; gap:12px; transition:border-color .15s;
+}
+.mono-card:active { border-color:var(--gold); }
+.mono-icon { font-size:28px; flex-shrink:0; }
+.mono-info { flex:1; min-width:0; }
+.mono-title { font-size:15px; font-weight:800; }
+.mono-sub { font-size:12px; color:var(--muted); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.mono-price { font-family:var(--fh); font-size:15px; color:var(--gold); white-space:nowrap; }
+.mono-actions { display:flex; gap:6px; flex-shrink:0; }
+.mono-btn {
+  padding:6px 10px; border-radius:var(--rS); border:1px solid var(--border2);
+  background:var(--bg3); color:var(--muted); font-size:12px; font-weight:700; font-family:var(--font);
+  white-space:nowrap; transition:all .15s;
+}
+.mono-btn:active { background:var(--bg4); }
+.mono-btn.copy-btn { color:var(--gold); border-color:var(--gold); }
+
+/* ── SCHEDULE TABLE ── */
+.sch-row { display:flex; gap:10px; margin-bottom:8px; align-items:flex-start; }
+.sch-time { font-family:var(--fh); font-size:16px; color:var(--gold); width:52px; flex-shrink:0; padding-top:10px; }
+.sch-bar { flex:1; min-width:0; background:var(--bg2); border:1px solid var(--border); border-radius:var(--rS); padding:10px 12px; }
+.sch-slot { font-size:13px; font-weight:700; }
+.sch-topics { font-size:12px; color:var(--muted); margin-top:2px; word-break:break-all; line-height:1.5; }
+.sch-edit-btn { font-size:11px; padding:3px 8px; border-radius:20px; border:1px solid var(--border); background:none; color:var(--muted); font-family:var(--font); margin-top:6px; }
+.sch-edit-btn:active { background:var(--bg3); }
+
+/* ── EDIT TOGGLE BAR ── */
+.edit-bar {
+  background:var(--bg3); border:1px solid var(--border2); border-radius:var(--rS);
+  padding:10px 14px; margin-bottom:16px;
+  display:flex; align-items:center; justify-content:space-between;
+  font-size:13px; color:var(--muted);
+}
+.edit-bar .edit-mode-label { font-weight:700; color:var(--gold); }
+.edit-toggle-btn {
+  padding:7px 14px; border-radius:20px; border:1px solid var(--border2);
+  background:var(--bg4); color:var(--text); font-size:12px; font-weight:700; font-family:var(--font);
+}
+.edit-toggle-btn.active { background:var(--gold); color:#07071A; border-color:var(--gold); }
+.edit-toggle-btn:active { opacity:.8; }
+
+/* ── LOADING SPINNER ── */
+.spinner { display:inline-block; width:20px; height:20px; border:2px solid var(--faint); border-top-color:var(--gold); border-radius:50%; animation:spin .6s linear infinite; vertical-align:middle; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* ── TOAST ── */
+.toast {
+  position:fixed; bottom:calc(80px + var(--safe-b)); left:50%; transform:translateX(-50%) translateY(20px);
+  background:var(--bg4); border:1px solid var(--border2); border-radius:100px;
+  padding:10px 20px; font-size:13px; font-weight:700; color:var(--text);
+  white-space:nowrap; opacity:0; transition:opacity .2s, transform .2s; z-index:500;
+  max-width:calc(100vw - 40px);
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* ── EMPTY STATE ── */
+.empty { text-align:center; padding:40px 20px; color:var(--muted); font-size:14px; }
+.empty-icon { font-size:40px; margin-bottom:10px; }
+
+/* ── UPDATE BANNER ── */
+.update-bar {
+  background:rgba(82,176,106,.15); border:1px solid rgba(82,176,106,.4);
+  border-radius:var(--rS); padding:10px 14px; margin-bottom:14px;
+  font-size:13px; display:none; align-items:center; gap:8px;
+}
+.update-bar.show { display:flex; }
+
+/* ── RESPONSIVE ── */
+@media (min-width:480px) {
+  .acct-grid { grid-template-columns:repeat(3,1fr); }
+  .trig-grid { grid-template-columns:repeat(3,1fr); }
+  .trig-btn.all { grid-column:1/-1; }
+}
+
+/* ── APPLICANT PAGE ── */
+.sub-tab-bar { display:flex; background:var(--bg2); border-radius:var(--r); padding:3px; gap:3px; margin-bottom:16px; border:1px solid var(--border); }
+.sub-tab { flex:1; padding:9px 4px; border-radius:var(--rS); border:none; background:none; color:var(--muted); font-size:12px; font-weight:700; font-family:var(--font); cursor:pointer; transition:all .15s; }
+.sub-tab.active { background:var(--bg4); color:var(--text); }
+.sub-panel { display:none; }
+.sub-panel.active { display:block; }
+
+.form-field { margin-bottom:14px; }
+.form-label { font-size:12px; color:var(--muted); font-weight:700; display:block; margin-bottom:6px; }
+.form-input { width:100%; padding:13px 14px; border-radius:var(--rS); border:1px solid var(--border2); background:var(--bg3); color:var(--text); font-size:15px; font-family:var(--font); }
+.form-input:focus { outline:none; border-color:var(--gold); }
+.form-chips { display:flex; flex-wrap:wrap; gap:6px; }
+.form-chip { padding:7px 12px; border-radius:20px; border:1px solid var(--border); background:var(--bg2); color:var(--muted); font-size:12px; font-weight:700; cursor:pointer; transition:all .15s; }
+.form-chip.sel { border-color:var(--gold); color:var(--gold); background:var(--gold3); }
+.form-chip.sm-sel { border-color:var(--gold); color:var(--gold); background:var(--gold3); }
+.form-chip.un-sel { border-color:var(--rose); color:var(--rose); background:var(--rose3); }
+.form-chip.s77-sel { border-color:var(--fire); color:var(--fire); background:var(--fire3); }
+
+.appl-card { background:var(--bg2); border:1px solid var(--border); border-radius:var(--r); padding:14px; margin-bottom:10px; }
+.appl-header { display:flex; align-items:center; gap:8px; margin-bottom:8px; flex-wrap:wrap; }
+.appl-name { font-size:15px; font-weight:700; }
+.appl-date { font-size:12px; color:var(--muted); margin-left:auto; }
+.appl-tags { display:flex; gap:6px; flex-wrap:wrap; }
+.appl-tag { font-size:11px; padding:3px 8px; border-radius:20px; border:1px solid var(--border); color:var(--muted); background:var(--bg3); }
+.appl-tag.cat { border-color:var(--gold); color:var(--gold); background:var(--gold3); }
+.appl-tag.pending { border-color:var(--blue); color:var(--blue); background:rgba(74,143,217,.1); }
+.appl-tag.done { border-color:var(--green); color:var(--green); background:rgba(82,176,106,.1); }
+.appl-memo { font-size:12px; color:var(--muted); margin-top:8px; line-height:1.5; }
+.appl-actions { display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; }
+.appl-btn { padding:6px 10px; border-radius:var(--rS); border:1px solid var(--border); background:var(--bg3); color:var(--muted); font-size:11px; font-weight:700; font-family:var(--font); cursor:pointer; }
+.appl-btn.done-btn { border-color:var(--green); color:var(--green); }
+.appl-btn.del-btn { border-color:var(--red); color:var(--red); }
+
+.ana-card { background:var(--bg2); border:1px solid var(--border); border-radius:var(--r); padding:16px; margin-bottom:12px; }
+.ana-title { font-family:var(--fh); font-size:14px; margin-bottom:14px; color:var(--text); }
+.bar-row { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.bar-label { font-size:11px; color:var(--muted); width:52px; flex-shrink:0; text-align:right; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.bar-wrap { flex:1; height:20px; background:var(--bg3); border-radius:6px; overflow:hidden; min-width:0; }
+.bar-fill { height:100%; border-radius:6px; background:var(--gold); transition:width .5s cubic-bezier(.4,0,.2,1); }
+.bar-count { font-size:12px; color:var(--muted); width:24px; flex-shrink:0; text-align:left; }
+.range-chips { display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap; }
+.stat-grid-mini { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px; }
+.stat-mini { background:var(--bg3); border-radius:var(--rS); padding:10px 8px; text-align:center; }
+.stat-mini .n { font-family:var(--fh); font-size:20px; color:var(--gold); }
+.stat-mini .l { font-size:10px; color:var(--muted); margin-top:2px; }
+
+/* ── LOG CHIP LOGO ── */
+.chip-logo {
+  display:inline-flex; align-items:center; gap:5px; vertical-align:middle;
+}
+.chip-logo-badge {
+  width:16px; height:16px; border-radius:50%;
+  display:inline-flex; align-items:center; justify-content:center;
+  flex-shrink:0; vertical-align:middle;
+}
+.chip-logo-badge.sm { background:linear-gradient(135deg,#c9a227,#e8c85a); }
+.chip-logo-badge.un { background:linear-gradient(135deg,#c9549a,#f4a8cc); }
+.chip-logo-badge.s77 { background:linear-gradient(135deg,#c43700,#f4923a); }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar__logo">
+    <div class="topbar__logo-badge">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <polygon points="9,1 10.8,6.2 16.5,6.2 11.9,9.8 13.7,15 9,11.4 4.3,15 6.1,9.8 1.5,6.2 7.2,6.2" fill="#06060f"/>
+      </svg>
+    </div>
+    사주마루
+  </div>
+  <div class="topbar__right">
+    <div id="onlineIndicator" class="topbar__icon" title="온라인 상태">🟢</div>
+    <button class="topbar__icon" onclick="openPatModal()" title="설정">⚙️</button>
+  </div>
+</div>
+
+<!-- UPDATE BANNER -->
+<div id="updateBar" class="update-bar" style="margin:8px 16px 0;">
+  <span>🔄</span>
+  <span>새 버전이 있어요.</span>
+  <button onclick="location.reload()" style="margin-left:auto;padding:4px 10px;border-radius:6px;border:1px solid var(--green);background:none;color:var(--green);font-size:12px;font-weight:700;">업데이트</button>
+</div>
+
+<!-- ───────── PAGE: HOME ───────── -->
+<div id="pageHome" class="page active">
+
+  <div class="sec-hd" style="margin-top:12px;">
+    <h2>계정 현황</h2>
+    <span id="lastRefresh">로딩 중...</span>
+  </div>
+
+  <div class="acct-grid">
+    <div class="acct-card sm" id="acctSm" onclick="switchAcct('sm')">
+      <div class="acct-logo-wrap sm">
+        <svg width="26" height="26" viewBox="0 0 18 18" fill="none">
+          <polygon points="9,1 10.8,6.2 16.5,6.2 11.9,9.8 13.7,15 9,11.4 4.3,15 6.1,9.8 1.5,6.2 7.2,6.2" fill="#06060f"/>
+        </svg>
+      </div>
+      <div class="acct-name">사주마루</div>
+      <div class="acct-status"><span class="acct-dot grey" id="dotSm"></span><span id="statusSm">-</span></div>
+    </div>
+    <div class="acct-card un" id="acctUn" onclick="switchAcct('un')">
+      <div class="acct-logo-wrap un">
+        <svg width="20" height="20" viewBox="0 0 16 16" fill="none">
+          <circle cx="8" cy="6" r="5" fill="#c9549a" opacity="0.9"/>
+          <circle cx="11" cy="4" r="4" fill="#200630"/>
+          <circle cx="11" cy="4" r="1.5" fill="#f4a8cc" opacity="0.7"/>
+        </svg>
+      </div>
+      <div class="acct-name">사주보는언니</div>
+      <div class="acct-status"><span class="acct-dot grey" id="dotUn"></span><span id="statusUn">-</span></div>
+    </div>
+    <div class="acct-card s77" id="acctS77" onclick="switchAcct('s77')">
+      <div class="acct-logo-wrap s77">
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+          <path d="M9 1L7 8h4L6 15l1-6H3L9 1z" fill="#fff" opacity="0.95"/>
+        </svg>
+      </div>
+      <div class="acct-name">사주마루77</div>
+      <div class="acct-status"><span class="acct-dot grey" id="dotS77"></span><span id="statusS77">-</span></div>
+    </div>
+  </div>
+
+  <!-- 다음 포스팅 타이머 -->
+  <div class="timer-card" id="timerCard">
+    <div class="timer-icon">⏰</div>
+    <div class="timer-info">
+      <div class="timer-label">다음 자동 포스팅</div>
+      <div class="timer-val" id="timerVal">계산 중...</div>
+      <div class="timer-sub" id="timerSub">KST 기준</div>
+    </div>
+    <button class="timer-btn" onclick="navTo('trigger')">지금 트리거</button>
+  </div>
+
+  <!-- 오늘 통계 -->
+  <div class="stat-row">
+    <div class="stat-box">
+      <div class="stat-num" id="todayCount">-</div>
+      <div class="stat-label">오늘 포스팅</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="weekCount">-</div>
+      <div class="stat-label">이번 주</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="totalCount">-</div>
+      <div class="stat-label">전체 로그</div>
+    </div>
+  </div>
+
+  <!-- 최근 포스트 -->
+  <div class="sec-hd">
+    <h2>최근 포스팅</h2>
+    <span id="curAcctLabel" style="color:var(--gold);">전체</span>
+  </div>
+  <div id="recentPosts"></div>
+</div>
+
+<!-- ───────── PAGE: TRIGGER ───────── -->
+<div id="pageTrigger" class="page">
+
+  <div class="sec-hd" style="margin-top:12px;">
+    <h2>포스팅 트리거</h2>
+    <span>수동 실행</span>
+  </div>
+
+  <!-- PAT 상태 표시 -->
+  <div id="patStatus" style="margin-bottom:14px;padding:10px 14px;border-radius:var(--rS);background:var(--bg2);border:1px solid var(--border);font-size:13px;color:var(--muted);">
+    ⚠️ GitHub PAT 미설정 — 트리거를 사용하려면 <button onclick="openPatModal()" style="background:none;border:none;color:var(--gold);font-size:13px;font-weight:700;font-family:var(--font);text-decoration:underline;">여기서 설정</button>
+  </div>
+
+  <!-- 시간대 선택 -->
+  <div class="sec-hd">
+    <h2>시간대</h2>
+  </div>
+  <div class="slot-picker">
+    <div class="slot-chip sel" data-slot="" onclick="selSlot(this,'')">⏰ 현재시각</div>
+    <div class="slot-chip" data-slot="08" onclick="selSlot(this,'08')">☀️ 08:00 아침</div>
+    <div class="slot-chip" data-slot="13" onclick="selSlot(this,'13')">🌤 13:00 점심</div>
+    <div class="slot-chip" data-slot="20" onclick="selSlot(this,'20')">🌙 20:00 저녁</div>
+  </div>
+
+  <!-- 계정 선택 -->
+  <div class="sec-hd" style="margin-top:16px;">
+    <h2>계정</h2>
+  </div>
+  <div class="trig-grid trigger-section">
+    <button class="trig-btn all" onclick="trigPost('all')">
+      <span style="font-size:22px;">🚀</span>
+      <span>전체 계정 실행</span>
+      <span class="trig-acct">sm + un + s77</span>
+    </button>
+    <button class="trig-btn sm" onclick="trigPost('sm')">
+      <div class="trig-logo sm">
+        <svg width="20" height="20" viewBox="0 0 18 18" fill="none">
+          <polygon points="9,1 10.8,6.2 16.5,6.2 11.9,9.8 13.7,15 9,11.4 4.3,15 6.1,9.8 1.5,6.2 7.2,6.2" fill="#06060f"/>
+        </svg>
+      </div>
+      <span>사주마루</span>
+    </button>
+    <button class="trig-btn un" onclick="trigPost('un')">
+      <div class="trig-logo un">
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+          <circle cx="8" cy="6" r="5" fill="#c9549a" opacity="0.9"/>
+          <circle cx="11" cy="4" r="4" fill="#200630"/>
+          <circle cx="11" cy="4" r="1.5" fill="#f4a8cc" opacity="0.7"/>
+        </svg>
+      </div>
+      <span>사주보는언니</span>
+    </button>
+    <button class="trig-btn s77" onclick="trigPost('s77')">
+      <div class="trig-logo s77">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M9 1L7 8h4L6 15l1-6H3L9 1z" fill="#fff" opacity="0.95"/>
+        </svg>
+      </div>
+      <span>사주마루77</span>
+    </button>
+  </div>
+
+  <div class="trig-log" id="trigLog">GitHub PAT 설정 후 트리거 버튼을 눌러봐.</div>
+</div>
+
+<!-- ───────── PAGE: LOG ───────── -->
+<div id="pageLog" class="page">
+
+  <div class="sec-hd" style="margin-top:12px;">
+    <h2>포스팅 로그</h2>
+    <button onclick="refreshAll()" style="background:none;border:none;color:var(--gold);font-size:13px;font-weight:700;font-family:var(--font);">새로고침 ↺</button>
+  </div>
+
+  <!-- 계정 필터 -->
+  <div class="slot-picker" style="margin-bottom:14px;">
+    <div class="slot-chip sel" onclick="filterLog(this,'all')">전체</div>
+    <div class="slot-chip" onclick="filterLog(this,'sm')">
+      <span class="chip-logo">
+        <span class="chip-logo-badge sm"><svg width="10" height="10" viewBox="0 0 18 18" fill="none"><polygon points="9,1 10.8,6.2 16.5,6.2 11.9,9.8 13.7,15 9,11.4 4.3,15 6.1,9.8 1.5,6.2 7.2,6.2" fill="#06060f"/></svg></span>
+        사주마루
+      </span>
+    </div>
+    <div class="slot-chip" onclick="filterLog(this,'un')">
+      <span class="chip-logo">
+        <span class="chip-logo-badge un"><svg width="10" height="10" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="6" r="5" fill="#c9549a" opacity="0.9"/><circle cx="11" cy="4" r="4" fill="#200630"/><circle cx="11" cy="4" r="1.5" fill="#f4a8cc" opacity="0.7"/></svg></span>
+        사주보는언니
+      </span>
+    </div>
+    <div class="slot-chip" onclick="filterLog(this,'s77')">
+      <span class="chip-logo">
+        <span class="chip-logo-badge s77"><svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M9 1L7 8h4L6 15l1-6H3L9 1z" fill="#fff" opacity="0.95"/></svg></span>
+        사주마루77
+      </span>
+    </div>
+  </div>
+
+  <div id="logList"></div>
+</div>
+
+<!-- ───────── PAGE: MONEY ───────── -->
+<div id="pageMoney" class="page">
+
+  <div class="sec-hd" style="margin-top:12px;">
+    <h2>수익화 링크</h2>
+    <button id="editToggleBtn" class="edit-toggle-btn" onclick="toggleEditMode()">✏️ 편집</button>
+  </div>
+
+  <!-- 편집 모드 안내 -->
+  <div id="editBar" class="edit-bar" style="display:none;">
+    <span class="edit-mode-label">✏️ 편집 모드</span>
+    <span>카드를 탭해서 수정해봐</span>
+  </div>
+
+  <div id="monoCards">
+    <!-- 카드는 JS로 렌더링 -->
+  </div>
+
+  <div class="sec-hd" style="margin-top:20px;">
+    <h2>가격 안내</h2>
+    <button id="priceEditBtn" class="edit-toggle-btn" onclick="openPriceEdit()" style="display:none;">수정</button>
+  </div>
+  <div id="priceTable" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
+    <!-- JS로 렌더링 -->
+  </div>
+
+  <div class="sec-hd" style="margin-top:20px;">
+    <h2>자동 포스팅 일정</h2>
+    <button id="schedEditBtn" class="edit-toggle-btn" onclick="openSchedEdit()" style="display:none;">수정</button>
+  </div>
+  <div id="schedTable">
+    <!-- JS로 렌더링 -->
+  </div>
+</div>
+
+<!-- ───────── PAGE: APPLICANT ───────── -->
+<div id="pageApplicant" class="page">
+
+  <div class="sec-hd" style="margin-top:12px;">
+    <h2>신청자 관리</h2>
+    <span id="applCountLabel" style="color:var(--gold);">0명</span>
+  </div>
+
+  <div class="sub-tab-bar">
+    <button class="sub-tab active" id="stab-reg" onclick="switchSubTab('reg')">📝 등록</button>
+    <button class="sub-tab" id="stab-list" onclick="switchSubTab('list')">📋 목록</button>
+    <button class="sub-tab" id="stab-ana" onclick="switchSubTab('ana')">📊 분석</button>
+  </div>
+
+  <!-- 등록 패널 -->
+  <div id="subReg" class="sub-panel active">
+    <div class="form-field">
+      <label class="form-label">이름 / 닉네임</label>
+      <input class="form-input" id="aName" type="text" placeholder="이름 또는 닉네임" autocomplete="off">
+    </div>
+    <div class="form-field">
+      <label class="form-label">생년월일</label>
+      <input class="form-input" id="aBirth" type="date">
+    </div>
+    <div class="form-field">
+      <label class="form-label">태어난 시간 <span style="font-weight:400;">(선택)</span></label>
+      <input class="form-input" id="aTime" type="text" placeholder="오전 9시, 미상 등">
+    </div>
+    <div class="form-field">
+      <label class="form-label">성별</label>
+      <div class="form-chips" id="aGenderChips">
+        <div class="form-chip sel" data-val="남" onclick="selGender(this)">남</div>
+        <div class="form-chip" data-val="여" onclick="selGender(this)">여</div>
+        <div class="form-chip" data-val="미상" onclick="selGender(this)">미상</div>
+      </div>
+    </div>
+    <div class="form-field">
+      <label class="form-label">상담 카테고리</label>
+      <div class="form-chips" id="aCatChips">
+        <div class="form-chip" data-val="재물" onclick="selCat(this)">재물</div>
+        <div class="form-chip" data-val="재회" onclick="selCat(this)">재회</div>
+        <div class="form-chip" data-val="궁합" onclick="selCat(this)">궁합</div>
+        <div class="form-chip" data-val="건강" onclick="selCat(this)">건강</div>
+        <div class="form-chip" data-val="합격" onclick="selCat(this)">합격</div>
+        <div class="form-chip" data-val="이직" onclick="selCat(this)">이직</div>
+        <div class="form-chip" data-val="사업" onclick="selCat(this)">사업</div>
+        <div class="form-chip" data-val="이사" onclick="selCat(this)">이사</div>
+        <div class="form-chip" data-val="부모" onclick="selCat(this)">부모</div>
+        <div class="form-chip" data-val="띠별" onclick="selCat(this)">띠별</div>
+        <div class="form-chip" data-val="기타" onclick="selCat(this)">기타</div>
+      </div>
+    </div>
+    <div class="form-field">
+      <label class="form-label">유입 채널</label>
+      <div class="form-chips" id="aAcctChips">
+        <div class="form-chip sm-sel" data-val="sm" onclick="selApplAcct(this)">사주마루</div>
+        <div class="form-chip" data-val="un" onclick="selApplAcct(this)">사주보는언니</div>
+        <div class="form-chip" data-val="s77" onclick="selApplAcct(this)">사주마루77</div>
+        <div class="form-chip" data-val="기타" onclick="selApplAcct(this)">기타/직접</div>
+      </div>
+    </div>
+    <div class="form-field">
+      <label class="form-label">서비스 유형</label>
+      <div class="form-chips" id="aSvcChips">
+        <div class="form-chip sel" data-val="기본" onclick="selSvc(this)">기본 사주</div>
+        <div class="form-chip" data-val="풀" onclick="selSvc(this)">풀 사주</div>
+        <div class="form-chip" data-val="무료" onclick="selSvc(this)">무료 상담</div>
+      </div>
+    </div>
+    <div class="form-field">
+      <label class="form-label">메모 <span style="font-weight:400;">(선택)</span></label>
+      <textarea class="form-input" id="aMemo" rows="3" style="resize:vertical;" placeholder="특이사항, 질문, 연락처 등..."></textarea>
+    </div>
+    <button class="modal-btn" style="margin-top:4px;" onclick="saveApplicant()">✅ 신청자 등록</button>
+    <div style="height:8px;"></div>
+  </div>
+
+  <!-- 목록 패널 -->
+  <div id="subList" class="sub-panel">
+    <div style="margin-bottom:10px;">
+      <input class="form-input" id="applSearch" type="search" placeholder="이름·카테고리·메모 검색..." oninput="renderApplList()">
+    </div>
+    <div class="slot-picker" style="margin-bottom:14px;" id="applStatusFilter">
+      <div class="slot-chip sel" onclick="filterAppl(this,'all')">전체</div>
+      <div class="slot-chip" onclick="filterAppl(this,'pending')">대기중</div>
+      <div class="slot-chip" onclick="filterAppl(this,'done')">완료</div>
+    </div>
+    <div id="applList"></div>
+  </div>
+
+  <!-- 분석 패널 -->
+  <div id="subAna" class="sub-panel">
+    <div class="range-chips">
+      <div class="slot-chip sel" onclick="selAnaRange(this,'7')">7일</div>
+      <div class="slot-chip" onclick="selAnaRange(this,'30')">30일</div>
+      <div class="slot-chip" onclick="selAnaRange(this,'90')">3개월</div>
+      <div class="slot-chip" onclick="selAnaRange(this,'all')">전체</div>
+    </div>
+
+    <div class="stat-grid-mini" id="anaStats"></div>
+
+    <div class="ana-card">
+      <div class="ana-title">카테고리별 신청 현황</div>
+      <div id="catBars"></div>
+    </div>
+
+    <div class="ana-card">
+      <div class="ana-title">일별 신청 추이</div>
+      <div id="dailyBars"></div>
+    </div>
+
+    <div class="ana-card">
+      <div class="ana-title">유입 채널별 비중</div>
+      <div id="acctBars"></div>
+    </div>
+
+    <div class="ana-card">
+      <div class="ana-title">서비스 유형별</div>
+      <div id="svcBars"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ───────── BOTTOM NAV ───────── -->
+<nav class="bottomnav">
+  <button class="nav-item active" id="navHome" onclick="navTo('home')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    홈
+  </button>
+  <button class="nav-item" id="navTrigger" onclick="navTo('trigger')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    트리거
+  </button>
+  <button class="nav-item" id="navLog" onclick="navTo('log')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    로그
+  </button>
+  <button class="nav-item" id="navMoney" onclick="navTo('money')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+    수익화
+  </button>
+  <button class="nav-item" id="navApplicant" onclick="navTo('applicant')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    신청자
+  </button>
+</nav>
+
+<!-- ───────── PAT MODAL ───────── -->
+<div class="modal-overlay" id="patModal" onclick="closeModal('patModal',event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🔑 GitHub PAT 설정</div>
+    <div class="modal-sub">포스팅 트리거를 쓰려면 GitHub Personal Access Token이 필요해.<br>이 기기에만 저장돼 (로컬 스토리지).</div>
+    <input class="modal-input" id="patInput" type="password" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off" spellcheck="false">
+    <div style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.6;">
+      ✅ 필요 권한: <strong style="color:var(--text);">workflow</strong><br>
+      📍 발급: github.com → Settings → Developer settings → Personal access tokens
+    </div>
+    <button class="modal-btn" onclick="savePat()">저장</button>
+    <a class="modal-link" href="https://github.com/settings/tokens" target="_blank" rel="noopener">GitHub 토큰 발급 페이지 →</a>
+  </div>
+</div>
+
+<!-- ───────── LINK EDIT MODAL ───────── -->
+<div class="modal-overlay" id="linkModal" onclick="closeModal('linkModal',event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="linkModalTitle">링크 수정</div>
+    <input type="hidden" id="linkEditIdx">
+    <label class="modal-input-label">제목</label>
+    <input class="modal-input" id="linkEditTitle" type="text" placeholder="카드 제목">
+    <label class="modal-input-label">URL</label>
+    <input class="modal-input" id="linkEditUrl" type="url" placeholder="https://...">
+    <label class="modal-input-label">부제목</label>
+    <input class="modal-input" id="linkEditSub" type="text" placeholder="짧은 설명">
+    <label class="modal-input-label">가격/라벨</label>
+    <input class="modal-input" id="linkEditPrice" type="text" placeholder="무료 / 판매 / 월정액">
+    <button class="modal-btn" onclick="saveLinkEdit()">저장</button>
+    <button class="modal-btn secondary" onclick="closeModal('linkModal')">취소</button>
+  </div>
+</div>
+
+<!-- ───────── PRICE EDIT MODAL ───────── -->
+<div class="modal-overlay" id="priceModal" onclick="closeModal('priceModal',event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">💰 가격 수정</div>
+    <label class="modal-input-label">기본 사주 상담 가격</label>
+    <input class="modal-input" id="priceBasic" type="text" placeholder="30,000원">
+    <label class="modal-input-label">풀 사주 상담 가격</label>
+    <input class="modal-input" id="priceFull" type="text" placeholder="90,000원">
+    <button class="modal-btn" onclick="savePriceEdit()">저장</button>
+    <button class="modal-btn secondary" onclick="closeModal('priceModal')">취소</button>
+  </div>
+</div>
+
+<!-- ───────── SCHEDULE EDIT MODAL ───────── -->
+<div class="modal-overlay" id="schedModal" onclick="closeModal('schedModal',event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="schedModalTitle">일정 수정</div>
+    <input type="hidden" id="schedEditIdx">
+    <label class="modal-input-label">시간</label>
+    <input class="modal-input" id="schedEditTime" type="text" placeholder="08:00">
+    <label class="modal-input-label">슬롯 이름</label>
+    <input class="modal-input" id="schedEditSlot" type="text" placeholder="☀️ 아침 운세">
+    <label class="modal-input-label">주제 목록 (쉼표 구분)</label>
+    <textarea class="modal-input" id="schedEditTopics" rows="3" style="resize:vertical;" placeholder="띠별,재물,재회,..."></textarea>
+    <button class="modal-btn" onclick="saveSchedEdit()">저장</button>
+    <button class="modal-btn secondary" onclick="closeModal('schedModal')">취소</button>
+  </div>
+</div>
+
+<!-- ───────── TOAST ───────── -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── CONFIG ──
+const OWNER = 'shinmoney7-cyber';
+const REPO  = '-';
+const WORKFLOW = 'auto_post_2h.yml';
+const BASE_URL = 'https://shinmoney7-cyber.github.io/-';
+
+// ── DEFAULT DATA ──
+const DEFAULT_LINKS = [
+  { icon:'💬', title:'카카오 무료상담', url:'https://pf.kakao.com/_saju', sub:'pf.kakao.com/_saju', price:'무료', color:'' },
+  { icon:'📋', title:'무료 사주 신청폼', url:'https://forms.gle/t2sSNES5NYow77vz5', sub:'forms.gle', price:'무료 퍼널', color:'' },
+  { icon:'🛒', title:'네이버 스마트스토어', url:'https://smartstore.naver.com/sajumaru', sub:'sajumaru · 사주책/자료', price:'판매', color:'rose' },
+  { icon:'▶️', title:'유튜브 멤버십', url:'https://www.youtube.com/@sajumaru/join', sub:'@sajumaru · 구독 전환', price:'월정액', color:'fire' }
+];
+
+const DEFAULT_PRICES = { basic:'30,000원', full:'90,000원' };
+
+const DEFAULT_SCHED = [
+  { time:'08:00', slot:'☀️ 아침 운세', topics:'띠별,재물,재회,합격,이직,사업,건강,궁합,이사,부모' },
+  { time:'13:00', slot:'🌤 점심 픽', topics:'재물,재회,띠별,건강,이직,합격,사업,궁합,이사,부모' },
+  { time:'20:00', slot:'🌙 저녁 포춘', topics:'재회,건강,합격,재물,이직,사업,부모,띠별,궁합,이사' }
+];
+
+// ── EDITABLE STATE ──
+let links = DEFAULT_LINKS.map(l=>({...l}));
+let prices = {...DEFAULT_PRICES};
+let sched = DEFAULT_SCHED.map(s=>({...s}));
+let editMode = false;
+
+// ── LOAD SAVED DATA ──
+function loadEditable() {
+  try {
+    const savedLinks = localStorage.getItem('mono_links');
+    if (savedLinks) links = JSON.parse(savedLinks);
+    const savedPrices = localStorage.getItem('mono_prices');
+    if (savedPrices) prices = JSON.parse(savedPrices);
+    const savedSched = localStorage.getItem('post_sched');
+    if (savedSched) sched = JSON.parse(savedSched);
+  } catch(e) {}
+}
+
+function saveLinks() {
+  try { localStorage.setItem('mono_links', JSON.stringify(links)); } catch(e) {}
+}
+function savePrices() {
+  try { localStorage.setItem('mono_prices', JSON.stringify(prices)); } catch(e) {}
+}
+function saveSched() {
+  try { localStorage.setItem('post_sched', JSON.stringify(sched)); } catch(e) {}
+}
+
+// ── STATE ──
+let allLogs = { sm:[], un:[], s77:[] };
+let curAcct = 'all';
+let logFilter = 'all';
+let selSlotVal = '';
+let pat = '';
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', () => {
+  loadPat();
+  loadEditable();
+  loadApplicants();
+  updateOnline();
+  window.addEventListener('online',  updateOnline);
+  window.addEventListener('offline', updateOnline);
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').then(reg => {
+      reg.addEventListener('updatefound', () => {
+        document.getElementById('updateBar').classList.add('show');
+      });
+    }).catch(() => {});
+  }
+
+  refreshAll();
+  updateTimer();
+  setInterval(updateTimer, 30000);
+  renderMoney();
+
+  const params = new URLSearchParams(location.search);
+  if (params.get('tab')) navTo(params.get('tab'));
+  if (params.get('action') === 'post') navTo('trigger');
+});
+
+// ── ONLINE STATUS ──
+function updateOnline() {
+  const dot = document.getElementById('onlineIndicator');
+  dot.textContent = navigator.onLine ? '🟢' : '🔴';
+}
+
+// ── PAT ──
+function loadPat() {
+  try { pat = localStorage.getItem('gh_pat') || ''; } catch(e) { pat = ''; }
+  updatePatStatus();
+}
+function savePat() {
+  const v = document.getElementById('patInput').value.trim();
+  if (!v) { showToast('PAT를 입력해줘'); return; }
+  pat = v;
+  try { localStorage.setItem('gh_pat', v); } catch(e) {}
+  closeModal('patModal');
+  updatePatStatus();
+  showToast('✅ PAT 저장 완료');
+}
+function updatePatStatus() {
+  const el = document.getElementById('patStatus');
+  if (pat) {
+    el.innerHTML = `✅ GitHub PAT 설정됨 — <button onclick="clearPat()" style="background:none;border:none;color:var(--red);font-size:13px;font-weight:700;font-family:var(--font);">초기화</button>`;
+    el.style.borderColor = 'rgba(82,176,106,.4)';
+    el.style.background = 'rgba(82,176,106,.08)';
+    el.style.color = 'var(--green)';
+  } else {
+    el.innerHTML = `⚠️ GitHub PAT 미설정 — 트리거를 사용하려면 <button onclick="openPatModal()" style="background:none;border:none;color:var(--gold);font-size:13px;font-weight:700;font-family:var(--font);text-decoration:underline;">여기서 설정</button>`;
+    el.style.borderColor = 'var(--border)';
+    el.style.background = 'var(--bg2)';
+    el.style.color = 'var(--muted)';
+  }
+}
+function clearPat() {
+  pat = '';
+  try { localStorage.removeItem('gh_pat'); } catch(e) {}
+  updatePatStatus();
+  showToast('PAT 초기화 완료');
+}
+function openPatModal() {
+  document.getElementById('patInput').value = pat;
+  openModal('patModal');
+}
+
+// ── MODAL HELPER ──
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id, e) {
+  if (!e || e.target === document.getElementById(id)) {
+    document.getElementById(id).classList.remove('open');
+  }
+}
+
+// ── FETCH LOGS ──
+async function fetchLog(acct) {
+  try {
+    const r = await fetch(`${BASE_URL}/data/posting_log_${acct}.json?t=${Date.now()}`, { cache:'no-store' });
+    if (!r.ok) return [];
+    return await r.json();
+  } catch(e) { return []; }
+}
+
+async function refreshAll() {
+  document.getElementById('lastRefresh').textContent = '로딩 중...';
+  const [sm, un, s77] = await Promise.all([fetchLog('sm'), fetchLog('un'), fetchLog('s77')]);
+  allLogs = { sm, un, s77 };
+
+  const now = new Date().toISOString().slice(0,10);
+  let todayN = 0, totalN = 0;
+  const accts = [
+    { id:'sm', logs:sm, dotId:'dotSm', statusId:'statusSm' },
+    { id:'un', logs:un, dotId:'dotUn', statusId:'statusUn' },
+    { id:'s77', logs:s77, dotId:'dotS77', statusId:'statusS77' }
+  ];
+  accts.forEach(a => {
+    const last = a.logs[0];
+    totalN += a.logs.length;
+    const todays = a.logs.filter(l => l.date === now);
+    todayN += todays.length;
+    const dot = document.getElementById(a.dotId);
+    const status = document.getElementById(a.statusId);
+    if (last) {
+      const hasFail = (last.platforms_fail||[]).length > 0;
+      dot.className = 'acct-dot ' + (hasFail ? 'red' : '');
+      status.textContent = last.slot || last.ts_kst?.slice(11,16) || '기록 있음';
+    } else {
+      dot.className = 'acct-dot grey';
+      status.textContent = '기록 없음';
+    }
+  });
+  document.getElementById('todayCount').textContent = todayN;
+  document.getElementById('totalCount').textContent = totalN;
+  const weekAgo = new Date(Date.now() - 7*86400000).toISOString().slice(0,10);
+  const weekN = [...sm,...un,...s77].filter(l => l.date >= weekAgo).length;
+  document.getElementById('weekCount').textContent = weekN;
+
+  document.getElementById('lastRefresh').textContent = '방금 업데이트';
+  renderRecent();
+  renderLog();
+}
+
+// ── RENDER RECENT ──
+function renderRecent() {
+  const container = document.getElementById('recentPosts');
+  let logs = [];
+  if (curAcct === 'all') {
+    const sm = allLogs.sm.map(l=>({...l,_acct:'sm'}));
+    const un = allLogs.un.map(l=>({...l,_acct:'un'}));
+    const s77 = allLogs.s77.map(l=>({...l,_acct:'s77'}));
+    logs = [...sm,...un,...s77].sort((a,b)=>(b.ts_kst||'').localeCompare(a.ts_kst||'')).slice(0,10);
+  } else {
+    logs = (allLogs[curAcct]||[]).map(l=>({...l,_acct:curAcct})).slice(0,8);
+  }
+  if (!logs.length) {
+    container.innerHTML = `<div class="empty"><div class="empty-icon">📭</div>아직 포스팅 기록이 없어요</div>`;
+    return;
+  }
+  container.innerHTML = logs.map(l => renderPostCard(l)).join('');
+}
+
+function renderPostCard(l) {
+  const ok = (l.platforms_ok||[]).map(p=>`<span class="plat-badge ok">${platIcon(p)} ${p}</span>`).join('');
+  const fail = (l.platforms_fail||[]).map(p=>`<span class="plat-badge fail">✗ ${p}</span>`).join('');
+  const acctLabel = {sm:'사주마루',un:'사주보는언니',s77:'사주마루77'}[l._acct]||l._acct;
+  const acctColor = {sm:'var(--gold)',un:'var(--rose)',s77:'var(--fire)'}[l._acct]||'var(--gold)';
+
+  let imgHtml = '';
+  if (l.image_url) {
+    imgHtml = `<img class="post-img" src="${l.image_url}" loading="lazy" alt="포스팅 카드">`;
+  }
+  if (l.slide_urls && l.slide_urls.length) {
+    imgHtml = `<div class="slide-row">${l.slide_urls.map(u=>`<img class="slide-thumb" src="${u}" loading="lazy" alt="슬라이드">`).join('')}</div>`;
+  }
+
+  return `<div class="post-card">
+    <div class="post-header">
+      <div class="post-acct-dot ${l._acct}"></div>
+      <span class="post-meta" style="color:${acctColor};font-weight:700;">${acctLabel}</span>
+      <span class="post-meta">${l.date||''} ${l.ts_kst?.slice(11,16)||''}</span>
+      <span class="post-slot">${l.slot||''}</span>
+    </div>
+    <div class="post-hook">${escHtml(l.hook||l.topic||'')}</div>
+    <div class="post-topic" style="color:var(--muted);">${escHtml(l.topic||'')} · ${escHtml(l.theme||'')}</div>
+    <div class="post-platforms">${ok}${fail}</div>
+    ${imgHtml}
+  </div>`;
+}
+
+function platIcon(p) {
+  return {instagram:'📸',facebook:'👥',threads:'🧵',twitter:'🐦',tiktok:'🎵',youtube:'▶️',naver_blog:'📝',naver_clip:'🎬',naver_jisik:'❓'}[p]||'🌐';
+}
+
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── SWITCH ACCT ──
+function switchAcct(id) {
+  curAcct = id;
+  document.getElementById('acctSm').classList.toggle('active-card', id==='sm');
+  document.getElementById('acctUn').classList.toggle('active-card', id==='un');
+  document.getElementById('acctS77').classList.toggle('active-card', id==='s77');
+  const labels = {sm:'사주마루',un:'사주보는언니',s77:'사주마루77',all:'전체'};
+  document.getElementById('curAcctLabel').textContent = labels[id]||'전체';
+  renderRecent();
+}
+
+// ── RENDER LOG ──
+function renderLog() {
+  const container = document.getElementById('logList');
+  let logs = [];
+  if (logFilter === 'all') {
+    logs = [
+      ...allLogs.sm.map(l=>({...l,_acct:'sm'})),
+      ...allLogs.un.map(l=>({...l,_acct:'un'})),
+      ...allLogs.s77.map(l=>({...l,_acct:'s77'}))
+    ].sort((a,b)=>(b.ts_kst||'').localeCompare(a.ts_kst||''));
+  } else {
+    logs = (allLogs[logFilter]||[]).map(l=>({...l,_acct:logFilter}));
+  }
+  if (!logs.length) {
+    container.innerHTML = `<div class="empty"><div class="empty-icon">📭</div>기록이 없어요</div>`;
+    return;
+  }
+  container.innerHTML = logs.map(l => renderPostCard(l)).join('');
+}
+
+function filterLog(el, val) {
+  document.querySelectorAll('#pageLog .slot-chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  logFilter = val;
+  renderLog();
+}
+
+// ── TIMER ──
+function updateTimer() {
+  const now = new Date();
+  const kstNow = new Date(now.getTime() + 9*3600000);
+  const h = kstNow.getUTCHours();
+  const m = kstNow.getUTCMinutes();
+  const curMin = h*60 + m;
+  const slots = sched.map(s => ({ min: parseInt(s.time)*60 + parseInt(s.time.slice(3)), label: s.time + ' ' + s.slot }));
+  let next = null;
+  for (const s of slots) { if (s.min > curMin) { next = s; break; } }
+  if (!next) next = { min: parseInt(slots[0]?.time||'08')*60 + 24*60, label:(slots[0]?.label||'08:00') + ' (내일)' };
+  const diff = next.min - curMin;
+  const hLeft = Math.floor(diff / 60), mLeft = diff % 60;
+  document.getElementById('timerVal').textContent = `${hLeft}시간 ${mLeft}분 후`;
+  document.getElementById('timerSub').textContent = next.label;
+}
+
+// ── TRIGGER ──
+function selSlot(el, val) {
+  document.querySelectorAll('.slot-picker .slot-chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  selSlotVal = val;
+}
+
+async function trigPost(acct) {
+  if (!pat) { openPatModal(); return; }
+  const log = document.getElementById('trigLog');
+  log.innerHTML = `<span class="spinner"></span> 트리거 요청 중... (${acct})`;
+
+  const body = { ref:'main', inputs:{ account_id: acct, hour_kst: selSlotVal } };
+  try {
+    const r = await fetch(
+      `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW}/dispatches`,
+      {
+        method:'POST',
+        headers:{ 'Authorization':`Bearer ${pat}`, 'Accept':'application/vnd.github+json', 'Content-Type':'application/json' },
+        body: JSON.stringify(body)
+      }
+    );
+    if (r.status === 204) {
+      log.innerHTML = `<span class="ok">✅ 트리거 성공! (${acct}) — GitHub Actions 실행 중...</span>\n\n약 2~3분 후 포스팅 로그에 반영돼.\n로그 탭에서 확인해봐.`;
+      showToast(`✅ ${acct} 트리거 완료`);
+      setTimeout(() => refreshAll(), 5000);
+    } else {
+      const txt = await r.text();
+      log.innerHTML = `<span class="err">❌ 오류 (${r.status}): ${txt}\n\nPAT 권한을 확인해봐 (workflow 권한 필요).</span>`;
+    }
+  } catch(e) {
+    log.innerHTML = `<span class="err">❌ 네트워크 오류: ${e.message}</span>`;
+  }
+}
+
+// ── RENDER MONEY ──
+function renderMoney() {
+  renderMonoCards();
+  renderPriceTable();
+  renderSchedTable();
+}
+
+function renderMonoCards() {
+  const colorMap = {
+    '': `background:linear-gradient(135deg,var(--gold3) 0%,var(--bg2) 100%);border-color:var(--border2);`,
+    rose: `background:linear-gradient(135deg,var(--rose3),var(--bg2));border-color:var(--rose);`,
+    fire: `background:linear-gradient(135deg,var(--fire3),var(--bg2));border-color:var(--fire);`
+  };
+  const priceColorMap = { '':' color:var(--gold)', rose:' color:var(--rose)', fire:' color:var(--fire)' };
+  const container = document.getElementById('monoCards');
+  container.innerHTML = links.map((l, i) => {
+    const cs = colorMap[l.color||''] || colorMap[''];
+    const pc = priceColorMap[l.color||''] || priceColorMap[''];
+    const editBtns = editMode ? `
+      <div class="mono-actions">
+        <button class="mono-btn copy-btn" onclick="event.stopPropagation();copyLink('${escHtml(l.url)}')">복사</button>
+        <button class="mono-btn" onclick="event.stopPropagation();openLinkEdit(${i})">수정</button>
+      </div>` : `
+      <div class="mono-actions">
+        <button class="mono-btn copy-btn" onclick="event.stopPropagation();copyLink('${escHtml(l.url)}')">복사</button>
+      </div>`;
+    return `<div class="mono-card" style="${cs}" onclick="copyLink('${escHtml(l.url)}')">
+      <div class="mono-icon">${l.icon}</div>
+      <div class="mono-info">
+        <div class="mono-title">${escHtml(l.title)}</div>
+        <div class="mono-sub">${escHtml(l.sub)}</div>
+      </div>
+      <div class="mono-price" style="${pc}">${escHtml(l.price)}</div>
+      ${editBtns}
+    </div>`;
+  }).join('');
+}
+
+function renderPriceTable() {
+  document.getElementById('priceTable').innerHTML = `
+    <div style="display:flex;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);">
+      <span>기본 사주 상담</span>
+      <span style="font-family:var(--fh);color:var(--gold);">${escHtml(prices.basic)}</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;padding:14px 16px;">
+      <span>풀 사주 상담</span>
+      <span style="font-family:var(--fh);color:var(--gold);">${escHtml(prices.full)}</span>
+    </div>`;
+}
+
+function renderSchedTable() {
+  document.getElementById('schedTable').innerHTML = sched.map((s, i) => {
+    const editBtn = editMode ? `<button class="sch-edit-btn" onclick="openSchedItemEdit(${i})">✏️ 수정</button>` : '';
+    return `<div class="sch-row">
+      <div class="sch-time">${escHtml(s.time)}</div>
+      <div class="sch-bar">
+        <div class="sch-slot">${escHtml(s.slot)}</div>
+        <div class="sch-topics">${escHtml(s.topics)}</div>
+        ${editBtn}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── EDIT MODE ──
+function toggleEditMode() {
+  editMode = !editMode;
+  const btn = document.getElementById('editToggleBtn');
+  const bar = document.getElementById('editBar');
+  const priceBtn = document.getElementById('priceEditBtn');
+  const schedBtn = document.getElementById('schedEditBtn');
+  btn.textContent = editMode ? '✅ 완료' : '✏️ 편집';
+  btn.classList.toggle('active', editMode);
+  bar.style.display = editMode ? 'flex' : 'none';
+  priceBtn.style.display = editMode ? '' : 'none';
+  schedBtn.style.display = editMode ? '' : 'none';
+  renderMoney();
+}
+
+// ── LINK EDIT ──
+function openLinkEdit(idx) {
+  const l = links[idx];
+  document.getElementById('linkEditIdx').value = idx;
+  document.getElementById('linkModalTitle').textContent = '링크 수정 — ' + l.title;
+  document.getElementById('linkEditTitle').value = l.title;
+  document.getElementById('linkEditUrl').value = l.url;
+  document.getElementById('linkEditSub').value = l.sub;
+  document.getElementById('linkEditPrice').value = l.price;
+  openModal('linkModal');
+}
+
+function saveLinkEdit() {
+  const idx = parseInt(document.getElementById('linkEditIdx').value);
+  links[idx] = {
+    ...links[idx],
+    title: document.getElementById('linkEditTitle').value.trim() || links[idx].title,
+    url:   document.getElementById('linkEditUrl').value.trim() || links[idx].url,
+    sub:   document.getElementById('linkEditSub').value.trim(),
+    price: document.getElementById('linkEditPrice').value.trim()
+  };
+  saveLinks();
+  closeModal('linkModal');
+  renderMonoCards();
+  showToast('✅ 저장 완료');
+}
+
+// ── PRICE EDIT ──
+function openPriceEdit() {
+  document.getElementById('priceBasic').value = prices.basic;
+  document.getElementById('priceFull').value = prices.full;
+  openModal('priceModal');
+}
+
+function savePriceEdit() {
+  prices.basic = document.getElementById('priceBasic').value.trim() || prices.basic;
+  prices.full  = document.getElementById('priceFull').value.trim() || prices.full;
+  savePrices();
+  closeModal('priceModal');
+  renderPriceTable();
+  showToast('✅ 가격 저장 완료');
+}
+
+// ── SCHEDULE EDIT ──
+function openSchedEdit() {
+  openSchedItemEdit(0);
+}
+
+function openSchedItemEdit(idx) {
+  const s = sched[idx];
+  document.getElementById('schedEditIdx').value = idx;
+  document.getElementById('schedModalTitle').textContent = '일정 수정 — ' + s.time;
+  document.getElementById('schedEditTime').value = s.time;
+  document.getElementById('schedEditSlot').value = s.slot;
+  document.getElementById('schedEditTopics').value = s.topics;
+  openModal('schedModal');
+}
+
+function saveSchedEdit() {
+  const idx = parseInt(document.getElementById('schedEditIdx').value);
+  sched[idx] = {
+    time:   document.getElementById('schedEditTime').value.trim() || sched[idx].time,
+    slot:   document.getElementById('schedEditSlot').value.trim() || sched[idx].slot,
+    topics: document.getElementById('schedEditTopics').value.trim()
+  };
+  saveSched();
+  closeModal('schedModal');
+  renderSchedTable();
+  updateTimer();
+  showToast('✅ 일정 저장 완료');
+}
+
+// ── COPY LINK ──
+function copyLink(url) {
+  try {
+    navigator.clipboard.writeText(url)
+      .then(() => showToast('✅ 링크 복사됨'))
+      .catch(() => { selectText(url); showToast('텍스트를 선택했어 — 직접 복사해줘'); });
+  } catch(e) { showToast(url); }
+}
+function selectText(txt) {
+  const t = document.createElement('textarea');
+  t.value = txt; t.style.position = 'fixed'; t.style.opacity = '0';
+  document.body.appendChild(t); t.focus(); t.select();
+  try { document.execCommand('copy'); } catch(e) {}
+  document.body.removeChild(t);
+}
+
+// ── NAV ──
+function navTo(page) {
+  ['home','trigger','log','money','applicant'].forEach(p => {
+    document.getElementById('page'+p.charAt(0).toUpperCase()+p.slice(1)).classList.toggle('active', p===page);
+    document.getElementById('nav'+p.charAt(0).toUpperCase()+p.slice(1)).classList.toggle('active', p===page);
+  });
+  if (page === 'applicant') renderApplList();
+}
+
+// ── APPLICANT DATA ──
+let applicants = [];
+let applFilter = 'all';
+let anaRange = '7';
+let fGender = '남', fCat = '', fAcct = 'sm', fSvc = '기본';
+
+const CATEGORIES = ['재물','재회','궁합','건강','합격','이직','사업','이사','부모','띠별','기타'];
+const ACCT_NAMES = {sm:'사주마루',un:'사주보는언니',s77:'사주마루77','기타':'기타/직접'};
+const ACCT_COLORS = {sm:'var(--gold)',un:'var(--rose)',s77:'var(--fire)','기타':'var(--muted)'};
+
+function loadApplicants() {
+  try {
+    const s = localStorage.getItem('applicants_v1');
+    if (s) applicants = JSON.parse(s);
+  } catch(e) { applicants = []; }
+  updateApplCount();
+}
+
+function saveApplicants() {
+  try { localStorage.setItem('applicants_v1', JSON.stringify(applicants)); } catch(e) {}
+}
+
+function updateApplCount() {
+  const el = document.getElementById('applCountLabel');
+  if (el) el.textContent = applicants.length + '명';
+}
+
+function saveApplicant() {
+  const name = document.getElementById('aName').value.trim();
+  if (!name) { showToast('이름을 입력해줘'); return; }
+  if (!fCat) { showToast('카테고리를 선택해줘'); return; }
+  const appl = {
+    id: Date.now(),
+    date: new Date().toISOString().slice(0,10),
+    ts: new Date().toISOString(),
+    name,
+    birth: document.getElementById('aBirth').value,
+    birthtime: document.getElementById('aTime').value.trim(),
+    gender: fGender,
+    category: fCat,
+    account: fAcct,
+    service: fSvc,
+    memo: document.getElementById('aMemo').value.trim(),
+    status: 'pending'
+  };
+  applicants.unshift(appl);
+  saveApplicants();
+  updateApplCount();
+  resetApplForm();
+  showToast('✅ 신청자 등록 완료');
+}
+
+function resetApplForm() {
+  document.getElementById('aName').value = '';
+  document.getElementById('aBirth').value = '';
+  document.getElementById('aTime').value = '';
+  document.getElementById('aMemo').value = '';
+  fGender = '남'; fCat = ''; fAcct = 'sm'; fSvc = '기본';
+  document.querySelectorAll('#aGenderChips .form-chip').forEach(c => c.classList.toggle('sel', c.dataset.val === '남'));
+  document.querySelectorAll('#aCatChips .form-chip').forEach(c => c.classList.remove('sel'));
+  document.querySelectorAll('#aAcctChips .form-chip').forEach(c => {
+    c.classList.remove('sel','sm-sel','un-sel','s77-sel');
+    if (c.dataset.val === 'sm') c.classList.add('sm-sel');
+  });
+  document.querySelectorAll('#aSvcChips .form-chip').forEach(c => c.classList.toggle('sel', c.dataset.val === '기본'));
+}
+
+function selGender(el) {
+  fGender = el.dataset.val;
+  document.querySelectorAll('#aGenderChips .form-chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function selCat(el) {
+  fCat = el.dataset.val;
+  document.querySelectorAll('#aCatChips .form-chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function selApplAcct(el) {
+  fAcct = el.dataset.val;
+  document.querySelectorAll('#aAcctChips .form-chip').forEach(c => {
+    c.classList.remove('sel','sm-sel','un-sel','s77-sel');
+  });
+  const cls = {sm:'sm-sel',un:'un-sel',s77:'s77-sel','기타':'sel'}[fAcct] || 'sel';
+  el.classList.add(cls);
+}
+
+function selSvc(el) {
+  fSvc = el.dataset.val;
+  document.querySelectorAll('#aSvcChips .form-chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function switchSubTab(tab) {
+  ['reg','list','ana'].forEach(t => {
+    document.getElementById('stab-'+t).classList.toggle('active', t===tab);
+    const panelId = 'sub' + t.charAt(0).toUpperCase() + t.slice(1);
+    document.getElementById(panelId).classList.toggle('active', t===tab);
+  });
+  if (tab === 'list') renderApplList();
+  if (tab === 'ana') renderAnalytics();
+}
+
+function filterAppl(el, val) {
+  applFilter = val;
+  document.querySelectorAll('#applStatusFilter .slot-chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  renderApplList();
+}
+
+function renderApplList() {
+  const q = (document.getElementById('applSearch')?.value || '').toLowerCase();
+  const container = document.getElementById('applList');
+  if (!container) return;
+  let list = applicants.filter(a => {
+    if (applFilter === 'pending' && a.status !== 'pending') return false;
+    if (applFilter === 'done' && a.status !== 'done') return false;
+    if (q && !`${a.name} ${a.category} ${a.memo||''}`.toLowerCase().includes(q)) return false;
+    return true;
+  });
+  if (!list.length) {
+    container.innerHTML = `<div class="empty"><div class="empty-icon">📭</div>신청자가 없어요</div>`;
+    return;
+  }
+  container.innerHTML = list.map(a => {
+    const acctColor = ACCT_COLORS[a.account] || 'var(--muted)';
+    const acctName = ACCT_NAMES[a.account] || a.account;
+    const statusTag = a.status === 'done'
+      ? `<span class="appl-tag done">✅ 완료</span>`
+      : `<span class="appl-tag pending">⏳ 대기중</span>`;
+    return `<div class="appl-card">
+      <div class="appl-header">
+        <span class="appl-name">${escHtml(a.name)}</span>
+        <span style="font-size:11px;color:${acctColor};font-weight:700;">${escHtml(acctName)}</span>
+        <span class="appl-date">${a.date||''}</span>
+      </div>
+      <div class="appl-tags">
+        <span class="appl-tag cat">${escHtml(a.category)}</span>
+        ${a.service ? `<span class="appl-tag">${escHtml(a.service)}</span>` : ''}
+        ${a.gender ? `<span class="appl-tag">${escHtml(a.gender)}</span>` : ''}
+        ${a.birth ? `<span class="appl-tag">${escHtml(a.birth)}</span>` : ''}
+        ${statusTag}
+      </div>
+      ${a.birthtime ? `<div class="appl-memo">🕐 ${escHtml(a.birthtime)}</div>` : ''}
+      ${a.memo ? `<div class="appl-memo">📝 ${escHtml(a.memo)}</div>` : ''}
+      <div class="appl-actions">
+        ${a.status !== 'done' ? `<button class="appl-btn done-btn" onclick="markApplDone(${a.id})">✅ 완료 처리</button>` : ''}
+        <button class="appl-btn del-btn" onclick="delAppl(${a.id})">삭제</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function markApplDone(id) {
+  const a = applicants.find(x => x.id === id);
+  if (a) { a.status = 'done'; saveApplicants(); renderApplList(); showToast('✅ 완료 처리됨'); }
+}
+
+function delAppl(id) {
+  applicants = applicants.filter(x => x.id !== id);
+  saveApplicants();
+  updateApplCount();
+  renderApplList();
+  showToast('삭제 완료');
+}
+
+function selAnaRange(el, val) {
+  anaRange = val;
+  document.querySelectorAll('#subAna .range-chips .slot-chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  renderAnalytics();
+}
+
+function getAnaApplicants() {
+  if (anaRange === 'all') return applicants;
+  const days = parseInt(anaRange);
+  const cutoff = new Date(Date.now() - days * 86400000).toISOString().slice(0,10);
+  return applicants.filter(a => (a.date||'') >= cutoff);
+}
+
+function makeBars(entries, maxVal, colorFn) {
+  if (!entries.length) return `<div style="color:var(--muted);font-size:13px;text-align:center;padding:8px 0;">데이터 없음</div>`;
+  return entries.map(([label, cnt]) => `
+    <div class="bar-row">
+      <div class="bar-label" title="${escHtml(label)}">${escHtml(label)}</div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:${Math.round(cnt/maxVal*100)}%;${colorFn ? 'background:'+colorFn(label)+';' : ''}"></div></div>
+      <div class="bar-count">${cnt}</div>
+    </div>`).join('');
+}
+
+function renderAnalytics() {
+  const list = getAnaApplicants();
+  const total = list.length;
+  const done = list.filter(a => a.status === 'done').length;
+  const pending = total - done;
+
+  document.getElementById('anaStats').innerHTML = `
+    <div class="stat-mini"><div class="n">${total}</div><div class="l">전체 신청</div></div>
+    <div class="stat-mini"><div class="n" style="color:var(--blue)">${pending}</div><div class="l">대기중</div></div>
+    <div class="stat-mini"><div class="n" style="color:var(--green)">${done}</div><div class="l">완료</div></div>`;
+
+  // 카테고리 바
+  const catMap = {};
+  CATEGORIES.forEach(c => catMap[c] = 0);
+  list.forEach(a => { if (a.category) catMap[a.category] = (catMap[a.category]||0) + 1; });
+  const catEntries = Object.entries(catMap).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]);
+  const maxCat = Math.max(1, ...catEntries.map(([,v])=>v));
+  document.getElementById('catBars').innerHTML = makeBars(catEntries, maxCat, null);
+
+  // 일별 바 (최근 14일)
+  const dayMap = {};
+  list.forEach(a => { if (a.date) dayMap[a.date] = (dayMap[a.date]||0) + 1; });
+  const dayEntries = Object.entries(dayMap).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,14)
+    .map(([d,v]) => [d.slice(5), v]); // MM-DD
+  const maxDay = Math.max(1, ...dayEntries.map(([,v])=>v));
+  document.getElementById('dailyBars').innerHTML = makeBars(dayEntries, maxDay, null);
+
+  // 계정 바
+  const acctMap = {sm:0,un:0,s77:0,'기타':0};
+  list.forEach(a => { acctMap[a.account||'기타'] = (acctMap[a.account||'기타']||0) + 1; });
+  const acctEntries = Object.entries(acctMap).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1])
+    .map(([k,v]) => [ACCT_NAMES[k]||k, v]);
+  const origKeys = Object.keys(acctMap).filter(k=>acctMap[k]>0).sort((a,b)=>acctMap[b]-acctMap[a]);
+  const maxAcct = Math.max(1, ...acctEntries.map(([,v])=>v));
+  document.getElementById('acctBars').innerHTML = makeBars(
+    acctEntries, maxAcct,
+    (_, i) => ACCT_COLORS[origKeys[i]] || 'var(--gold)'
+  );
+
+  // 서비스 유형 바
+  const svcMap = {'기본':0,'풀':0,'무료':0};
+  list.forEach(a => { svcMap[a.service||'기본'] = (svcMap[a.service||'기본']||0) + 1; });
+  const svcEntries = Object.entries(svcMap).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]);
+  const maxSvc = Math.max(1, ...svcEntries.map(([,v])=>v));
+  document.getElementById('svcBars').innerHTML = makeBars(svcEntries, maxSvc, null);
+}
+
+// ── TOAST ──
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>

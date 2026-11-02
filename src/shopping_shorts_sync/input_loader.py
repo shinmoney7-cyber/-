@@ -55,6 +55,69 @@ def _load_csv_rows(path: Path) -> list[dict]:
         return list(csv.DictReader(f))
 
 
+def set_product_enabled(path: str | Path, product_id: str, enabled: bool) -> bool:
+    """Toggles the enabled flag for a single product row (matched by id).
+    Returns True if the product was found and updated, False if not found.
+    Only JSON files are supported."""
+    path = Path(path)
+    if path.suffix.lower() != ".json":
+        raise InputLoadError(f"set_product_enabled only supports .json input files, got {path}")
+
+    rows = _load_json_rows(path) if path.exists() else []
+    found = False
+    for row in rows:
+        if row.get("id") == product_id:
+            row["enabled"] = enabled
+            found = True
+            break
+
+    if not found:
+        return False
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp_path = tempfile.mkstemp(dir=path.parent, prefix=".products-", suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            json.dump(rows, f, ensure_ascii=False, indent=2)
+        os.replace(tmp_path, path)
+    finally:
+        if os.path.exists(tmp_path):
+            os.remove(tmp_path)
+
+    return True
+
+
+def set_product_thumbnail(path: str | Path, product_id: str, thumbnail_url: str) -> bool:
+    """Persists a resolved thumbnail URL for a single product row (matched by id).
+    Returns True if updated, False if product not found. JSON files only."""
+    path = Path(path)
+    if path.suffix.lower() != ".json":
+        raise InputLoadError(f"set_product_thumbnail only supports .json input files, got {path}")
+
+    rows = _load_json_rows(path) if path.exists() else []
+    found = False
+    for row in rows:
+        if row.get("id") == product_id:
+            row["thumbnail"] = thumbnail_url
+            found = True
+            break
+
+    if not found:
+        return False
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp_path = tempfile.mkstemp(dir=path.parent, prefix=".products-", suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            json.dump(rows, f, ensure_ascii=False, indent=2)
+        os.replace(tmp_path, path)
+    finally:
+        if os.path.exists(tmp_path):
+            os.remove(tmp_path)
+
+    return True
+
+
 def upsert_product(path: str | Path, product: Product) -> None:
     """Inserts or replaces a single product (matched by id) in a JSON
     product-list file, preserving all other rows. CSV input files are not

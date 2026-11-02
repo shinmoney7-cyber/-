@@ -1,0 +1,40 @@
+name: Monthly Order Report
+
+on:
+  schedule:
+    # KST 18:00 = UTC 09:00 / 매달 1일, 7일, 15일, 30일
+    - cron: '0 9 1,7,15,30 * *'
+  workflow_dispatch:
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Generate and send report
+        env:
+          GMAIL_USER: shinmoney7@gmail.com
+          GMAIL_APP_PASSWORD: "${{ secrets.GMAIL_APP_PASSWORD }}"
+          SOLAPI_API_KEY: "${{ secrets.SOLAPI_API_KEY }}"
+          SOLAPI_API_SECRET: "${{ secrets.SOLAPI_API_SECRET }}"
+          SOLAPI_FROM: "${{ secrets.SOLAPI_FROM }}"
+          KAKAO_CHANNEL_ID: "${{ secrets.KAKAO_CHANNEL_ID }}"
+          NOTIFY_PHONE: "${{ secrets.NOTIFY_PHONE }}"
+          NOTIFY_EMAIL: "${{ secrets.NOTIFY_EMAIL }}"
+          BANK_ACCOUNT: "${{ secrets.BANK_ACCOUNT }}"
+        run: python scripts/monthly_report.py

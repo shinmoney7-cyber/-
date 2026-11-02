@@ -1,0 +1,21 @@
+{
+  "name": "사주마루 운영 센터",
+  "short_name": "사주마루",
+  "description": "사주채널 자동 포스팅 관리 앱",
+  "start_url": "/-/app/?utm_source=pwa",
+  "scope": "/-/app/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#07071A",
+  "theme_color": "#07071A",
+  "lang": "ko",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "categories": ["business", "productivity"],
+  "shortcuts": [
+    { "name": "지금 포스팅", "short_name": "포스팅", "url": "/app/?action=post", "description": "지금 바로 포스팅 트리거" },
+    { "name": "포스팅 로그", "short_name": "로그", "url": "/app/?tab=log", "description": "최근 포스팅 기록" }
+  ]
+}
