@@ -9,6 +9,7 @@ import bisect
 from dataclasses import dataclass
 from pathlib import Path
 
+from .category import classify
 from .models import Item
 from .pricing import apply_coupons, list_price, net_margin
 from .settings import VendingSettings
@@ -33,6 +34,7 @@ class Opportunity:
     margin: int
     margin_rate: float
     source_url: str
+    category: str = ""
 
 
 def _cheapest(items: list[Item], skip_sold_out: bool) -> dict[str, Item]:
@@ -82,12 +84,13 @@ def build_opportunities(sourcing: list[Item], market_items: list[Item], s: Vendi
             sizes=src.sizes, source_price=src.price, our_cost=cost,
             market=SOURCE_LABELS.get(mk.source, mk.source), market_price=mk.price, sell_price=sell,
             margin=margin, margin_rate=round(margin / sell, 4) if sell else 0.0, source_url=src.url,
+            category=classify(src.name, src.brand),
         ))
     out.sort(key=lambda o: o.margin, reverse=True)
     return out
 
 
-HEADERS = ["순", "브랜드", "크롤 상품명", "품번", "소싱처", "스토어", "가능/사이즈", "소싱가",
+HEADERS = ["순", "카테고리", "브랜드", "크롤 상품명", "품번", "소싱처", "스토어", "가능/사이즈", "소싱가",
            "공급가(쿠폰적용)", "판매 기준", "기준가", "판매가", "마진", "마진율", "소싱 URL"]
 
 
@@ -102,15 +105,15 @@ def write_xlsx(opps: list[Opportunity], path: str | Path) -> Path:
     for c in ws[1]:
         c.font = Font(bold=True)
     for i, o in enumerate(opps, 1):
-        ws.append([i, o.brand, o.name, o.style_code, o.source, o.store, o.sizes, o.source_price,
+        ws.append([i, o.category, o.brand, o.name, o.style_code, o.source, o.store, o.sizes, o.source_price,
                    o.our_cost, o.market, o.market_price, o.sell_price, o.margin, o.margin_rate, o.source_url])
         r = i + 1
-        for col in (8, 9, 11, 12, 13):
+        for col in (9, 10, 12, 13, 14):
             ws.cell(row=r, column=col).number_format = "#,##0"
-        ws.cell(row=r, column=14).number_format = "0.0%"
+        ws.cell(row=r, column=15).number_format = "0.0%"
     ws.freeze_panes = "A2"
     ws.auto_filter.ref = ws.dimensions
-    for col, width in zip("ABCDEFGHIJKLMNO", (5, 14, 40, 18, 11, 14, 10, 11, 13, 10, 11, 11, 10, 8, 40)):
+    for col, width in zip("ABCDEFGHIJKLMNOP", (5, 8, 14, 40, 18, 11, 14, 10, 11, 13, 10, 11, 11, 10, 8, 40)):
         ws.column_dimensions[col].width = width
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)

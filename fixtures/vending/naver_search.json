@@ -135,5 +135,39 @@
    "link": "https://smartstore.naver.com/x"
   }
  ],
- "1BYJKW3907": []
+ "1BYJKW3907": [],
+ "DD1391100": [
+  {
+   "mallName": "슈마켓",
+   "lprice": "129000",
+   "title": "나이키 덩크 로우 DD1391-100 범고래",
+   "link": "https://smartstore.naver.com/x"
+  },
+  {
+   "mallName": "스니커즈랩",
+   "lprice": "132000",
+   "title": "나이키 DD1391 100 덩크",
+   "link": "https://smartstore.naver.com/x"
+  },
+  {
+   "mallName": "무신사",
+   "lprice": "139000",
+   "title": "DD1391-100",
+   "link": "https://smartstore.naver.com/x"
+  }
+ ],
+ "206991001": [
+  {
+   "mallName": "슈마켓",
+   "lprice": "45900",
+   "title": "크록스 클래식 클로그 206991-001",
+   "link": "https://smartstore.naver.com/x"
+  },
+  {
+   "mallName": "크록스공식",
+   "lprice": "54900",
+   "title": "크록스 206991-001",
+   "link": "https://smartstore.naver.com/x"
+  }
+ ]
 }

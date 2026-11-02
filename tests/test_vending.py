@@ -136,7 +136,7 @@ def test_write_xlsx(tmp_path):
                                [item("n", 200000, style_code="X1", source="musinsa")], s)
     path = write_xlsx(opps, tmp_path / "out.xlsx")
     rows = list(load_workbook(path).active.iter_rows(values_only=True))
-    assert rows[0][3] == "품번" and rows[1][3] == "X1"
+    assert rows[0][4] == "품번" and rows[1][4] == "X1" and rows[0][1] == "카테고리"
 
 
 def test_cached_source_reuses_within_ttl(tmp_path):
@@ -276,7 +276,7 @@ def test_outlet_judgement(tmp_path):
 
     path = write_outlet_xlsx(list(v.values()), tmp_path / "o.xlsx")
     ws = load_workbook(path).active
-    assert ws["A1"].value == "판단" and ws["A2"].value == "매입" and ws["P2"].value == nike.margin * 3
+    assert ws["A1"].value == "판단" and ws["A2"].value == "매입" and ws["Q2"].value == nike.margin * 3 and ws["B1"].value == "카테고리"
 
 
 def test_listing_monitor_flags(tmp_path):
@@ -315,12 +315,15 @@ def test_inventory_fifo_and_pnl(tmp_path):
 
     s = load_settings(SETTINGS)
     lines = build_stock(load_ledger("data/vending/inventory.example.csv"), s)
-    nike = lines[normalize_style_code("BV2654-063")]
+    nike = lines["BV2654063#M"]
     assert nike.qty == 1 and nike.revenue == 137800 and nike.cogs == 90000
-    tommy = lines[normalize_style_code("MW0MW11797")]
+    tommy = lines["MW0MW11797#M"]
     assert tommy.qty == 5 and tommy.sold_qty == 0 and tommy.revenue == 0  # sold 1, returned 1
-    assert lines[normalize_style_code("1BYJKW3907")].written_off == 189000
-    assert sum(l.realized for l in lines.values()) == -162588
+    assert lines["1BYJKW3907#100"].written_off == 189000
+    # shoes: same 품번, sizes tracked separately
+    assert lines["DD1391100#260"].qty == 2 and lines["DD1391100#270"].qty == 0
+    assert lines["DD1391100#270"].revenue == 270000
+    assert sum(l.realized for l in lines.values()) == -91438
 
     # FIFO: two lots at different costs, selling 3 consumes the cheap lot first
     led = tmp_path / "inv.csv"
@@ -353,14 +356,57 @@ def test_inventory_report_flags_and_outlet_import(tmp_path):
     fx = FixtureSearcher("fixtures/vending/naver_search.json")
     lines = build_stock(load_ledger("data/vending/inventory.example.csv"), s)
     active = assess(lines, s, date(2026, 11, 2), fx)
-    flags = {l.style_code: l.flag for l in active}
-    assert flags == {"710680785": "손실 위험", "1BYJKW3907": "처분 추천", "MW0MW11797": "마진 축소", "BV2654-063": "정상"}
+    flags = {(l.style_code, l.size): l.flag for l in active}
+    assert flags == {("710680785", "M"): "손실 위험", ("SP0WRCEX021", "250"): "손실 위험",
+                     ("1BYJKW3907", "100"): "처분 추천", ("MW0MW11797", "M"): "마진 축소",
+                     ("BV2654-063", "M"): "정상", ("DD1391-100", "260"): "정상", ("206991-001", "M8"): "정상"}
+    assert {l.style_code for l in active if l.category == "신발"} == {"SP0WRCEX021", "DD1391-100", "206991-001"}
     path = write_stock_xlsx(active, lines, date(2026, 11, 2), tmp_path / "s.xlsx")
     wb = load_workbook(path)
-    assert wb["재고 현황"]["A2"].value == "손실 위험"
-    assert wb["품번별 손익"].cell(row=wb["품번별 손익"].max_row, column=11).value == -162588
+    assert wb["재고 현황"]["A2"].value == "손실 위험" and wb["재고 현황"]["D1"].value == "사이즈"
+    assert wb["품번별 손익"].cell(row=wb["품번별 손익"].max_row, column=13).value == -91438
 
     outlet_xlsx = write_outlet_xlsx(judge(load_finds("data/vending/outlet_finds.example.csv"), fx, s,
                                           echo=lambda *_: None), tmp_path / "o.xlsx")
     txs = txs_from_outlet_xlsx(outlet_xlsx, date(2026, 11, 2))
-    assert [(t.kind, t.style_code, t.qty, t.price) for t in txs] == [("입고", "BV2654-063", 3, 45000)]
+    # multi-size rows ("M,L") import without a size; single-size shoe rows keep it
+    assert [(t.style_code, t.size, t.qty, t.price) for t in txs] == [
+        ("BV2654-063", "", 3, 45000), ("DD1391-100", "270", 2, 89000), ("206991-001", "M8", 2, 29000)]
+
+
+def test_category_classification():
+    from shopping_shorts_sync.vending.category import classify
+
+    assert classify("나이키 덩크 로우 레트로", "나이키") == "신발"
+    assert classify("아디다스 삼바 OG", "아디다스") == "신발"
+    assert classify("클래식 클로그", "크록스") == "신발"
+    assert classify("고워크 7", "스케쳐스") == "신발"            # shoe-only brand
+    assert classify("MR530SG", "뉴발란스") == "신발"            # NB model number
+    assert classify("뉴발란스 로고 반팔", "뉴발란스") == "의류"
+    assert classify("나이키 클럽 플리스 후디", "나이키") == "의류"
+    assert classify("보테가베네타 미니 카세트백", "") == "가방"
+    assert classify("볼캡 모자", "") == "잡화"
+    assert classify("알 수 없는 상품", "") == "기타"
+
+
+def test_ledger_size_upgrade_and_oversell_by_size(tmp_path):
+    from datetime import date
+
+    import pytest
+
+    from shopping_shorts_sync.vending.inventory import (HEADER, InventoryError, Tx, append_ledger, build_stock,
+                                                         load_ledger)
+
+    s = load_settings(SETTINGS)
+    old = tmp_path / "old.csv"  # ledger written before the 사이즈 column existed
+    old.write_text("\ufeff날짜,구분,품번,브랜드,상품명,수량,단가,거래처,메모\n2026-10-01,입고,X1,b,n,1,1000,,\n",
+                   encoding="utf-8")
+    append_ledger(old, [Tx(date(2026, 10, 2), "입고", "S1", "b", "운동화", 1, 50000, size="250mm")])
+    import csv
+    with open(old, encoding="utf-8-sig") as f:
+        assert next(csv.reader(f)) == HEADER
+    txs = load_ledger(old)
+    assert [t.size for t in txs] == ["", "250"]
+    # 270 has no stock even though 250 does
+    with pytest.raises(InventoryError, match="270"):
+        build_stock(txs + [Tx(date(2026, 10, 3), "판매", "S1", "", "", 1, 60000, size="270")], s)

@@ -15,6 +15,13 @@
     "나이키",
     "아디다스",
     "뉴발란스",
+    "스케쳐스",
+    "크록스",
+    "컨버스",
+    "아식스",
+    "반스",
+    "푸마",
+    "살로몬",
     "bape"
   ],
   "excluded_brands": [
@@ -120,7 +127,14 @@
         "아디다스": "adidas",
         "뉴발란스": "newbalance",
         "메종미하라야스히로": "maisonmiharayasuhiro",
-        "아미": "amiparis"
+        "아미": "amiparis",
+        "스케쳐스": "skechers",
+        "크록스": "crocs",
+        "컨버스": "converse",
+        "아식스": "asics",
+        "반스": "vans",
+        "푸마": "puma",
+        "살로몬": "salomon"
       }
     },
     {

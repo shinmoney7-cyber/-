@@ -424,6 +424,7 @@ _LEDGER = "data/vending/inventory.csv"
 @vending_stock.command("add")
 @click.argument("kind", type=click.Choice(["입고", "판매", "반품", "폐기", "조정"]))
 @click.option("--code", "style_code", required=True, help="품번")
+@click.option("--size", default="", help="사이즈 (신발은 꼭: 250, 265 ...)")
 @click.option("--qty", type=int, required=True)
 @click.option("--price", type=int, default=0, help="입고=매입가, 판매/반품=판매가")
 @click.option("--brand", default="")
@@ -432,18 +433,19 @@ _LEDGER = "data/vending/inventory.csv"
 @click.option("--memo", default="")
 @click.option("--date", "on", default=None, help="YYYY-MM-DD (default: today)")
 @click.option("--ledger", default=_LEDGER, show_default=True)
-def stock_add(kind, style_code, qty, price, brand, name, partner, memo, on, ledger):
+def stock_add(kind, style_code, size, qty, price, brand, name, partner, memo, on, ledger):
     """예) vending stock add 판매 --code BV2654-063 --qty 1 --price 68900"""
     from datetime import date
 
-    from .vending.inventory import Tx, _date, append_ledger, build_stock, load_ledger
+    from .vending.inventory import Tx, _date, _norm_size, append_ledger, build_stock, load_ledger
     from .vending.settings import load_settings
 
-    tx = Tx(_date(on) if on else date.today(), kind, style_code, brand, name, qty, price, partner, memo)
+    tx = Tx(_date(on) if on else date.today(), kind, style_code, brand, name, qty, price, partner, memo,
+            _norm_size(size))
     settings = load_settings(_settings_path("data/vending/settings.json"))
     build_stock(load_ledger(ledger) + [tx], settings)  # validates (e.g. selling more than in stock)
     append_ledger(ledger, [tx])
-    click.echo(f"기록: {tx.date} {kind} {style_code} x{qty} @ {price:,}")
+    click.echo(f"기록: {tx.date} {kind} {style_code}{' ' + tx.size if tx.size else ''} x{qty} @ {price:,}")
 
 
 @vending_stock.command("import-outlet")
@@ -471,7 +473,9 @@ def stock_import_outlet(xlsx_path, on, ledger):
 @click.option("--today", default=None, help="기준일 YYYY-MM-DD (default: today)")
 @click.option("--dry-run/--live", "dry_run", default=True, help="Live looks up Naver online lowest prices.")
 @click.option("--no-market", is_flag=True, help="Skip the online price lookup.")
-def stock_report(ledger, settings_path, out_dir, stale_days, today, dry_run, no_market):
+@click.option("--category", default=None, type=click.Choice(["신발", "의류", "가방", "잡화", "기타"]),
+              help="이 카테고리만 표시")
+def stock_report(ledger, settings_path, out_dir, stale_days, today, dry_run, no_market, category):
     """재고 현황 (손실 위험 / 처분 추천 / 마진 축소) + 품번별 실현손익 엑셀."""
     import os
     from datetime import date, datetime
@@ -493,13 +497,16 @@ def stock_report(ledger, settings_path, out_dir, stale_days, today, dry_run, no_
     if not no_market:
         searcher = (FixtureSearcher("fixtures/vending/naver_search.json") if dry_run
                     else NaverSearcher(os.environ.get("NAVER_CLIENT_ID", ""), os.environ.get("NAVER_CLIENT_SECRET", "")))
+    if category:
+        lines = {k: l for k, l in lines.items() if l.category == category}
     active = assess(lines, settings, ref, searcher, stale_days)
 
-    click.echo(f"[재고 현황] {ref} 기준 / 품번 {len(active)}개 / 재고 {sum(l.qty for l in active)}개 / "
+    click.echo(f"[재고 현황] {ref} 기준 / 품목(품번×사이즈) {len(active)}개 / 재고 {sum(l.qty for l in active)}개 / "
                f"재고 금액 {sum(l.stock_cost for l in active):,}원")
     for l in active:
         mk = f" | 최저가 {l.market_low:,}" if l.market_low else ""
-        click.echo(f"  [{l.flag}] {l.brand} {l.style_code} x{l.qty} @ {l.avg_cost:,} | {l.holding_days(ref)}일{mk} - {l.advice}")
+        sz = f" {l.size}" if l.size else ""
+        click.echo(f"  [{l.flag}] [{l.category}] {l.brand} {l.style_code}{sz} x{l.qty} @ {l.avg_cost:,} | {l.holding_days(ref)}일{mk} - {l.advice}")
     realized = sum(l.realized for l in lines.values())
     click.echo(f"\n  누적 실현손익 {realized:,}원 (매출 {sum(l.revenue for l in lines.values()):,} / "
                f"폐기손실 {sum(l.written_off for l in lines.values()):,})")

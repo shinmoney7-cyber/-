@@ -12,6 +12,7 @@ import statistics
 from dataclasses import dataclass
 from pathlib import Path
 
+from .category import classify
 from .discover import MARKET_MALLS, _norm_mall, _title_has_code
 from .models import normalize_style_code
 from .pricing import list_price, net_margin
@@ -113,22 +114,22 @@ def write_outlet_xlsx(verdicts: list[OutletVerdict], path: str | Path) -> Path:
     wb = Workbook()
     ws = wb.active
     ws.title = "아울렛 매입 판단"
-    ws.append(["판단", "매장", "브랜드", "품번", "상품명", "아울렛가", "사이즈", "수량", "온라인 판매처 수",
+    ws.append(["판단", "카테고리", "매장", "브랜드", "품번", "상품명", "아울렛가", "사이즈", "수량", "온라인 판매처 수",
                "온라인 최저가", "최저 판매처", "온라인 중간가", "판매가", "개당 마진", "마진율", "총 마진", "사유", "날짜"])
     for c in ws[1]:
         c.font = Font(bold=True)
     for v in verdicts:
         f = v.find
-        ws.append([v.verdict, f.store, f.brand, f.style_code, f.name, f.price, f.sizes, f.qty, v.sellers,
+        ws.append([v.verdict, classify(f.name, f.brand), f.store, f.brand, f.style_code, f.name, f.price, f.sizes, f.qty, v.sellers,
                    v.online_low, v.online_low_mall, v.online_median, v.sell_price, v.margin, v.margin_rate,
                    (v.margin or 0) * f.qty if v.margin and v.margin > 0 else None, v.reason, f.date])
         r = ws.max_row
         ws.cell(row=r, column=1).fill = fills.get(v.verdict, PatternFill())
-        for col in (6, 10, 12, 13, 14, 16):
+        for col in (7, 11, 13, 14, 15, 17):
             ws.cell(row=r, column=col).number_format = "#,##0"
-        ws.cell(row=r, column=15).number_format = "0.0%"
+        ws.cell(row=r, column=16).number_format = "0.0%"
     ws.freeze_panes = "B2"
-    for col, w in zip("ABCDEFGHIJKLMNOPQR", (8, 18, 10, 16, 28, 11, 9, 6, 9, 12, 12, 12, 11, 11, 8, 11, 40, 11)):
+    for col, w in zip("ABCDEFGHIJKLMNOPQRS", (8, 8, 18, 10, 16, 28, 11, 9, 6, 9, 12, 12, 12, 11, 11, 8, 11, 40, 11)):
         ws.column_dimensions[col].width = w
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
