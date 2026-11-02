@@ -1,0 +1,52 @@
+{
+  "_comment": "Copy to data/vending/settings.json. Site endpoints/field mappings are UNVERIFIED best guesses - see docs/VENDING.md (calibration).",
+  "brands": ["스톤아일랜드", "메종키츠네", "나이키", "아디다스", "bape"],
+  "excluded_brands": ["bape"],
+  "coupons": [{"rate": 0.05, "cap": 50000}, {"rate": 0.10, "cap": 200000}],
+  "conservative_coupons": [{"rate": 0.03, "cap": 50000}, {"rate": 0.07, "cap": 200000}],
+  "price_drop_threshold": 0.10,
+  "market_fee_rate": 0.055,
+  "shipping_cost": 3000,
+  "min_margin": 10000,
+  "undercut": 100,
+  "cache_ttl_minutes": 120,
+  "request_delay_sec": 1.5,
+  "sources": [
+    {
+      "name": "musinsa",
+      "role": "sourcing",
+      "warmup_url": "https://www.musinsa.com/",
+      "url": "https://api.musinsa.com/api2/dp/v1/plp/goods?brand={brand_id}&sortCode=NEW&page={page}&size=60&caller=BRAND",
+      "list_path": "data.list",
+      "max_pages": 2,
+      "fields": {"product_no": "goodsNo", "name": "goodsName", "brand": "brandName", "price": "price",
+                 "url": "goodsLinkUrl", "image": "thumbnail", "sold_out": "isSoldOut", "style_code": "styleNo"},
+      "brand_ids": {"스톤아일랜드": "stoneisland", "메종키츠네": "maisonkitsune", "나이키": "nike", "아디다스": "adidas"}
+    },
+    {
+      "name": "cm29",
+      "role": "sourcing",
+      "warmup_url": "https://www.29cm.co.kr/",
+      "url": "CALIBRATE_ME?brand={brand_id}&page={page}",
+      "list_path": "data.list",
+      "fields": {"product_no": "itemNo", "name": "itemName", "price": "lastSalePrice", "style_code": "styleNo"},
+      "brand_ids": {}
+    },
+    {
+      "name": "okmall",
+      "role": "sourcing",
+      "url": "CALIBRATE_ME?brand={brand_id}&page={page}",
+      "list_path": "items",
+      "fields": {"product_no": "id", "name": "name", "price": "price", "style_code": "model_no"},
+      "brand_ids": {}
+    },
+    {
+      "name": "naver_store",
+      "role": "store",
+      "url": "CALIBRATE_ME?query={brand_id}&page={page}",
+      "list_path": "items",
+      "fields": {"product_no": "productId", "name": "title", "price": "lprice", "store": "mallName", "style_code": "modelNo"},
+      "brand_ids": {}
+    }
+  ]
+}

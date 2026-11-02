@@ -85,6 +85,17 @@ python -m shopping_shorts_sync script select --product-id harujin-vacuum-01 \
 JSON 파일이라 직접 열어서 수정하면 된다. 수정 후에는 `script select`를 다시 실행해서
 반영한다.
 
+## 2종 자판기 (브랜드 상품 자동 소싱)
+
+무신사·29cm·오케이몰의 **신상품/가격 하락 디스코드 알림**과, 네이버 직구 스토어와
+**품번으로 매칭해 마진을 계산한 엑셀 소싱표**를 만든다. 자세한 내용은
+[docs/VENDING.md](docs/VENDING.md) 참고. 사이트 연결은 보정 전이라 처음에는 dry-run으로만 쓸 것.
+
+```bash
+python run_all.py            # dry-run (fixtures)
+python run_all.py --live --discord --loop 30
+```
+
 ## 입력 파일 형식
 
 `data/products.example.json` / `data/products.example.csv` 참고. 각 상품은

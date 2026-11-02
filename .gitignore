@@ -9,3 +9,8 @@ venv/
 playwright-report/
 test-results/
 *.egg-info/
+data/vending/seen.json
+data/vending/cache/
+data/vending/settings.json
+data/vending/blacklist.txt
+output/

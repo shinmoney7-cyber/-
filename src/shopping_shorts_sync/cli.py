@@ -238,6 +238,59 @@ def script_select(product_id, candidate_id, input_path, script_file):
 
 
 @cli.group()
+def vending():
+    """'2종 자판기': new-product/price-drop alerts + 품번 matching sourcing sheet.
+
+    Site endpoints are uncalibrated -- see docs/VENDING.md before --live.
+    """
+
+
+@vending.command("run")
+@click.option("--settings", "settings_path", default="data/vending/settings.json", show_default=True,
+              help="Falls back to data/vending/settings.example.json if missing.")
+@click.option("--blacklist", "blacklist_path", default="data/vending/blacklist.txt", show_default=True)
+@click.option("--db", "db_path", default="data/vending/seen.json", show_default=True)
+@click.option("--out-dir", default="output", show_default=True)
+@click.option("--dry-run/--live", "dry_run", default=True, help="Dry-run reads fixtures/vending/*.json, no network.")
+@click.option("--discord/--console", "discord", default=False, help="Send alerts to the Discord webhook.")
+@click.option("--loop", "loop_min", type=int, default=0, help="Repeat every N minutes (0 = run once).")
+def vending_run(settings_path, blacklist_path, db_path, out_dir, dry_run, discord, loop_min):
+    import os
+    import time
+    from pathlib import Path
+
+    from .vending.db import SeenDB
+    from .vending.notify import ConsoleNotifier, DiscordNotifier
+    from .vending.runner import run_cycle
+    from .vending.settings import load_blacklist, load_settings
+    from .vending.sources import build_sources
+
+    config = load_config()
+    _setup_logging(config)
+    if not Path(settings_path).exists():
+        settings_path = "data/vending/settings.example.json"
+    settings = load_settings(settings_path)
+    blacklist = load_blacklist(blacklist_path)
+
+    fixture_dir = "fixtures/vending" if dry_run else None
+    cache_dir = None if dry_run else "data/vending/cache"
+    sourcing = build_sources(settings.sourcing_sources, fixture_dir, settings.request_delay_sec,
+                             cache_dir, settings.cache_ttl_minutes)
+    stores = build_sources(settings.store_sources, fixture_dir, settings.request_delay_sec,
+                           cache_dir, settings.cache_ttl_minutes)
+    notifier = (DiscordNotifier(os.environ.get("VENDING_DISCORD_WEBHOOK_URL", ""))
+                if discord else ConsoleNotifier(click.echo))
+
+    while True:
+        db = SeenDB(db_path)
+        run_cycle(settings, sourcing, stores, db, blacklist, notifier, out_dir, echo=click.echo)
+        if loop_min <= 0:
+            break
+        click.echo(f"\n다음 사이클: {loop_min}분 후 (Ctrl+C로 종료)")
+        time.sleep(loop_min * 60)
+
+
+@cli.group()
 def state():
     """Inspect or reset the local sync state file."""
 
