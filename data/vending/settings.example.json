@@ -1,11 +1,46 @@
 {
   "_comment": "Copy to data/vending/settings.json. Brands/stores were read from blurry screenshots - check spelling. Site endpoints are UNVERIFIED - see docs/VENDING.md.",
-  "brands": ["보테가베네타", "셀린느", "르메르", "스톤아일랜드", "미우미우", "톰브라운", "버버리", "펜디", "토즈",
-             "아미", "메종미하라야스히로", "나이키", "아디다스", "뉴발란스", "bape"],
-  "excluded_brands": ["bape"],
-  "coupons": [{"rate": 0.05, "cap": 50000}, {"rate": 0.10, "cap": 200000}],
-  "conservative_coupons": [{"rate": 0.03, "cap": 50000}, {"rate": 0.07, "cap": 200000}],
-  "price_drop_threshold": 0.10,
+  "brands": [
+    "보테가베네타",
+    "셀린느",
+    "르메르",
+    "스톤아일랜드",
+    "미우미우",
+    "톰브라운",
+    "버버리",
+    "펜디",
+    "토즈",
+    "아미",
+    "메종미하라야스히로",
+    "나이키",
+    "아디다스",
+    "뉴발란스",
+    "bape"
+  ],
+  "excluded_brands": [
+    "bape"
+  ],
+  "coupons": [
+    {
+      "rate": 0.05,
+      "cap": 50000
+    },
+    {
+      "rate": 0.1,
+      "cap": 200000
+    }
+  ],
+  "conservative_coupons": [
+    {
+      "rate": 0.03,
+      "cap": 50000
+    },
+    {
+      "rate": 0.07,
+      "cap": 200000
+    }
+  ],
+  "price_drop_threshold": 0.1,
   "market_fee_rate": 0.055,
   "shipping_cost": 3000,
   "min_margin": 10000,
@@ -14,16 +49,35 @@
   "request_delay_sec": 1.5,
   "sources": [
     {
-      "_comment": "소싱처 1: 네이버직구 스토어 (네이버 쇼핑 공식 API, NAVER_CLIENT_ID/SECRET 필요). 비밀소싱처는 stores에 계속 추가",
+      "_comment": "소싱처 1: 네이버직구 스토어 (네이버 쇼핑 공식 API, NAVER_CLIENT_ID/SECRET 필요). 비밀소싱처는 stores에 계속 추가. 끝의 4개(SSF SHOP/LF몰/코오롱몰/바바더닷컴)는 아울렛 연계 공식몰 - 네이버 쇼핑의 판매처명(mallName) 철자는 vending discover 결과로 확인할 것",
       "name": "naver_direct",
       "type": "naver_shop",
       "role": "sourcing",
       "detect": false,
       "max_pages": 3,
-      "url": "", "list_path": "", "fields": {},
-      "brand_ids": {"보테가베네타": "보테가베네타", "메종미하라야스히로": "메종미하라야스히로"},
-      "stores": ["메종파르코", "FABSTYLE", "럭스보이", "오케이몰", "나우NOW", "라벨루쏘", "비비아노 VIVIAN",
-                 "바이스트", "넥스트젠팩", "아뜰리에"]
+      "url": "",
+      "list_path": "",
+      "fields": {},
+      "brand_ids": {
+        "보테가베네타": "보테가베네타",
+        "메종미하라야스히로": "메종미하라야스히로"
+      },
+      "stores": [
+        "메종파르코",
+        "FABSTYLE",
+        "럭스보이",
+        "오케이몰",
+        "나우NOW",
+        "라벨루쏘",
+        "비비아노 VIVIAN",
+        "바이스트",
+        "넥스트젠팩",
+        "아뜰리에",
+        "SSF SHOP",
+        "LF몰",
+        "코오롱몰",
+        "바바더닷컴"
+      ]
     },
     {
       "_comment": "소싱처 2: 오케이몰 (엔드포인트 보정 필요)",
@@ -32,7 +86,13 @@
       "detect": true,
       "url": "CALIBRATE_ME?brand={brand_id}&page={page}",
       "list_path": "items",
-      "fields": {"product_no": "id", "name": "name", "price": "price", "style_code": "model_no", "sizes": "sizes"},
+      "fields": {
+        "product_no": "id",
+        "name": "name",
+        "price": "price",
+        "style_code": "model_no",
+        "sizes": "sizes"
+      },
       "brand_ids": {}
     },
     {
@@ -44,10 +104,24 @@
       "url": "https://api.musinsa.com/api2/dp/v1/plp/goods?brand={brand_id}&sortCode=NEW&page={page}&size=60&caller=BRAND",
       "list_path": "data.list",
       "max_pages": 2,
-      "fields": {"product_no": "goodsNo", "name": "goodsName", "brand": "brandName", "price": "price",
-                 "url": "goodsLinkUrl", "image": "thumbnail", "sold_out": "isSoldOut", "style_code": "styleNo"},
-      "brand_ids": {"스톤아일랜드": "stoneisland", "나이키": "nike", "아디다스": "adidas", "뉴발란스": "newbalance",
-                    "메종미하라야스히로": "maisonmiharayasuhiro", "아미": "amiparis"}
+      "fields": {
+        "product_no": "goodsNo",
+        "name": "goodsName",
+        "brand": "brandName",
+        "price": "price",
+        "url": "goodsLinkUrl",
+        "image": "thumbnail",
+        "sold_out": "isSoldOut",
+        "style_code": "styleNo"
+      },
+      "brand_ids": {
+        "스톤아일랜드": "stoneisland",
+        "나이키": "nike",
+        "아디다스": "adidas",
+        "뉴발란스": "newbalance",
+        "메종미하라야스히로": "maisonmiharayasuhiro",
+        "아미": "amiparis"
+      }
     },
     {
       "_comment": "판매 기준 + 신상품 감지: 29cm (엔드포인트 보정 필요)",
@@ -57,7 +131,12 @@
       "warmup_url": "https://www.29cm.co.kr/",
       "url": "CALIBRATE_ME?brand={brand_id}&page={page}",
       "list_path": "data.list",
-      "fields": {"product_no": "itemNo", "name": "itemName", "price": "lastSalePrice", "style_code": "styleNo"},
+      "fields": {
+        "product_no": "itemNo",
+        "name": "itemName",
+        "price": "lastSalePrice",
+        "style_code": "styleNo"
+      },
       "brand_ids": {}
     }
   ]
