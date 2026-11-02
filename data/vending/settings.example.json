@@ -1,6 +1,7 @@
 {
-  "_comment": "Copy to data/vending/settings.json. Site endpoints/field mappings are UNVERIFIED best guesses - see docs/VENDING.md (calibration).",
-  "brands": ["스톤아일랜드", "메종키츠네", "나이키", "아디다스", "bape"],
+  "_comment": "Copy to data/vending/settings.json. Brands/stores were read from blurry screenshots - check spelling. Site endpoints are UNVERIFIED - see docs/VENDING.md.",
+  "brands": ["보테가베네타", "셀린느", "르메르", "스톤아일랜드", "미우미우", "톰브라운", "버버리", "펜디", "토즈",
+             "아미", "메종미하라야스히로", "나이키", "아디다스", "뉴발란스", "bape"],
   "excluded_brands": ["bape"],
   "coupons": [{"rate": 0.05, "cap": 50000}, {"rate": 0.10, "cap": 200000}],
   "conservative_coupons": [{"rate": 0.03, "cap": 50000}, {"rate": 0.07, "cap": 200000}],
@@ -13,39 +14,50 @@
   "request_delay_sec": 1.5,
   "sources": [
     {
-      "name": "musinsa",
+      "_comment": "소싱처 1: 네이버직구 스토어 (네이버 쇼핑 공식 API, NAVER_CLIENT_ID/SECRET 필요). 비밀소싱처는 stores에 계속 추가",
+      "name": "naver_direct",
+      "type": "naver_shop",
       "role": "sourcing",
+      "detect": false,
+      "max_pages": 3,
+      "url": "", "list_path": "", "fields": {},
+      "brand_ids": {"보테가베네타": "보테가베네타", "메종미하라야스히로": "메종미하라야스히로"},
+      "stores": ["메종파르코", "FABSTYLE", "럭스보이", "오케이몰", "나우NOW", "라벨루쏘", "비비아노 VIVIAN",
+                 "바이스트", "넥스트젠팩", "아뜰리에"]
+    },
+    {
+      "_comment": "소싱처 2: 오케이몰 (엔드포인트 보정 필요)",
+      "name": "okmall",
+      "role": "sourcing",
+      "detect": true,
+      "url": "CALIBRATE_ME?brand={brand_id}&page={page}",
+      "list_path": "items",
+      "fields": {"product_no": "id", "name": "name", "price": "price", "style_code": "model_no", "sizes": "sizes"},
+      "brand_ids": {}
+    },
+    {
+      "_comment": "판매 기준 + 신상품 감지: 무신사 (추정 엔드포인트, 보정 필요)",
+      "name": "musinsa",
+      "role": "market",
+      "detect": true,
       "warmup_url": "https://www.musinsa.com/",
       "url": "https://api.musinsa.com/api2/dp/v1/plp/goods?brand={brand_id}&sortCode=NEW&page={page}&size=60&caller=BRAND",
       "list_path": "data.list",
       "max_pages": 2,
       "fields": {"product_no": "goodsNo", "name": "goodsName", "brand": "brandName", "price": "price",
                  "url": "goodsLinkUrl", "image": "thumbnail", "sold_out": "isSoldOut", "style_code": "styleNo"},
-      "brand_ids": {"스톤아일랜드": "stoneisland", "메종키츠네": "maisonkitsune", "나이키": "nike", "아디다스": "adidas"}
+      "brand_ids": {"스톤아일랜드": "stoneisland", "나이키": "nike", "아디다스": "adidas", "뉴발란스": "newbalance",
+                    "메종미하라야스히로": "maisonmiharayasuhiro", "아미": "amiparis"}
     },
     {
+      "_comment": "판매 기준 + 신상품 감지: 29cm (엔드포인트 보정 필요)",
       "name": "cm29",
-      "role": "sourcing",
+      "role": "market",
+      "detect": true,
       "warmup_url": "https://www.29cm.co.kr/",
       "url": "CALIBRATE_ME?brand={brand_id}&page={page}",
       "list_path": "data.list",
       "fields": {"product_no": "itemNo", "name": "itemName", "price": "lastSalePrice", "style_code": "styleNo"},
-      "brand_ids": {}
-    },
-    {
-      "name": "okmall",
-      "role": "sourcing",
-      "url": "CALIBRATE_ME?brand={brand_id}&page={page}",
-      "list_path": "items",
-      "fields": {"product_no": "id", "name": "name", "price": "price", "style_code": "model_no"},
-      "brand_ids": {}
-    },
-    {
-      "name": "naver_store",
-      "role": "store",
-      "url": "CALIBRATE_ME?query={brand_id}&page={page}",
-      "list_path": "items",
-      "fields": {"product_no": "productId", "name": "title", "price": "lprice", "store": "mallName", "style_code": "modelNo"},
       "brand_ids": {}
     }
   ]

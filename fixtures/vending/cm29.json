@@ -1,11 +1,18 @@
 {
- "나이키": [
+ "보테가베네타": [
   {
    "product_no": "29-1",
-   "name": "나이키 클럽 플리스 후디",
-   "price": 75000,
-   "style_code": "BV2654 063",
-   "sizes": "M,L"
+   "name": "보테가베네타 미니 카세트백",
+   "price": 3576000,
+   "style_code": "591970VCQR11000"
+  }
+ ],
+ "펜디": [
+  {
+   "product_no": "29-2",
+   "name": "펜디 바이 더 웨이 미니",
+   "price": 1990000,
+   "style_code": "8BS067ANVGF0QA1"
   }
  ]
 }

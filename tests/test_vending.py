@@ -82,31 +82,58 @@ def test_parse_items_field_mapping():
 def test_build_opportunities_matches_by_style_code():
     s = load_settings(SETTINGS)
     sourcing = [
-        item("a", 420000, style_code="K1S151100026", source="musinsa"),
-        item("b", 398000, style_code="K1S15 1100026", source="okmall"),   # cheaper, same 품번
-        item("c", 890000, style_code="8115106F1"),                          # competitor too cheap even after coupons
-        item("d", 100, style_code="NOMATCH"),
+        item("a", 420000, style_code="K1S151100026", source="naver_direct", store="FABSTYLE"),
+        item("b", 398000, style_code="K1S15 1100026", source="okmall"),    # cheaper, same 품번
+        item("c", 890000, style_code="8115106F1", source="naver_direct"),  # market too cheap even after coupons
+        item("d", 100, style_code="NOMATCH", source="naver_direct"),
+        item("e", 2865000, style_code="591970 VCQR1", source="naver_direct", store="메종파르코"),
     ]
-    stores = [
-        item("n1", 469000, style_code="K1S151100026", source="naver_store", store="FABSTYLE"),
-        item("n2", 489000, style_code="K1S151100026", source="naver_store", store="럭스보이"),
-        item("n3", 760000, style_code="8115106F1", source="naver_store"),
+    market = [
+        item("m1", 469000, style_code="K1S151100026", source="musinsa"),
+        item("m2", 489000, style_code="K1S151100026", source="cm29"),
+        item("m3", 760000, style_code="8115106F1", source="musinsa"),
+        item("m4", 3576000, style_code="591970VCQR11000", source="cm29"),  # prefix match (color suffix)
     ]
-    opps = build_opportunities(sourcing, stores, s)
-    assert len(opps) == 1
-    o = opps[0]
-    assert o.source == "okmall" and o.store == "FABSTYLE"
+    opps = {o.style_code: o for o in build_opportunities(sourcing, market, s)}
+    assert set(opps) == {"K1S15 1100026", "591970 VCQR1"}
+    o = opps["K1S15 1100026"]
+    assert o.source == "오케이몰" and o.market == "무신사"
     assert o.our_cost == apply_coupons(398000, s.coupons)
-    assert o.sell_price == 468900
-    assert o.margin >= s.min_margin
+    assert o.sell_price == 468900 and o.margin >= s.min_margin
+    assert opps["591970 VCQR1"].store == "메종파르코" and opps["591970 VCQR1"].market == "29cm"
+
+
+def test_extract_style_code_from_titles():
+    from shopping_shorts_sync.vending.sources import extract_style_code
+
+    assert normalize_style_code(extract_style_code("보테가 베네타 미니 카세트 591970 VCQR1 네이버직구")) == "591970VCQR1"
+    assert normalize_style_code(extract_style_code("(W) 셀린느 트리옹프 2W99C6760.07K")) == "2W99C676007K"
+    assert extract_style_code("나이키 후디 블랙") == ""
+
+
+def test_naver_store_source_filters_by_mall(requests_mock):
+    from shopping_shorts_sync.vending.settings import SourceSpec
+    from shopping_shorts_sync.vending.sources import NaverStoreSource
+
+    requests_mock.get(NaverStoreSource.API_URL, json={"items": [
+        {"title": "<b>톰브라운</b> 가디건 MKC171A 00219", "lprice": "1617200", "mallName": "럭스보이", "productId": "1"},
+        {"title": "톰브라운 가디건 MKC171A 00219", "lprice": "1500000", "mallName": "모르는스토어", "productId": "2"},
+    ]})
+    spec = SourceSpec(name="naver_direct", url="", list_path="", fields={}, type="naver_shop",
+                      stores=["럭스 보이"])
+    items = NaverStoreSource(spec, "id", "secret").fetch_brand("톰브라운")
+    assert [i.product_no for i in items] == ["1"]
+    assert items[0].store == "럭스보이" and items[0].price == 1617200
+    assert normalize_style_code(items[0].style_code) == "MKC171A00219"
+    assert requests_mock.last_request.headers["X-Naver-Client-Id"] == "id"
 
 
 def test_write_xlsx(tmp_path):
     from openpyxl import load_workbook
 
     s = load_settings(SETTINGS)
-    opps = build_opportunities([item("a", 100000, style_code="X1")],
-                               [item("n", 200000, style_code="X1", source="naver_store", store="S")], s)
+    opps = build_opportunities([item("a", 100000, style_code="X1", source="naver_direct", store="S")],
+                               [item("n", 200000, style_code="X1", source="musinsa")], s)
     path = write_xlsx(opps, tmp_path / "out.xlsx")
     rows = list(load_workbook(path).active.iter_rows(values_only=True))
     assert rows[0][3] == "품번" and rows[1][3] == "X1"
@@ -129,28 +156,32 @@ def test_cached_source_reuses_within_ttl(tmp_path):
 
 
 def test_full_cycle_with_fixtures(tmp_path):
+    from shopping_shorts_sync.vending.sources import build_sources
+
     s = load_settings(SETTINGS)
-    sourcing = [FixtureSource(spec.name, "fixtures/vending") for spec in s.sourcing_sources]
-    stores = [FixtureSource(spec.name, "fixtures/vending") for spec in s.store_sources]
+    sources = build_sources(s.sources, "fixtures/vending", s.request_delay_sec)
     lines = []
     notifier = ConsoleNotifier(lines.append)
 
-    first = run_cycle(s, sourcing, stores, SeenDB(tmp_path / "seen.json"), set(), notifier, tmp_path, echo=lines.append)
+    first = run_cycle(s, sources, SeenDB(tmp_path / "seen.json"), set(), notifier, tmp_path, echo=lines.append)
     assert first.events == []  # baseline run
     assert first.sheet_path and first.sheet_path.exists()
+    assert {o.source for o in first.opportunities} <= {"네이버직구", "오케이몰"}
     assert all(o.brand != "bape" for o in first.opportunities)
+    # naver_direct has detect=false -> never written to the seen DB
+    assert SeenDB(tmp_path / "seen.json").count("naver_direct") == 0
 
     # simulate a price drop + a new product on the next cycle
     db = SeenDB(tmp_path / "seen.json")
-    db.items["musinsa:6601"]["price"] = 99000
-    del db.items["musinsa:5501"]
+    db.items["musinsa:6601"]["price"] = 109000
+    del db.items["cm29:29-2"]
     db.save()
-    second = run_cycle(s, sourcing, stores, SeenDB(tmp_path / "seen.json"), set(), notifier, tmp_path, echo=lines.append)
+    second = run_cycle(s, sources, SeenDB(tmp_path / "seen.json"), set(), notifier, tmp_path, echo=lines.append)
     kinds = sorted((e.kind, e.item.product_no) for e in second.events)
-    assert kinds == [("new", "5501"), ("price_drop", "6601")]
+    assert kinds == [("new", "29-2"), ("price_drop", "6601")]
     assert all(e.our_cost is not None for e in second.events)
     assert len(notifier.sent) == 2
-    assert any("[STEP 0]" in l for l in lines) and any("[STEP 2]" in l for l in lines)
+    assert all(any(f"[STEP {n}]" in l for l in lines) for n in (0, 1, 2))
 
 
 def test_discord_notifier_batches_embeds(requests_mock):

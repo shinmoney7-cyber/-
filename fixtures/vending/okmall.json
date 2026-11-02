@@ -4,8 +4,17 @@
    "product_no": "ok-77",
    "name": "스톤아일랜드 와펜 맨투맨",
    "price": 398000,
-   "style_code": "K1S15 1100026",
+   "style_code": "K2S15 5100026",
    "sizes": "2/4"
+  }
+ ],
+ "펜디": [
+  {
+   "product_no": "ok-88",
+   "name": "펜디 바이 더 웨이 미니 8BS067 ANVG",
+   "price": 1683000,
+   "style_code": "8BS067 ANVG",
+   "sizes": "1/1"
   }
  ]
 }

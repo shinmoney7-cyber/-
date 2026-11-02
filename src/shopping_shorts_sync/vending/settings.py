@@ -24,8 +24,11 @@ class SourceSpec:
     warmup_url: str = ""
     headers: dict = field(default_factory=dict)
     max_pages: int = 1
-    role: str = "sourcing"        # "sourcing" (we buy here) or "store" (competitor 직구 store)
-    brand_ids: dict = field(default_factory=dict)  # brand name -> site brand id; missing = skipped
+    role: str = "sourcing"        # "sourcing" (we buy here) or "market" (sell-price reference, e.g. 무신사/29cm)
+    detect: bool = False          # run 신상품/가격하락 detection + alerts on this source
+    brand_ids: dict = field(default_factory=dict)  # brand name -> site brand id/query; missing = skipped
+    type: str = "json_http"       # "json_http" (config-mapped JSON) or "naver_shop" (Naver Shopping Open API)
+    stores: list = field(default_factory=list)     # naver_shop only: mallName allow-list (네이버직구 스토어)
 
 
 @dataclass(frozen=True)
@@ -38,7 +41,7 @@ class VendingSettings:
     market_fee_rate: float        # smartstore fees, e.g. 0.055
     shipping_cost: int
     min_margin: int               # KRW net margin required for the sourcing sheet
-    undercut: int                 # list this much below the cheapest competitor
+    undercut: int                 # list this much below the market (판매 기준) price
     cache_ttl_minutes: int
     request_delay_sec: float
     sources: list[SourceSpec]
@@ -48,8 +51,8 @@ class VendingSettings:
         return [s for s in self.sources if s.role == "sourcing"]
 
     @property
-    def store_sources(self) -> list[SourceSpec]:
-        return [s for s in self.sources if s.role == "store"]
+    def market_sources(self) -> list[SourceSpec]:
+        return [s for s in self.sources if s.role == "market"]
 
 
 def _coupons(raw) -> list[Coupon]:
@@ -70,7 +73,8 @@ def load_settings(path: str | Path) -> VendingSettings:
         undercut=int(raw.get("undercut", 100)),
         cache_ttl_minutes=int(raw.get("cache_ttl_minutes", 120)),
         request_delay_sec=float(raw.get("request_delay_sec", 1.0)),
-        sources=[SourceSpec(**s) for s in raw.get("sources", [])],
+        sources=[SourceSpec(**{k: v for k, v in s.items() if k in SourceSpec.__dataclass_fields__})
+                 for s in raw.get("sources", [])],
     )
 
 

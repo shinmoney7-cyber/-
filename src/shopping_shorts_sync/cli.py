@@ -283,16 +283,14 @@ def vending_run(settings_path, blacklist_path, db_path, out_dir, dry_run, discor
 
     fixture_dir = "fixtures/vending" if dry_run else None
     cache_dir = None if dry_run else "data/vending/cache"
-    sourcing = build_sources(settings.sourcing_sources, fixture_dir, settings.request_delay_sec,
-                             cache_dir, settings.cache_ttl_minutes)
-    stores = build_sources(settings.store_sources, fixture_dir, settings.request_delay_sec,
-                           cache_dir, settings.cache_ttl_minutes)
+    sources = build_sources(settings.sources, fixture_dir, settings.request_delay_sec,
+                            cache_dir, settings.cache_ttl_minutes)
     notifier = (DiscordNotifier(os.environ.get("VENDING_DISCORD_WEBHOOK_URL", ""))
                 if discord else ConsoleNotifier(click.echo))
 
     while True:
         db = SeenDB(db_path)
-        run_cycle(settings, sourcing, stores, db, blacklist, notifier, out_dir, echo=click.echo)
+        run_cycle(settings, sources, db, blacklist, notifier, out_dir, echo=click.echo)
         if loop_min <= 0:
             break
         click.echo(f"\n다음 사이클: {loop_min}분 후 (Ctrl+C로 종료)")
