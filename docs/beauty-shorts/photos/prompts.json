@@ -1,0 +1,28 @@
+{
+  "soul_id": "50572930-5fd2-4ca7-a68a-196bf118aee3",
+  "model": "soul_2",
+  "aspect_ratio": "9:16",
+  "quality": "2k",
+  "common": "Vertical smartphone UGC beauty shorts frame, photorealistic, the same Korean woman in her 20s with light brown hair in a low ponytail with face-framing strands. Soft natural daylight, real skin texture with visible pores, no beauty filter. Keep the upper third of the frame clean for subtitles. Any serum bottle is a plain unlabeled clear glass dropper bottle with light aqua serum. No text, no logos, no watermark.",
+  "looks": {
+    "bare": "Completely bare face, no makeup at all, natural brows, natural lip color.",
+    "makeup": "Natural glowy K-beauty makeup: thin skin-like foundation, soft brown eyeliner, light peach blush, sheer coral-rose lip tint."
+  },
+  "scenes": [
+    {"key": "A1", "shot": "Close-up in front of a bathroom mirror, she gently taps her cheek with one fingertip, mildly frustrated relatable expression; the cheek skin looks a little dry and flaky. White tiled bathroom softly blurred. Wearing a plain white t-shirt."},
+    {"key": "A2", "shot": "Medium close-up at a bright vanity, she holds a small unopened skincare box and the serum bottle toward the camera, label side facing the lens, curious smile. Wearing a plain white t-shirt."},
+    {"key": "A3", "shot": "Macro close-up of her hand: the dropper releases a drop of serum onto the back of her hand, glossy droplet, her face softly out of focus in the background."},
+    {"key": "A4", "shot": "After face washing with a hair band on, she presses both palms gently on her cheeks to pat in serum, eyes closed, calm expression, bathroom background."},
+    {"key": "A5", "shot": "Close-up of her cheek in the same bathroom lighting, smooth hydrated skin with a soft natural sheen, she glances at the mirror with a satisfied small smile."},
+    {"key": "A6", "shot": "She holds the serum bottle next to her face at chest height and points down with her other hand, friendly smile toward the camera, clean bright room background."},
+    {"key": "B1", "shot": "Extreme macro: a single drop of light aqua serum falling from the glass dropper in slow motion, her blurred face in the background."},
+    {"key": "B2", "shot": "Macro close-up of the back of her hand as two fingers spread a thin layer of serum, watery texture spreading, her face softly blurred behind."},
+    {"key": "B3", "shot": "Close-up of the back of her hand tilted sideways showing the absorbed serum not dripping, she lightly taps it with a fingertip."},
+    {"key": "B4", "shot": "Tight close-up of her cheek right after applying serum, dewy hydrated skin catching window light, eyes looking slightly off camera."},
+    {"key": "B5", "shot": "Front-facing product shot: she holds the serum bottle at eye level beside her face, soft smile, warm clean background."},
+    {"key": "C1", "shot": "Day 1 diary-style close-up portrait facing the camera directly, neutral expression, plain light wall background, even soft light."},
+    {"key": "C2", "shot": "Morning routine moment: she drips two or three drops of serum into her palm in front of the bathroom mirror, casual home outfit."},
+    {"key": "C3", "shot": "Day 7 close-up portrait in the exact same framing, wall and lighting as Day 1, relaxed comfortable expression, skin looks comfortable and hydrated."},
+    {"key": "C4", "shot": "She holds the serum bottle up next to her face and smiles at the camera, plain light wall background."}
+  ]
+}
