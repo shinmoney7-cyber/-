@@ -10,6 +10,7 @@
 |---|---|---|
 | `photos/reference/ref_cardigan_bare_loose.webp` | 전 | 풀어 내린 머리 · 하늘색 가디건 |
 | `photos/reference/ref_cardigan_bare_tied.webp` | 전 | 묶은 머리 · 라벤더 가디건 |
+| `photos/reference/ref_cardigan_bare_lavender.webp` | 전 | 풀어 내린 머리 · 라벤더 가디건 |
 | `photos/reference/ref_cardigan_makeup_smile.webp` | 후 | 풀어 내린 머리 · 하늘색 가디건 · 웃음 |
 | `photos/reference/ref_cardigan_makeup_tied.webp` | 후 | 묶은 머리 · 라벤더 가디건 · 미소 |
 | `photos/reference/ref_cardigan_makeup_blonde.webp` | 후 | 금발 변형 · 하늘색 가디건 (기본 장면에는 쓰지 않음) |

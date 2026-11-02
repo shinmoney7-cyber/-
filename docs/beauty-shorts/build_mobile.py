@@ -17,6 +17,7 @@ REF = HERE / "photos" / "reference"
 MODELS = [
     ("cardigan_bare_loose", "ref_cardigan_bare_loose.webp", "전", "풀어 내린 머리", "하늘색 가디건 · 미소"),
     ("cardigan_bare_tied", "ref_cardigan_bare_tied.webp", "전", "묶은 머리", "라벤더 가디건 · 정면"),
+    ("cardigan_bare_lavender", "ref_cardigan_bare_lavender.webp", "전", "풀어 내린 머리", "라벤더 가디건 · 정면"),
     ("cardigan_makeup_smile", "ref_cardigan_makeup_smile.webp", "후", "풀어 내린 머리", "하늘색 가디건 · 웃음"),
     ("cardigan_makeup_tied", "ref_cardigan_makeup_tied.webp", "후", "묶은 머리", "라벤더 가디건 · 미소"),
     ("cardigan_makeup_blonde", "ref_cardigan_makeup_blonde.webp", "후", "풀어 내린 머리", "금발 · 하늘색 가디건 · 웃음"),

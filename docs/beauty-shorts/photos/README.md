@@ -69,6 +69,7 @@ job ID 목록은 `jobs.json` 참고.
 |---|---|
 | `reference/ref_cardigan_bare_loose.webp` | 생얼, 풀어 내린 머리, 하늘색 가디건 |
 | `reference/ref_cardigan_bare_tied.webp` | 생얼, 묶은 머리, 라벤더 가디건 |
+| `reference/ref_cardigan_bare_lavender.webp` | 생얼, 풀어 내린 머리, 라벤더 가디건 (2026-11-02 추가) |
 | `reference/ref_cardigan_makeup_smile.webp` | 메이크업, 웃는 얼굴, 하늘색 가디건 |
 | `reference/ref_cardigan_makeup_tied.webp` | 메이크업, 묶은 머리, 라벤더 가디건 |
 | `reference/ref_cardigan_makeup_blonde.webp` | 메이크업, 금발 변형 (선택용) |
