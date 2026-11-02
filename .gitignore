@@ -17,3 +17,5 @@ output/
 scripts/.env
 scripts/orders_data/
 data/vending/outlet_finds.csv
+data/vending/listings.csv
+data/vending/inventory.csv

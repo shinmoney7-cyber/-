@@ -18,6 +18,41 @@
 
 검증된 브랜드 정품을 같은 품번으로 파는 구조라 상세페이지를 따로 만들지 않아도 된다.
 
+## 위탁 판매 상품 감시 (STEP 3)
+
+스토어에 올려둔 위탁(무재고) 상품을 `data/vending/listings.csv`에 적는다. 컬럼은
+`품번,소싱처,소싱 상품번호,스토어,내 판매가,브랜드,상품명`이다. 소싱처 칸에는 settings의 source 이름
+(`naver_direct`, `okmall`, `musinsa` 등)을 쓴다. `run_all.py`가 돌 때마다 다음을 확인한다.
+
+- **🚨 판매 중지 필요**: 소싱처에서 품절됐거나, 소싱가가 올라 내 판매가 기준 마진이 기준 미만이 됨
+- **⚠️ 확인 필요**: 소싱처 목록에서 상품이 보이지 않음. 품절·삭제일 수도 있고, 수집 페이지 범위 밖일 수도 있음
+
+이번 사이클에 수집하지 못한 소싱처는 판단하지 않는다(모르는 것을 품절로 보지 않음).
+
+## 사입 재고장
+
+아울렛에서 사온 재고를 `data/vending/inventory.csv` 장부에 기록한다. 구분은 입고/판매/반품/폐기/조정이다.
+원가는 먼저 산 것부터 나간다고 보고(FIFO) 계산한다.
+
+```bash
+# 아울렛 매입 판단 결과에서 '매입' 행을 그대로 입고 처리
+python -m shopping_shorts_sync vending stock import-outlet --file output/outlet_20261102_1430.xlsx
+# 팔리면 한 줄 기록 (재고보다 많이 팔면 거부)
+python -m shopping_shorts_sync vending stock add 판매 --code BV2654-063 --qty 1 --price 68900
+# 재고 현황 + 손익 엑셀 (--live: 네이버 최저가로 시세 확인)
+python -m shopping_shorts_sync vending stock report --live
+```
+
+재고 현황은 다음 상태로 표시한다.
+
+- **손실 위험**: 지금 시세로 팔면 손해
+- **처분 추천**: 30일 이상 보유(`--stale-days`)
+- **마진 축소**: 마진이 기준 미만
+- **정상**
+- **시세 미확인**
+
+엑셀에는 "재고 현황"과 "품번별 손익"(매출, 매출원가, 수수료·배송, 폐기손실, 실현손익) 시트가 들어간다.
+
 ## 오프라인 아울렛 매입 판단
 
 매장에서 본 상품을 `data/vending/outlet_finds.csv`(엑셀에서 CSV로 저장해도 됨)에 적는다.

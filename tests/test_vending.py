@@ -277,3 +277,90 @@ def test_outlet_judgement(tmp_path):
     path = write_outlet_xlsx(list(v.values()), tmp_path / "o.xlsx")
     ws = load_workbook(path).active
     assert ws["A1"].value == "판단" and ws["A2"].value == "매입" and ws["P2"].value == nike.margin * 3
+
+
+def test_listing_monitor_flags(tmp_path):
+    from shopping_shorts_sync.vending.listings import check_listings, load_listings
+
+    s = load_settings(SETTINGS)
+    p = tmp_path / "l.csv"
+    p.write_text("﻿품번,소싱처,소싱 상품번호,스토어,내 판매가,브랜드,상품명\n"
+                 "A1,naver_direct,,FAB,200000,b,ok\n"          # healthy
+                 "A2,naver_direct,,,100000,b,margin gone\n"
+                 "A3,musinsa,m3,,100000,b,sold out\n"
+                 "A4,musinsa,m404,,100000,b,vanished\n"
+                 "A5,cm29,,,100000,b,source not fetched\n", encoding="utf-8")
+    listings = load_listings(p)
+    fetched = {
+        "naver_direct": [item("1", 100000, style_code="A1", source="naver_direct", store="FAB"),
+                         item("2", 120000, style_code="A2", source="naver_direct")],
+        "musinsa": [item("m3", 50000, style_code="A3", sold_out=True)],
+    }
+    ev = {e.item.name if e.item.name in ("vanished",) else e.item.style_code: e
+          for e in check_listings(listings, fetched, s)}
+    assert set(ev) == {"A2", "A3", "vanished"}
+    assert ev["A2"].kind == "unlist" and "마진" in ev["A2"].reason
+    assert ev["A3"].kind == "unlist" and "품절" in ev["A3"].reason
+    assert ev["vanished"].kind == "check"
+    assert load_listings(tmp_path / "missing.csv") == []
+
+
+def test_inventory_fifo_and_pnl(tmp_path):
+    from datetime import date
+
+    import pytest
+
+    from shopping_shorts_sync.vending.inventory import (InventoryError, Tx, append_ledger, assess, build_stock,
+                                                         load_ledger)
+
+    s = load_settings(SETTINGS)
+    lines = build_stock(load_ledger("data/vending/inventory.example.csv"), s)
+    nike = lines[normalize_style_code("BV2654-063")]
+    assert nike.qty == 1 and nike.revenue == 137800 and nike.cogs == 90000
+    tommy = lines[normalize_style_code("MW0MW11797")]
+    assert tommy.qty == 5 and tommy.sold_qty == 0 and tommy.revenue == 0  # sold 1, returned 1
+    assert lines[normalize_style_code("1BYJKW3907")].written_off == 189000
+    assert sum(l.realized for l in lines.values()) == -162588
+
+    # FIFO: two lots at different costs, selling 3 consumes the cheap lot first
+    led = tmp_path / "inv.csv"
+    append_ledger(led, [Tx(date(2026, 10, 1), "입고", "X1", "b", "n", 2, 1000),
+                        Tx(date(2026, 10, 10), "입고", "X1", "b", "n", 2, 2000),
+                        Tx(date(2026, 10, 20), "판매", "X1", "b", "n", 3, 5000)])
+    line = build_stock(load_ledger(led), s)["X1"]
+    assert line.cogs == 1000 * 2 + 2000 and line.qty == 1 and line.avg_cost == 2000
+    assert line.holding_days(date(2026, 11, 9)) == 30
+
+    with pytest.raises(InventoryError):
+        build_stock(load_ledger(led) + [Tx(date(2026, 10, 21), "판매", "X1", "", "", 5, 1)], s)
+
+    # stale + no market price -> 처분 추천
+    active = assess({"X1": line}, s, date(2026, 11, 9), searcher=None, stale_days=30)
+    assert active[0].flag == "처분 추천"
+
+
+def test_inventory_report_flags_and_outlet_import(tmp_path):
+    from datetime import date
+
+    from openpyxl import load_workbook
+
+    from shopping_shorts_sync.vending.discover import FixtureSearcher
+    from shopping_shorts_sync.vending.inventory import (assess, build_stock, load_ledger, txs_from_outlet_xlsx,
+                                                         write_stock_xlsx)
+    from shopping_shorts_sync.vending.outlet import judge, load_finds, write_outlet_xlsx
+
+    s = load_settings(SETTINGS)
+    fx = FixtureSearcher("fixtures/vending/naver_search.json")
+    lines = build_stock(load_ledger("data/vending/inventory.example.csv"), s)
+    active = assess(lines, s, date(2026, 11, 2), fx)
+    flags = {l.style_code: l.flag for l in active}
+    assert flags == {"710680785": "손실 위험", "1BYJKW3907": "처분 추천", "MW0MW11797": "마진 축소", "BV2654-063": "정상"}
+    path = write_stock_xlsx(active, lines, date(2026, 11, 2), tmp_path / "s.xlsx")
+    wb = load_workbook(path)
+    assert wb["재고 현황"]["A2"].value == "손실 위험"
+    assert wb["품번별 손익"].cell(row=wb["품번별 손익"].max_row, column=11).value == -162588
+
+    outlet_xlsx = write_outlet_xlsx(judge(load_finds("data/vending/outlet_finds.example.csv"), fx, s,
+                                          echo=lambda *_: None), tmp_path / "o.xlsx")
+    txs = txs_from_outlet_xlsx(outlet_xlsx, date(2026, 11, 2))
+    assert [(t.kind, t.style_code, t.qty, t.price) for t in txs] == [("입고", "BV2654-063", 3, 45000)]

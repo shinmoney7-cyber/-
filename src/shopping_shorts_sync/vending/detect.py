@@ -8,10 +8,11 @@ from .models import Item
 
 @dataclass(frozen=True)
 class Event:
-    kind: str                # "new" | "price_drop"
+    kind: str                # "new" | "price_drop" | "unlist" | "check"
     item: Item
     prev_price: int | None = None
     our_cost: int | None = None  # after coupons
+    reason: str = ""             # unlist/check: why the listing must come down
 
     @property
     def drop_rate(self) -> float:

@@ -3,6 +3,7 @@
 STEP 0  신규 감지   — sources with detect=true (무신사/29cm/오케이몰): new products + price drops -> alerts
 STEP 1  데이터 로드 — every source per brand (cached with TTL)
 STEP 2  소싱 스캔   — 네이버직구 스토어 + 오케이몰 vs 무신사/29cm by 품번 -> xlsx 소싱표
+STEP 3  판매 감시   — data/vending/listings.csv 위탁 상품: 소싱처 품절 / 마진 소멸 -> 알림
 """
 from __future__ import annotations
 
@@ -21,12 +22,13 @@ from .sheet import Opportunity, build_opportunities, write_xlsx
 @dataclass
 class CycleResult:
     events: list[Event] = field(default_factory=list)
+    listing_events: list[Event] = field(default_factory=list)
     opportunities: list[Opportunity] = field(default_factory=list)
     sheet_path: Path | None = None
 
 
 def run_cycle(settings: VendingSettings, sources, db: SeenDB, blacklist: set[str], notifier,
-              out_dir: str | Path, echo=print) -> CycleResult:
+              out_dir: str | Path, echo=print, listings=None) -> CycleResult:
     res = CycleResult()
     line = "=" * 60
     warn = coupon_warning(settings.coupons, settings.conservative_coupons)
@@ -105,4 +107,15 @@ def run_cycle(settings: VendingSettings, sources, db: SeenDB, blacklist: set[str
                  f"{o.market} {o.sell_price:,} | 마진 {o.margin:,} ({o.margin_rate:.0%})")
     else:
         echo("  조건을 만족하는 품번 없음")
+
+    # STEP 3 — 위탁 판매 상품 감시 (품절 / 마진 소멸)
+    if listings:
+        from .listings import check_listings
+
+        res.listing_events = check_listings(listings, fetched, settings)
+        unlist = sum(1 for e in res.listing_events if e.kind == "unlist")
+        check = len(res.listing_events) - unlist
+        echo(f"\n[STEP 3] 판매중 상품 {len(listings)}개 감시 - 판매 중지 필요 {unlist}개 / 확인 필요 {check}개")
+        if res.listing_events:
+            notifier.send(res.listing_events)
     return res

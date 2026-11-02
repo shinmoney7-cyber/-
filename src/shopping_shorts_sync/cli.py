@@ -263,7 +263,9 @@ def vending():
 @click.option("--dry-run/--live", "dry_run", default=True, help="Dry-run reads fixtures/vending/*.json, no network.")
 @click.option("--discord/--console", "discord", default=False, help="Send alerts to the Discord webhook.")
 @click.option("--loop", "loop_min", type=int, default=0, help="Repeat every N minutes (0 = run once).")
-def vending_run(settings_path, blacklist_path, db_path, out_dir, dry_run, discord, loop_min):
+@click.option("--listings", "listings_path", default="data/vending/listings.csv", show_default=True,
+              help="위탁 판매중 상품 목록 (STEP 3 품절/마진 감시). Dry-run falls back to the example.")
+def vending_run(settings_path, blacklist_path, db_path, out_dir, dry_run, discord, loop_min, listings_path):
     import os
     import time
     from pathlib import Path
@@ -288,9 +290,15 @@ def vending_run(settings_path, blacklist_path, db_path, out_dir, dry_run, discor
     notifier = (DiscordNotifier(os.environ.get("VENDING_DISCORD_WEBHOOK_URL", ""))
                 if discord else ConsoleNotifier(click.echo))
 
+    from .vending.listings import load_listings
+
+    if dry_run and not Path(listings_path).exists():
+        listings_path = "data/vending/listings.example.csv"
+    listings = load_listings(listings_path)
+
     while True:
         db = SeenDB(db_path)
-        run_cycle(settings, sources, db, blacklist, notifier, out_dir, echo=click.echo)
+        run_cycle(settings, sources, db, blacklist, notifier, out_dir, echo=click.echo, listings=listings)
         if loop_min <= 0:
             break
         click.echo(f"\n다음 사이클: {loop_min}분 후 (Ctrl+C로 종료)")
@@ -403,6 +411,106 @@ def vending_outlet(input_path, settings_path, out_dir, min_sellers, dry_run):
                f"비추천 {sum(v.verdict == '비추천' for v in verdicts)}개 · 매입 시 예상 총마진 {total:,}원")
     path = write_outlet_xlsx(verdicts, Path(out_dir) / f"outlet_{datetime.now():%Y%m%d_%H%M}.xlsx")
     click.echo(f"  -> {path}")
+
+
+@vending.group("stock")
+def vending_stock():
+    """사입 재고장: 입고/판매/반품/폐기 기록 + 재고 현황/손익 엑셀."""
+
+
+_LEDGER = "data/vending/inventory.csv"
+
+
+@vending_stock.command("add")
+@click.argument("kind", type=click.Choice(["입고", "판매", "반품", "폐기", "조정"]))
+@click.option("--code", "style_code", required=True, help="품번")
+@click.option("--qty", type=int, required=True)
+@click.option("--price", type=int, default=0, help="입고=매입가, 판매/반품=판매가")
+@click.option("--brand", default="")
+@click.option("--name", default="")
+@click.option("--partner", default="", help="매장/판매처")
+@click.option("--memo", default="")
+@click.option("--date", "on", default=None, help="YYYY-MM-DD (default: today)")
+@click.option("--ledger", default=_LEDGER, show_default=True)
+def stock_add(kind, style_code, qty, price, brand, name, partner, memo, on, ledger):
+    """예) vending stock add 판매 --code BV2654-063 --qty 1 --price 68900"""
+    from datetime import date
+
+    from .vending.inventory import Tx, _date, append_ledger, build_stock, load_ledger
+    from .vending.settings import load_settings
+
+    tx = Tx(_date(on) if on else date.today(), kind, style_code, brand, name, qty, price, partner, memo)
+    settings = load_settings(_settings_path("data/vending/settings.json"))
+    build_stock(load_ledger(ledger) + [tx], settings)  # validates (e.g. selling more than in stock)
+    append_ledger(ledger, [tx])
+    click.echo(f"기록: {tx.date} {kind} {style_code} x{qty} @ {price:,}")
+
+
+@vending_stock.command("import-outlet")
+@click.option("--file", "xlsx_path", required=True, type=click.Path(exists=True), help="vending outlet 결과 엑셀")
+@click.option("--date", "on", default=None, help="입고일 YYYY-MM-DD (default: today)")
+@click.option("--ledger", default=_LEDGER, show_default=True)
+def stock_import_outlet(xlsx_path, on, ledger):
+    """아울렛 매입 판단 엑셀에서 '매입' 행을 입고로 기록."""
+    from datetime import date
+
+    from .vending.inventory import _date, append_ledger, txs_from_outlet_xlsx
+
+    txs = txs_from_outlet_xlsx(xlsx_path, _date(on) if on else date.today())
+    append_ledger(ledger, txs)
+    for t in txs:
+        click.echo(f"입고: {t.style_code} {t.brand} x{t.qty} @ {t.price:,} ({t.partner})")
+    click.echo(f"{len(txs)}건 입고 기록 -> {ledger}")
+
+
+@vending_stock.command("report")
+@click.option("--ledger", default=_LEDGER, show_default=True, help="Dry-run falls back to the example ledger.")
+@click.option("--settings", "settings_path", default="data/vending/settings.json", show_default=True)
+@click.option("--out-dir", default="output", show_default=True)
+@click.option("--stale-days", type=int, default=30, show_default=True, help="이 일수 이상 보유하면 처분 추천")
+@click.option("--today", default=None, help="기준일 YYYY-MM-DD (default: today)")
+@click.option("--dry-run/--live", "dry_run", default=True, help="Live looks up Naver online lowest prices.")
+@click.option("--no-market", is_flag=True, help="Skip the online price lookup.")
+def stock_report(ledger, settings_path, out_dir, stale_days, today, dry_run, no_market):
+    """재고 현황 (손실 위험 / 처분 추천 / 마진 축소) + 품번별 실현손익 엑셀."""
+    import os
+    from datetime import date, datetime
+    from pathlib import Path
+
+    from .vending.discover import FixtureSearcher, NaverSearcher
+    from .vending.inventory import InventoryError, _date, assess, build_stock, load_ledger, write_stock_xlsx
+    from .vending.settings import load_settings
+
+    if dry_run and not Path(ledger).exists():
+        ledger = "data/vending/inventory.example.csv"
+    settings = load_settings(_settings_path(settings_path))
+    ref = _date(today) if today else date.today()
+    try:
+        lines = build_stock(load_ledger(ledger), settings)
+    except InventoryError as exc:
+        raise click.ClickException(str(exc)) from exc
+    searcher = None
+    if not no_market:
+        searcher = (FixtureSearcher("fixtures/vending/naver_search.json") if dry_run
+                    else NaverSearcher(os.environ.get("NAVER_CLIENT_ID", ""), os.environ.get("NAVER_CLIENT_SECRET", "")))
+    active = assess(lines, settings, ref, searcher, stale_days)
+
+    click.echo(f"[재고 현황] {ref} 기준 / 품번 {len(active)}개 / 재고 {sum(l.qty for l in active)}개 / "
+               f"재고 금액 {sum(l.stock_cost for l in active):,}원")
+    for l in active:
+        mk = f" | 최저가 {l.market_low:,}" if l.market_low else ""
+        click.echo(f"  [{l.flag}] {l.brand} {l.style_code} x{l.qty} @ {l.avg_cost:,} | {l.holding_days(ref)}일{mk} - {l.advice}")
+    realized = sum(l.realized for l in lines.values())
+    click.echo(f"\n  누적 실현손익 {realized:,}원 (매출 {sum(l.revenue for l in lines.values()):,} / "
+               f"폐기손실 {sum(l.written_off for l in lines.values()):,})")
+    path = write_stock_xlsx(active, lines, ref, Path(out_dir) / f"stock_{datetime.now():%Y%m%d_%H%M}.xlsx")
+    click.echo(f"  -> {path}")
+
+
+def _settings_path(path):
+    from pathlib import Path
+
+    return path if Path(path).exists() else "data/vending/settings.example.json"
 
 
 def json_list(names):
