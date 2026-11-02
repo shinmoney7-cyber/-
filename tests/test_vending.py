@@ -240,3 +240,40 @@ def test_discovery_xlsx_and_add_stores(tmp_path):
     assert add_stores(SETTINGS, target, ["밀라노스토어"]) == []                          # idempotent
     stores = load_settings(target).sources[0].stores
     assert stores[-1] == "밀라노스토어"
+
+
+def test_outlet_judgement(tmp_path):
+    from openpyxl import load_workbook
+
+    from shopping_shorts_sync.vending.discover import FixtureSearcher
+    from shopping_shorts_sync.vending.outlet import judge, load_finds, write_outlet_xlsx
+
+    csv_path = tmp_path / "finds.csv"
+    # Excel-style BOM + one row missing 품번 (skipped)
+    csv_path.write_text(
+        "﻿날짜,매장,브랜드,품번,상품명,가격,사이즈,수량\n"
+        "2026-11-02,롯데 이천,나이키,BV2654-063,후디,\"45,000원\",M,3\n"
+        "2026-11-02,NC 천호,폴로,710680785,피케,59000,M,1\n"
+        "2026-11-02,BYN 가산,블랙야크,1BYJKW3907,자켓,189000,100,1\n"
+        "2026-11-02,BYN 가산,블랙야크,,품번없음,1000,,1\n", encoding="utf-8")
+    finds = load_finds(csv_path)
+    assert len(finds) == 3 and finds[0].price == 45000 and finds[0].qty == 3
+
+    s = load_settings(SETTINGS)
+    v = {x.find.style_code: x for x in judge(finds, FixtureSearcher("fixtures/vending/naver_search.json"), s,
+                                             echo=lambda *_: None)}
+    nike = v["BV2654-063"]
+    assert nike.verdict == "매입" and nike.online_low == 69000 and nike.online_low_mall == "라벨루쏘"
+    assert nike.sellers == 2  # '네이버' bundle excluded
+    assert nike.margin == net_margin(68900, 45000, s.market_fee_rate, s.shipping_cost)
+    assert v["710680785"].verdict == "비추천"
+    assert v["1BYJKW3907"].verdict == "보류" and v["1BYJKW3907"].online_low is None
+
+    # only one online seller -> 보류 even if profitable
+    v2 = judge(finds[:1], FixtureSearcher("fixtures/vending/naver_search.json"), s, min_sellers=3,
+               echo=lambda *_: None)
+    assert v2[0].verdict == "보류"
+
+    path = write_outlet_xlsx(list(v.values()), tmp_path / "o.xlsx")
+    ws = load_workbook(path).active
+    assert ws["A1"].value == "판단" and ws["A2"].value == "매입" and ws["P2"].value == nike.margin * 3

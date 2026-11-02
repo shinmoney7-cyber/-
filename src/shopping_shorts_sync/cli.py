@@ -364,6 +364,47 @@ def vending_discover(settings_path, out_dir, limit, top, dry_run, apply_, min_pr
                    else f"\n  추가할 소싱처 없음 (수익 품번 {min_profitable}개 이상 기준)")
 
 
+@vending.command("outlet")
+@click.option("--input", "input_path", default="data/vending/outlet_finds.csv", show_default=True,
+              help="매장에서 기록한 CSV (날짜,매장,브랜드,품번,상품명,가격,사이즈,수량). Falls back to the example.")
+@click.option("--settings", "settings_path", default="data/vending/settings.json", show_default=True)
+@click.option("--out-dir", default="output", show_default=True)
+@click.option("--min-sellers", type=int, default=2, show_default=True,
+              help="'매입' requires at least this many online sellers (else '보류').")
+@click.option("--dry-run/--live", "dry_run", default=True, help="Dry-run uses fixtures/vending/naver_search.json.")
+def vending_outlet(input_path, settings_path, out_dir, min_sellers, dry_run):
+    """오프라인 아울렛 매입 판단: outlet price vs Naver online lowest price per 품번."""
+    import os
+    from datetime import datetime
+    from pathlib import Path
+
+    from .vending.discover import FixtureSearcher, NaverSearcher
+    from .vending.outlet import judge, load_finds, write_outlet_xlsx
+    from .vending.settings import load_settings
+
+    if not Path(input_path).exists():
+        input_path = "data/vending/outlet_finds.example.csv"
+    if not Path(settings_path).exists():
+        settings_path = "data/vending/settings.example.json"
+    settings = load_settings(settings_path)
+    finds = load_finds(input_path)
+    searcher = (FixtureSearcher("fixtures/vending/naver_search.json") if dry_run
+                else NaverSearcher(os.environ.get("NAVER_CLIENT_ID", ""), os.environ.get("NAVER_CLIENT_SECRET", "")))
+
+    click.echo(f"[아울렛 매입 판단] {len(finds)}개 품목 / 판매가 = 온라인 최저가 - {settings.undercut:,}원, "
+               f"수수료 {settings.market_fee_rate:.1%}, 배송비 {settings.shipping_cost:,}원")
+    verdicts = judge(finds, searcher, settings, min_sellers, echo=click.echo)
+    for v in verdicts:
+        if v.online_low is None:
+            click.echo(f"  [{v.verdict}] {v.find.store} | {v.find.brand} {v.find.style_code} - {v.reason}")
+    buy = [v for v in verdicts if v.verdict == "매입"]
+    total = sum(v.margin * v.find.qty for v in buy)
+    click.echo(f"\n  매입 {len(buy)}개 / 보류 {sum(v.verdict == '보류' for v in verdicts)}개 / "
+               f"비추천 {sum(v.verdict == '비추천' for v in verdicts)}개 · 매입 시 예상 총마진 {total:,}원")
+    path = write_outlet_xlsx(verdicts, Path(out_dir) / f"outlet_{datetime.now():%Y%m%d_%H%M}.xlsx")
+    click.echo(f"  -> {path}")
+
+
 def json_list(names):
     import json
 

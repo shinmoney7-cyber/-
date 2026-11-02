@@ -16,3 +16,4 @@ data/vending/blacklist.txt
 output/
 scripts/.env
 scripts/orders_data/
+data/vending/outlet_finds.csv
