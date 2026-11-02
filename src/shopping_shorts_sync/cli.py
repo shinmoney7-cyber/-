@@ -247,6 +247,286 @@ def script_select(product_id, candidate_id, input_path, script_file):
 
 
 @cli.group()
+def vending():
+    """'2종 자판기': new-product/price-drop alerts + 품번 matching sourcing sheet.
+
+    Site endpoints are uncalibrated -- see docs/VENDING.md before --live.
+    """
+
+
+@vending.command("run")
+@click.option("--settings", "settings_path", default="data/vending/settings.json", show_default=True,
+              help="Falls back to data/vending/settings.example.json if missing.")
+@click.option("--blacklist", "blacklist_path", default="data/vending/blacklist.txt", show_default=True)
+@click.option("--db", "db_path", default="data/vending/seen.json", show_default=True)
+@click.option("--out-dir", default="output", show_default=True)
+@click.option("--dry-run/--live", "dry_run", default=True, help="Dry-run reads fixtures/vending/*.json, no network.")
+@click.option("--discord/--console", "discord", default=False, help="Send alerts to the Discord webhook.")
+@click.option("--loop", "loop_min", type=int, default=0, help="Repeat every N minutes (0 = run once).")
+@click.option("--listings", "listings_path", default="data/vending/listings.csv", show_default=True,
+              help="위탁 판매중 상품 목록 (STEP 3 품절/마진 감시). Dry-run falls back to the example.")
+def vending_run(settings_path, blacklist_path, db_path, out_dir, dry_run, discord, loop_min, listings_path):
+    import os
+    import time
+    from pathlib import Path
+
+    from .vending.db import SeenDB
+    from .vending.notify import ConsoleNotifier, DiscordNotifier
+    from .vending.runner import run_cycle
+    from .vending.settings import load_blacklist, load_settings
+    from .vending.sources import build_sources
+
+    config = load_config()
+    _setup_logging(config)
+    if not Path(settings_path).exists():
+        settings_path = "data/vending/settings.example.json"
+    settings = load_settings(settings_path)
+    blacklist = load_blacklist(blacklist_path)
+
+    fixture_dir = "fixtures/vending" if dry_run else None
+    cache_dir = None if dry_run else "data/vending/cache"
+    sources = build_sources(settings.sources, fixture_dir, settings.request_delay_sec,
+                            cache_dir, settings.cache_ttl_minutes)
+    notifier = (DiscordNotifier(os.environ.get("VENDING_DISCORD_WEBHOOK_URL", ""))
+                if discord else ConsoleNotifier(click.echo))
+
+    from .vending.listings import load_listings
+
+    if dry_run and not Path(listings_path).exists():
+        listings_path = "data/vending/listings.example.csv"
+    listings = load_listings(listings_path)
+
+    while True:
+        db = SeenDB(db_path)
+        run_cycle(settings, sources, db, blacklist, notifier, out_dir, echo=click.echo, listings=listings)
+        if loop_min <= 0:
+            break
+        click.echo(f"\n다음 사이클: {loop_min}분 후 (Ctrl+C로 종료)")
+        time.sleep(loop_min * 60)
+
+
+@vending.command("discover")
+@click.option("--settings", "settings_path", default="data/vending/settings.json", show_default=True)
+@click.option("--out-dir", default="output", show_default=True)
+@click.option("--limit", type=int, default=0, help="Max 품번 to search (0 = all). Naver API allows 25,000 calls/day.")
+@click.option("--top", type=int, default=20, show_default=True)
+@click.option("--dry-run/--live", "dry_run", default=True, help="Dry-run uses fixtures/vending/naver_search.json.")
+@click.option("--apply", "apply_", is_flag=True,
+              help="Append new candidates to the naver_shop stores list in data/vending/settings.json.")
+@click.option("--min-profitable", type=int, default=2, show_default=True,
+              help="--apply only adds sellers with at least this many profitable 품번.")
+def vending_discover(settings_path, out_dir, limit, top, dry_run, apply_, min_profitable):
+    """소싱처 발굴: rank Naver sellers that sell market 품번 below market price."""
+    import os
+    from datetime import datetime
+    from pathlib import Path
+
+    from .vending.discover import FixtureSearcher, NaverSearcher, rank_malls, search_codes, write_discovery_xlsx
+    from .vending.settings import load_settings
+    from .vending.sources import build_sources
+
+    config = load_config()
+    _setup_logging(config)
+    if not Path(settings_path).exists():
+        settings_path = "data/vending/settings.example.json"
+    settings = load_settings(settings_path)
+
+    fixture_dir = "fixtures/vending" if dry_run else None
+    cache_dir = None if dry_run else "data/vending/cache"
+    market_sources = build_sources(settings.market_sources, fixture_dir, settings.request_delay_sec,
+                                   cache_dir, settings.cache_ttl_minutes)
+    excluded = {b.replace(" ", "") for b in settings.excluded_brands}
+    brands = [b for b in settings.brands if b.lower().replace(" ", "") not in excluded]
+    market_items = []
+    for src in market_sources:
+        for brand in brands:
+            try:
+                market_items.extend(src.fetch_brand(brand))
+            except Exception as exc:
+                click.echo(f"  [{src.name}] {brand}: 수집 실패 ({exc})")
+
+    searcher = (FixtureSearcher("fixtures/vending/naver_search.json") if dry_run
+                else NaverSearcher(os.environ.get("NAVER_CLIENT_ID", ""), os.environ.get("NAVER_CLIENT_SECRET", "")))
+    results = search_codes(market_items, searcher, limit or None, echo=click.echo)
+    known = [s for spec in settings.sources if spec.type == "naver_shop" for s in spec.stores]
+    ranking = rank_malls(results, settings, known)
+
+    click.echo(f"\n[소싱처 순위] 상위 {min(top, len(ranking))}곳 (수익 품번 / 시세보다 싼 품번 / 평균 할인율)")
+    for i, st in enumerate(ranking[:top], 1):
+        tag = "기존" if st.known else "★신규"
+        click.echo(f"  {i:>2}. [{tag}] {st.mall}: {st.codes_profitable} / {st.codes_cheaper} / {st.avg_discount:.0%}"
+                   + (f"  예) {st.examples[0]}" if st.examples else ""))
+    new = [st.mall for st in ranking if not st.known and st.codes_profitable]
+    if new:
+        click.echo(f"\n  stores 목록에 추가할 후보: {json_list(new)}")
+    path = write_discovery_xlsx(ranking, results, Path(out_dir) / f"discover_{datetime.now():%Y%m%d_%H%M}.xlsx")
+    click.echo(f"  -> {path}")
+
+    if apply_:
+        from .vending.discover import add_stores
+
+        chosen = [st.mall for st in ranking if not st.known and st.codes_profitable >= min_profitable]
+        target = "data/vending/settings.json"
+        added = add_stores(settings_path, target, chosen)
+        click.echo(f"\n  {target}에 소싱처 {len(added)}곳 추가: {json_list(added)}" if added
+                   else f"\n  추가할 소싱처 없음 (수익 품번 {min_profitable}개 이상 기준)")
+
+
+@vending.command("outlet")
+@click.option("--input", "input_path", default="data/vending/outlet_finds.csv", show_default=True,
+              help="매장에서 기록한 CSV (날짜,매장,브랜드,품번,상품명,가격,사이즈,수량). Falls back to the example.")
+@click.option("--settings", "settings_path", default="data/vending/settings.json", show_default=True)
+@click.option("--out-dir", default="output", show_default=True)
+@click.option("--min-sellers", type=int, default=2, show_default=True,
+              help="'매입' requires at least this many online sellers (else '보류').")
+@click.option("--dry-run/--live", "dry_run", default=True, help="Dry-run uses fixtures/vending/naver_search.json.")
+def vending_outlet(input_path, settings_path, out_dir, min_sellers, dry_run):
+    """오프라인 아울렛 매입 판단: outlet price vs Naver online lowest price per 품번."""
+    import os
+    from datetime import datetime
+    from pathlib import Path
+
+    from .vending.discover import FixtureSearcher, NaverSearcher
+    from .vending.outlet import judge, load_finds, write_outlet_xlsx
+    from .vending.settings import load_settings
+
+    if not Path(input_path).exists():
+        input_path = "data/vending/outlet_finds.example.csv"
+    if not Path(settings_path).exists():
+        settings_path = "data/vending/settings.example.json"
+    settings = load_settings(settings_path)
+    finds = load_finds(input_path)
+    searcher = (FixtureSearcher("fixtures/vending/naver_search.json") if dry_run
+                else NaverSearcher(os.environ.get("NAVER_CLIENT_ID", ""), os.environ.get("NAVER_CLIENT_SECRET", "")))
+
+    click.echo(f"[아울렛 매입 판단] {len(finds)}개 품목 / 판매가 = 온라인 최저가 - {settings.undercut:,}원, "
+               f"수수료 {settings.market_fee_rate:.1%}, 배송비 {settings.shipping_cost:,}원")
+    verdicts = judge(finds, searcher, settings, min_sellers, echo=click.echo)
+    for v in verdicts:
+        if v.online_low is None:
+            click.echo(f"  [{v.verdict}] {v.find.store} | {v.find.brand} {v.find.style_code} - {v.reason}")
+    buy = [v for v in verdicts if v.verdict == "매입"]
+    total = sum(v.margin * v.find.qty for v in buy)
+    click.echo(f"\n  매입 {len(buy)}개 / 보류 {sum(v.verdict == '보류' for v in verdicts)}개 / "
+               f"비추천 {sum(v.verdict == '비추천' for v in verdicts)}개 · 매입 시 예상 총마진 {total:,}원")
+    path = write_outlet_xlsx(verdicts, Path(out_dir) / f"outlet_{datetime.now():%Y%m%d_%H%M}.xlsx")
+    click.echo(f"  -> {path}")
+
+
+@vending.group("stock")
+def vending_stock():
+    """사입 재고장: 입고/판매/반품/폐기 기록 + 재고 현황/손익 엑셀."""
+
+
+_LEDGER = "data/vending/inventory.csv"
+
+
+@vending_stock.command("add")
+@click.argument("kind", type=click.Choice(["입고", "판매", "반품", "폐기", "조정"]))
+@click.option("--code", "style_code", required=True, help="품번")
+@click.option("--size", default="", help="사이즈 (신발은 꼭: 250, 265 ...)")
+@click.option("--qty", type=int, required=True)
+@click.option("--price", type=int, default=0, help="입고=매입가, 판매/반품=판매가")
+@click.option("--brand", default="")
+@click.option("--name", default="")
+@click.option("--partner", default="", help="매장/판매처")
+@click.option("--memo", default="")
+@click.option("--date", "on", default=None, help="YYYY-MM-DD (default: today)")
+@click.option("--ledger", default=_LEDGER, show_default=True)
+def stock_add(kind, style_code, size, qty, price, brand, name, partner, memo, on, ledger):
+    """예) vending stock add 판매 --code BV2654-063 --qty 1 --price 68900"""
+    from datetime import date
+
+    from .vending.inventory import Tx, _date, _norm_size, append_ledger, build_stock, load_ledger
+    from .vending.settings import load_settings
+
+    tx = Tx(_date(on) if on else date.today(), kind, style_code, brand, name, qty, price, partner, memo,
+            _norm_size(size))
+    settings = load_settings(_settings_path("data/vending/settings.json"))
+    build_stock(load_ledger(ledger) + [tx], settings)  # validates (e.g. selling more than in stock)
+    append_ledger(ledger, [tx])
+    click.echo(f"기록: {tx.date} {kind} {style_code}{' ' + tx.size if tx.size else ''} x{qty} @ {price:,}")
+
+
+@vending_stock.command("import-outlet")
+@click.option("--file", "xlsx_path", required=True, type=click.Path(exists=True), help="vending outlet 결과 엑셀")
+@click.option("--date", "on", default=None, help="입고일 YYYY-MM-DD (default: today)")
+@click.option("--ledger", default=_LEDGER, show_default=True)
+def stock_import_outlet(xlsx_path, on, ledger):
+    """아울렛 매입 판단 엑셀에서 '매입' 행을 입고로 기록."""
+    from datetime import date
+
+    from .vending.inventory import _date, append_ledger, txs_from_outlet_xlsx
+
+    txs = txs_from_outlet_xlsx(xlsx_path, _date(on) if on else date.today())
+    append_ledger(ledger, txs)
+    for t in txs:
+        click.echo(f"입고: {t.style_code} {t.brand} x{t.qty} @ {t.price:,} ({t.partner})")
+    click.echo(f"{len(txs)}건 입고 기록 -> {ledger}")
+
+
+@vending_stock.command("report")
+@click.option("--ledger", default=_LEDGER, show_default=True, help="Dry-run falls back to the example ledger.")
+@click.option("--settings", "settings_path", default="data/vending/settings.json", show_default=True)
+@click.option("--out-dir", default="output", show_default=True)
+@click.option("--stale-days", type=int, default=30, show_default=True, help="이 일수 이상 보유하면 처분 추천")
+@click.option("--today", default=None, help="기준일 YYYY-MM-DD (default: today)")
+@click.option("--dry-run/--live", "dry_run", default=True, help="Live looks up Naver online lowest prices.")
+@click.option("--no-market", is_flag=True, help="Skip the online price lookup.")
+@click.option("--category", default=None, type=click.Choice(["신발", "의류", "가방", "잡화", "기타"]),
+              help="이 카테고리만 표시")
+def stock_report(ledger, settings_path, out_dir, stale_days, today, dry_run, no_market, category):
+    """재고 현황 (손실 위험 / 처분 추천 / 마진 축소) + 품번별 실현손익 엑셀."""
+    import os
+    from datetime import date, datetime
+    from pathlib import Path
+
+    from .vending.discover import FixtureSearcher, NaverSearcher
+    from .vending.inventory import InventoryError, _date, assess, build_stock, load_ledger, write_stock_xlsx
+    from .vending.settings import load_settings
+
+    if dry_run and not Path(ledger).exists():
+        ledger = "data/vending/inventory.example.csv"
+    settings = load_settings(_settings_path(settings_path))
+    ref = _date(today) if today else date.today()
+    try:
+        lines = build_stock(load_ledger(ledger), settings)
+    except InventoryError as exc:
+        raise click.ClickException(str(exc)) from exc
+    searcher = None
+    if not no_market:
+        searcher = (FixtureSearcher("fixtures/vending/naver_search.json") if dry_run
+                    else NaverSearcher(os.environ.get("NAVER_CLIENT_ID", ""), os.environ.get("NAVER_CLIENT_SECRET", "")))
+    if category:
+        lines = {k: l for k, l in lines.items() if l.category == category}
+    active = assess(lines, settings, ref, searcher, stale_days)
+
+    click.echo(f"[재고 현황] {ref} 기준 / 품목(품번×사이즈) {len(active)}개 / 재고 {sum(l.qty for l in active)}개 / "
+               f"재고 금액 {sum(l.stock_cost for l in active):,}원")
+    for l in active:
+        mk = f" | 최저가 {l.market_low:,}" if l.market_low else ""
+        sz = f" {l.size}" if l.size else ""
+        click.echo(f"  [{l.flag}] [{l.category}] {l.brand} {l.style_code}{sz} x{l.qty} @ {l.avg_cost:,} | {l.holding_days(ref)}일{mk} - {l.advice}")
+    realized = sum(l.realized for l in lines.values())
+    click.echo(f"\n  누적 실현손익 {realized:,}원 (매출 {sum(l.revenue for l in lines.values()):,} / "
+               f"폐기손실 {sum(l.written_off for l in lines.values()):,})")
+    path = write_stock_xlsx(active, lines, ref, Path(out_dir) / f"stock_{datetime.now():%Y%m%d_%H%M}.xlsx")
+    click.echo(f"  -> {path}")
+
+
+def _settings_path(path):
+    from pathlib import Path
+
+    return path if Path(path).exists() else "data/vending/settings.example.json"
+
+
+def json_list(names):
+    import json
+
+    return json.dumps(names, ensure_ascii=False)
+
+
+@cli.group()
 def instagram():
     """Instagram feed posting via Meta Graph API.
 

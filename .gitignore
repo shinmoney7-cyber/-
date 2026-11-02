@@ -9,6 +9,13 @@ venv/
 playwright-report/
 test-results/
 *.egg-info/
-scripts/.env
+data/vending/seen.json
+data/vending/cache/
+data/vending/settings.json
+data/vending/blacklist.txt
 output/
+scripts/.env
 scripts/orders_data/
+data/vending/outlet_finds.csv
+data/vending/listings.csv
+data/vending/inventory.csv

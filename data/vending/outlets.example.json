@@ -1,0 +1,239 @@
+{
+  "_comment": "오프라인 아울렛 소싱처 지도 (손글씨 메모에서 옮김 - 지점/내용 확인 필요) / online: 연결된 온라인몰. verified=false는 검색으로 확인 못한 것",
+  "outlets": [
+    {
+      "name": "신세계 아울렛",
+      "branches": [],
+      "brands": [
+        "삼성물산 팩토리"
+      ],
+      "note": "삼성물산 제품",
+      "online": [
+        {
+          "mall": "SSF샵 (삼성물산 패션)",
+          "url": "https://www.ssfshop.com",
+          "verified": true,
+          "note": "삼성물산 제품 온라인 공식몰"
+        },
+        {
+          "mall": "SSG.COM",
+          "url": "https://www.ssg.com",
+          "verified": true,
+          "note": "신세계그룹 이커머스"
+        }
+      ]
+    },
+    {
+      "name": "롯데아울렛",
+      "branches": [
+        "이천",
+        "시흥",
+        "여주"
+      ],
+      "brands": [
+        "나이키"
+      ],
+      "note": "이천 나이키 저렴",
+      "online": [
+        {
+          "mall": "롯데ON",
+          "url": "https://www.lotteon.com",
+          "verified": false,
+          "note": "롯데 계열 온라인몰 - 아울렛 전용관 여부 확인 필요"
+        }
+      ]
+    },
+    {
+      "name": "삼성패션아울렛",
+      "branches": [],
+      "brands": [],
+      "note": "신사복",
+      "online": [
+        {
+          "mall": "SSF샵",
+          "url": "https://www.ssfshop.com",
+          "verified": true,
+          "note": "삼성물산 패션부문 공식몰"
+        }
+      ]
+    },
+    {
+      "name": "NC아울렛",
+      "branches": [],
+      "brands": [
+        "뉴발란스"
+      ],
+      "note": "",
+      "online": [
+        {
+          "mall": "11번가 NC 입점관",
+          "url": "https://www.11st.co.kr",
+          "verified": true,
+          "note": "이랜드 NC 아울렛 상품 11번가 입점 판매 사례 (2019 기사)"
+        }
+      ]
+    },
+    {
+      "name": "NC 픽스",
+      "branches": [
+        "천호",
+        "송파",
+        "강서"
+      ],
+      "brands": [
+        "나이키",
+        "아디다스",
+        "크록스",
+        "컨버스",
+        "폴로",
+        "타미"
+      ],
+      "note": "모자 / 폴로 5만원대, 타미 1~2만원",
+      "online": [
+        {
+          "mall": "11번가 NC 입점관",
+          "url": "https://www.11st.co.kr",
+          "verified": true,
+          "note": "위와 동일 - 현재 운영 여부 확인 필요"
+        }
+      ]
+    },
+    {
+      "name": "뉴코아 팩토리 아울렛",
+      "branches": [
+        "광명",
+        "천호"
+      ],
+      "brands": [
+        "스케쳐스"
+      ],
+      "note": "가장 저렴",
+      "online": [
+        {
+          "mall": "(이랜드 계열 - 온라인 채널 미확인)",
+          "url": "",
+          "verified": false,
+          "note": ""
+        }
+      ]
+    },
+    {
+      "name": "블랙야크 팩토리 아울렛",
+      "branches": [
+        "BYN 가산"
+      ],
+      "brands": [
+        "블랙야크"
+      ],
+      "note": "등산복 저렴",
+      "online": [
+        {
+          "mall": "블랙야크 공식몰",
+          "url": "",
+          "verified": false,
+          "note": "검색으로 확인 못함"
+        }
+      ]
+    },
+    {
+      "name": "코오롱 아울렛",
+      "branches": [
+        "일산",
+        "파주"
+      ],
+      "brands": [
+        "코오롱스포츠"
+      ],
+      "note": "등산복",
+      "online": [
+        {
+          "mall": "코오롱몰",
+          "url": "https://www.kolonmall.com",
+          "verified": true,
+          "note": "코오롱FnC 공식몰, 아울렛/할인 기획전 있음"
+        }
+      ]
+    },
+    {
+      "name": "안성 팩토리 아울렛",
+      "branches": [
+        "가산"
+      ],
+      "brands": [],
+      "note": "60~70% 할인",
+      "online": []
+    },
+    {
+      "name": "제일모직 아울렛",
+      "branches": [],
+      "brands": [],
+      "note": "7월",
+      "online": [
+        {
+          "mall": "SSF샵",
+          "url": "https://www.ssfshop.com",
+          "verified": true,
+          "note": "제일모직 패션 = 현 삼성물산 패션부문"
+        }
+      ]
+    },
+    {
+      "name": "LF 아울렛",
+      "branches": [],
+      "brands": [],
+      "note": "",
+      "online": [
+        {
+          "mall": "LF몰",
+          "url": "https://www.lfmall.co.kr",
+          "verified": true,
+          "note": "LF 공식몰"
+        }
+      ]
+    },
+    {
+      "name": "현대아울렛",
+      "branches": [],
+      "brands": [
+        "타미"
+      ],
+      "note": "",
+      "online": [
+        {
+          "mall": "더현대닷컴",
+          "url": "https://www.thehyundai.com",
+          "verified": false,
+          "note": "현대백화점 온라인몰 - 아울렛 상품 취급 여부 확인 필요"
+        }
+      ]
+    },
+    {
+      "name": "바바스몰",
+      "branches": [],
+      "brands": [],
+      "note": "온라인",
+      "online": [
+        {
+          "mall": "바바더닷컴 (바바패션)",
+          "url": "https://www.babathe.com",
+          "verified": true,
+          "note": "앱 소개에 백화점·아울렛·온라인 단독 전문관 - '바바스몰'이 이곳인지 확인 필요"
+        }
+      ]
+    },
+    {
+      "name": "코오롱몰",
+      "branches": [],
+      "brands": [],
+      "note": "온라인",
+      "online": [
+        {
+          "mall": "코오롱몰",
+          "url": "https://www.kolonmall.com",
+          "verified": true,
+          "note": ""
+        }
+      ]
+    }
+  ]
+}
