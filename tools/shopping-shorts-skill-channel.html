@@ -287,8 +287,8 @@ input[type=range]{width:100%;accent-color:var(--cy);height:4px;border-radius:4px
 .btab-bar{display:none}
 
 /* ── Mobile Drawer ── */
-.drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;backdrop-filter:blur(2px);opacity:0;transition:opacity .25s}
-.drawer-overlay.open{opacity:1}
+.drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;backdrop-filter:blur(2px);opacity:0;transition:opacity .25s;pointer-events:none}
+.drawer-overlay.open{opacity:1;pointer-events:auto}
 .sidebar{transition:transform .25s cubic-bezier(.4,0,.2,1)}
 
 /* ── Hamburger ── */
