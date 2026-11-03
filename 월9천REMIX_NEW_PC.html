@@ -432,26 +432,76 @@ select option{background:var(--bg3)}
         </div>
       </div>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-        <div class="card">
-          <div class="card-title">🛠 툴 바로가기</div>
-          <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
-            <button class="btn btn-outline" style="justify-content:flex-start" onclick="goPanel('search',null)">🔍 영상 탐색 — YouTube API로 쇼츠 자동 검색</button>
-            <button class="btn btn-outline" style="justify-content:flex-start" onclick="goPanel('analyzer',null)">📊 바이럴 분석 — 후킹 구조 + 100만뷰 점수</button>
-            <button class="btn btn-outline" style="justify-content:flex-start" onclick="goPanel('remix',null)">✨ 리믹스 스튜디오 — 대본 재생성 + AI 영상 프롬프트</button>
-            <button class="btn btn-outline" style="justify-content:flex-start" onclick="goPanel('publish',null)">📱 플랫폼 배포 — 유튜브·틱톡·인스타 문구 생성</button>
-            <button class="btn btn-outline" style="justify-content:flex-start" onclick="goPanel('imgshorts',null)">🖼️ 이미지→쇼츠 — 상품 이미지로 대본 생성</button>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-title">📋 워크플로우</div>
-          <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
-            <div style="display:flex;align-items:center;gap:10px"><div style="width:24px;height:24px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">1</div><div><div style="font-size:12px;font-weight:600">API 설정</div><div style="font-size:11px;color:var(--text3)">Claude API 키 입력 및 연결 테스트</div></div></div>
-            <div style="display:flex;align-items:center;gap:10px"><div style="width:24px;height:24px;background:var(--bg4);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text2);flex-shrink:0">2</div><div><div style="font-size:12px;font-weight:600">영상 탐색</div><div style="font-size:11px;color:var(--text3)">키워드 쇼츠 검색 → 클릭 선택</div></div></div>
-            <div style="display:flex;align-items:center;gap:10px"><div style="width:24px;height:24px;background:var(--bg4);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text2);flex-shrink:0">3</div><div><div style="font-size:12px;font-weight:600">바이럴 분석</div><div style="font-size:11px;color:var(--text3)">자막 붙여넣기 → 후킹 구조 분석</div></div></div>
-            <div style="display:flex;align-items:center;gap:10px"><div style="width:24px;height:24px;background:var(--bg4);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text2);flex-shrink:0">4</div><div><div style="font-size:12px;font-weight:600">리믹스 생성</div><div style="font-size:11px;color:var(--text3)">상품 정보 입력 → AI 대본 + 프롬프트</div></div></div>
-            <div style="display:flex;align-items:center;gap:10px"><div style="width:24px;height:24px;background:var(--bg4);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text2);flex-shrink:0">5</div><div><div style="font-size:12px;font-weight:600">플랫폼 배포</div><div style="font-size:11px;color:var(--text3)">5개 플랫폼 맞춤 문구 자동 생성</div></div></div>
-          </div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title">📽️ 숏폼 제작 11단계 워크플로우</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-top:12px">
+
+          <button onclick="goPanel('matcher',null)" style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:left;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;gap:6px" onmouseover="this.style.borderColor='#ff6b35';this.style.background='rgba(255,107,53,.08)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--bg3)'">
+            <div style="display:flex;align-items:center;gap:8px"><span style="background:#ff6b35;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">1</span><span style="font-size:14px">🛒</span></div>
+            <div style="font-size:12px;font-weight:700;color:var(--text1)">상품매칭 + 클릭바</div>
+            <div style="font-size:10px;color:var(--text3)">상품 URL 등록 → 클릭유도 바 생성</div>
+          </button>
+
+          <button onclick="goPanel('search',null)" style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:left;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;gap:6px" onmouseover="this.style.borderColor='#2563eb';this.style.background='rgba(37,99,235,.08)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--bg3)'">
+            <div style="display:flex;align-items:center;gap:8px"><span style="background:#2563eb;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">2</span><span style="font-size:14px">🔍</span></div>
+            <div style="font-size:12px;font-weight:700;color:var(--text1)">영상 탐색</div>
+            <div style="font-size:10px;color:var(--text3)">키워드 쇼츠 검색 → 레퍼런스 선택</div>
+          </button>
+
+          <button onclick="goPanel('analyzer',null)" style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:left;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;gap:6px" onmouseover="this.style.borderColor='#7c3aed';this.style.background='rgba(124,58,237,.08)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--bg3)'">
+            <div style="display:flex;align-items:center;gap:8px"><span style="background:#7c3aed;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">3</span><span style="font-size:14px">📊</span></div>
+            <div style="font-size:12px;font-weight:700;color:var(--text1)">바이럴 분석</div>
+            <div style="font-size:10px;color:var(--text3)">후킹 구조 분석 + 100만뷰 점수</div>
+          </button>
+
+          <button onclick="goPanel('backcoach',null)" style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:left;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;gap:6px" onmouseover="this.style.borderColor='#4CAF50';this.style.background='rgba(76,175,80,.08)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--bg3)'">
+            <div style="display:flex;align-items:center;gap:8px"><span style="background:#4CAF50;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">4</span><span style="font-size:14px">🧠</span></div>
+            <div style="font-size:12px;font-weight:700;color:var(--text1)">백코치 대본생성기</div>
+            <div style="font-size:10px;color:var(--text3)">상품명 입력 → AI 대본 3종 생성</div>
+          </button>
+
+          <button onclick="goPanel('cheatkey',null)" style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:left;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;gap:6px" onmouseover="this.style.borderColor='#FF6124';this.style.background='rgba(255,97,36,.08)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--bg3)'">
+            <div style="display:flex;align-items:center;gap:8px"><span style="background:#FF6124;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">5</span><span style="font-size:14px">⚡</span></div>
+            <div style="font-size:12px;font-weight:700;color:var(--text1)">쇼핑숏폼 치트키 6</div>
+            <div style="font-size:10px;color:var(--text3)">6가지 바이럴 훅 공식 레퍼런스</div>
+          </button>
+
+          <button onclick="goPanel('remix',null)" style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:left;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;gap:6px" onmouseover="this.style.borderColor='#6c5ce7';this.style.background='rgba(108,92,231,.08)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--bg3)'">
+            <div style="display:flex;align-items:center;gap:8px"><span style="background:#6c5ce7;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">6</span><span style="font-size:14px">✨</span></div>
+            <div style="font-size:12px;font-weight:700;color:var(--text1)">리믹스 스튜디오</div>
+            <div style="font-size:10px;color:var(--text3)">대본 리믹스 + AI 영상 프롬프트</div>
+          </button>
+
+          <button onclick="goPanel('imgshorts',null)" style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:left;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;gap:6px" onmouseover="this.style.borderColor='#0891b2';this.style.background='rgba(8,145,178,.08)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--bg3)'">
+            <div style="display:flex;align-items:center;gap:8px"><span style="background:#0891b2;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">7</span><span style="font-size:14px">🖼️</span></div>
+            <div style="font-size:12px;font-weight:700;color:var(--text1)">이미지→쇼츠</div>
+            <div style="font-size:10px;color:var(--text3)">상품 이미지로 대본 자동 생성</div>
+          </button>
+
+          <button onclick="goPanel('videogen',null)" style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:left;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;gap:6px" onmouseover="this.style.borderColor='var(--accent)';this.style.background='rgba(108,92,231,.08)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--bg3)'">
+            <div style="display:flex;align-items:center;gap:8px"><span style="background:var(--accent);color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">8</span><span style="font-size:14px">🎬</span></div>
+            <div style="font-size:12px;font-weight:700;color:var(--text1)">영상 생성기</div>
+            <div style="font-size:10px;color:var(--text3)">자막 → Canvas WebM 영상 렌더링</div>
+          </button>
+
+          <button onclick="goPanel('converter',null)" style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:left;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;gap:6px" onmouseover="this.style.borderColor='#00b894';this.style.background='rgba(0,184,148,.08)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--bg3)'">
+            <div style="display:flex;align-items:center;gap:8px"><span style="background:#00b894;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">9</span><span style="font-size:14px">🔄</span></div>
+            <div style="font-size:12px;font-weight:700;color:var(--text1)">영상 변환기</div>
+            <div style="font-size:10px;color:var(--text3)">WebM → MP4/GIF 포맷 변환</div>
+          </button>
+
+          <button onclick="goPanel('publish',null)" style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:left;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;gap:6px" onmouseover="this.style.borderColor='#db2777';this.style.background='rgba(219,39,119,.08)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--bg3)'">
+            <div style="display:flex;align-items:center;gap:8px"><span style="background:#db2777;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">10</span><span style="font-size:14px">📱</span></div>
+            <div style="font-size:12px;font-weight:700;color:var(--text1)">플랫폼 배포</div>
+            <div style="font-size:10px;color:var(--text3)">5개 플랫폼 맞춤 문구 자동 생성</div>
+          </button>
+
+          <button onclick="goPanel('launcher',null)" style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:left;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;gap:6px" onmouseover="this.style.borderColor='#d97706';this.style.background='rgba(217,119,6,.08)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--bg3)'">
+            <div style="display:flex;align-items:center;gap:8px"><span style="background:#d97706;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">11</span><span style="font-size:14px">🚀</span></div>
+            <div style="font-size:12px;font-weight:700;color:var(--text1)">플랫폼 런처</div>
+            <div style="font-size:10px;color:var(--text3)">유튜브·틱톡·인스타 바로 열기</div>
+          </button>
+
         </div>
       </div>
 
@@ -968,6 +1018,7 @@ select option{background:var(--bg3)}
             <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" id="t_runway" checked><span style="background:rgba(255,107,107,.15);color:#ff8c8c;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700">Runway</span></label>
             <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" id="t_kling" checked><span style="background:rgba(255,211,42,.12);color:var(--yellow);padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700">Kling</span></label>
             <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" id="t_pika"><span style="background:rgba(108,92,231,.15);color:var(--accent2);padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700">Pika</span></label>
+            <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" id="t_capcut" checked><span style="background:rgba(0,0,0,.9);color:#fff;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700">CapCut 무료</span></label>
           </div>
         </div>
         <button class="btn btn-accent btn-full" id="remixBtn" onclick="doRemix()">✨ 리믹스 대본 + AI 프롬프트 생성</button>
@@ -2172,7 +2223,7 @@ function bcRenderResult(text) {
       <div id="${sec.id}" style="font-size:12px;color:var(--text);line-height:1.85;white-space:pre-wrap">${content.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
       <div class="bc-copy-row">
         <button class="bc-copy-btn" onclick="bcCopySection('${sec.id}','${sec.id}-btn')" id="${sec.id}-btn">📋 복사</button>
-        ${i >= 1 && i <= 3 ? `<button class="bc-copy-btn" onclick="bcSendToVideo('${sec.id}')" style="margin-left:6px;border-color:#6c5ce7;color:#a29bfe">▶ 영상으로</button>` : ''}
+        ${i >= 1 && i <= 3 ? `<button class="bc-copy-btn" onclick="bcSendToRemix('${sec.id}')" style="margin-left:6px;border-color:#4CAF50;color:#4CAF50">✨ 리믹스로</button><button class="bc-copy-btn" onclick="bcSendToVideo('${sec.id}')" style="margin-left:6px;border-color:#6c5ce7;color:#a29bfe">▶ 영상으로</button>` : ''}
       </div>
     </div>`;
   });
@@ -2215,6 +2266,27 @@ function bcSendToVideo(sectionId) {
     const el2 = document.getElementById('vgScript');
     if(el2) el2.scrollIntoView({ behavior:'smooth', block:'center' });
     setTimeout(() => { if(typeof vgGenerate === 'function') vgGenerate(); }, 300);
+  }, 200);
+}
+
+function bcSendToRemix(sectionId) {
+  const el = document.getElementById(sectionId);
+  if(!el) return;
+  const txt = (el.innerText || el.textContent).trim();
+  // Fill remix features (셀링포인트) with the script
+  const remixFeatures = document.getElementById('remixFeatures');
+  if(remixFeatures) remixFeatures.value = txt;
+  // Also copy product name from 백코치 input
+  const bcProduct = document.getElementById('bc-product');
+  const remixProduct = document.getElementById('remixProduct');
+  if(bcProduct && remixProduct && !remixProduct.value) remixProduct.value = bcProduct.value;
+  // Navigate to remix panel
+  goPanel('remix', null);
+  setTimeout(() => {
+    if(remixFeatures) remixFeatures.scrollIntoView({ behavior:'smooth', block:'center' });
+    // Flash highlight
+    remixFeatures.style.outline = '2px solid #4CAF50';
+    setTimeout(() => { remixFeatures.style.outline = ''; }, 1800);
   }, 200);
 }
 </script>
@@ -3044,13 +3116,14 @@ async function doRemix() {
   const discount=document.getElementById('remixDiscount').value;
   const link=document.getElementById('remixLink').value;
   const features=document.getElementById('remixFeatures').value;
-  const tools=['sora','runway','kling','pika'].filter(t=>document.getElementById('t_'+t)?.checked);
+  const tools=['sora','runway','kling','pika','capcut'].filter(t=>document.getElementById('t_'+t)?.checked);
   const hookArr=selectedHooks.map(h=>'{"style":"'+h+'","hook_line":"후킹","scenes":[{"time":"0~3초","s":"","v":""},{"time":"3~8초","s":"","v":""},{"time":"8~16초","s":"","v":""},{"time":"16~24초","s":"","v":""},{"time":"24~30초","s":"","v":""}]}');
   let aiP=[];
   if(tools.includes('sora'))aiP.push('"sora":["p1","p2","p3","p4","p5"]');
   if(tools.includes('runway'))aiP.push('"runway":["p1","p2","p3","p4","p5"]');
   if(tools.includes('kling'))aiP.push('"kling":["p1","p2","p3","p4","p5"]');
   if(tools.includes('pika'))aiP.push('"pika":["p1","p2","p3","p4","p5"]');
+  if(tools.includes('capcut'))aiP.push('"capcut":{"subtitle_timing":[{"sec":"0-3","text":"자막텍스트","effect":"효과"}],"transitions":["전환효과1","전환효과2"],"bgm_keyword":"BGM검색키워드","text_overlays":["오버레이1","오버레이2"],"speed_effect":"속도효과팁"}');
   aiP.push('"bgm":"BGM방향"');
   const prompt=[
     '월 9천만원 매출 최고의 쇼핑쇼츠 마케터입니다.',
@@ -3090,6 +3163,20 @@ function renderRemix(d,tools){
     ap[t].forEach((pr,i)=>{h+=`<div style="border-left:2px solid var(--green);padding:7px 10px;background:rgba(0,184,148,.07);border-radius:0 5px 5px 0;margin-bottom:5px"><div style="font-size:9px;font-weight:700;color:var(--green);margin-bottom:2px;font-family:Space Mono,monospace">장면${i+1}</div><div style="font-size:11px;font-family:Space Mono,monospace;line-height:1.6;color:#a8e6ce">${esc(pr)}</div></div>`;});
     h+=`</div></div>`;
   });
+  // CapCut 무료 편집 가이드
+  if(tools.includes('capcut') && ap.capcut) {
+    const cc = ap.capcut;
+    h+=`<div class="res-card"><div class="res-hd"><span style="background:rgba(0,0,0,.9);color:#fff;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700">✂️ CapCut 무료 편집 가이드</span><button class="copy-btn" onclick="copyEl('apCapcut',this)">복사</button></div><div id="apCapcut">`;
+    if(cc.subtitle_timing?.length){
+      h+=`<div style="font-size:10px;font-weight:700;color:var(--text2);margin-bottom:6px">⏱ 자막 타이밍</div>`;
+      cc.subtitle_timing.forEach(row=>{h+=`<div style="display:grid;grid-template-columns:55px 1fr 80px;gap:6px;padding:5px 0;border-bottom:1px solid var(--border);font-size:11px"><span style="color:var(--accent2);font-family:monospace">${esc(row.sec)}초</span><span>${esc(row.text)}</span><span style="color:var(--green)">${esc(row.effect)}</span></div>`;});
+    }
+    if(cc.transitions?.length){h+=`<div style="margin-top:10px;font-size:10px;font-weight:700;color:var(--text2);margin-bottom:4px">🔀 전환 효과</div><div style="display:flex;gap:6px;flex-wrap:wrap">${cc.transitions.map(t=>`<span style="background:var(--bg4);padding:3px 8px;border-radius:6px;font-size:11px">${esc(t)}</span>`).join('')}</div>`;}
+    if(cc.bgm_keyword){h+=`<div style="margin-top:10px;font-size:10px;font-weight:700;color:var(--text2);margin-bottom:2px">🎵 BGM 검색키워드</div><div style="font-size:12px;color:var(--yellow)">"${esc(cc.bgm_keyword)}"</div>`;}
+    if(cc.text_overlays?.length){h+=`<div style="margin-top:10px;font-size:10px;font-weight:700;color:var(--text2);margin-bottom:4px">✏️ 텍스트 오버레이</div><div style="display:flex;flex-direction:column;gap:4px">${cc.text_overlays.map((t,i)=>`<div style="border-left:2px solid var(--pink);padding:4px 8px;font-size:11px;color:var(--text)">${i+1}. ${esc(t)}</div>`).join('')}</div>`;}
+    if(cc.speed_effect){h+=`<div style="margin-top:10px;font-size:10px;font-weight:700;color:var(--text2);margin-bottom:2px">⚡ 속도효과 팁</div><div style="font-size:11px;color:var(--text3)">${esc(cc.speed_effect)}</div>`;}
+    h+=`</div></div>`;
+  }
   // 소구점
   ksp.forEach((p,i)=>{h+=`<div class="res-card"><div class="res-hd"><span class="res-title">${i+1}. ${esc(p.title)}</span></div><div class="hl"><div style="font-size:9px;color:var(--accent2)">헤드카피</div><div class="ctext">${esc(p.headcopy)}</div></div><div class="gr"><div style="font-size:9px;color:var(--green)">서브카피</div><div class="ctext">${esc(p.subcopy)}</div></div></div>`;});
   // CTA
