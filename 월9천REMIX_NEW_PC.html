@@ -333,6 +333,7 @@ select option{background:var(--bg3)}
     <button class="nav-item" onclick="goPanel('publish',this)"><span class="icon">📱</span>플랫폼 배포</button>
     <button class="nav-item" onclick="goPanel('launcher',this)"><span class="icon">🚀</span>플랫폼 런처</button>
     <button class="nav-item" onclick="goPanel('videogen',this)"><span class="icon">🎬</span>영상 생성기 <span class="nav-badge">NEW</span></button>
+    <button class="nav-item" onclick="goPanel('cheatkey',this)"><span class="icon">⚡</span>쇼핑숏폼 치트키 6 <span class="nav-badge" style="background:#FF6124;color:#fff">HOT</span></button>
     <div class="nav-section">💰 수익화</div>
     <button class="nav-item" onclick="goPanel('cpa',this)"><span class="icon">💰</span>쿠팡 CPA 대시보드 <span class="nav-badge" style="background:var(--yellow);color:#000">💸</span></button>
     <button class="nav-item" onclick="goPanel('comments',this)"><span class="icon">💬</span>댓글 트렌드 <span class="nav-badge">NEW</span></button>
@@ -1675,8 +1676,117 @@ select option{background:var(--bg3)}
       </div>
     </div>
 
+    <div class="panel" id="panel-cheatkey"></div>
+
   </div><!-- content -->
 </div><!-- main -->
+
+<!-- ⚡ 쇼핑숏폼 치트키 6 Panel -->
+<style>
+.ck-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0}
+@media(max-width:600px){.ck-grid{grid-template-columns:1fr}}
+.ck-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:10px;transition:border-color .15s}
+.ck-card:hover{border-color:var(--accent)}
+.ck-step{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent2)}
+.ck-num{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;background:rgba(108,92,231,.2);color:var(--accent)}
+.ck-title{font-size:14px;font-weight:700;color:var(--text)}
+.ck-desc{font-size:12px;color:var(--text2);line-height:1.55}
+.ck-prompt{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:11px;color:var(--text2);line-height:1.7;white-space:pre-wrap;font-family:'JetBrains Mono',monospace}
+.ck-btn-row{display:flex;gap:8px;margin-top:4px}
+.ck-btn-run{flex:1;padding:9px;border:none;border-radius:9px;background:linear-gradient(135deg,#6c5ce7,#00b894);color:#fff;font-size:12px;font-weight:700;cursor:pointer;transition:opacity .15s}
+.ck-btn-run:hover{opacity:.85}
+.ck-btn-copy{padding:9px 14px;border:1px solid var(--border);border-radius:9px;background:none;color:var(--text2);font-size:12px;cursor:pointer;transition:all .15s}
+.ck-btn-copy:hover{border-color:var(--accent);color:var(--accent)}
+</style>
+
+<script>
+const CHEAT_STEPS = [
+  {
+    num:1, icon:'🎯', title:'3초 훅 멘트 생성',
+    desc:'제품 특징 3개를 추출해 시청자가 멈추는 첫 3초 훅을 만든다.',
+    prompt:'[제품사진 / 제품명 / URL 중 1개 줄게]\n웹에서 이 제품 정보 검색해서\n특징 3개로 3초 훅 멘트 만들어줘',
+    script:'[0초] 이거 모르면 손해\n[3초] 다들 이런 경험 있죠?\n[8초] 바로 이 제품이 해결해줘요\n[16초] 실제 후기 ★4.9 · 3만건\n[24초] 지금 링크에서 확인해봐'
+  },
+  {
+    num:2, icon:'📝', title:'숏폼 대본 자동 생성',
+    desc:'상세페이지·구매 후기를 웹에서 검색해 15초 대본을 완성한다.',
+    prompt:'[제품사진 / 제품명 / URL 중 1개 줄게]\n웹에서 상세페이지·구매 후기 검색해서\n숏폼 대본 짜줘',
+    script:'[0초] 요즘 이거 다들 쓰던데\n[3초] 나도 처음엔 반신반의했어\n[8초] 핵심 기능이 진짜 남달라\n[16초] 가격 대비 퀄리티 실화\n[24초] 아래 링크에서 바로 확인'
+  },
+  {
+    num:3, icon:'💬', title:'실사용 후기 톤 변환',
+    desc:'광고 냄새를 제거하고 진짜 사용자 후기처럼 자연스럽게 바꾼다.',
+    prompt:'웹에서 이 제품 실제 구매 후기 검색해서\n광고 느낌 빼고 실사용 후기처럼 바꿔줘',
+    script:'[0초] 솔직히 처음엔 안 믿었어\n[3초] 근데 써보니까 진짜\n[8초] 이 부분이 특히 좋더라고\n[16초] 가격도 생각보다 합리적\n[24초] 링크 댓글에 올려놨어'
+  },
+  {
+    num:4, icon:'💡', title:'구매 유도 클로징 멘트',
+    desc:'영상 끝 3초에 최신 반응을 반영한 강력한 CTA를 삽입한다.',
+    prompt:'웹에서 이 제품 최신 반응·후기 검색해서\n영상 끝나기 3초 전에 구매 유도 멘트 넣어줘',
+    script:'[0초] 이게 왜 요즘 핫한지 알아?\n[3초] 이 문제 때문에 난리났잖아\n[8초] 딱 이걸로 해결되거든\n[16초] 후기 3만건 ★4.9 실화\n[24초] 지금 품절되기 전에 빨리'
+  },
+  {
+    num:5, icon:'🖼️', title:'썸네일 문구 5개 생성',
+    desc:'트렌드 썸네일 공식을 검색해 클릭률 높은 문구 5개를 뽑는다.',
+    prompt:'웹에서 지금 숏폼 썸네일 트렌드 검색해서\n이 대본으로 썸네일 문구 5개 뽑아줘',
+    script:'[0초] 썸네일만 봐도 클릭하게\n[3초] 진짜 이런 거 있다고?\n[8초] 숨겨진 기능 공개합니다\n[16초] 사기 전에 꼭 보세요\n[24초] 지금 바로 확인 가능'
+  },
+  {
+    num:6, icon:'#️⃣', title:'알고리즘 해시태그 추천',
+    desc:'트렌딩 태그를 실시간 검색해 알고리즘 노출 최적화 태그를 생성한다.',
+    prompt:'웹에서 지금 트렌딩 해시태그 검색해서\n숏폼 알고리즘 될 만한 해시태그 추천해줘',
+    script:'[0초] 이 해시태그 조합 써봤어?\n[3초] 알고리즘 타는 핵심이야\n[8초] 조회수 차이 실화\n[16초] 지금 제일 뜨는 태그\n[24초] 바로 복사해서 써봐'
+  }
+];
+
+function cheatGo(idx){
+  const step = CHEAT_STEPS[idx];
+  const ta = document.getElementById('vgScript');
+  if(ta){ ta.value = step.script; }
+  if(typeof vgParseScript === 'function') vgParseScript();
+  const btn = document.querySelector('.nav-item[onclick*="videogen"]');
+  goPanel('videogen', btn);
+  setTimeout(()=>{
+    const el = document.getElementById('vgScript');
+    if(el) el.scrollIntoView({behavior:'smooth',block:'center'});
+  }, 150);
+}
+function cheatCopy(idx){
+  const step = CHEAT_STEPS[idx];
+  const btn = document.querySelector('.ck-card:nth-child('+(idx+1)+') .ck-btn-copy');
+  navigator.clipboard.writeText(step.prompt).then(()=>{
+    if(btn){const orig=btn.textContent;btn.textContent='✓ 복사됨';setTimeout(()=>btn.textContent=orig,1500);}
+  }).catch(()=>{
+    const ta=document.createElement('textarea');
+    ta.value=step.prompt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    if(btn){const orig=btn.textContent;btn.textContent='✓ 복사됨';setTimeout(()=>btn.textContent=orig,1500);}
+  });
+}
+function renderCheatPanel(){
+  const c = document.getElementById('panel-cheatkey');
+  if(!c) return;
+  c.innerHTML = `
+    <div style="padding:24px 20px 32px">
+      <div style="margin-bottom:20px">
+        <div style="font-size:20px;font-weight:900;color:var(--text)">⚡ 쇼핑숏폼 치트키 6</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:4px">클릭 한 번으로 대본+자막 자동 연동 — 바로 영상 생성기로 이동합니다</div>
+      </div>
+      <div class="ck-grid">
+        ${CHEAT_STEPS.map((s,i)=>`
+        <div class="ck-card">
+          <div class="ck-step"><div class="ck-num">${s.num}</div>${s.icon} STEP ${s.num}</div>
+          <div class="ck-title">${s.title}</div>
+          <div class="ck-desc">${s.desc}</div>
+          <div class="ck-prompt">${s.prompt}</div>
+          <div class="ck-btn-row">
+            <button class="ck-btn-run" onclick="cheatGo(${i})">▶ 클릭 실행 → 영상 생성기</button>
+            <button class="ck-btn-copy" onclick="cheatCopy(${i})">📋 복사</button>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>`;
+}
+</script>
 
 <script>
 
@@ -1726,7 +1836,7 @@ function closeMob() {
 const panelTitles = {
   home:'홈 대시보드', api:'API 설정', search:'영상 탐색',
   analyzer:'바이럴 분석기', remix:'리믹스 스튜디오', publish:'플랫폼 배포',
-  launcher:'플랫폼 런처', videogen:'🎬 영상 생성기', converter:'🔄 영상 변환기', cpa:'💰 쿠팡 CPA 수익화 대시보드', comments:'댓글 트렌드', imgshorts:'이미지→쇼츠 변환'
+  launcher:'플랫폼 런처', videogen:'🎬 영상 생성기', converter:'🔄 영상 변환기', cpa:'💰 쿠팡 CPA 수익화 대시보드', comments:'댓글 트렌드', imgshorts:'이미지→쇼츠 변환', cheatkey:'⚡ 쇼핑숏폼 치트키 6'
 };
 function goPanel(id, btn) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
@@ -1735,6 +1845,7 @@ function goPanel(id, btn) {
   if(btn) btn.classList.add('on');
   document.getElementById('topTitle').textContent = panelTitles[id] || id;
   if(window.innerWidth <= 900) closeMob();
+  if(id === 'cheatkey') renderCheatPanel();
 }
 
 // ══════════════════════════════

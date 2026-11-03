@@ -526,6 +526,7 @@ textarea.finp{resize:vertical;min-height:80px;}
       <div class="sb-item" id="nav-match" onclick="showPage('matcher')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-radius:8px;font-size:13px;color:var(--muted)">🛒 상품매칭+클릭바 <span style="background:#ff6b35;color:#fff;font-size:9px;padding:1px 6px;border-radius:999px;margin-left:auto">NEW</span></div>
       <div class="sb-item" id="nav-conv" onclick="showPage('converter')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-radius:8px;font-size:13px;color:var(--muted)">🔄 영상 변환기 <span style="background:var(--green,#00b894);color:#fff;font-size:9px;padding:1px 6px;border-radius:999px;margin-left:auto">NEW</span></div>
       <div class="sb-item" id="nav-vid" onclick="showPage('videogen')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-radius:8px;font-size:13px;color:var(--muted)">🎬 영상 생성기 <span style="background:var(--acc);color:#fff;font-size:9px;padding:1px 6px;border-radius:999px;margin-left:auto">NEW</span></div>
+      <div class="sb-item" id="nav-cheatkey" onclick="showPage('cheatkey')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-radius:8px;font-size:13px;color:var(--muted)">⚡ 쇼핑숏폼 치트키 6 <span style="background:#FF6124;color:#fff;font-size:9px;padding:1px 6px;border-radius:999px;margin-left:auto">HOT</span></div>
     <div class="sb-item">🔔 알림</div>
   </div>
   <div class="sb-grp">
@@ -809,13 +810,14 @@ function openM(id){document.getElementById(id).classList.remove('hidden');}
 function showPage(p){
   S.page=p;
   document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('active'));
-  const ts={wizard:'새 프로젝트',library:'내 보관함',home:'메인',videogen:'🎬 영상 생성기',converter:'🔄 영상 변환기',matcher:'🛒 상품매칭+클릭바'};
+  const ts={wizard:'새 프로젝트',library:'내 보관함',home:'메인',videogen:'🎬 영상 생성기',converter:'🔄 영상 변환기',matcher:'🛒 상품매칭+클릭바',cheatkey:'⚡ 쇼핑숏폼 치트키 6'};
   document.getElementById('topbar-t').textContent=ts[p]||'';
   if(p==='wizard')document.getElementById('nav-new').classList.add('active');
   if(p==='library')document.getElementById('nav-lib').classList.add('active');
   if(p==='videogen'){document.getElementById('nav-vid')?.classList.add('active');}
   if(p==='converter'){document.getElementById('nav-conv')?.classList.add('active');}
   if(p==='matcher'){document.getElementById('nav-match')?.classList.add('active');}
+  if(p==='cheatkey'){document.getElementById('nav-cheatkey')?.classList.add('active');}
   renderPage(p);
 }
 function renderPage(p){
@@ -825,6 +827,7 @@ function renderPage(p){
   if(p==='videogen'){renderVideogen();return;}
   if(p==='converter'){renderConverter();return;}
   if(p==='matcher'){renderMatcher();return;}
+  if(p==='cheatkey'){renderCheatkey();return;}
   c.innerHTML=`<div class="ldg"><div style="font-size:40px;">🏠</div><div style="margin-top:12px;color:var(--muted);">메인 페이지</div></div>`;
 }
 
@@ -2806,6 +2809,74 @@ function cvSendToAnalyzer() {
 
 
 
+
+const CK_STEPS = [
+  {num:1,icon:'🎯',title:'3초 훅 멘트 생성',desc:'제품 특징 3개를 추출해 시청자가 멈추는 첫 3초 훅을 만든다.',
+   prompt:'[제품사진 / 제품명 / URL 중 1개 줄게]\n웹에서 이 제품 정보 검색해서\n특징 3개로 3초 훅 멘트 만들어줘',
+   script:'[0초] 이거 모르면 손해\n[3초] 다들 이런 경험 있죠?\n[8초] 바로 이 제품이 해결해줘요\n[16초] 실제 후기 ★4.9 · 3만건\n[24초] 지금 링크에서 확인해봐'},
+  {num:2,icon:'📝',title:'숏폼 대본 자동 생성',desc:'상세페이지·구매 후기를 웹에서 검색해 15초 대본을 완성한다.',
+   prompt:'[제품사진 / 제품명 / URL 중 1개 줄게]\n웹에서 상세페이지·구매 후기 검색해서\n숏폼 대본 짜줘',
+   script:'[0초] 요즘 이거 다들 쓰던데\n[3초] 나도 처음엔 반신반의했어\n[8초] 핵심 기능이 진짜 남달라\n[16초] 가격 대비 퀄리티 실화\n[24초] 아래 링크에서 바로 확인'},
+  {num:3,icon:'💬',title:'실사용 후기 톤 변환',desc:'광고 냄새를 제거하고 진짜 사용자 후기처럼 자연스럽게 바꾼다.',
+   prompt:'웹에서 이 제품 실제 구매 후기 검색해서\n광고 느낌 빼고 실사용 후기처럼 바꿔줘',
+   script:'[0초] 솔직히 처음엔 안 믿었어\n[3초] 근데 써보니까 진짜\n[8초] 이 부분이 특히 좋더라고\n[16초] 가격도 생각보다 합리적\n[24초] 링크 댓글에 올려놨어'},
+  {num:4,icon:'💡',title:'구매 유도 클로징 멘트',desc:'영상 끝 3초에 최신 반응을 반영한 강력한 CTA를 삽입한다.',
+   prompt:'웹에서 이 제품 최신 반응·후기 검색해서\n영상 끝나기 3초 전에 구매 유도 멘트 넣어줘',
+   script:'[0초] 이게 왜 요즘 핫한지 알아?\n[3초] 이 문제 때문에 난리났잖아\n[8초] 딱 이걸로 해결되거든\n[16초] 후기 3만건 ★4.9 실화\n[24초] 지금 품절되기 전에 빨리'},
+  {num:5,icon:'🖼️',title:'썸네일 문구 5개 생성',desc:'트렌드 썸네일 공식을 검색해 클릭률 높은 문구 5개를 뽑는다.',
+   prompt:'웹에서 지금 숏폼 썸네일 트렌드 검색해서\n이 대본으로 썸네일 문구 5개 뽑아줘',
+   script:'[0초] 썸네일만 봐도 클릭하게\n[3초] 진짜 이런 거 있다고?\n[8초] 숨겨진 기능 공개합니다\n[16초] 사기 전에 꼭 보세요\n[24초] 지금 바로 확인 가능'},
+  {num:6,icon:'#️⃣',title:'알고리즘 해시태그 추천',desc:'트렌딩 태그를 실시간 검색해 알고리즘 노출 최적화 태그를 생성한다.',
+   prompt:'웹에서 지금 트렌딩 해시태그 검색해서\n숏폼 알고리즘 될 만한 해시태그 추천해줘',
+   script:'[0초] 이 해시태그 조합 써봤어?\n[3초] 알고리즘 타는 핵심이야\n[8초] 조회수 차이 실화\n[16초] 지금 제일 뜨는 태그\n[24초] 바로 복사해서 써봐'}
+];
+
+function renderCheatkey() {
+  const mc = document.getElementById('mc');
+  mc.innerHTML = `
+  <div style="padding:20px 16px 32px">
+    <div style="margin-bottom:18px">
+      <div style="font-size:18px;font-weight:900;color:var(--text)">⚡ 쇼핑숏폼 치트키 6</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px">클릭 한 번으로 대본+자막 자동 연동 — 바로 영상 생성기로 이동합니다</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      ${CK_STEPS.map((s,i)=>`
+      <div style="background:var(--bg2,#fff);border:1px solid var(--bdr,#e0e0e0);border-radius:13px;padding:16px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700;color:var(--primary,#6c5ce7);text-transform:uppercase;letter-spacing:.07em">
+          <span style="width:22px;height:22px;border-radius:50%;background:rgba(108,92,231,.15);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900">${s.num}</span>
+          ${s.icon} STEP ${s.num}
+        </div>
+        <div style="font-size:13px;font-weight:700;color:var(--text,#1a1a2e)">${s.title}</div>
+        <div style="font-size:11px;color:var(--muted,#888);line-height:1.55">${s.desc}</div>
+        <div style="background:var(--bg,#f9f9f9);border:1px solid var(--bdr,#e0e0e0);border-radius:7px;padding:9px 11px;font-size:10px;color:var(--muted,#888);line-height:1.7;white-space:pre-wrap;font-family:monospace">${s.prompt}</div>
+        <div style="display:flex;gap:7px;margin-top:2px">
+          <button onclick="ckGo(${i})" style="flex:1;padding:9px;border:none;border-radius:8px;background:linear-gradient(135deg,var(--primary,#6c5ce7),var(--green,#00b894));color:#fff;font-size:11px;font-weight:700;cursor:pointer">▶ 클릭 실행 → 영상 생성기</button>
+          <button id="ck-copy-${i}" onclick="ckCopy(${i})" style="padding:9px 12px;border:1px solid var(--bdr,#e0e0e0);border-radius:8px;background:none;color:var(--muted,#888);font-size:11px;cursor:pointer">📋</button>
+        </div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function ckGo(idx){
+  const s = CK_STEPS[idx];
+  const ta = document.getElementById('vgScript');
+  if(ta) ta.value = s.script;
+  if(typeof vgParseScript === 'function') vgParseScript();
+  showPage('videogen');
+  setTimeout(()=>{
+    const el = document.getElementById('vgScript');
+    if(el) el.scrollIntoView({behavior:'smooth',block:'center'});
+  }, 200);
+}
+
+function ckCopy(idx){
+  const s = CK_STEPS[idx];
+  const btn = document.getElementById('ck-copy-'+idx);
+  const copy = t => { try { navigator.clipboard.writeText(t); } catch(e) { const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta); } };
+  copy(s.prompt);
+  if(btn){ const o=btn.textContent; btn.textContent='✓'; setTimeout(()=>btn.textContent=o,1500); }
+}
 
 function renderMatcher() {
   const mc = document.getElementById('mc');
