@@ -2035,6 +2035,36 @@ function renderVideogen() {
 
       <!-- 설정 -->
       <div style="display:flex;flex-direction:column;gap:12px">
+
+        <!-- 상품 정보 -->
+        <div style="background:#f8faff;border:1px solid rgba(37,99,235,.15);border-radius:10px;padding:12px">
+          <div style="font-size:11px;font-weight:700;color:var(--primary);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">🛍️ 상품 정보</div>
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <div>
+              <div style="font-size:10px;color:var(--muted);margin-bottom:3px">제품명</div>
+              <input id="vgProductName" type="text" placeholder="예) 다이슨 헤어드라이어 V9"
+                style="width:100%;padding:7px 9px;border:1px solid var(--border);border-radius:6px;font-size:12px;outline:none;font-family:inherit;background:white"
+                oninput="vgUpdateProductOverlay()">
+            </div>
+            <div>
+              <div style="font-size:10px;color:var(--muted);margin-bottom:3px">상품 URL (쿠팡·네이버·11번가 등)</div>
+              <input id="vgProductUrl" type="url" placeholder="https://www.coupang.com/..."
+                style="width:100%;padding:7px 9px;border:1px solid var(--border);border-radius:6px;font-size:12px;outline:none;font-family:inherit;background:white">
+            </div>
+            <div>
+              <div style="font-size:10px;color:var(--muted);margin-bottom:3px">상품 이미지 URL (직접 붙여넣기)</div>
+              <div style="display:flex;gap:5px">
+                <input id="vgProductImgUrl" type="url" placeholder="https://image.coupangcdn.com/..."
+                  style="flex:1;padding:7px 9px;border:1px solid var(--border);border-radius:6px;font-size:12px;outline:none;font-family:inherit;background:white">
+                <button onclick="vgAddImgFromUrl()" style="padding:7px 10px;border:1px solid var(--primary);border-radius:6px;background:var(--primary-l);color:var(--primary);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit">추가</button>
+              </div>
+            </div>
+            <button onclick="vgApplyProductCta()" style="width:100%;padding:7px;border:1px dashed var(--primary);border-radius:7px;background:var(--primary-l);color:var(--primary);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">
+              📌 제품명 + URL → 마지막 자막에 CTA 자동 추가
+            </button>
+          </div>
+        </div>
+
         <!-- 이미지 -->
         <div>
           <div style="font-size:11px;color:var(--muted);margin-bottom:5px">📸 상품 이미지 (최대 10장)</div>
@@ -2211,6 +2241,54 @@ function vgParseScript(){
   }
   vgRenderSubs(); vgUpdateTL();
   alert(`✅ ${vgSubs.length}개 자막 생성!`);
+}
+
+// ── 상품 정보 헬퍼 ──
+function vgAddImgFromUrl() {
+  const url = document.getElementById('vgProductImgUrl')?.value?.trim();
+  if(!url) { alert('이미지 URL을 입력하세요.'); return; }
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = function() {
+    vgImgs.push({ name: 'product_img', el: img });
+    vgRenderImgGrid(); vgUpdateTL(); vgDrawFrame(vgCurTime);
+    document.getElementById('vgProductImgUrl').value = '';
+    document.getElementById('vgProductImgUrl').style.borderColor = '#22c55e';
+    setTimeout(() => { if(document.getElementById('vgProductImgUrl')) document.getElementById('vgProductImgUrl').style.borderColor = ''; }, 1500);
+  };
+  img.onerror = function() {
+    // Try as proxy or direct
+    const canvas = document.createElement('canvas'); canvas.width=360; canvas.height=640;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#1a1a2e'; ctx.fillRect(0,0,360,640);
+    ctx.fillStyle = '#fff'; ctx.font = 'bold 16px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('상품 이미지', 180, 320);
+    const fallback = new Image(); fallback.src = canvas.toDataURL();
+    vgImgs.push({ name: 'product_img', el: fallback });
+    vgRenderImgGrid(); vgUpdateTL(); vgDrawFrame(vgCurTime);
+    alert('⚠️ 이미지 URL 로드 실패. CORS 제한으로 일부 외부 URL은 직접 업로드를 이용하세요.');
+  };
+  img.src = url;
+}
+
+function vgUpdateProductOverlay() {
+  vgDrawFrame(vgCurTime);
+}
+
+function vgApplyProductCta() {
+  const name = document.getElementById('vgProductName')?.value?.trim() || '';
+  const url  = document.getElementById('vgProductUrl')?.value?.trim()  || '';
+  if(!name && !url) { alert('제품명 또는 URL을 먼저 입력하세요.'); return; }
+  const dur = vgGetDur();
+  let ctaText = '';
+  if(name && url) ctaText = `📦 ${name} → 링크는 댓글에!`;
+  else if(name)   ctaText = `📦 ${name} — 링크 댓글 확인!`;
+  else             ctaText = `👉 ${url.length > 30 ? url.slice(0,30)+'…' : url}`;
+  // Remove existing CTA at the end (last 3s) and add new one
+  vgSubs = vgSubs.filter(s => s.end < dur - 3);
+  vgSubs.push({ start: dur - 4, end: dur, text: ctaText });
+  vgRenderSubs(); vgUpdateTL();
+  alert(`✅ CTA 자막 추가됨: "${ctaText}"`);
 }
 
 // 스타일

@@ -1156,6 +1156,29 @@ select option{background:var(--bg3)}
 
           <!-- 오른쪽: 설정 -->
           <div class="vg-right">
+            <!-- 상품 정보 -->
+            <div style="background:#f8faff;border:1px solid rgba(108,92,231,.2);border-radius:10px;padding:12px">
+              <div style="font-size:11px;font-weight:700;color:var(--accent);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">🛍️ 상품 정보</div>
+              <div style="display:flex;flex-direction:column;gap:7px">
+                <div>
+                  <div style="font-size:10px;color:var(--text3);margin-bottom:3px">제품명</div>
+                  <input id="vgProductName" type="text" placeholder="예) 다이슨 헤어드라이어 V9" style="width:100%;font-size:12px;padding:6px 9px;border:1px solid rgba(108,92,231,.25);border-radius:7px;background:var(--bg2);color:var(--text1)" oninput="vgUpdateProductOverlay()">
+                </div>
+                <div>
+                  <div style="font-size:10px;color:var(--text3);margin-bottom:3px">상품 URL (쿠팡·네이버·11번가 등)</div>
+                  <input id="vgProductUrl" type="url" placeholder="https://www.coupang.com/..." style="width:100%;font-size:12px;padding:6px 9px;border:1px solid rgba(108,92,231,.25);border-radius:7px;background:var(--bg2);color:var(--text1)">
+                </div>
+                <div>
+                  <div style="font-size:10px;color:var(--text3);margin-bottom:3px">상품 이미지 URL (직접 붙여넣기)</div>
+                  <div style="display:flex;gap:5px">
+                    <input id="vgProductImgUrl" type="url" placeholder="https://image.coupangcdn.com/..." style="flex:1;font-size:12px;padding:6px 9px;border:1px solid rgba(108,92,231,.25);border-radius:7px;background:var(--bg2);color:var(--text1)">
+                    <button onclick="vgAddImgFromUrl()" style="font-size:11px;padding:5px 10px;background:var(--accent);color:#fff;border:none;border-radius:7px;cursor:pointer;white-space:nowrap">추가</button>
+                  </div>
+                </div>
+                <button onclick="vgApplyProductCta()" style="width:100%;font-size:11px;padding:7px;background:rgba(108,92,231,.12);color:var(--accent);border:1px solid rgba(108,92,231,.3);border-radius:7px;cursor:pointer;font-weight:600">📌 제품명 + URL → 마지막 자막에 CTA 자동 추가</button>
+              </div>
+            </div>
+
             <!-- 이미지 업로드 -->
             <div>
               <div class="label">📸 상품 이미지 (최대 10장)</div>
@@ -3285,6 +3308,51 @@ const VG_COLORS = ['#6c5ce7','#00b894','#ffd32a','#fd79a8','#74b9ff','#e17055','
 function vgGetCanvas(){ return document.getElementById('vgCanvas'); }
 function vgGetCtx(){ return vgGetCanvas()?.getContext('2d'); }
 function vgGetDur(){ return parseInt(document.getElementById('vgDuration')?.value||'30'); }
+
+// 상품 정보 헬퍼
+function vgAddImgFromUrl(){
+  const url = document.getElementById('vgProductImgUrl')?.value?.trim();
+  if(!url){alert('이미지 URL을 입력하세요.');return;}
+  if(vgImgs.length>=10){alert('최대 10장!');return;}
+  const img=new Image();
+  img.crossOrigin='anonymous';
+  img.onload=function(){
+    vgImgs.push({name:'product_img',el:img});
+    vgRenderImgGrid();vgUpdateTL();vgDrawFrame(vgCurTime);
+    document.getElementById('vgProductImgUrl').value='';
+    alert('✅ 이미지 추가 완료!');
+  };
+  img.onerror=function(){
+    // CORS 실패 시 placeholder 캔버스
+    const c=document.createElement('canvas');c.width=360;c.height=640;
+    const ctx=c.getContext('2d');
+    ctx.fillStyle='#667eea';ctx.fillRect(0,0,360,640);
+    ctx.fillStyle='#fff';ctx.font='bold 24px sans-serif';ctx.textAlign='center';
+    ctx.fillText('상품 이미지',180,320);
+    const ph=new Image();ph.src=c.toDataURL();
+    ph.onload=()=>{vgImgs.push({name:'product_img',el:ph});vgRenderImgGrid();vgUpdateTL();vgDrawFrame(vgCurTime);};
+    alert('⚠️ 이미지 로드 실패. 대체 이미지를 사용합니다.');
+  };
+  img.src=url;
+}
+function vgUpdateProductOverlay(){
+  const name=document.getElementById('vgProductName')?.value||'';
+  // 제품명이 있으면 타임라인 제목 업데이트 (시각적 힌트)
+}
+function vgApplyProductCta(){
+  const name=document.getElementById('vgProductName')?.value?.trim()||'';
+  const url=document.getElementById('vgProductUrl')?.value?.trim()||'';
+  if(!name&&!url){alert('제품명 또는 URL을 먼저 입력하세요.');return;}
+  const dur=vgGetDur();
+  let ctaText='';
+  if(name&&url) ctaText=`📦 ${name} → 링크는 댓글에!`;
+  else if(name)  ctaText=`📦 ${name} — 링크 댓글 확인!`;
+  else           ctaText=`👉 ${url.length>30?url.slice(0,30)+'…':url}`;
+  vgSubs=vgSubs.filter(s=>s.end<dur-3);
+  vgSubs.push({start:dur-4,end:dur,text:ctaText});
+  vgRenderSubs();vgUpdateTL();
+  alert(`✅ CTA 자막 추가됨: "${ctaText}"`);
+}
 
 // 이미지
 function vgDrop(e){ e.preventDefault(); vgProcessFiles(Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/'))); }
