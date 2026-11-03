@@ -527,6 +527,7 @@ textarea.finp{resize:vertical;min-height:80px;}
       <div class="sb-item" id="nav-conv" onclick="showPage('converter')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-radius:8px;font-size:13px;color:var(--muted)">🔄 영상 변환기 <span style="background:var(--green,#00b894);color:#fff;font-size:9px;padding:1px 6px;border-radius:999px;margin-left:auto">NEW</span></div>
       <div class="sb-item" id="nav-vid" onclick="showPage('videogen')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-radius:8px;font-size:13px;color:var(--muted)">🎬 영상 생성기 <span style="background:var(--acc);color:#fff;font-size:9px;padding:1px 6px;border-radius:999px;margin-left:auto">NEW</span></div>
       <div class="sb-item" id="nav-cheatkey" onclick="showPage('cheatkey')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-radius:8px;font-size:13px;color:var(--muted)">⚡ 쇼핑숏폼 치트키 6 <span style="background:#FF6124;color:#fff;font-size:9px;padding:1px 6px;border-radius:999px;margin-left:auto">HOT</span></div>
+      <div class="sb-item" id="nav-backcoach" onclick="showPage('backcoach')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-radius:8px;font-size:13px;color:var(--muted)">🧠 백코치 대본생성기 <span style="background:#4CAF50;color:#fff;font-size:9px;padding:1px 6px;border-radius:999px;margin-left:auto">AI</span></div>
     <div class="sb-item">🔔 알림</div>
   </div>
   <div class="sb-grp">
@@ -810,7 +811,7 @@ function openM(id){document.getElementById(id).classList.remove('hidden');}
 function showPage(p){
   S.page=p;
   document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('active'));
-  const ts={wizard:'새 프로젝트',library:'내 보관함',home:'메인',videogen:'🎬 영상 생성기',converter:'🔄 영상 변환기',matcher:'🛒 상품매칭+클릭바',cheatkey:'⚡ 쇼핑숏폼 치트키 6'};
+  const ts={wizard:'새 프로젝트',library:'내 보관함',home:'메인',videogen:'🎬 영상 생성기',converter:'🔄 영상 변환기',matcher:'🛒 상품매칭+클릭바',cheatkey:'⚡ 쇼핑숏폼 치트키 6',backcoach:'🧠 백코치식 쇼핑쇼츠 대본생성기'};
   document.getElementById('topbar-t').textContent=ts[p]||'';
   if(p==='wizard')document.getElementById('nav-new').classList.add('active');
   if(p==='library')document.getElementById('nav-lib').classList.add('active');
@@ -818,6 +819,7 @@ function showPage(p){
   if(p==='converter'){document.getElementById('nav-conv')?.classList.add('active');}
   if(p==='matcher'){document.getElementById('nav-match')?.classList.add('active');}
   if(p==='cheatkey'){document.getElementById('nav-cheatkey')?.classList.add('active');}
+  if(p==='backcoach'){document.getElementById('nav-backcoach')?.classList.add('active');}
   renderPage(p);
 }
 function renderPage(p){
@@ -828,6 +830,7 @@ function renderPage(p){
   if(p==='converter'){renderConverter();return;}
   if(p==='matcher'){renderMatcher();return;}
   if(p==='cheatkey'){renderCheatkey();return;}
+  if(p==='backcoach'){renderBackcoachSk();return;}
   c.innerHTML=`<div class="ldg"><div style="font-size:40px;">🏠</div><div style="margin-top:12px;color:var(--muted);">메인 페이지</div></div>`;
 }
 
@@ -2914,6 +2917,211 @@ function ckCopy(idx) {
   const copy = t => { try { navigator.clipboard.writeText(t); } catch(e) { const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta); } };
   copy(s.prompt);
   if(btn){ const o=btn.textContent; btn.textContent='✓'; setTimeout(()=>btn.textContent=o,1500); }
+}
+
+/* ══════════════════════════
+   백코치식 쇼핑쇼츠 대본생성기
+══════════════════════════ */
+function skGetGeminiKey() {
+  return document.getElementById('sk-bc-key')?.value?.trim()
+    || localStorage.getItem('gemini_key') || '';
+}
+
+function renderBackcoachSk() {
+  const mc = document.getElementById('mc');
+  const savedKey = localStorage.getItem('gemini_key') || '';
+  mc.innerHTML = `
+  <div style="padding:16px;max-width:800px">
+    <div style="background:linear-gradient(135deg,rgba(76,175,80,.12),rgba(108,92,231,.08));border:1px solid rgba(76,175,80,.3);border-radius:14px;padding:16px;margin-bottom:16px;display:flex;align-items:center;gap:12px">
+      <div style="font-size:36px">🧠</div>
+      <div>
+        <div style="font-size:16px;font-weight:700">백코치식 쇼핑쇼츠 대본생성기</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px">원본 대본 → 소구점 분석 → 완전히 새로운 대본 3개 + 인스타 캡션 (Gemini AI)</div>
+      </div>
+    </div>
+
+    <!-- Gemini 키 -->
+    <div style="background:white;border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px">
+      <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px">🔑 Gemini API 키</div>
+      <div style="display:flex;gap:8px">
+        <input id="sk-bc-key" type="password" placeholder="AIzaSy..." value="${savedKey}"
+          style="flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;outline:none;font-family:inherit"
+          oninput="localStorage.setItem('gemini_key',this.value)">
+        <a href="https://aistudio.google.com/app/apikey" target="_blank"
+          style="padding:8px 12px;background:rgba(76,175,80,.1);border:1px solid rgba(76,175,80,.3);border-radius:6px;color:#16a34a;font-size:11px;font-weight:700;text-decoration:none;display:flex;align-items:center;white-space:nowrap">🆓 무료 발급</a>
+      </div>
+    </div>
+
+    <!-- 원본 대본 -->
+    <div style="background:white;border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px">
+      <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px">📋 원본 대본 <span style="font-size:10px;font-weight:400;text-transform:none">(바이럴 영상 자막/스크립트 붙여넣기)</span></div>
+      <textarea id="sk-bc-script" rows="6" placeholder="예) 이거 진짜 모르면 손해야&#10;나 이거 쓰고 나서 완전 달라졌거든&#10;가격도 이게 맞아?..."
+        style="width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;outline:none;resize:vertical;font-family:inherit;min-height:100px"></textarea>
+    </div>
+
+    <!-- 상품명 -->
+    <div style="background:white;border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:14px">
+      <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px">🛍️ 상품명 또는 URL</div>
+      <input id="sk-bc-product" type="text" placeholder="예) 접이식 소파베드 / 쿠팡 URL / 제품명"
+        style="width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;outline:none;font-family:inherit">
+    </div>
+
+    <button id="sk-bc-gen-btn" onclick="skBcGenerate()" class="btn btn-p btn-full btn-lg">
+      🧠 소구점 분석 + 새 대본 3개 생성하기
+    </button>
+
+    <!-- 로딩 -->
+    <div id="sk-bc-spinner" style="display:none;text-align:center;padding:24px;font-size:13px;color:var(--muted)">
+      ⏳ Gemini AI가 소구점을 분석하고 새 대본을 생성 중입니다... (10-20초 소요)
+    </div>
+
+    <!-- 결과 -->
+    <div id="sk-bc-result"></div>
+  </div>`;
+}
+
+async function skBcGenerate() {
+  const script = document.getElementById('sk-bc-script')?.value?.trim() || '';
+  const product = document.getElementById('sk-bc-product')?.value?.trim() || '';
+  const key = skGetGeminiKey();
+
+  if(!key) { alert('Gemini API 키를 입력하세요. Google AI Studio(aistudio.google.com)에서 무료로 발급받을 수 있습니다.'); return; }
+  if(!script && !product) { alert('원본 대본 또는 상품명을 입력하세요.'); return; }
+
+  const btn = document.getElementById('sk-bc-gen-btn');
+  const spinner = document.getElementById('sk-bc-spinner');
+  const resultEl = document.getElementById('sk-bc-result');
+  btn.disabled = true; btn.textContent = '⏳ 생성 중...';
+  spinner.style.display = 'block'; resultEl.innerHTML = '';
+
+  const prompt = `당신은 쇼핑 숏폼 영상 대본 전문가입니다.
+아래 원본 대본을 분석하여 소구점(핵심 판매 포인트)을 추출하고, 그 소구점을 바탕으로 완전히 새로운 대본 3개를 작성하세요.
+원본을 절대 복사하거나 리믹스하지 말고, 소구점에서 새롭게 창작하세요.
+
+상품명/URL: ${product || '(원본 대본에서 파악)'}
+
+원본 대본:
+${script || '(상품명/URL에서 파악)'}
+
+아래 형식으로 정확히 출력하세요:
+
+[원본 상품 소구점]
+상품: (이 상품이 무엇인지 한 줄)
+사용상황: (언제/어디서/어떤 상황에 사용하는지)
+사용방법: (어떻게 사용하는지)
+핵심기능: (가장 중요한 기능이나 스펙)
+장점: (경쟁 상품 대비 차별화 포인트)
+
+[새 대본 1]
+(문제 공감형 훅으로 시작 — 타깃의 불편함/고민에서 출발)
+(원본과 완전히 다른 새로운 스토리로 15초 분량)
+궁금하신 분들은 댓글에 '나도' 남겨주세요?
+
+[새 대본 2]
+(가성비/충격 가격형 훅으로 시작 — 가격 놀라움에서 출발)
+(원본과 완전히 다른 새로운 스토리로 15초 분량)
+궁금하신 분들은 댓글에 '나도' 남겨주세요?
+
+[새 대본 3]
+(변화/결과형 훅으로 시작 — 사용 전후 변화에서 출발)
+(원본과 완전히 다른 새로운 스토리로 15초 분량)
+궁금하신 분들은 댓글에 '나도' 남겨주세요?
+
+[인스타 캡션]
+(이모지와 핵심 혜택을 포함한 2-3줄 캡션)
+#해시태그1 #해시태그2 #해시태그3 #해시태그4 #해시태그5 #해시태그6 #해시태그7 #해시태그8
+
+주의사항:
+- 각 새 대본은 서로 다른 훅 구조 사용 (문제공감/가성비/변화결과)
+- 자연스러운 구어체 한국어 사용
+- 각 대본은 소구점의 다른 측면을 강조
+- 해시태그는 실제 트렌딩 태그로 8개 이상 작성`;
+
+  try {
+    const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { temperature: 0.85, maxOutputTokens: 2048 }
+      })
+    });
+    const data = await resp.json();
+    if(data.error) throw new Error(data.error.message);
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    skBcRenderResult(text);
+  } catch(e) {
+    resultEl.innerHTML = `<div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:10px;padding:14px;color:#dc2626;font-size:13px;margin-top:14px">⚠️ 오류: ${e.message}<br><br>• API 키를 확인하세요<br>• Gemini 무료 한도를 초과했을 수 있습니다</div>`;
+  } finally {
+    btn.disabled = false; btn.textContent = '🧠 소구점 분석 + 새 대본 3개 생성하기';
+    spinner.style.display = 'none';
+  }
+}
+
+function skBcRenderResult(text) {
+  const resultEl = document.getElementById('sk-bc-result');
+  const sections = [
+    { key:'[원본 상품 소구점]', id:'skbc-s1', title:'📊 원본 상품 소구점', color:'#2563eb' },
+    { key:'[새 대본 1]',       id:'skbc-s2', title:'✏️ 새 대본 1 (문제 공감형)', color:'#7c3aed' },
+    { key:'[새 대본 2]',       id:'skbc-s3', title:'✏️ 새 대본 2 (가성비형)',   color:'#16a34a' },
+    { key:'[새 대본 3]',       id:'skbc-s4', title:'✏️ 새 대본 3 (변화·결과형)', color:'#db2777' },
+    { key:'[인스타 캡션]',     id:'skbc-s5', title:'📱 인스타 캡션 + 해시태그', color:'#d97706' }
+  ];
+
+  let html = '<div style="margin-top:16px;display:flex;flex-direction:column;gap:12px">';
+  sections.forEach((sec, i) => {
+    const start = text.indexOf(sec.key);
+    if(start === -1) return;
+    const nextKeys = sections.slice(i+1).map(s => s.key);
+    let end = text.length;
+    nextKeys.forEach(nk => { const ni = text.indexOf(nk); if(ni > start && ni < end) end = ni; });
+    const content = text.slice(start + sec.key.length, end).trim();
+    html += `<div style="background:white;border:1px solid ${sec.color}33;border-left:3px solid ${sec.color};border-radius:10px;padding:14px">
+      <div style="font-size:12px;font-weight:700;color:${sec.color};margin-bottom:8px">${sec.title}</div>
+      <div id="${sec.id}" style="font-size:12px;color:var(--text);line-height:1.85;white-space:pre-wrap">${content.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+      <div style="display:flex;justify-content:flex-end;gap:6px;margin-top:10px">
+        <button onclick="skBcCopy('${sec.id}','${sec.id}-btn')" id="${sec.id}-btn"
+          style="padding:5px 12px;background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:11px;cursor:pointer;font-family:inherit">📋 복사</button>
+        ${i >= 1 && i <= 3 ? `<button onclick="skBcToVideo('${sec.id}')"
+          style="padding:5px 12px;background:var(--primary-l);border:1px solid var(--primary);border-radius:6px;color:var(--primary);font-size:11px;cursor:pointer;font-family:inherit">▶ 영상으로</button>` : ''}
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+
+  if(!sections.some(s => text.includes(s.key))) {
+    html = `<div style="background:white;border:1px solid var(--border);border-radius:10px;padding:14px;margin-top:14px"><div style="font-size:12px;color:var(--text);line-height:1.85;white-space:pre-wrap">${text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div></div>`;
+  }
+  resultEl.innerHTML = html;
+}
+
+function skBcCopy(id, btnId) {
+  const el = document.getElementById(id);
+  const btn = document.getElementById(btnId);
+  if(!el) return;
+  const txt = el.innerText || el.textContent;
+  try { navigator.clipboard.writeText(txt); }
+  catch(e) { const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta); }
+  if(btn){ const o=btn.textContent; btn.textContent='✓ 복사됨'; setTimeout(()=>btn.textContent=o,1500); }
+}
+
+function skBcToVideo(sectionId) {
+  const el = document.getElementById(sectionId);
+  if(!el) return;
+  let txt = (el.innerText || el.textContent).trim();
+  const lines = txt.split('\n').filter(l => l.trim());
+  let converted = '[씬] 제품+사람 동시 등장 · 클로즈업 교차\n';
+  let t = 0;
+  lines.forEach(l => { if(l.trim()){ converted += `[${t}초] ${l.trim()}\n`; t += 3; } });
+  const ta = document.getElementById('vgScript');
+  if(ta) ta.value = converted;
+  if(typeof vgParseScript === 'function') vgParseScript();
+  showPage('videogen');
+  setTimeout(() => {
+    const e2 = document.getElementById('vgScript');
+    if(e2) e2.scrollIntoView({ behavior:'smooth', block:'center' });
+    setTimeout(() => { if(typeof vgGenerate === 'function') vgGenerate(); }, 300);
+  }, 200);
 }
 
 function renderMatcher() {
