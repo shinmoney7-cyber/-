@@ -3801,16 +3801,17 @@ function _showCapCutInteractive() {
   ];
   const sfxList = ['Whoosh (등장)','Ding (알림)','Thud (임팩트)','Pop (효과)','Cash Register (구매)','Fanfare (완료)'];
   const subPositions = ['상단 10%','상단 20%','중앙','하단 20%','하단 10%'];
-  const voiceOptions = [
-    {name:'Lucy',desc:'한국어 여성·밝음',best:'뷰티/패션'},
-    {name:'Daniel',desc:'한국어 남성·중후함',best:'전자제품'},
-    {name:'Sora',desc:'한국어 여성·활기',best:'쇼핑 일반'},
-    {name:'Auto',desc:'자동 캡션 변환',best:'빠른 제작'},
-    {name:'경상도 여성',desc:'사투리·경상도 억양',best:'친근·유머'},
-    {name:'전라도 남성',desc:'사투리·전라도 억양',best:'감성·진정성'},
-    {name:'충청도 여성',desc:'사투리·충청도 억양',best:'느긋·신뢰'},
-    {name:'부산 아재',desc:'사투리·부산 억양',best:'개성·화제성'},
-  ];
+  const voiceCats = {
+    '홈쇼핑':[{name:'민희',gen:'여',desc:'열정·판매 강조',best:'홈쇼핑/라이브'},{name:'지연',gen:'여',desc:'속도감·긴장감',best:'한정세일'},{name:'소연',gen:'여',desc:'신뢰감·차분함',best:'고급 쇼핑'},{name:'하연',gen:'여',desc:'밝고 활기찬',best:'뷰티/패션'},{name:'나라',gen:'여',desc:'전문성·고급',best:'프리미엄'},{name:'준호',gen:'남',desc:'중저음·신뢰',best:'가전/IT'},{name:'성민',gen:'남',desc:'열정·설득력',best:'건강/스포츠'},{name:'태준',gen:'남',desc:'전문가·권위',best:'투자/가전'},{name:'경호',gen:'남',desc:'친근·유머',best:'생활/식품'},{name:'민재',gen:'남',desc:'속도감·에너지',best:'SNS/틱톡'}],
+    '시니어':[{name:'순자',gen:'여',desc:'따뜻함·어르신',best:'건강/의류'},{name:'복자',gen:'여',desc:'신뢰감·중장년',best:'의약품'},{name:'영희',gen:'여',desc:'부드러움·50대',best:'가정/식품'},{name:'경희',gen:'여',desc:'차분함·60대',best:'여행/보험'},{name:'정숙',gen:'여',desc:'다정함·중년',best:'화장품'},{name:'영철',gen:'남',desc:'중후함·60대',best:'건강/의료'},{name:'봉수',gen:'남',desc:'권위·어르신',best:'투자/보험'},{name:'상규',gen:'남',desc:'신뢰감·50대',best:'전통/건강'},{name:'인수',gen:'남',desc:'따뜻함·중장년',best:'생활/식품'},{name:'현식',gen:'남',desc:'부드러움·중년',best:'여행/레저'}],
+    '아동':[{name:'소율',gen:'여',desc:'밝고 귀여움 7~10세',best:'완구/교육'},{name:'유나',gen:'여',desc:'활기차고 명랑 10~13세',best:'학습/게임'},{name:'채원',gen:'여',desc:'천진난만 6~8세',best:'그림책'},{name:'나은',gen:'여',desc:'씩씩함 10~12세',best:'스포츠'},{name:'지우',gen:'여',desc:'따뜻함 8~11세',best:'학습/독서'},{name:'준서',gen:'남',desc:'장난기 8~10세',best:'게임/완구'},{name:'민호',gen:'남',desc:'활발함 10~12세',best:'스포츠'},{name:'태현',gen:'남',desc:'씩씩함 9~11세',best:'로봇/과학'},{name:'재민',gen:'남',desc:'호기심 7~9세',best:'교육/책'},{name:'도현',gen:'남',desc:'유쾌함 10~13세',best:'캐릭터'}],
+    '일반인':[{name:'Lucy',gen:'여',desc:'밝음·쇼핑 추천',best:'뷰티/패션'},{name:'Sora',gen:'여',desc:'활기·자연스러움',best:'생활/트렌드'},{name:'지수',gen:'여',desc:'차분함·진정성',best:'리뷰/언박싱'},{name:'민지',gen:'여',desc:'친근·일상적',best:'브이로그'},{name:'혜지',gen:'여',desc:'신뢰감 20~30대',best:'전문리뷰'},{name:'Daniel',gen:'남',desc:'중후함·안정감',best:'전자/가전'},{name:'준호',gen:'남',desc:'친근·젊은 감각',best:'SNS/트렌드'},{name:'민준',gen:'남',desc:'활기·20대',best:'게임/IT'},{name:'서준',gen:'남',desc:'진지함·30대',best:'전문 리뷰'},{name:'재호',gen:'남',desc:'유머·친근함',best:'음식/여행'}],
+    '사투리':[{name:'경상도 여성',gen:'여',desc:'경상도 억양·친근',best:'친근·유머'},{name:'전라도 남성',gen:'남',desc:'전라도 억양·감성',best:'감성'},{name:'충청도 여성',gen:'여',desc:'충청도 억양·느긋',best:'신뢰'},{name:'부산 아재',gen:'남',desc:'부산 억양·개성',best:'화제성'}],
+  };
+  const vcKeys = Object.keys(voiceCats);
+  const vcIcons = {'홈쇼핑':'🏪','시니어':'👴','아동':'🧒','일반인':'👤','사투리':'🗣️'};
+  const vcTabsHtml = vcKeys.map((cat,i)=>`<button data-vt="${cat}" onclick="const s=this.closest('[data-vs]');const c=this.dataset.vt;s.querySelectorAll('[data-vp]').forEach(d=>d.style.display=d.dataset.vp===c?'grid':'none');s.querySelectorAll('[data-vt]').forEach(b=>{b.style.background=b.dataset.vt===c?'rgba(192,132,252,.4)':'rgba(255,255,255,.06)';b.style.borderColor=b.dataset.vt===c?'rgba(192,132,252,.5)':'rgba(255,255,255,.15)'})" style="padding:4px 10px;border-radius:6px;background:${i===0?'rgba(192,132,252,.4)':'rgba(255,255,255,.06)'};border:1px solid ${i===0?'rgba(192,132,252,.5)':'rgba(255,255,255,.15)'};color:#fff;font-size:11px;cursor:pointer">${vcIcons[cat]} ${cat}</button>`).join('');
+  const vcPanelsHtml = vcKeys.map((cat,ci)=>`<div data-vp="${cat}" style="display:${ci===0?'grid':'none'};grid-template-columns:1fr 1fr;gap:5px">${voiceCats[cat].map((v,vi)=>`<button onclick="this.closest('[data-vp]').querySelectorAll('button').forEach(b=>b.style.background='rgba(255,255,255,.06)');this.style.background='rgba(192,132,252,.3)'" style="padding:8px 10px;border:1px solid rgba(192,132,252,.2);border-radius:8px;background:${vi===0&&ci===0?'rgba(192,132,252,.3)':'rgba(255,255,255,.06)'};color:#fff;font-size:11px;cursor:pointer;text-align:left"><div style="display:flex;align-items:center;gap:4px;margin-bottom:2px"><span style="background:${v.gen==='여'?'#db2877':'#2563eb'};color:#fff;font-size:9px;padding:1px 4px;border-radius:3px">${v.gen}</span><span style="font-weight:700">${v.name}</span></div><div style="font-size:10px;color:rgba(255,255,255,.5)">${v.desc}</div><div style="font-size:10px;color:#c084fc;margin-top:1px">추천: ${v.best}</div></button>`).join('')}</div>`).join('');
 
   const overlay = document.createElement('div');
   overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.8);z-index:9999;display:flex;align-items:center;justify-content:center;padding:12px';
@@ -3932,16 +3933,11 @@ function _showCapCutInteractive() {
         </div>
       </div>
 
-      <!-- AI 보이스오버 (사투리 포함) -->
-      <div style="background:rgba(255,255,255,.05);border-radius:10px;padding:12px;margin-bottom:14px">
-        <div style="font-size:12px;font-weight:700;color:#c084fc;margin-bottom:10px">🎤 AI 보이스오버 (사투리 포함)</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">
-        ${voiceOptions.map((v,i)=>`<button onclick="this.parentElement.querySelectorAll('button').forEach(b=>b.style.background='rgba(255,255,255,.06)');this.style.background='rgba(192,132,252,.3)'" style="padding:8px 10px;border:1px solid rgba(192,132,252,.2);border-radius:8px;background:${i===0?'rgba(192,132,252,.3)':'rgba(255,255,255,.06)'};color:#fff;font-size:11px;cursor:pointer;text-align:left">
-          <div style="font-weight:700;margin-bottom:2px">${v.name}</div>
-          <div style="font-size:10px;color:rgba(255,255,255,.5)">${v.desc}</div>
-          <div style="font-size:10px;color:#c084fc;margin-top:1px">추천: ${v.best}</div>
-        </button>`).join('')}
-        </div>
+      <!-- AI 보이스오버 44종 (카테고리별 탭) -->
+      <div data-vs style="background:rgba(255,255,255,.05);border-radius:10px;padding:12px;margin-bottom:14px">
+        <div style="font-size:12px;font-weight:700;color:#c084fc;margin-bottom:10px">🎤 AI 보이스오버 44종</div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px">${vcTabsHtml}</div>
+        ${vcPanelsHtml}
       </div>
 
       <button onclick="this.closest('[style*=position]').remove()" style="width:100%;padding:12px;background:linear-gradient(135deg,#6c5ce7,#00b464);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer">✅ CapCut 편집 시작!</button>
