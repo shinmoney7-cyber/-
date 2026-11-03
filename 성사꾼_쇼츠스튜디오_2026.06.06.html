@@ -499,7 +499,7 @@ textarea.finp{resize:vertical;min-height:80px;}
 .prog-wrap.show{display:block}
 .prog-bar{height:7px;background:var(--bg4);border-radius:999px;overflow:hidden}
 .prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:999px;transition:width .08s;width:0}
-.prog-txt{font-size:11px;color:var(--text3);margin-top:5px;text-align:center}
+.prog-txt{font-size:11px;color:var(--text2);margin-top:5px;text-align:center}
 .dl-box{background:rgba(0,184,148,.08);border:1px solid rgba(0,184,148,.3);border-radius:9px;padding:14px;margin-top:10px;display:none;text-align:center}
 .dl-box.show{display:block}
 @media(max-width:900px){.vg-wrap{grid-template-columns:1fr}}
@@ -561,6 +561,12 @@ textarea.finp{resize:vertical;min-height:80px;}
     <div class="sb-item" id="nav-lib" onclick="showPage('library')" style="display:flex;align-items:center;gap:8px;padding:9px 14px;cursor:pointer;border-radius:8px;font-size:13px;color:var(--muted)">
       <span style="background:#636e72;color:#fff;border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0">7</span>
       📁 내 보관함
+    </div>
+
+    <!-- STEP 8 -->
+    <div class="sb-item" id="nav-videoremix" onclick="showPage('videoremix')" style="display:flex;align-items:center;gap:8px;padding:9px 14px;cursor:pointer;border-radius:8px;font-size:13px;color:var(--muted)">
+      <span style="background:#e11d48;color:#fff;border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0">8</span>
+      🎬 영상 리믹스 <span style="background:#e11d48;color:#fff;font-size:9px;padding:1px 6px;border-radius:999px;margin-left:auto">NEW</span>
     </div>
 
     <div class="sb-item" style="display:flex;align-items:center;gap:8px;padding:9px 14px;font-size:13px;color:var(--muted)">🔔 알림</div>
@@ -846,7 +852,7 @@ function openM(id){document.getElementById(id).classList.remove('hidden');}
 function showPage(p){
   S.page=p;
   document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('active'));
-  const ts={wizard:'새 프로젝트',library:'내 보관함',home:'메인',videogen:'🎬 영상 생성기',converter:'🔄 영상 변환기',matcher:'🛒 상품매칭+클릭바',cheatkey:'⚡ 쇼핑숏폼 치트키 6',backcoach:'🧠 백코치식 쇼핑쇼츠 대본생성기'};
+  const ts={wizard:'새 프로젝트',library:'내 보관함',home:'메인',videogen:'🎬 영상 생성기',converter:'🔄 영상 변환기',matcher:'🛒 상품매칭+클릭바',cheatkey:'⚡ 쇼핑숏폼 치트키 6',backcoach:'🧠 백코치식 쇼핑쇼츠 대본생성기',videoremix:'🎬 영상 리믹스 (백코치 대본)');
   document.getElementById('topbar-t').textContent=ts[p]||'';
   if(p==='wizard')document.getElementById('nav-new').classList.add('active');
   if(p==='library')document.getElementById('nav-lib').classList.add('active');
@@ -855,6 +861,7 @@ function showPage(p){
   if(p==='matcher'){document.getElementById('nav-match')?.classList.add('active');}
   if(p==='cheatkey'){document.getElementById('nav-cheatkey')?.classList.add('active');}
   if(p==='backcoach'){document.getElementById('nav-backcoach')?.classList.add('active');}
+  if(p==='videoremix'){document.getElementById('nav-videoremix')?.classList.add('active');}
   renderPage(p);
 }
 function renderPage(p){
@@ -866,6 +873,7 @@ function renderPage(p){
   if(p==='matcher'){renderMatcher();return;}
   if(p==='cheatkey'){renderCheatkey();return;}
   if(p==='backcoach'){renderBackcoachSk();return;}
+  if(p==='videoremix'){renderVideoRemix();return;}
   c.innerHTML=`<div style="padding:16px">
     <div style="background:linear-gradient(135deg,rgba(108,92,231,.12),rgba(76,175,80,.08));border:1px solid rgba(108,92,231,.25);border-radius:14px;padding:16px;margin-bottom:16px;display:flex;align-items:center;gap:12px">
       <div style="font-size:36px">🏆</div>
@@ -2305,7 +2313,7 @@ function vgAddSub(s=0,e=3,t=''){ vgSubs.push({start:parseFloat(s),end:parseFloat
 function vgRenderSubs(){
   const list=document.getElementById('vgSubList');
   if(!list)return;
-  if(!vgSubs.length){list.innerHTML='<div style="text-align:center;color:var(--text3);padding:10px;font-size:12px">자막 없음. 추가 버튼을 클릭하세요.</div>';return;}
+  if(!vgSubs.length){list.innerHTML='<div style="text-align:center;color:var(--text2);padding:10px;font-size:12px">자막 없음. 추가 버튼을 클릭하세요.</div>';return;}
   list.innerHTML=vgSubs.map((s,i)=>`
     <div class="sub-row">
       <input type="number" value="${s.start}" min="0" step="0.5" style="font-family:Space Mono,monospace;font-size:11px;color:var(--accent2)" onchange="vgSubs[${i}].start=parseFloat(this.value);vgUpdateTL();vgDrawFrame(vgCurTime)">
@@ -2411,7 +2419,7 @@ function vgUpdateTL(){
   const dur=vgGetDur();
   const tl=document.getElementById('vgTimeline');
   if(!tl)return;
-  if(!vgImgs.length){tl.innerHTML='<div style="width:100%;background:var(--bg4);border-radius:4px;height:100%;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--text3)">이미지 업로드 필요</div>';return;}
+  if(!vgImgs.length){tl.innerHTML='<div style="width:100%;background:var(--bg4);border-radius:4px;height:100%;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--text2)">이미지 업로드 필요</div>';return;}
   const seg=100/vgImgs.length;
   tl.innerHTML=vgImgs.map((img,i)=>`<div class="vg-seg" style="width:${seg}%;background:${VG_COLORS[i%VG_COLORS.length]};opacity:.75" title="${img.name}">이미지${i+1}</div>`).join('');
 }
@@ -3112,9 +3120,219 @@ function skGetGeminiKey() {
     || localStorage.getItem('gemini_key') || '';
 }
 
+function renderVideoRemix() {
+  const mc = document.getElementById('mc');
+  mc.innerHTML = `
+  <div style="padding:16px">
+    <div style="background:linear-gradient(135deg,rgba(225,29,72,.12),rgba(108,92,231,.08));border:1px solid rgba(225,29,72,.3);border-radius:14px;padding:16px;margin-bottom:16px;display:flex;align-items:center;gap:12px">
+      <div style="font-size:36px">🎬</div>
+      <div>
+        <div style="font-size:16px;font-weight:700;color:var(--text)">영상 리믹스 → 백코치 대본</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px">유튜브·인스타·틱톡 영상 URL → 자막 분석 → 백코치 스타일 리믹스 대본 + CapCut 가이드</div>
+      </div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:14px">
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px">📹 STEP 1 — 영상 URL 입력</div>
+      <div style="display:flex;gap:8px;margin-bottom:8px">
+        <input id="vr-url" type="url" placeholder="https://youtube.com/shorts/... 또는 youtu.be/... 틱톡/인스타 URL"
+          style="flex:1;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:12px;background:var(--bg);color:var(--text)" />
+        <button onclick="vrFetchMeta()" style="padding:10px 14px;background:#e11d48;border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">📡 정보가져오기</button>
+      </div>
+      <div id="vr-meta" style="display:none;background:var(--hover);border-radius:8px;padding:10px;font-size:12px;color:var(--text);margin-bottom:8px"></div>
+
+      <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:6px;margin-top:10px">📋 STEP 2 — 자막/스크립트 붙여넣기</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:6px">영상의 자막이나 대본을 복사해서 붙여넣으세요 (유튜브 자막 버튼 → 복사)</div>
+      <textarea id="vr-script" placeholder="[0:00] 자막 텍스트 1&#10;[0:03] 자막 텍스트 2&#10;..."
+        style="width:100%;height:120px;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:12px;background:var(--bg);color:var(--text);resize:vertical;box-sizing:border-box"></textarea>
+
+      <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:6px;margin-top:10px">🎯 STEP 3 — 리믹스 설정</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+        <div>
+          <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">리믹스 방향</label>
+          <select id="vr-style" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;font-size:12px;background:var(--bg);color:var(--text)">
+            <option value="backcoach">🧠 백코치 쇼핑 대본</option>
+            <option value="hook">🔥 훅 강화 리믹스</option>
+            <option value="short">⚡ 15초 압축본</option>
+            <option value="cta">🛒 CTA 강화본</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">타깃 플랫폼</label>
+          <select id="vr-platform" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;font-size:12px;background:var(--bg);color:var(--text)">
+            <option value="all">전체 (유튜브+인스타+틱톡)</option>
+            <option value="youtube">유튜브 쇼츠</option>
+            <option value="instagram">인스타 릴스</option>
+            <option value="tiktok">틱톡</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-bottom:10px">
+        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">상품명 (선택 — 넣으면 쇼핑 대본으로 최적화)</label>
+        <input id="vr-product" type="text" placeholder="예: 쿠팡 에어팟 프로 대체템"
+          style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:12px;background:var(--bg);color:var(--text);box-sizing:border-box" />
+      </div>
+      <button onclick="vrGenerate()" style="width:100%;padding:12px;background:linear-gradient(135deg,#e11d48,#6c5ce7);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer">
+        🎬 백코치 리믹스 대본 생성
+      </button>
+    </div>
+
+    <div id="vr-result" style="display:none"></div>
+  </div>`;
+
+  window.vrFetchMeta = async function() {
+    const url = document.getElementById('vr-url').value.trim();
+    const metaDiv = document.getElementById('vr-meta');
+    if(!url){alert('URL을 입력해주세요.');return;}
+    metaDiv.style.display='block';
+    metaDiv.innerHTML='⏳ 영상 정보 가져오는 중...';
+
+    // YouTube oEmbed
+    let isYT = url.includes('youtube.com') || url.includes('youtu.be');
+    if(isYT){
+      try{
+        const oUrl = 'https://www.youtube.com/oembed?url='+encodeURIComponent(url)+'&format=json';
+        const r = await fetch(oUrl);
+        if(r.ok){
+          const d = await r.json();
+          metaDiv.innerHTML = `<strong>${d.title}</strong><br><span style="font-size:11px;color:var(--muted)">${d.author_name}</span>`;
+          document.getElementById('vr-product').value = d.title;
+          return;
+        }
+      }catch(e){}
+    }
+    metaDiv.innerHTML = `✅ URL 인식 완료 — 자막을 아래에 붙여넣어 주세요<br><span style="font-size:11px;color:var(--muted)">(틱톡/인스타는 자동 정보 수집이 제한됩니다)</span>`;
+  };
+
+  window.vrGenerate = async function() {
+    const script = document.getElementById('vr-script').value.trim();
+    const style = document.getElementById('vr-style').value;
+    const platform = document.getElementById('vr-platform').value;
+    const product = document.getElementById('vr-product').value.trim();
+    const resDiv = document.getElementById('vr-result');
+
+    if(!script){alert('자막/스크립트를 붙여넣어 주세요.');return;}
+
+    const gemKey = localStorage.getItem('gemini_key') || localStorage.getItem('gcpKey') || '';
+    if(!gemKey){
+      resDiv.style.display='block';
+      resDiv.innerHTML=`<div style="background:#fff5f5;border:1px solid #fca5a5;border-radius:10px;padding:14px;font-size:12px;color:#dc2626">
+        ⚠️ Gemini API Key가 없습니다. 상단 ⚙️ 설정에서 키를 입력해주세요.</div>`;
+      return;
+    }
+
+    const styleMap = {
+      backcoach:'백코치식 쇼핑 숏폼 대본 (훅→문제공감→솔루션→증거→CTA 5단계 구조)',
+      hook:'첫 3초 훅을 5배 강화한 리믹스 (충격적 질문이나 반전 사실로 시작)',
+      short:'15초 이내로 압축한 초압축 버전 (핵심 1문장 훅 + 스펙 2가지 + CTA)',
+      cta:'구매 행동 유도 극대화 버전 (희소성·할인·링크 클릭 강조)',
+    };
+    const platMap = {all:'유튜브 쇼츠·인스타 릴스·틱톡 모두',youtube:'유튜브 쇼츠',instagram:'인스타 릴스',tiktok:'틱톡'};
+
+    resDiv.style.display='block';
+    resDiv.innerHTML=`<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px">
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px">⏳ AI 리믹스 생성 중...</div>
+    </div>`;
+
+    const prompt = `다음 영상 자막/스크립트를 분석해서 ${styleMap[style]}으로 완전히 리믹스해줘.
+타깃 플랫폼: ${platMap[platform]}
+${product ? '상품명: '+product : ''}
+
+원본 스크립트:
+${script}
+
+출력 형식 (JSON):
+{
+  "analysis": "원본 영상 핵심 분석 2줄",
+  "remix_title": "리믹스 제목",
+  "scenes": [
+    {"time":"0:00","text":"자막 내용 (20자 이내)","note":"연출 팁","style":"훅/본문/스펙/CTA 중 하나"}
+  ],
+  "hashtags": ["해시태그1","해시태그2"],
+  "capcut_tip": "이 영상에 맞는 CapCut 편집 핵심 팁 1문장",
+  "hook_score": 85,
+  "reason": "리믹스 포인트 설명 2줄"
+}
+
+규칙: 자막 1줄 20자 이내, 15~30초 분량, 백코치 스타일로 임팩트있게, 한국어만 사용`;
+
+    try{
+      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${gemKey}`,{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{responseMimeType:'application/json'}})
+      });
+      const d = await r.json();
+      const txt = d.candidates?.[0]?.content?.parts?.[0]?.text||'';
+      let parsed;
+      try{parsed=JSON.parse(txt);}catch(e){
+        parsed={analysis:'파싱 오류',remix_title:'리믹스 결과',scenes:[{time:'0:00',text:txt.slice(0,100),note:'',style:'본문'}],hashtags:[],capcut_tip:'',hook_score:70,reason:''};
+      }
+
+      const scoreColor = parsed.hook_score>=80?'#00b464':parsed.hook_score>=60?'#f59e0b':'#ef4444';
+      let html = `<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <div style="font-size:13px;font-weight:700;color:var(--text)">🎬 ${(parsed.remix_title||'리믹스 대본').replace(/</g,'&lt;')}</div>
+          <div style="background:${scoreColor};color:#fff;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700">훅점수 ${parsed.hook_score||'-'}점</div>
+        </div>
+        <div style="font-size:11px;color:var(--muted);background:var(--hover);border-radius:8px;padding:8px;margin-bottom:12px">${(parsed.analysis||'').replace(/</g,'&lt;')}</div>`;
+
+      // Scenes
+      html+=`<div style="margin-bottom:12px"><div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px">📋 리믹스 대본</div>`;
+      const styleColors={훅:'#e11d48',본문:'#2563eb',스펙:'#7c3aed',CTA:'#00b464'};
+      (parsed.scenes||[]).forEach(s=>{
+        const sc=styleColors[s.style]||'#666';
+        html+=`<div style="display:grid;grid-template-columns:40px 1fr auto;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);align-items:start">
+          <span style="font-family:monospace;font-size:11px;color:var(--muted)">${s.time||''}</span>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--text)">${s.text.replace(/</g,'&lt;')}</div>
+            ${s.note?`<div style="font-size:10px;color:var(--muted);margin-top:2px">${s.note.replace(/</g,'&lt;')}</div>`:''}
+          </div>
+          <span style="font-size:10px;padding:2px 7px;border-radius:999px;background:${sc}22;color:${sc};white-space:nowrap;font-weight:700">${s.style||''}</span>
+        </div>`;
+      });
+      html+=`</div>`;
+
+      // CapCut tip
+      if(parsed.capcut_tip){
+        html+=`<div style="background:#f0fdf4;border:1px solid rgba(0,180,100,.3);border-radius:8px;padding:10px;margin-bottom:10px;font-size:12px">
+          ✂️ <strong>CapCut 팁:</strong> ${parsed.capcut_tip.replace(/</g,'&lt;')}
+        </div>`;
+      }
+
+      // Hashtags
+      if(parsed.hashtags?.length){
+        html+=`<div style="margin-bottom:10px"><div style="font-size:11px;color:var(--muted);margin-bottom:5px">해시태그</div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap">
+          ${parsed.hashtags.map(h=>`<span style="background:var(--hover);padding:3px 8px;border-radius:6px;font-size:11px;color:var(--text)">#${h.replace(/^#/,'')}</span>`).join('')}
+          </div></div>`;
+      }
+
+      // Reason
+      if(parsed.reason){
+        html+=`<div style="font-size:11px;color:var(--muted);border-top:1px solid var(--border);padding-top:10px">${parsed.reason.replace(/</g,'&lt;')}</div>`;
+      }
+
+      // Copy + CapCut buttons
+      const allText = (parsed.scenes||[]).map(s=>s.text).join('\n');
+      html+=`<div style="display:flex;gap:8px;margin-top:12px">
+        <button onclick="navigator.clipboard.writeText(${JSON.stringify(allText)}).then(()=>this.textContent='✅ 복사됨!')" style="flex:1;padding:10px;background:var(--hover);border:1px solid var(--border);border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;color:var(--text)">📋 대본 복사</button>
+        <button onclick="skShowCapCutGuide()" style="flex:1;padding:10px;background:#6c5ce7;border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer">✂️ CapCut 가이드</button>
+      </div>`;
+
+      html+=`</div>`;
+      resDiv.innerHTML=html;
+    }catch(e){
+      resDiv.innerHTML=`<div style="background:#fff5f5;border:1px solid #fca5a5;border-radius:10px;padding:14px;font-size:12px;color:#dc2626">❌ 오류: ${e.message}</div>`;
+    }
+  };
+}
+
 function renderBackcoachSk() {
   const mc = document.getElementById('mc');
   const savedKey = localStorage.getItem('gemini_key') || '';
+  const savedCpAcc = localStorage.getItem('cp_access_key') || '';
+  const savedCpSec = localStorage.getItem('cp_secret_key') || '';
+  const savedCpSub = localStorage.getItem('cp_sub_id') || '';
   mc.innerHTML = `
   <div style="padding:16px;max-width:800px">
 
@@ -3451,118 +3669,286 @@ function skBcToCapCut(sectionId) {
   const txt = (el.innerText || el.textContent).trim();
   const lines = txt.split('\n').filter(l => l.trim());
 
-  let guideHtml = `<div style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:9999;display:flex;align-items:center;justify-content:center" onclick="if(event.target===this)this.remove()">
-    <div style="background:#fff;border-radius:16px;padding:20px;max-width:480px;width:90%;max-height:80vh;overflow-y:auto;font-family:inherit">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-        <div style="font-size:15px;font-weight:700">✂️ CapCut 무료 편집 가이드</div>
-        <button onclick="this.closest('[style*=fixed]').remove()" style="border:none;background:none;font-size:18px;cursor:pointer">×</button>
-      </div>
-      <div style="font-size:11px;color:#666;margin-bottom:14px">아래 순서대로 CapCut 무료 버전에서 편집하세요</div>`;
+  const subtitleStyles = [
+    {name:'훅 스타일',color:'#fff',bg:'rgba(0,0,0,.7)',border:'2px solid #ff6b35',emoji:'🔥'},
+    {name:'카라오케',color:'#ffe600',bg:'transparent',border:'none',emoji:'🎵'},
+    {name:'가격 강조',color:'#ff2d55',bg:'#fff',border:'none',emoji:'💰'},
+    {name:'CTA 스타일',color:'#fff',bg:'#00b464',border:'none',emoji:'🛒'},
+  ];
+  const transitions = ['Glitch','Zoom In','Slide Left','Shake','Flash','Bounce','Swipe Right','Rotate','Blur','Fade','Split','Warp'];
+  const textAnims = ['Typewriter','Pop In','Slide Up','Shake','Bounce','Glow','Blur In','Zoom'];
+  const bgmKeywords = ['"upbeat shopping"','"trendy pop beat"','"viral tiktok"','"hype music"','"lo-fi chill"'];
+  const sfxPlacements = ['0초: 훅 등장 SFX (Whoosh)','CTA 직전: 알림음 (Ding)','전환 포인트: 타격음 (Thud)','마지막: 팡파레 (Fanfare)'];
+  const filters = ['Vivid','Cinematic','Cool','Warm','B&W','Retro'];
+  const stickers = ['💥 SALE!','🔥 HOT','⚡ FAST','✅ 추천','🎁 선물용'];
+  const voiceOptions = ['Lucy(한국어 여성·밝음)','Daniel(한국어 남성·중후함)','Sora(한국어 여성·활기)','Auto Caption(자동)'];
+  const speedZones = ['0~1초: 2배속 (훅 임팩트)','중간 클라이맥스: 0.8배속 (강조)','마지막 1초: 0.5배속 슬로우 (CTA)'];
+  const exportPresets = [
+    {plat:'유튜브 쇼츠',res:'1080×1920',fps:'30fps',fmt:'MP4'},
+    {plat:'인스타 릴스',res:'1080×1920',fps:'30fps',fmt:'MP4'},
+    {plat:'틱톡',res:'1080×1920',fps:'60fps',fmt:'MP4'},
+  ];
 
   let t = 0;
-  guideHtml += `<div style="margin-bottom:12px"><div style="font-size:11px;font-weight:700;color:#333;margin-bottom:6px">⏱ 자막 타이밍</div>`;
-  lines.forEach((l, i) => {
+  const timings = lines.map((l, i) => {
     const dur = Math.max(2, Math.min(4, Math.ceil(l.length / 10)));
-    guideHtml += `<div style="display:grid;grid-template-columns:70px 1fr;gap:8px;padding:5px 0;border-bottom:1px solid #eee;font-size:11px">
-      <span style="color:#6c5ce7;font-family:monospace;font-weight:600">${t}~${t+dur}초</span>
-      <span style="color:#333">${l.replace(/</g,'&lt;')}</span>
-    </div>`;
+    const style = i === 0 ? subtitleStyles[0] : i === lines.length-1 ? subtitleStyles[3] : subtitleStyles[1];
+    const row = {t, dur, l, style};
     t += dur;
+    return row;
+  });
+  const totalSec = t;
+
+  let guideHtml = `<div style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.75);z-index:9999;display:flex;align-items:center;justify-content:center;padding:12px" onclick="if(event.target===this)this.remove()">
+    <div style="background:#fff;border-radius:16px;padding:20px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;font-family:inherit">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div style="font-size:15px;font-weight:700">✂️ CapCut 고급 편집 가이드</div>
+        <button onclick="this.closest('[style*=fixed]').remove()" style="border:none;background:none;font-size:20px;cursor:pointer;color:#666">×</button>
+      </div>
+      <div style="font-size:11px;color:#666;background:#f8f9ff;border-radius:8px;padding:10px;margin-bottom:14px">총 <strong>${totalSec}초</strong> / <strong>${lines.length}개</strong> 자막 — 아래 순서대로 편집하세요</div>`;
+
+  // STEP 1: Subtitle timing
+  guideHtml += `<div style="margin-bottom:14px"><div style="font-size:11px;font-weight:700;color:#6c5ce7;margin-bottom:8px">📝 STEP 1 — 자막 타이밍 + 스타일</div>`;
+  timings.forEach(r => {
+    guideHtml += `<div style="display:grid;grid-template-columns:70px 1fr auto;gap:8px;padding:6px 0;border-bottom:1px solid #eee;font-size:11px;align-items:center">
+      <span style="color:#6c5ce7;font-family:monospace;font-weight:600">${r.t}~${r.t+r.dur}초</span>
+      <span style="color:#333">${r.l.replace(/</g,'&lt;')}</span>
+      <span style="padding:2px 6px;border-radius:6px;font-size:10px;background:#f0f0f0;color:#555;white-space:nowrap">${r.style.emoji}${r.style.name}</span>
+    </div>`;
   });
   guideHtml += `</div>`;
 
-  const totalSec = t;
-  guideHtml += `
-    <div style="margin-bottom:12px">
-      <div style="font-size:11px;font-weight:700;color:#333;margin-bottom:6px">🔀 추천 전환 효과</div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap">
-        ${['Glitch','Zoom In','Slide Left','Shake','Flash'].map(e=>`<span style="background:#f3f4f6;padding:3px 8px;border-radius:6px;font-size:11px;color:#333">${e}</span>`).join('')}
-      </div>
+  // STEP 2: Subtitle styles
+  guideHtml += `<div style="margin-bottom:14px"><div style="font-size:11px;font-weight:700;color:#2563eb;margin-bottom:8px">🎨 STEP 2 — 자막 스타일 4종</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+    ${subtitleStyles.map(s=>`<div style="border:1px solid #e5e7eb;border-radius:8px;padding:8px;font-size:11px">
+      <div style="font-weight:700;margin-bottom:3px">${s.emoji} ${s.name}</div>
+      <div style="color:#555">글자색: <span style="color:${s.color==='#fff'?'#999':s.color};font-weight:600">${s.color}</span></div>
+    </div>`).join('')}
+    </div></div>`;
+
+  // STEP 3: Transitions
+  guideHtml += `<div style="margin-bottom:14px"><div style="font-size:11px;font-weight:700;color:#7c3aed;margin-bottom:8px">🔀 STEP 3 — 전환 효과 12종 (2~3개만 선택)</div>
+    <div style="display:flex;gap:5px;flex-wrap:wrap">
+    ${transitions.map(e=>`<span style="background:#f3f4f6;padding:3px 8px;border-radius:6px;font-size:11px;color:#333">${e}</span>`).join('')}
+    </div></div>`;
+
+  // STEP 4: Text animations
+  guideHtml += `<div style="margin-bottom:14px"><div style="font-size:11px;font-weight:700;color:#db2777;margin-bottom:8px">✨ STEP 4 — 텍스트 애니메이션 8종</div>
+    <div style="display:flex;gap:5px;flex-wrap:wrap">
+    ${textAnims.map(a=>`<span style="background:#fdf2f8;padding:3px 8px;border-radius:6px;font-size:11px;color:#9d174d">${a}</span>`).join('')}
     </div>
-    <div style="margin-bottom:12px">
-      <div style="font-size:11px;font-weight:700;color:#333;margin-bottom:6px">🎵 BGM (CapCut 무료음악)</div>
-      <div style="background:#f8f9ff;border-radius:8px;padding:10px;font-size:11px;color:#555">
-        검색키워드: <strong>"upbeat shopping"</strong> 또는 <strong>"trendy pop beat"</strong><br>
-        길이 ${totalSec}초에 맞게 자르기 → 페이드아웃 1초
-      </div>
+    <div style="font-size:10px;color:#666;margin-top:5px">훅 자막: Pop In / Typewriter 추천 · CTA: Shake / Zoom 추천</div></div>`;
+
+  // STEP 5: BGM + SFX
+  guideHtml += `<div style="margin-bottom:14px"><div style="font-size:11px;font-weight:700;color:#d97706;margin-bottom:8px">🎵 STEP 5 — BGM + 효과음</div>
+    <div style="background:#fffbeb;border-radius:8px;padding:10px;font-size:11px;margin-bottom:8px">
+      <div style="font-weight:700;margin-bottom:4px">BGM 검색키워드 (${totalSec}초 맞춤)</div>
+      ${bgmKeywords.map(k=>`<span style="display:inline-block;margin:2px 4px 2px 0;background:#fef9c3;padding:2px 8px;border-radius:6px;color:#92400e">${k}</span>`).join('')}
+      <div style="margin-top:6px;color:#666">음량 30~40% → 마지막 1초 페이드아웃</div>
     </div>
-    <div style="margin-bottom:12px">
-      <div style="font-size:11px;font-weight:700;color:#333;margin-bottom:6px">✏️ 텍스트 오버레이 팁</div>
-      <div style="display:flex;flex-direction:column;gap:5px;font-size:11px;color:#555">
-        <div>• 1번 자막: <strong>Bold + 흰색</strong> + 검정 테두리 (훅 강조)</div>
-        <div>• 중간 자막: <strong>일반 + 노란색</strong> (핵심 스펙)</div>
-        <div>• 마지막 자막: <strong>Bold + 빨간색</strong> (CTA)</div>
-      </div>
+    <div style="font-size:11px;font-weight:700;margin-bottom:5px">효과음 배치</div>
+    ${sfxPlacements.map(s=>`<div style="font-size:11px;color:#555;padding:2px 0">• ${s}</div>`).join('')}
+    </div>`;
+
+  // STEP 6: Filters + Stickers
+  guideHtml += `<div style="margin-bottom:14px"><div style="font-size:11px;font-weight:700;color:#059669;margin-bottom:8px">🎨 STEP 6 — 필터 6종 + 스티커</div>
+    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px">
+    ${filters.map(f=>`<span style="background:#ecfdf5;padding:3px 8px;border-radius:6px;font-size:11px;color:#065f46">${f}</span>`).join('')}
     </div>
-    <div>
-      <div style="font-size:11px;font-weight:700;color:#333;margin-bottom:6px">⚡ 속도 효과 팁</div>
-      <div style="font-size:11px;color:#555">0~1초 구간 2배속 → 갑작스런 시작으로 눈길 끌기<br>마지막 1초 슬로우모션 0.5배속 → CTA 강조</div>
-    </div>
-    <button onclick="this.closest('[style*=fixed]').remove()" style="margin-top:16px;width:100%;padding:10px;background:#4CAF50;border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:600;cursor:pointer">확인</button>
+    <div style="display:flex;gap:5px;flex-wrap:wrap">
+    ${stickers.map(s=>`<span style="background:#fff7ed;padding:3px 8px;border-radius:6px;font-size:11px;color:#c2410c">${s}</span>`).join('')}
+    </div></div>`;
+
+  // STEP 7: AI Voiceover
+  guideHtml += `<div style="margin-bottom:14px"><div style="font-size:11px;font-weight:700;color:#7c3aed;margin-bottom:8px">🎤 STEP 7 — AI 보이스오버 4종</div>
+    ${voiceOptions.map((v,i)=>`<div style="font-size:11px;color:#555;padding:3px 0">• ${v}${i===3?' (자막만 있어도 OK)':''}</div>`).join('')}
+    </div>`;
+
+  // STEP 8: Speed effects
+  guideHtml += `<div style="margin-bottom:14px"><div style="font-size:11px;font-weight:700;color:#dc2626;margin-bottom:8px">⚡ STEP 8 — 속도 효과 3구간</div>
+    ${speedZones.map(z=>`<div style="font-size:11px;color:#555;padding:3px 0">• ${z}</div>`).join('')}
+    </div>`;
+
+  // STEP 9: Export presets
+  guideHtml += `<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:700;color:#1d4ed8;margin-bottom:8px">📤 STEP 9 — 플랫폼별 내보내기</div>
+    <div style="display:flex;flex-direction:column;gap:5px">
+    ${exportPresets.map(p=>`<div style="display:flex;justify-content:space-between;background:#eff6ff;border-radius:8px;padding:8px 12px;font-size:11px">
+      <span style="font-weight:700">${p.plat}</span>
+      <span style="color:#3b82f6">${p.res} · ${p.fps} · ${p.fmt}</span>
+    </div>`).join('')}
+    </div></div>`;
+
+  guideHtml += `<button onclick="this.closest('[style*=fixed]').remove()" style="margin-top:4px;width:100%;padding:12px;background:#6c5ce7;border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer">✅ 확인 완료</button>
   </div></div>`;
 
   document.body.insertAdjacentHTML('beforeend', guideHtml);
 }
 
 function skShowCapCutGuide() {
-  const guideHtml = `<div style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:9999;display:flex;align-items:center;justify-content:center" onclick="if(event.target===this)this.remove()">
-    <div style="background:#fff;border-radius:16px;padding:20px;max-width:480px;width:90%;max-height:85vh;overflow-y:auto;font-family:inherit">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-        <div style="font-size:15px;font-weight:700">✂️ CapCut 무료 편집 가이드</div>
-        <button onclick="this.closest('[style*=fixed]').remove()" style="border:none;background:none;font-size:20px;cursor:pointer;color:#666">×</button>
+  _showCapCutInteractive();
+}
+
+function _showCapCutInteractive() {
+  const fonts = ['Noto Sans KR','NanumGothic','NanumSquare','Gmarket Sans','Spoqa Han Sans','Cafe24 Ohsquare','Jua','Black Han Sans','Do Hyeon','Gaegu'];
+  const bgmList = [
+    {name:'upbeat shopping',mood:'밝고 신나는 쇼핑'},
+    {name:'viral tiktok',mood:'트렌디 틱톡'},
+    {name:'hype music',mood:'에너지 넘치는'},
+    {name:'lo-fi chill',mood:'편안한 감성'},
+    {name:'k-pop beat',mood:'K팝 스타일'},
+    {name:'cinematic tense',mood:'긴장감 드라마'},
+  ];
+  const sfxList = ['Whoosh (등장)','Ding (알림)','Thud (임팩트)','Pop (효과)','Cash Register (구매)','Fanfare (완료)'];
+  const subPositions = ['상단 10%','상단 20%','중앙','하단 20%','하단 10%'];
+  const voiceOptions = [
+    {name:'Lucy',desc:'한국어 여성·밝음',best:'뷰티/패션'},
+    {name:'Daniel',desc:'한국어 남성·중후함',best:'전자제품'},
+    {name:'Sora',desc:'한국어 여성·활기',best:'쇼핑 일반'},
+    {name:'Auto',desc:'자동 캡션 변환',best:'빠른 제작'},
+    {name:'경상도 여성',desc:'사투리·경상도 억양',best:'친근·유머'},
+    {name:'전라도 남성',desc:'사투리·전라도 억양',best:'감성·진정성'},
+    {name:'충청도 여성',desc:'사투리·충청도 억양',best:'느긋·신뢰'},
+    {name:'부산 아재',desc:'사투리·부산 억양',best:'개성·화제성'},
+  ];
+
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.8);z-index:9999;display:flex;align-items:center;justify-content:center;padding:12px';
+  overlay.onclick = e => { if(e.target===overlay) overlay.remove(); };
+
+  overlay.innerHTML = `
+  <div style="background:#1a1a2e;border-radius:16px;width:100%;max-width:560px;max-height:92vh;overflow-y:auto;font-family:inherit;border:1px solid rgba(108,92,231,.4)">
+    <div style="position:sticky;top:0;background:#1a1a2e;border-bottom:1px solid rgba(255,255,255,.1);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;z-index:1">
+      <div style="font-size:15px;font-weight:700;color:#fff">✂️ CapCut 인터랙티브 편집기</div>
+      <button onclick="this.closest('[style*=position:fixed]').remove()" style="border:none;background:rgba(255,255,255,.1);color:#fff;width:28px;height:28px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">×</button>
+    </div>
+    <div style="padding:16px">
+
+      <!-- 영상 길이 슬라이더 -->
+      <div style="margin-bottom:18px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div style="font-size:12px;font-weight:700;color:#a78bfa">🎬 영상 길이</div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <input id="scc-dur-num" type="number" min="5" max="60" value="30" style="width:52px;padding:4px 6px;border:1px solid rgba(108,92,231,.4);border-radius:6px;background:#0f0f1a;color:#fff;font-size:13px;font-weight:700;text-align:center"
+              oninput="document.getElementById('scc-dur').value=this.value;document.getElementById('scc-dur-lbl').textContent=this.value+'초';document.getElementById('scc-dur-fill').style.width=((Math.min(60,Math.max(5,+this.value))-5)/55*100)+'%'" />
+            <span id="scc-dur-lbl" style="color:#a78bfa;font-size:12px;font-weight:700">30초</span>
+          </div>
+        </div>
+        <div style="position:relative;height:32px;display:flex;align-items:center">
+          <div style="position:absolute;width:100%;height:6px;background:rgba(255,255,255,.1);border-radius:3px"></div>
+          <div id="scc-dur-fill" style="position:absolute;height:6px;background:linear-gradient(90deg,#6c5ce7,#a78bfa);border-radius:3px;width:50%;pointer-events:none;transition:width .05s"></div>
+          <input id="scc-dur" type="range" min="5" max="60" value="30" style="position:absolute;width:100%;-webkit-appearance:none;height:20px;background:transparent;cursor:pointer;outline:none"
+            oninput="document.getElementById('scc-dur-num').value=this.value;document.getElementById('scc-dur-lbl').textContent=this.value+'초';document.getElementById('scc-dur-fill').style.width=((this.value-5)/55*100)+'%'" />
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,.4);margin-top:2px"><span>5초</span><span>15초</span><span>30초</span><span>45초</span><span>60초</span></div>
       </div>
-      <div style="font-size:11px;color:#666;margin-bottom:14px;background:#f8f9ff;border-radius:8px;padding:10px">
-        💡 대본을 영상으로 만든 후 아래 순서로 CapCut 무료 버전에서 편집하세요
-      </div>
-      <div style="margin-bottom:14px">
-        <div style="font-size:11px;font-weight:700;color:#00b464;margin-bottom:8px">📥 STEP 1 — 영상 불러오기</div>
-        <div style="font-size:11px;color:#444;line-height:1.7">
-          • CapCut 실행 → 새 프로젝트 → 갤러리에서 영상 선택<br>
-          • 비율: <strong>9:16</strong> (세로형 숏폼)으로 설정
+
+      <!-- 자막 설정 -->
+      <div style="background:rgba(255,255,255,.05);border-radius:10px;padding:12px;margin-bottom:14px">
+        <div style="font-size:12px;font-weight:700;color:#a78bfa;margin-bottom:10px">📝 자막 설정</div>
+
+        <!-- 자막 위치 -->
+        <div style="margin-bottom:10px">
+          <div style="font-size:11px;color:rgba(255,255,255,.6);margin-bottom:5px">위치</div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap">
+          ${subPositions.map((p,i)=>`<button onclick="this.parentElement.querySelectorAll('button').forEach(b=>b.style.background='rgba(255,255,255,.08)');this.style.background='rgba(108,92,231,.5)'" style="padding:4px 10px;border:1px solid rgba(108,92,231,.3);border-radius:6px;background:${i===3?'rgba(108,92,231,.5)':'rgba(255,255,255,.08)'};color:#fff;font-size:11px;cursor:pointer">${p}</button>`).join('')}
+          </div>
+        </div>
+
+        <!-- 자막 크기 -->
+        <div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+            <div style="font-size:11px;color:rgba(255,255,255,.6)">크기</div>
+            <span id="scc-sz-lbl" style="color:#a78bfa;font-size:11px;font-weight:700">36px</span>
+          </div>
+          <input type="range" min="18" max="72" value="36" style="width:100%;cursor:pointer;-webkit-appearance:none;height:6px;border-radius:3px;background:rgba(255,255,255,.15);outline:none" oninput="document.getElementById('scc-sz-lbl').textContent=this.value+'px';document.getElementById('scc-preview-text').style.fontSize=this.value+'px'" />
+        </div>
+
+        <!-- 자막 색 -->
+        <div style="margin-bottom:10px">
+          <div style="font-size:11px;color:rgba(255,255,255,.6);margin-bottom:5px">자막 색</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${['#ffffff','#ffe600','#ff2d55','#00ff88','#4fc3f7','#ff9f43','#fd79a8','#a29bfe'].map(clr=>`<div onclick="document.getElementById('scc-preview-text').style.color='${clr}';this.parentElement.querySelectorAll('div').forEach(d=>d.style.outline='none');this.style.outline='2px solid #fff'" style="width:28px;height:28px;border-radius:50%;background:${clr};cursor:pointer;border:2px solid rgba(255,255,255,.2);flex-shrink:0${clr==='#ffffff'?';outline:2px solid #fff':''}"></div>`).join('')}
+          <input type="color" value="#ffffff" oninput="document.getElementById('scc-preview-text').style.color=this.value" style="width:28px;height:28px;border-radius:50%;border:2px solid rgba(255,255,255,.2);background:transparent;cursor:pointer;padding:0;flex-shrink:0" title="직접 선택" />
+          </div>
+        </div>
+
+        <!-- 폰트 10종 -->
+        <div style="margin-bottom:10px">
+          <div style="font-size:11px;color:rgba(255,255,255,.6);margin-bottom:5px">폰트 10종</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">
+          ${fonts.map((f,i)=>`<button onclick="document.getElementById('scc-preview-text').style.fontFamily='${f}';this.parentElement.querySelectorAll('button').forEach(b=>b.style.background='rgba(255,255,255,.08)');this.style.background='rgba(108,92,231,.5)'" style="padding:5px 8px;border:1px solid rgba(108,92,231,.2);border-radius:6px;background:${i===0?'rgba(108,92,231,.5)':'rgba(255,255,255,.08)'};color:#fff;font-size:11px;cursor:pointer">${f}</button>`).join('')}
+          </div>
+        </div>
+
+        <!-- 기본 텍스트 추가 -->
+        <div style="margin-bottom:10px">
+          <div style="font-size:11px;color:rgba(255,255,255,.6);margin-bottom:5px">기본 텍스트 추가</div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap">
+          ${['🔥 지금 구매!','💥 특가 한정!','✅ 추천 상품','⚡ 빠른 배송','🎁 선물 추천','💰 최저가'].map(t=>`<button onclick="document.getElementById('scc-preview-text').textContent='${t}'" style="padding:4px 10px;border:1px solid rgba(255,255,255,.15);border-radius:6px;background:rgba(255,255,255,.08);color:#fff;font-size:11px;cursor:pointer">${t}</button>`).join('')}
+          </div>
+        </div>
+
+        <!-- 미리보기 -->
+        <div style="background:#000;border-radius:8px;height:90px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.1)">
+          <div id="scc-preview-text" style="font-size:36px;font-weight:700;color:#fff;font-family:'Noto Sans KR';text-shadow:2px 2px 4px rgba(0,0,0,.8);transition:all .2s;text-align:center;padding:0 12px">자막 미리보기</div>
         </div>
       </div>
-      <div style="margin-bottom:14px">
-        <div style="font-size:11px;font-weight:700;color:#2563eb;margin-bottom:8px">📝 STEP 2 — 자막 추가</div>
-        <div style="font-size:11px;color:#444;line-height:1.7">
-          • 텍스트 → 자동 캡션 (AI 자동 자막 생성)<br>
-          • 또는 직접 입력: 텍스트 → 추가<br>
-          • <strong>훅 자막</strong>: Bold + 흰색 + 검정 테두리<br>
-          • <strong>본문 자막</strong>: 일반 + 노란색<br>
-          • <strong>CTA 자막</strong>: Bold + 빨간색 (마지막 1~2초)
+
+      <!-- 음량 + BGM -->
+      <div style="background:rgba(255,255,255,.05);border-radius:10px;padding:12px;margin-bottom:14px">
+        <div style="font-size:12px;font-weight:700;color:#fbbf24;margin-bottom:10px">🎵 음량 + BGM 설정</div>
+
+        <div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <div style="font-size:11px;color:rgba(255,255,255,.6)">🔊 원본 영상 음량</div>
+            <span id="scc-vol-lbl" style="color:#fbbf24;font-size:11px;font-weight:700">100%</span>
+          </div>
+          <input type="range" min="0" max="100" value="100" style="width:100%;cursor:pointer;-webkit-appearance:none;height:6px;border-radius:3px;background:rgba(255,255,255,.15);outline:none;accent-color:#fbbf24" oninput="document.getElementById('scc-vol-lbl').textContent=this.value+'%'" />
+        </div>
+
+        <div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <div style="font-size:11px;color:rgba(255,255,255,.6)">🎵 BGM 음량</div>
+            <span id="scc-bgm-vol-lbl" style="color:#fbbf24;font-size:11px;font-weight:700">35%</span>
+          </div>
+          <input type="range" min="0" max="100" value="35" style="width:100%;cursor:pointer;-webkit-appearance:none;height:6px;border-radius:3px;background:rgba(255,255,255,.15);outline:none;accent-color:#fbbf24" oninput="document.getElementById('scc-bgm-vol-lbl').textContent=this.value+'%'" />
+        </div>
+
+        <div style="margin-bottom:10px">
+          <div style="font-size:11px;color:rgba(255,255,255,.6);margin-bottom:5px">BGM 검색키워드</div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+          ${bgmList.map((b,i)=>`<button onclick="this.parentElement.querySelectorAll('button').forEach(x=>x.style.background='rgba(255,255,255,.05)');this.style.background='rgba(251,191,36,.2)'" style="padding:6px 10px;border:1px solid rgba(251,191,36,.2);border-radius:6px;background:${i===0?'rgba(251,191,36,.2)':'rgba(255,255,255,.05)'};color:#fff;font-size:11px;cursor:pointer;text-align:left;display:flex;justify-content:space-between">
+            <span>"${b.name}"</span><span style="color:rgba(255,255,255,.5);font-size:10px">${b.mood}</span>
+          </button>`).join('')}
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size:11px;color:rgba(255,255,255,.6);margin-bottom:5px">효과음 배치</div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap">
+          ${sfxList.map(s=>`<label style="display:flex;align-items:center;gap:4px;font-size:11px;color:#fff;cursor:pointer;padding:4px 8px;background:rgba(255,255,255,.06);border-radius:6px"><input type="checkbox" style="accent-color:#6c5ce7" />${s}</label>`).join('')}
+          </div>
         </div>
       </div>
-      <div style="margin-bottom:14px">
-        <div style="font-size:11px;font-weight:700;color:#7c3aed;margin-bottom:8px">🔀 STEP 3 — 전환 효과</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">
-          ${['Glitch','Zoom In','Slide Left','Shake','Flash'].map(e=>`<span style="background:#f3f4f6;padding:3px 8px;border-radius:6px;font-size:11px;color:#333">${e}</span>`).join('')}
-        </div>
-        <div style="font-size:11px;color:#666">씬 전환 시 위 효과 중 1~2가지만 사용 (통일감 유지)</div>
-      </div>
-      <div style="margin-bottom:14px">
-        <div style="font-size:11px;font-weight:700;color:#d97706;margin-bottom:8px">🎵 STEP 4 — BGM (CapCut 무료음악)</div>
-        <div style="background:#fffbeb;border-radius:8px;padding:10px;font-size:11px;color:#555">
-          검색: <strong>"upbeat shopping"</strong> 또는 <strong>"trendy pop beat"</strong><br>
-          음량 낮추기 30~40% → 마지막 1초 페이드아웃
+
+      <!-- AI 보이스오버 (사투리 포함) -->
+      <div style="background:rgba(255,255,255,.05);border-radius:10px;padding:12px;margin-bottom:14px">
+        <div style="font-size:12px;font-weight:700;color:#c084fc;margin-bottom:10px">🎤 AI 보이스오버 (사투리 포함)</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">
+        ${voiceOptions.map((v,i)=>`<button onclick="this.parentElement.querySelectorAll('button').forEach(b=>b.style.background='rgba(255,255,255,.06)');this.style.background='rgba(192,132,252,.3)'" style="padding:8px 10px;border:1px solid rgba(192,132,252,.2);border-radius:8px;background:${i===0?'rgba(192,132,252,.3)':'rgba(255,255,255,.06)'};color:#fff;font-size:11px;cursor:pointer;text-align:left">
+          <div style="font-weight:700;margin-bottom:2px">${v.name}</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.5)">${v.desc}</div>
+          <div style="font-size:10px;color:#c084fc;margin-top:1px">추천: ${v.best}</div>
+        </button>`).join('')}
         </div>
       </div>
-      <div style="margin-bottom:14px">
-        <div style="font-size:11px;font-weight:700;color:#db2777;margin-bottom:8px">⚡ STEP 5 — 속도 효과</div>
-        <div style="font-size:11px;color:#444;line-height:1.7">
-          • 인트로 0~1초: <strong>2배속</strong> (빠른 시작으로 훅 강조)<br>
-          • CTA 마지막 1초: <strong>0.5배속</strong> 슬로우모션
-        </div>
-      </div>
-      <div style="margin-bottom:16px">
-        <div style="font-size:11px;font-weight:700;color:#333;margin-bottom:8px">📤 STEP 6 — 내보내기</div>
-        <div style="font-size:11px;color:#444;line-height:1.7">
-          해상도: <strong>1080p</strong> → 프레임: <strong>30fps</strong> → 내보내기<br>
-          파일명: 상품명_날짜.mp4
-        </div>
-      </div>
-      <button onclick="this.closest('[style*=fixed]').remove()" style="width:100%;padding:11px;background:#00b464;border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer">확인</button>
+
+      <button onclick="this.closest('[style*=position]').remove()" style="width:100%;padding:12px;background:linear-gradient(135deg,#6c5ce7,#00b464);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer">✅ CapCut 편집 시작!</button>
     </div>
   </div>`;
-  document.body.insertAdjacentHTML('beforeend', guideHtml);
+
+  document.body.appendChild(overlay);
 }
 
 function renderMatcher() {
@@ -3849,13 +4235,13 @@ function mtRender(d, coupangLink, platforms) {
     <div class="card-title">🔍 상품 분석 결과</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
       <div style="background:var(--bg3);border-radius:10px;padding:14px">
-        <div style="font-size:11px;color:var(--text3);margin-bottom:4px">감지된 상품</div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:4px">감지된 상품</div>
         <div style="font-size:15px;font-weight:700">${esc(pa.detected_name||'')}</div>
         <div style="font-size:11px;color:var(--accent2);margin-top:4px">${esc(pa.category||'')} · ${esc(pa.price_range||'')}</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:3px">👥 ${esc(pa.target_audience||'')}</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:3px">👥 ${esc(pa.target_audience||'')}</div>
       </div>
       <div style="background:var(--bg3);border-radius:10px;padding:14px">
-        <div style="font-size:11px;color:var(--text3);margin-bottom:6px">바이럴 잠재력</div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:6px">바이럴 잠재력</div>
         <div style="font-size:32px;font-weight:900;font-family:Space Mono,monospace;color:var(--green)">${pa.viral_potential||0}</div>
         <div class="viral-score-bar" style="margin-top:6px"><div class="viral-score-fill" style="width:${pa.viral_potential||0}%;background:var(--green)"></div></div>
       </div>
@@ -3869,7 +4255,7 @@ function mtRender(d, coupangLink, platforms) {
     <div style="background:rgba(255,92,0,.08);border:1px solid rgba(255,92,0,.2);border-radius:10px;padding:14px;margin-bottom:12px">
       <div style="font-size:12px;font-weight:700;color:#ff6b35;margin-bottom:8px">🔍 추천 검색어</div>
       <div class="tag-wrap" style="margin-bottom:10px">${(cm.search_keywords||[]).map(k=>`<span class="tag" style="cursor:pointer;border-color:rgba(255,92,0,.3)" onclick="window.open('https://www.coupang.com/np/search?q=${encodeURIComponent(k)}','_blank')">🔍 ${esc(k)}</span>`).join('')}</div>
-      <div style="font-size:11px;color:var(--text3);margin-bottom:6px">${esc(cm.recommended_filters||'')}</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:6px">${esc(cm.recommended_filters||'')}</div>
       <a href="${cm.search_url||'https://www.coupang.com'}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:rgba(255,92,0,.15);border:1px solid rgba(255,92,0,.3);border-radius:7px;color:#ff6b35;font-size:12px;font-weight:700;text-decoration:none">
         🛒 쿠팡에서 검색하기 →
       </a>
@@ -3931,7 +4317,7 @@ function mtRender(d, coupangLink, platforms) {
     html+=`<div class="card"><div class="card-title">▶ YouTube + 🧵 Threads</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">`;
     if(platforms.includes('yt')&&cb.youtube){const yt=cb.youtube;
-      html+=`<div class="res-card"><div class="res-hd"><span class="res-title">▶ YouTube 카드</span></div><div class="ctext">${esc(yt.card_text||'')}</div><div style="font-size:10px;color:var(--text3);margin-top:6px">${esc(yt.description_cta||'')}</div></div>`;}
+      html+=`<div class="res-card"><div class="res-hd"><span class="res-title">▶ YouTube 카드</span></div><div class="ctext">${esc(yt.card_text||'')}</div><div style="font-size:10px;color:var(--text2);margin-top:6px">${esc(yt.description_cta||'')}</div></div>`;}
     if(platforms.includes('th')&&cb.threads){const th2=cb.threads;
       html+=`<div class="res-card"><div class="res-hd"><span class="res-title">🧵 Threads</span><button class="copy-btn" onclick="copyEl('thMt',this)">복사</button></div><div class="ctext" id="thMt">${esc(th2.text||'')}</div></div>`;}
     html+=`</div></div>`;
