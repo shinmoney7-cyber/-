@@ -2810,68 +2810,106 @@ function cvSendToAnalyzer() {
 
 
 
-const CK_STEPS = [
-  {num:1,icon:'🎯',title:'3초 훅 멘트 생성',desc:'제품 특징 3개를 추출해 시청자가 멈추는 첫 3초 훅을 만든다.',
-   prompt:'[제품사진 / 제품명 / URL 중 1개 줄게]\n웹에서 이 제품 정보 검색해서\n특징 3개로 3초 훅 멘트 만들어줘',
-   script:'[0초] 이거 모르면 손해\n[3초] 다들 이런 경험 있죠?\n[8초] 바로 이 제품이 해결해줘요\n[16초] 실제 후기 ★4.9 · 3만건\n[24초] 지금 링크에서 확인해봐'},
-  {num:2,icon:'📝',title:'숏폼 대본 자동 생성',desc:'상세페이지·구매 후기를 웹에서 검색해 15초 대본을 완성한다.',
-   prompt:'[제품사진 / 제품명 / URL 중 1개 줄게]\n웹에서 상세페이지·구매 후기 검색해서\n숏폼 대본 짜줘',
-   script:'[0초] 요즘 이거 다들 쓰던데\n[3초] 나도 처음엔 반신반의했어\n[8초] 핵심 기능이 진짜 남달라\n[16초] 가격 대비 퀄리티 실화\n[24초] 아래 링크에서 바로 확인'},
-  {num:3,icon:'💬',title:'실사용 후기 톤 변환',desc:'광고 냄새를 제거하고 진짜 사용자 후기처럼 자연스럽게 바꾼다.',
-   prompt:'웹에서 이 제품 실제 구매 후기 검색해서\n광고 느낌 빼고 실사용 후기처럼 바꿔줘',
-   script:'[0초] 솔직히 처음엔 안 믿었어\n[3초] 근데 써보니까 진짜\n[8초] 이 부분이 특히 좋더라고\n[16초] 가격도 생각보다 합리적\n[24초] 링크 댓글에 올려놨어'},
-  {num:4,icon:'💡',title:'구매 유도 클로징 멘트',desc:'영상 끝 3초에 최신 반응을 반영한 강력한 CTA를 삽입한다.',
-   prompt:'웹에서 이 제품 최신 반응·후기 검색해서\n영상 끝나기 3초 전에 구매 유도 멘트 넣어줘',
-   script:'[0초] 이게 왜 요즘 핫한지 알아?\n[3초] 이 문제 때문에 난리났잖아\n[8초] 딱 이걸로 해결되거든\n[16초] 후기 3만건 ★4.9 실화\n[24초] 지금 품절되기 전에 빨리'},
-  {num:5,icon:'🖼️',title:'썸네일 문구 5개 생성',desc:'트렌드 썸네일 공식을 검색해 클릭률 높은 문구 5개를 뽑는다.',
-   prompt:'웹에서 지금 숏폼 썸네일 트렌드 검색해서\n이 대본으로 썸네일 문구 5개 뽑아줘',
-   script:'[0초] 썸네일만 봐도 클릭하게\n[3초] 진짜 이런 거 있다고?\n[8초] 숨겨진 기능 공개합니다\n[16초] 사기 전에 꼭 보세요\n[24초] 지금 바로 확인 가능'},
-  {num:6,icon:'#️⃣',title:'알고리즘 해시태그 추천',desc:'트렌딩 태그를 실시간 검색해 알고리즘 노출 최적화 태그를 생성한다.',
-   prompt:'웹에서 지금 트렌딩 해시태그 검색해서\n숏폼 알고리즘 될 만한 해시태그 추천해줘',
-   script:'[0초] 이 해시태그 조합 써봤어?\n[3초] 알고리즘 타는 핵심이야\n[8초] 조회수 차이 실화\n[16초] 지금 제일 뜨는 태그\n[24초] 바로 복사해서 써봐'}
+/* ── 치트키 6 상태 ── */
+const ckSt = { desire: '가성비', target: '2030여성' };
+
+const SK_DESIRE = {
+  '문제해결': { hook:'이 문제 때문에 힘드셨죠?',      proof:'직접 써보니 문제가 싹 해결돼요', cta:'문제 해결하러 링크 클릭' },
+  '가성비':   { hook:'이 가격에 이 퀄리티 실화냐?',    proof:'가격 대비 퀄리티 진짜 미쳤어요',  cta:'지금 가격 확인하러 바로' },
+  '자기과시': { hook:'있는 사람들은 다 이거 쓰더라',   proof:'쓰고 나서 주변 반응이 달라졌어요', cta:'나도 써봐야지 링크 클릭' },
+  '시간절약': { hook:'30분 걸리던 거 3분에 끝냄',     proof:'시간이 이렇게 아껴질 줄 몰랐어요', cta:'시간 아끼러 지금 바로' },
+  '한정수량': { hook:'오늘 마지막이래 진짜로',         proof:'이미 3천개 이상 팔렸어요',         cta:'품절 전에 지금 바로' }
+};
+const SK_TARGET = {
+  '2030여성':'2030대 여성분들','2040남성':'2040대 남성분들',
+  '3040주부':'3040대 주부님들','2545공통':'25-45세 누구든'
+};
+const SK_META = [
+  {num:1,icon:'🎯',title:'3초 훅 멘트 생성',       desc:'욕구를 자극하는 시청 멈춤 훅을 만든다.',            prompt:'[제품사진 / 제품명 / URL 중 1개 줄게]\n웹에서 이 제품 정보 검색해서\n특징 3개로 3초 훅 멘트 만들어줘'},
+  {num:2,icon:'📝',title:'숏폼 대본 자동 생성',     desc:'상세페이지·후기를 검색해 15초 대본을 완성한다.',     prompt:'[제품사진 / 제품명 / URL 중 1개 줄게]\n웹에서 상세페이지·구매 후기 검색해서\n숏폼 대본 짜줘'},
+  {num:3,icon:'💬',title:'실사용 후기 톤 변환',     desc:'광고 냄새를 지우고 신뢰감 있는 후기 톤으로 바꾼다.', prompt:'웹에서 이 제품 실제 구매 후기 검색해서\n광고 느낌 빼고 실사용 후기처럼 바꿔줘'},
+  {num:4,icon:'💡',title:'구매 유도 클로징 멘트',   desc:'최신 반응을 반영한 강력한 CTA를 끝 3초에 삽입한다.', prompt:'웹에서 이 제품 최신 반응·후기 검색해서\n영상 끝나기 3초 전에 구매 유도 멘트 넣어줘'},
+  {num:5,icon:'🖼️',title:'썸네일 문구 5개 생성',  desc:'트렌드 썸네일 공식으로 클릭률 높은 문구를 뽑는다.',  prompt:'웹에서 지금 숏폼 썸네일 트렌드 검색해서\n이 대본으로 썸네일 문구 5개 뽑아줘'},
+  {num:6,icon:'#️⃣',title:'알고리즘 해시태그 추천',desc:'트렌딩 태그 실시간 검색으로 알고리즘 노출을 최적화한다.',prompt:'웹에서 지금 트렌딩 해시태그 검색해서\n숏폼 알고리즘 될 만한 해시태그 추천해줘'}
 ];
+
+function buildSkScript(idx) {
+  const d = SK_DESIRE[ckSt.desire] || SK_DESIRE['가성비'];
+  const t = SK_TARGET[ckSt.target] || '여러분';
+  const scene = '[씬] 제품+사람 동시 등장 · 클로즈업 교차';
+  const s = [
+    `${scene}\n[0초] ${d.hook}\n[3초] ${t}, 이런 경험 있죠?\n[8초] 바로 이 제품이 해결해줘요\n[16초] 실제 후기 ★4.9 · 3만건\n[24초] ${d.cta}`,
+    `${scene}\n[0초] ${d.hook}\n[3초] 저도 처음엔 반신반의했어요\n[8초] ${d.proof}\n[16초] ${t} 강력 추천\n[24초] ${d.cta}`,
+    `${scene}\n[0초] 솔직히 처음엔 안 믿었어요\n[3초] ${t}, 한 번 써봐요\n[8초] ${d.proof}\n[16초] 가격도 생각보다 합리적\n[24초] 링크 댓글에 올려놨어요`,
+    `${scene}\n[0초] ${d.hook}\n[3초] ${t} 다 알아야 하는 거\n[8초] ${d.proof}\n[16초] 후기 3만건 ★4.9 실화\n[24초] ${d.cta}`,
+    `${scene}\n[0초] 썸네일만 봐도 클릭하게\n[3초] ${t} 필수 아이템\n[8초] ${d.proof}\n[16초] 지금 제일 핫한 거\n[24초] 지금 바로 확인`,
+    `${scene}\n[0초] 이 해시태그 조합 알아?\n[3초] ${t} 사이에서 난리남\n[8초] 알고리즘 타는 핵심이야\n[16초] ${d.proof}\n[24초] 바로 복사해서 써봐`
+  ];
+  return s[idx] || s[0];
+}
+
+function skSetDesire(d){ ckSt.desire=d; document.querySelectorAll('.sk-d-chip').forEach(c=>c.classList.toggle('on',c.dataset.v===d)); }
+function skSetTarget(t){ ckSt.target=t; document.querySelectorAll('.sk-t-chip').forEach(c=>c.classList.toggle('on',c.dataset.v===t)); }
 
 function renderCheatkey() {
   const mc = document.getElementById('mc');
+  const desires = ['문제해결','가성비','자기과시','시간절약','한정수량'];
+  const targets  = [['2030여성','👩 2030여성'],['2040남성','👨 2040남성'],['3040주부','🏠 3040주부'],['2545공통','🙋 2545공통']];
   mc.innerHTML = `
-  <div style="padding:20px 16px 32px">
-    <div style="margin-bottom:18px">
-      <div style="font-size:18px;font-weight:900;color:var(--text)">⚡ 쇼핑숏폼 치트키 6</div>
-      <div style="font-size:12px;color:var(--muted);margin-top:4px">클릭 한 번으로 대본+자막 자동 연동 — 바로 영상 생성기로 이동합니다</div>
+  <div style="padding:18px 14px 36px">
+    <div style="margin-bottom:14px">
+      <div style="font-size:17px;font-weight:900;color:var(--text)">⚡ 쇼핑숏폼 치트키 6</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">욕구·타깃 설정 → 클릭 한 번 → 대본+자막+영상 자동 생성 · <b style="color:#FF6124">제품+사람 동시 등장</b> 고정</div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-      ${CK_STEPS.map((s,i)=>`
-      <div style="background:var(--bg2,#fff);border:1px solid var(--bdr,#e0e0e0);border-radius:13px;padding:16px;display:flex;flex-direction:column;gap:8px">
-        <div style="display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700;color:var(--primary,#6c5ce7);text-transform:uppercase;letter-spacing:.07em">
-          <span style="width:22px;height:22px;border-radius:50%;background:rgba(108,92,231,.15);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900">${s.num}</span>
+
+    <div style="background:var(--bg2,#f4f4f8);border:1px solid var(--bdr,#e0e0e0);border-radius:12px;padding:12px 14px;margin-bottom:9px">
+      <div style="font-size:10px;font-weight:700;color:var(--primary,#6c5ce7);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">💥 욕구 포인트</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        ${desires.map(d=>`<button class="sk-d-chip${ckSt.desire===d?' on':''}" data-v="${d}" onclick="skSetDesire('${d}')" style="padding:5px 13px;border:1px solid var(--bdr,#ddd);border-radius:20px;background:${ckSt.desire===d?'rgba(108,92,231,.18)':'none'};color:${ckSt.desire===d?'var(--primary,#6c5ce7)':'var(--muted,#888)'};font-size:11px;cursor:pointer;font-weight:${ckSt.desire===d?'700':'400'};font-family:inherit">${d}</button>`).join('')}
+      </div>
+    </div>
+
+    <div style="background:var(--bg2,#f4f4f8);border:1px solid var(--bdr,#e0e0e0);border-radius:12px;padding:12px 14px;margin-bottom:16px">
+      <div style="font-size:10px;font-weight:700;color:var(--primary,#6c5ce7);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">🎯 타깃 페르소나</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        ${targets.map(([v,l])=>`<button class="sk-t-chip${ckSt.target===v?' on':''}" data-v="${v}" onclick="skSetTarget('${v}')" style="padding:5px 13px;border:1px solid var(--bdr,#ddd);border-radius:20px;background:${ckSt.target===v?'rgba(108,92,231,.18)':'none'};color:${ckSt.target===v?'var(--primary,#6c5ce7)':'var(--muted,#888)'};font-size:11px;cursor:pointer;font-weight:${ckSt.target===v?'700':'400'};font-family:inherit">${l}</button>`).join('')}
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      ${SK_META.map((s,i)=>`
+      <div style="background:var(--bg2,#fff);border:1px solid var(--bdr,#e0e0e0);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:7px">
+        <div style="display:flex;align-items:center;gap:7px;font-size:10px;font-weight:700;color:var(--primary,#6c5ce7);text-transform:uppercase;letter-spacing:.07em">
+          <span style="width:20px;height:20px;border-radius:50%;background:rgba(108,92,231,.15);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900">${s.num}</span>
           ${s.icon} STEP ${s.num}
         </div>
-        <div style="font-size:13px;font-weight:700;color:var(--text,#1a1a2e)">${s.title}</div>
-        <div style="font-size:11px;color:var(--muted,#888);line-height:1.55">${s.desc}</div>
-        <div style="background:var(--bg,#f9f9f9);border:1px solid var(--bdr,#e0e0e0);border-radius:7px;padding:9px 11px;font-size:10px;color:var(--muted,#888);line-height:1.7;white-space:pre-wrap;font-family:monospace">${s.prompt}</div>
-        <div style="display:flex;gap:7px;margin-top:2px">
-          <button onclick="ckGo(${i})" style="flex:1;padding:9px;border:none;border-radius:8px;background:linear-gradient(135deg,var(--primary,#6c5ce7),var(--green,#00b894));color:#fff;font-size:11px;font-weight:700;cursor:pointer">▶ 클릭 실행 → 영상 생성기</button>
-          <button id="ck-copy-${i}" onclick="ckCopy(${i})" style="padding:9px 12px;border:1px solid var(--bdr,#e0e0e0);border-radius:8px;background:none;color:var(--muted,#888);font-size:11px;cursor:pointer">📋</button>
+        <div style="font-size:12px;font-weight:700;color:var(--text,#1a1a2e)">${s.title}</div>
+        <div style="font-size:10px;color:var(--muted,#888);line-height:1.5">${s.desc}</div>
+        <div style="background:var(--bg,#f9f9f9);border:1px solid var(--bdr,#e0e0e0);border-radius:6px;padding:7px 9px;font-size:9px;color:var(--muted,#888);line-height:1.65;white-space:pre-wrap;font-family:monospace">${s.prompt}</div>
+        <div style="display:flex;gap:6px;margin-top:1px">
+          <button onclick="ckGo(${i})" style="flex:1;padding:8px;border:none;border-radius:7px;background:linear-gradient(135deg,var(--primary,#6c5ce7),var(--green,#00b894));color:#fff;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit">▶ 실행 → 영상 자동 생성</button>
+          <button id="ck-copy-${i}" onclick="ckCopy(${i})" style="padding:8px 11px;border:1px solid var(--bdr,#e0e0e0);border-radius:7px;background:none;color:var(--muted,#888);font-size:10px;cursor:pointer">📋</button>
         </div>
       </div>`).join('')}
     </div>
   </div>`;
 }
 
-function ckGo(idx){
-  const s = CK_STEPS[idx];
+function ckGo(idx) {
+  const script = buildSkScript(idx);
   const ta = document.getElementById('vgScript');
-  if(ta) ta.value = s.script;
+  if(ta) ta.value = script;
   if(typeof vgParseScript === 'function') vgParseScript();
   showPage('videogen');
-  setTimeout(()=>{
+  setTimeout(() => {
     const el = document.getElementById('vgScript');
-    if(el) el.scrollIntoView({behavior:'smooth',block:'center'});
+    if(el) el.scrollIntoView({ behavior:'smooth', block:'center' });
+    setTimeout(() => { if(typeof vgGenerate === 'function') vgGenerate(); }, 300);
   }, 200);
 }
 
-function ckCopy(idx){
-  const s = CK_STEPS[idx];
+function ckCopy(idx) {
+  const s = SK_META[idx];
   const btn = document.getElementById('ck-copy-'+idx);
   const copy = t => { try { navigator.clipboard.writeText(t); } catch(e) { const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta); } };
   copy(s.prompt);
