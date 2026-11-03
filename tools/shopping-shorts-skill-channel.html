@@ -524,6 +524,31 @@ input[type=range]{width:100%;accent-color:var(--cy);height:4px;border-radius:4px
 .pc-item.done .pc-item-txt{color:var(--gn)}
 .pc-progress{height:4px;background:var(--bd);border-radius:4px;margin-top:8px}
 .pc-progress-bar{height:4px;background:var(--gn);border-radius:4px;transition:.3s}
+
+/* ── Outsource Plan ── */
+.oplan-summary{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+.oplan-sum-tile{background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:12px 16px;flex:1;min-width:110px;text-align:center}
+.oplan-sum-num{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--cy)}
+.oplan-sum-label{font-size:11px;color:var(--t3);margin-top:4px}
+.oplan-filter-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.oplan-tab{padding:5px 12px;border-radius:20px;border:1px solid var(--bd);background:none;color:var(--t2);font-size:12px;font-weight:600;cursor:pointer;transition:.15s}
+.oplan-tab:hover{background:var(--s2);color:var(--t1)}
+.oplan-tab.active{background:var(--cyD);color:var(--cy);border-color:var(--cyM)}
+.oplan-tbl-wrap{overflow-x:auto}
+.oplan-tbl{width:100%;border-collapse:collapse;font-size:12px;min-width:720px}
+.oplan-tbl th{background:var(--s2);color:var(--t3);font-weight:600;padding:8px 10px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap;font-size:11px;letter-spacing:.3px}
+.oplan-tbl td{padding:8px 10px;border-bottom:1px solid var(--bd);vertical-align:middle}
+.oplan-tbl tbody tr:hover td{background:var(--s2)}
+.oplan-status{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.oplan-status.s0{background:var(--cyD);color:var(--cy)}
+.oplan-status.s1{background:var(--waD);color:var(--wa)}
+.oplan-status.s2{background:var(--gnD);color:var(--gn)}
+.oplan-status.s3{background:var(--rdD);color:var(--rd)}
+.oplan-add-form{display:none;flex-direction:column;gap:10px;padding:16px;background:var(--s2);border-radius:var(--rs);border:1px solid var(--bd);margin-top:14px}
+.oplan-add-form.open{display:flex}
+.oplan-row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.oplan-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:480px){.oplan-row2,.oplan-row3{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
@@ -608,6 +633,12 @@ input[type=range]{width:100%;accent-color:var(--cy);height:4px;border-radius:4px
   </button>
   <button class="nav-btn" onclick="navGo('trend-hooks',this);renderTrendHooks('food')" data-sec="trend-hooks">
     <span class="nav-icon">📈</span> <span>유행 훅 트렌드</span>
+  </button>
+
+  <hr class="divider" style="margin:10px 16px">
+  <div class="nav-sec">📋 기획 관리</div>
+  <button class="nav-btn" onclick="navGo('outsource-plan',this);initOutsourcePlan()" data-sec="outsource-plan">
+    <span class="nav-icon">📋</span> <span>상품 외주기획표</span>
   </button>
 </aside>
 
@@ -1579,6 +1610,121 @@ input[type=range]{width:100%;accent-color:var(--cy);height:4px;border-radius:4px
       <div style="padding:10px;background:var(--cyD);border:1px solid var(--cyM);border-radius:var(--rs)">
         <div style="font-weight:700;font-size:12px;color:var(--cy);margin-bottom:4px">👥 사회적 증명 공식</div>
         <div style="font-size:12px;color:var(--t2)">[구체적 숫자] + [행동] → <em>"47,820명이 산 이유 있더라고요"</em></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 📋 상품 외주기획표 -->
+<section class="section" id="outsource-plan">
+  <div>
+    <div class="section-title">📋 상품 외주기획표</div>
+    <div class="section-sub">영상·디자인·촬영 외주 현황을 한눈에 관리하고 비용을 추적하세요</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">외주 현황 요약 <span class="card-sub" id="oplan-date" style="font-size:11px;color:var(--t3);font-weight:400"></span></div>
+    <div class="oplan-summary" id="oplan-summary">
+      <div class="oplan-sum-tile"><div class="oplan-sum-num">0</div><div class="oplan-sum-label">총 외주 건수</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">외주 목록
+      <span class="card-sub">
+        <button class="btn btn-ghost btn-sm" onclick="oplanExportCSV()" style="font-size:11px">📥 CSV 내보내기</button>
+      </span>
+    </div>
+
+    <div class="oplan-filter-tabs">
+      <button class="oplan-tab active" onclick="oplanSetFilter('all',this)">전체</button>
+      <button class="oplan-tab" onclick="oplanSetFilter('의뢰중',this)">🔵 의뢰중</button>
+      <button class="oplan-tab" onclick="oplanSetFilter('진행중',this)">🟠 진행중</button>
+      <button class="oplan-tab" onclick="oplanSetFilter('완료',this)">🟢 완료</button>
+      <button class="oplan-tab" onclick="oplanSetFilter('취소',this)">🔴 취소</button>
+    </div>
+
+    <div class="oplan-tbl-wrap">
+      <table class="oplan-tbl" id="oplan-tbl">
+        <thead>
+          <tr>
+            <th>상품명</th><th>카테고리</th><th>외주유형</th><th>업체/프리랜서</th>
+            <th style="text-align:right">단가</th><th style="text-align:center">수량</th>
+            <th style="text-align:right">총비용</th><th>납기일</th><th>상태</th><th>비고</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="oplan-tbody">
+          <tr><td colspan="11" style="text-align:center;padding:32px;color:var(--t3)">등록된 외주가 없습니다. "+ 외주 추가" 버튼을 눌러 시작하세요.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="text-align:center;margin-top:14px">
+      <button class="btn btn-primary" onclick="oplanToggleForm()" id="oplan-add-btn">+ 외주 추가</button>
+    </div>
+
+    <div class="oplan-add-form" id="oplan-add-form">
+      <div class="card-title" style="margin-bottom:0;font-size:13px">새 외주 등록</div>
+      <div class="oplan-row2">
+        <div class="field"><label>상품명 *</label><input id="of-name" type="text" placeholder="예: 제주 감귤 3kg"></div>
+        <div class="field"><label>카테고리</label>
+          <select id="of-cat">
+            <option value="">-- 선택 --</option>
+            <option>식품/과일</option><option>패션/의류</option><option>뷰티/화장품</option>
+            <option>홈/리빙</option><option>건강/피트니스</option><option>테크/가전</option>
+            <option>유아/육아</option><option>반려동물</option><option>기타</option>
+          </select>
+        </div>
+      </div>
+      <div class="oplan-row3">
+        <div class="field"><label>외주유형 *</label>
+          <select id="of-type">
+            <option value="">-- 선택 --</option>
+            <option>영상 편집</option><option>촬영</option><option>디자인</option>
+            <option>카피라이팅</option><option>번역/자막</option><option>기타</option>
+          </select>
+        </div>
+        <div class="field"><label>업체/프리랜서</label><input id="of-vendor" type="text" placeholder="예: 크몽 @designer1"></div>
+        <div class="field"><label>상태</label>
+          <select id="of-status">
+            <option>의뢰중</option><option>진행중</option><option>완료</option><option>취소</option>
+          </select>
+        </div>
+      </div>
+      <div class="oplan-row3">
+        <div class="field"><label>단가 (₩)</label><input id="of-price" type="number" placeholder="50000" min="0" oninput="oplanCalcTotal()"></div>
+        <div class="field"><label>수량</label><input id="of-qty" type="number" placeholder="1" min="1" value="1" oninput="oplanCalcTotal()"></div>
+        <div class="field"><label>총비용</label><input id="of-total" type="text" placeholder="자동 계산" readonly style="color:var(--cy);font-weight:700;cursor:default"></div>
+      </div>
+      <div class="oplan-row2">
+        <div class="field"><label>납기일</label><input id="of-due" type="date"></div>
+        <div class="field"><label>비고</label><input id="of-memo" type="text" placeholder="추가 메모"></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:4px">
+        <button class="btn btn-primary" onclick="oplanAddRow()" style="flex:1;justify-content:center">등록</button>
+        <button class="btn btn-ghost" onclick="oplanToggleForm()" style="flex:1;justify-content:center">취소</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">💡 외주 가이드</div>
+    <div style="display:grid;gap:8px">
+      <div style="padding:10px;background:var(--cyD);border:1px solid var(--cyM);border-radius:var(--rs)">
+        <div style="font-weight:700;font-size:12px;color:var(--cy);margin-bottom:4px">🎬 영상 편집 평균 단가</div>
+        <div style="font-size:12px;color:var(--t2)">1분 쇼츠 기준 · 국내 프리랜서 ₩30,000~80,000 / 해외 업체 ₩10,000~30,000 · 크몽/프리모아 참고</div>
+      </div>
+      <div style="padding:10px;background:var(--waD);border:1px solid var(--waM);border-radius:var(--rs)">
+        <div style="font-weight:700;font-size:12px;color:var(--wa);margin-bottom:4px">📸 제품 촬영 평균 단가</div>
+        <div style="font-size:12px;color:var(--t2)">제품 5~10개 기준 · 스튜디오 ₩150,000~400,000 / 아웃도어 ₩200,000~600,000 · 소품·배경 별도</div>
+      </div>
+      <div style="padding:10px;background:var(--gnD);border:1px solid var(--gnM);border-radius:var(--rs)">
+        <div style="font-weight:700;font-size:12px;color:var(--gn);margin-bottom:4px">✍️ 카피라이팅 평균 단가</div>
+        <div style="font-size:12px;color:var(--t2)">쇼핑 쇼츠 스크립트 1편 · ₩20,000~50,000 · 훅 문구 포함 시 +₩10,000 / 후기 5건 세트 ₩30,000~70,000</div>
+      </div>
+      <div style="padding:10px;background:var(--puD);border:1px solid var(--puM);border-radius:var(--rs)">
+        <div style="font-weight:700;font-size:12px;color:var(--pu);margin-bottom:4px">🎨 썸네일/디자인 평균 단가</div>
+        <div style="font-size:12px;color:var(--t2)">썸네일 1장 ₩15,000~40,000 / 캐러셀 카드 5장 ₩50,000~120,000 / 브랜드 로고 ₩100,000~300,000</div>
       </div>
     </div>
   </div>
@@ -4344,6 +4490,169 @@ function init() {
   renderSeasonCal();
   renderTrendHooks('food');
   initPlatformChecklist();
+  // Outsource plan
+  initOutsourcePlan();
+}
+
+/* ══════════════════════════════════
+   외주기획표 (Outsource Plan)
+══════════════════════════════════ */
+let oplanData = [];
+let oplanFilterVal = 'all';
+let oplanEditId = null;
+
+(function(){
+  try { const d = localStorage.getItem('oplan_data'); if(d) oplanData = JSON.parse(d); } catch(e){}
+})();
+
+function oplanSave() {
+  try { localStorage.setItem('oplan_data', JSON.stringify(oplanData)); } catch(e){}
+}
+
+function oplanToggleForm() {
+  const f = document.getElementById('oplan-add-form');
+  const btn = document.getElementById('oplan-add-btn');
+  if (!f) return;
+  const open = f.classList.toggle('open');
+  btn.textContent = open ? '✕ 닫기' : '+ 외주 추가';
+  if (!open) { oplanResetForm(); oplanEditId = null; }
+}
+
+function oplanResetForm() {
+  ['of-name','of-vendor','of-price','of-memo'].forEach(id => { const e=document.getElementById(id); if(e) e.value=''; });
+  ['of-cat','of-type'].forEach(id => { const e=document.getElementById(id); if(e) e.selectedIndex=0; });
+  const qty = document.getElementById('of-qty'); if(qty) qty.value='1';
+  const st = document.getElementById('of-status'); if(st) st.value='의뢰중';
+  const due = document.getElementById('of-due'); if(due) due.value='';
+  const tot = document.getElementById('of-total'); if(tot) tot.value='';
+}
+
+function oplanCalcTotal() {
+  const p = parseFloat(document.getElementById('of-price')?.value) || 0;
+  const q = parseInt(document.getElementById('of-qty')?.value) || 1;
+  const tot = document.getElementById('of-total');
+  if (tot) tot.value = (p && q) ? '₩' + (p*q).toLocaleString() : '';
+}
+
+function oplanAddRow() {
+  const name = (document.getElementById('of-name')?.value||'').trim();
+  const type = document.getElementById('of-type')?.value||'';
+  if (!name) { alert('상품명을 입력하세요.'); return; }
+  if (!type) { alert('외주유형을 선택하세요.'); return; }
+  const p = parseFloat(document.getElementById('of-price')?.value)||0;
+  const q = parseInt(document.getElementById('of-qty')?.value)||1;
+  const row = {
+    id: oplanEditId || Date.now(),
+    name, cat: document.getElementById('of-cat')?.value||'',
+    type, vendor: document.getElementById('of-vendor')?.value||'',
+    price: p, qty: q, total: p*q,
+    due: document.getElementById('of-due')?.value||'',
+    status: document.getElementById('of-status')?.value||'의뢰중',
+    memo: document.getElementById('of-memo')?.value||''
+  };
+  if (oplanEditId) {
+    const idx = oplanData.findIndex(r=>r.id===oplanEditId);
+    if (idx>=0) oplanData[idx]=row; else oplanData.unshift(row);
+    oplanEditId = null;
+  } else {
+    oplanData.unshift(row);
+  }
+  oplanSave(); oplanToggleForm(); oplanRender(); oplanRenderSummary();
+}
+
+function oplanDelete(id) {
+  if (!confirm('이 외주를 삭제하시겠습니까?')) return;
+  oplanData = oplanData.filter(r=>r.id!==id);
+  oplanSave(); oplanRender(); oplanRenderSummary();
+}
+
+function oplanEdit(id) {
+  const r = oplanData.find(r=>r.id===id); if(!r) return;
+  oplanEditId = id;
+  const set = (el,v) => { const e=document.getElementById(el); if(e) e.value=v||''; };
+  set('of-name',r.name); set('of-cat',r.cat); set('of-type',r.type);
+  set('of-vendor',r.vendor); set('of-price',r.price); set('of-qty',r.qty||1);
+  set('of-due',r.due); set('of-status',r.status); set('of-memo',r.memo);
+  oplanCalcTotal();
+  const f=document.getElementById('oplan-add-form');
+  const btn=document.getElementById('oplan-add-btn');
+  if(f){ f.classList.add('open'); btn.textContent='✕ 닫기'; f.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+}
+
+function oplanSetFilter(val, btn) {
+  oplanFilterVal = val;
+  document.querySelectorAll('.oplan-tab').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  oplanRender();
+}
+
+const OPLAN_SC = {'의뢰중':'s0','진행중':'s1','완료':'s2','취소':'s3'};
+
+function oplanRender() {
+  const tbody = document.getElementById('oplan-tbody'); if(!tbody) return;
+  const rows = oplanFilterVal==='all' ? oplanData : oplanData.filter(r=>r.status===oplanFilterVal);
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;padding:32px;color:var(--t3)">등록된 외주가 없습니다.</td></tr>';
+    return;
+  }
+  const today = new Date(); today.setHours(0,0,0,0);
+  tbody.innerHTML = rows.map(r => {
+    const sc = OPLAN_SC[r.status]||'s0';
+    const due = r.due ? r.due.replace(/-/g,'.') : '-';
+    const overdue = r.due && r.status!=='완료' && r.status!=='취소' && new Date(r.due)<today;
+    return `<tr>
+      <td style="font-weight:600;color:var(--t1);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.name}">${r.name}</td>
+      <td style="color:var(--t2);white-space:nowrap">${r.cat||'-'}</td>
+      <td><span class="detect-badge" style="font-size:11px;padding:2px 8px">${r.type}</span></td>
+      <td style="color:var(--t2);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.vendor||''}">${r.vendor||'-'}</td>
+      <td style="text-align:right;color:var(--t2);white-space:nowrap">${r.price?'₩'+r.price.toLocaleString():'-'}</td>
+      <td style="text-align:center;color:var(--t2)">${r.qty||1}</td>
+      <td style="text-align:right;font-weight:700;color:var(--wa);white-space:nowrap">${r.total?'₩'+r.total.toLocaleString():'-'}</td>
+      <td style="white-space:nowrap;${overdue?'color:var(--rd);font-weight:600':''}">${due}${overdue?' ⚠':''}​</td>
+      <td><span class="oplan-status ${sc}">${r.status}</span></td>
+      <td style="color:var(--t3);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.memo||''}">${r.memo||''}</td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-ghost btn-sm" onclick="oplanEdit(${r.id})" style="padding:3px 7px;font-size:10px">수정</button>
+        <button class="btn btn-ghost btn-sm" onclick="oplanDelete(${r.id})" style="padding:3px 7px;font-size:10px;color:var(--rd);margin-left:2px">삭제</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function oplanRenderSummary() {
+  const el = document.getElementById('oplan-summary'); if(!el) return;
+  const total = oplanData.length;
+  const byStatus = s => oplanData.filter(r=>r.status===s).length;
+  const sumCost = f => oplanData.filter(f).reduce((s,r)=>s+(r.total||0),0);
+  const totalCost = sumCost(()=>true);
+  const pendingCost = sumCost(r=>r.status!=='완료'&&r.status!=='취소');
+  el.innerHTML = `
+    <div class="oplan-sum-tile"><div class="oplan-sum-num">${total}</div><div class="oplan-sum-label">총 건수</div></div>
+    <div class="oplan-sum-tile"><div class="oplan-sum-num" style="color:var(--wa)">${byStatus('진행중')}</div><div class="oplan-sum-label">진행중</div></div>
+    <div class="oplan-sum-tile"><div class="oplan-sum-num" style="color:var(--gn)">${byStatus('완료')}</div><div class="oplan-sum-label">완료</div></div>
+    <div class="oplan-sum-tile"><div class="oplan-sum-num" style="color:var(--wa);font-size:15px">₩${totalCost.toLocaleString()}</div><div class="oplan-sum-label">총 비용</div></div>
+    <div class="oplan-sum-tile"><div class="oplan-sum-num" style="color:var(--rd);font-size:15px">₩${pendingCost.toLocaleString()}</div><div class="oplan-sum-label">미정산</div></div>`;
+}
+
+function oplanExportCSV() {
+  if (!oplanData.length) { alert('내보낼 데이터가 없습니다.'); return; }
+  const hdr = ['상품명','카테고리','외주유형','업체/프리랜서','단가','수량','총비용','납기일','상태','비고'];
+  const esc = v => `"${String(v||'').replace(/"/g,'""')}"`;
+  const body = oplanData.map(r=>[r.name,r.cat,r.type,r.vendor,r.price,r.qty,r.total,r.due,r.status,r.memo].map(esc).join(','));
+  const csv = '﻿'+[hdr.map(esc).join(','),...body].join('\n');
+  const blob = new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download='외주기획표_'+new Date().toISOString().slice(0,10)+'.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function initOutsourcePlan() {
+  const dateEl = document.getElementById('oplan-date');
+  if (dateEl) dateEl.textContent = new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
+  oplanRender();
+  oplanRenderSummary();
 }
 
 init();
@@ -4362,6 +4671,9 @@ init();
   </button>
   <button class="btab" data-sec="calculator" onclick="navGo('calculator',document.querySelector('[data-sec=calculator]'));btabActivate(this)">
     <span class="btab-icon">📊</span>수익
+  </button>
+  <button class="btab" data-sec="outsource-plan" onclick="navGo('outsource-plan',document.querySelector('[data-sec=outsource-plan]'));initOutsourcePlan();btabActivate(this)">
+    <span class="btab-icon">📋</span>외주
   </button>
   <button class="btab-more" onclick="toggleDrawer()">
     <span class="btab-icon">☰</span>더보기
