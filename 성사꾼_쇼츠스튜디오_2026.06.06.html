@@ -519,16 +519,51 @@ textarea.finp{resize:vertical;min-height:80px;}
     <div class="sb-item" onclick="showPage('home')">🏠 메인 페이지</div>
   </div>
   <div class="sb-grp">
-    <div class="sb-gt">스튜디오 ▾</div>
-    <div class="sb-item active" id="nav-new" onclick="showPage('wizard')">➕ 새 프로젝트</div>
-    <div class="sb-item" id="nav-lib" onclick="showPage('library')">🎬 내 보관함</div>
-      
-      <div class="sb-item" id="nav-match" onclick="showPage('matcher')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-radius:8px;font-size:13px;color:var(--muted)">🛒 상품매칭+클릭바 <span style="background:#ff6b35;color:#fff;font-size:9px;padding:1px 6px;border-radius:999px;margin-left:auto">NEW</span></div>
-      <div class="sb-item" id="nav-conv" onclick="showPage('converter')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-radius:8px;font-size:13px;color:var(--muted)">🔄 영상 변환기 <span style="background:var(--green,#00b894);color:#fff;font-size:9px;padding:1px 6px;border-radius:999px;margin-left:auto">NEW</span></div>
-      <div class="sb-item" id="nav-vid" onclick="showPage('videogen')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-radius:8px;font-size:13px;color:var(--muted)">🎬 영상 생성기 <span style="background:var(--acc);color:#fff;font-size:9px;padding:1px 6px;border-radius:999px;margin-left:auto">NEW</span></div>
-      <div class="sb-item" id="nav-cheatkey" onclick="showPage('cheatkey')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-radius:8px;font-size:13px;color:var(--muted)">⚡ 쇼핑숏폼 치트키 6 <span style="background:#FF6124;color:#fff;font-size:9px;padding:1px 6px;border-radius:999px;margin-left:auto">HOT</span></div>
-      <div class="sb-item" id="nav-backcoach" onclick="showPage('backcoach')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-radius:8px;font-size:13px;color:var(--muted)">🧠 백코치 대본생성기 <span style="background:#4CAF50;color:#fff;font-size:9px;padding:1px 6px;border-radius:999px;margin-left:auto">AI</span></div>
-    <div class="sb-item">🔔 알림</div>
+    <div class="sb-gt">📽️ 제작 과정</div>
+
+    <!-- STEP 1 -->
+    <div class="sb-item active" id="nav-new" onclick="showPage('wizard')" style="display:flex;align-items:center;gap:8px;padding:9px 14px;cursor:pointer;border-radius:8px;font-size:13px;color:var(--muted)">
+      <span style="background:var(--primary,#6366f1);color:#fff;border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0">1</span>
+      ➕ 새 프로젝트
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="sb-item" id="nav-match" onclick="showPage('matcher')" style="display:flex;align-items:center;gap:8px;padding:9px 14px;cursor:pointer;border-radius:8px;font-size:13px;color:var(--muted)">
+      <span style="background:#ff6b35;color:#fff;border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0">2</span>
+      🛒 상품매칭+클릭바 <span style="background:#ff6b35;color:#fff;font-size:9px;padding:1px 6px;border-radius:999px;margin-left:auto">NEW</span>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="sb-item" id="nav-backcoach" onclick="showPage('backcoach')" style="display:flex;align-items:center;gap:8px;padding:9px 14px;cursor:pointer;border-radius:8px;font-size:13px;color:var(--muted)">
+      <span style="background:#4CAF50;color:#fff;border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0">3</span>
+      🧠 백코치 대본생성기 <span style="background:#4CAF50;color:#fff;font-size:9px;padding:1px 6px;border-radius:999px;margin-left:auto">AI</span>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="sb-item" id="nav-cheatkey" onclick="showPage('cheatkey')" style="display:flex;align-items:center;gap:8px;padding:9px 14px;cursor:pointer;border-radius:8px;font-size:13px;color:var(--muted)">
+      <span style="background:#FF6124;color:#fff;border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0">4</span>
+      ⚡ 쇼핑숏폼 치트키 6 <span style="background:#FF6124;color:#fff;font-size:9px;padding:1px 6px;border-radius:999px;margin-left:auto">HOT</span>
+    </div>
+
+    <!-- STEP 5 -->
+    <div class="sb-item" id="nav-vid" onclick="showPage('videogen')" style="display:flex;align-items:center;gap:8px;padding:9px 14px;cursor:pointer;border-radius:8px;font-size:13px;color:var(--muted)">
+      <span style="background:var(--acc,#a855f7);color:#fff;border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0">5</span>
+      🎬 영상 생성기 <span style="background:var(--acc,#a855f7);color:#fff;font-size:9px;padding:1px 6px;border-radius:999px;margin-left:auto">NEW</span>
+    </div>
+
+    <!-- STEP 6 -->
+    <div class="sb-item" id="nav-conv" onclick="showPage('converter')" style="display:flex;align-items:center;gap:8px;padding:9px 14px;cursor:pointer;border-radius:8px;font-size:13px;color:var(--muted)">
+      <span style="background:#00b894;color:#fff;border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0">6</span>
+      🔄 영상 변환기 <span style="background:#00b894;color:#fff;font-size:9px;padding:1px 6px;border-radius:999px;margin-left:auto">NEW</span>
+    </div>
+
+    <!-- STEP 7 -->
+    <div class="sb-item" id="nav-lib" onclick="showPage('library')" style="display:flex;align-items:center;gap:8px;padding:9px 14px;cursor:pointer;border-radius:8px;font-size:13px;color:var(--muted)">
+      <span style="background:#636e72;color:#fff;border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0">7</span>
+      📁 내 보관함
+    </div>
+
+    <div class="sb-item" style="display:flex;align-items:center;gap:8px;padding:9px 14px;font-size:13px;color:var(--muted)">🔔 알림</div>
   </div>
   <div class="sb-grp">
     <div class="sb-gt">커뮤니티 ▾</div>
