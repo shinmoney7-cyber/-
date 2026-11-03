@@ -1888,8 +1888,66 @@ function renderBackcoachPanel() {
   c.innerHTML = `
   <div class="bc-wrap">
     <div class="bc-header">
-      <div style="font-size:19px;font-weight:900;color:var(--text)">🧠 백코치식 쇼핑쇼츠 대본생성기</div>
-      <div style="font-size:12px;color:var(--text2);margin-top:4px">원본 대본 분석 → 소구점 추출 → 완전히 새로운 대본 3개 + 인스타 캡션 자동 생성 (Gemini AI)</div>
+      <div style="font-size:19px;font-weight:900;color:var(--text)">🧠 백코치식 쇼핑쇼츠 대본생성기 v5</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:4px">상품 입력 → 소구점 분석 → 새 대본 3개 + 인스타 캡션 + 영상 자동생성 (Gemini AI)</div>
+    </div>
+
+    <!-- 6단계 과정 흐름도 -->
+    <div class="bc-card">
+      <div class="bc-lbl" style="margin-bottom:10px">📌 전체 과정 (6단계 자동 실행)</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+        <div style="display:flex;align-items:center;gap:5px;background:rgba(108,92,231,.08);border:1px solid rgba(108,92,231,.2);border-radius:8px;padding:7px 11px;font-size:11px;color:var(--text)">
+          <span style="background:var(--accent);color:#fff;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">1</span>🛍️ 상품명/URL
+        </div>
+        <span style="color:var(--text3);font-size:13px">→</span>
+        <div style="display:flex;align-items:center;gap:5px;background:rgba(108,92,231,.08);border:1px solid rgba(108,92,231,.2);border-radius:8px;padding:7px 11px;font-size:11px;color:var(--text)">
+          <span style="background:var(--accent);color:#fff;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">2</span>📋 원본 대본
+        </div>
+        <span style="color:var(--text3);font-size:13px">→</span>
+        <div style="display:flex;align-items:center;gap:5px;background:rgba(108,92,231,.12);border:1px solid rgba(108,92,231,.3);border-radius:8px;padding:7px 11px;font-size:11px;color:var(--text)">
+          <span style="background:#6c5ce7;color:#fff;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">3</span>🔍 소구점 분석
+        </div>
+        <span style="color:var(--text3);font-size:13px">→</span>
+        <div style="display:flex;align-items:center;gap:5px;background:rgba(0,184,148,.08);border:1px solid rgba(0,184,148,.2);border-radius:8px;padding:7px 11px;font-size:11px;color:var(--text)">
+          <span style="background:#00b894;color:#fff;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">4</span>✏️ 대본 3개
+        </div>
+        <span style="color:var(--text3);font-size:13px">→</span>
+        <div style="display:flex;align-items:center;gap:5px;background:rgba(253,203,110,.12);border:1px solid rgba(253,203,110,.3);border-radius:8px;padding:7px 11px;font-size:11px;color:var(--text)">
+          <span style="background:#ffd32a;color:#333;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">5</span>📱 캡션+태그
+        </div>
+        <span style="color:var(--text3);font-size:13px">→</span>
+        <div style="display:flex;align-items:center;gap:5px;background:rgba(253,121,168,.08);border:1px solid rgba(253,121,168,.2);border-radius:8px;padding:7px 11px;font-size:11px;color:var(--text)">
+          <span style="background:#fd79a8;color:#fff;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">6</span>🎬 영상 생성
+        </div>
+      </div>
+    </div>
+
+    <!-- 훅 유형 안내 -->
+    <div class="bc-card">
+      <div class="bc-lbl" style="margin-bottom:10px">✏️ 생성될 대본 3가지 훅 유형</div>
+      <div style="display:flex;flex-direction:column;gap:7px">
+        <div style="display:flex;align-items:flex-start;gap:10px;padding:9px 11px;background:rgba(108,92,231,.06);border-radius:8px;border:1px solid rgba(108,92,231,.15)">
+          <span style="font-size:18px;flex-shrink:0">😩</span>
+          <div>
+            <div style="font-size:12px;font-weight:700;color:#6c5ce7">대본 1 — 문제 공감형 훅</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:2px">타깃의 불편함·고민에서 출발 → "이런 경험 있지 않아?" 공감으로 주목 유도</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:10px;padding:9px 11px;background:rgba(0,184,148,.06);border-radius:8px;border:1px solid rgba(0,184,148,.15)">
+          <span style="font-size:18px;flex-shrink:0">💰</span>
+          <div>
+            <div style="font-size:12px;font-weight:700;color:#00b894">대본 2 — 가성비·충격 가격형 훅</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:2px">가격 놀라움에서 출발 → "이 가격에 이게 돼?" 충격으로 시선 고정</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:10px;padding:9px 11px;background:rgba(253,121,168,.06);border-radius:8px;border:1px solid rgba(253,121,168,.15)">
+          <span style="font-size:18px;flex-shrink:0">✨</span>
+          <div>
+            <div style="font-size:12px;font-weight:700;color:#fd79a8">대본 3 — 변화·결과형 훅</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:2px">사용 전후 변화에서 출발 → "이거 쓰고 나서 진짜 달라졌어" 결과 제시</div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- API 키 -->
@@ -1901,26 +1959,54 @@ function renderBackcoachPanel() {
       </div>
     </div>
 
-    <!-- 입력 -->
+    <!-- STEP 1: 상품명 (먼저) -->
     <div class="bc-card">
-      <div class="bc-lbl">📋 원본 대본 <span style="font-size:10px;font-weight:400;color:var(--text3)">(바이럴 영상의 자막/스크립트 붙여넣기)</span></div>
-      <textarea id="bc-script" class="bc-ta" rows="6" placeholder="예) 이거 진짜 모르면 손해야&#10;나 이거 쓰고 나서 완전 달라졌거든&#10;가격도 이게 맞아? 할인 끝나기 전에 봐..."></textarea>
-    </div>
-
-    <div class="bc-card">
-      <div class="bc-lbl">🛍️ 상품명 또는 URL</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="background:var(--accent);color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">1</span>
+        <div class="bc-lbl" style="margin:0">🛍️ 상품명 또는 URL</div>
+        <span style="font-size:10px;color:var(--accent);background:rgba(108,92,231,.1);padding:2px 8px;border-radius:999px;border:1px solid rgba(108,92,231,.2)">필수</span>
+      </div>
       <input id="bc-product" type="text" class="bc-inp" placeholder="예) 접이식 소파베드 / 쿠팡 URL / 제품명">
+      <div style="font-size:10px;color:var(--text3);margin-top:5px">💡 쿠팡·네이버·11번가 URL 또는 제품명 → AI가 자동으로 소구점 파악</div>
     </div>
 
-    <button class="bc-btn-gen" onclick="bcGenerate()" id="bc-gen-btn">🧠 소구점 분석 + 새 대본 3개 생성하기</button>
+    <!-- STEP 2: 원본 대본 (다음) -->
+    <div class="bc-card">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="background:#6c5ce7;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">2</span>
+        <div class="bc-lbl" style="margin:0">📋 원본 대본 <span style="font-size:10px;font-weight:400;color:var(--text3)">(바이럴 영상의 자막/스크립트 붙여넣기)</span></div>
+        <span style="font-size:10px;color:var(--text3);background:var(--bg3);padding:2px 8px;border-radius:999px;border:1px solid var(--bg4)">선택</span>
+      </div>
+      <textarea id="bc-script" class="bc-ta" rows="5" placeholder="예) 이거 진짜 모르면 손해야&#10;나 이거 쓰고 나서 완전 달라졌거든&#10;가격도 이게 맞아? 할인 끝나기 전에 봐...&#10;&#10;※ 잘 팔리는 영상 자막을 붙여넣으면 그 스타일로 새 대본을 만들어줍니다"></textarea>
+      <div style="font-size:10px;color:var(--text3);margin-top:5px">💡 경쟁사·바이럴 영상 자막 붙여넣기 → 소구점 분석 후 완전히 새로운 대본 창작</div>
+    </div>
 
-    <!-- 로딩 -->
-    <div class="bc-spinner" id="bc-spinner">⏳ Gemini AI가 소구점을 분석하고 새 대본을 생성 중입니다... (10-20초 소요)</div>
+    <button class="bc-btn-gen" onclick="bcGenerate()" id="bc-gen-btn">🧠 STEP 3→6 자동 실행 · 소구점 분석 + 대본 3개 + 캡션 생성</button>
+
+    <!-- 로딩: 단계별 -->
+    <div class="bc-spinner" id="bc-spinner" style="display:none;text-align:center;padding:20px;background:var(--bg2);border-radius:12px;margin-top:12px;border:1px solid var(--bg4)">
+      <div style="font-size:20px;margin-bottom:6px">⚙️</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px">Gemini AI 처리 중...</div>
+      <div id="bc-step-label" style="font-size:11px;color:var(--text3)">🔍 STEP 3: 소구점 분석 중...</div>
+      <div style="margin-top:10px;height:4px;background:var(--bg4);border-radius:999px;overflow:hidden">
+        <div id="bc-progress" style="height:100%;width:0%;background:linear-gradient(90deg,#6c5ce7,#a29bfe);border-radius:999px;transition:width .4s ease"></div>
+      </div>
+    </div>
 
     <!-- 결과 -->
     <div id="bc-result-area"></div>
   </div>`;
+
+  window._bcStepAnim = null;
 }
+window._bcStepLabels = [
+  '🔍 STEP 3: 소구점 분석 중...',
+  '✏️ STEP 4: 문제 공감형 대본 작성 중...',
+  '✏️ STEP 4: 가성비형 대본 작성 중...',
+  '✏️ STEP 4: 변화·결과형 대본 작성 중...',
+  '📱 STEP 5: 인스타 캡션 + 해시태그 생성 중...',
+  '🎬 STEP 6: 영상 생성 준비 중...'
+];
 
 async function bcGenerate() {
   const script = document.getElementById('bc-script')?.value?.trim() || '';
@@ -1935,8 +2021,18 @@ async function bcGenerate() {
   const resultArea = document.getElementById('bc-result-area');
   btn.disabled = true;
   btn.textContent = '⏳ 생성 중...';
-  spinner.classList.add('on');
+  spinner.style.display = 'block'; spinner.classList.add('on');
   resultArea.innerHTML = '';
+  // 단계별 진행 애니메이션
+  let bcStepIdx = 0;
+  const bcLabels = window._bcStepLabels || [];
+  const bcProg = document.getElementById('bc-progress');
+  const bcLbl = document.getElementById('bc-step-label');
+  window._bcStepAnim = setInterval(() => {
+    if(bcLbl && bcLabels[bcStepIdx]) bcLbl.textContent = bcLabels[bcStepIdx];
+    if(bcProg) bcProg.style.width = Math.min(95, ((bcStepIdx+1)/bcLabels.length)*100) + '%';
+    bcStepIdx = (bcStepIdx+1) % bcLabels.length;
+  }, 2000);
 
   const prompt = `당신은 쇼핑 숏폼 영상 대본 전문가입니다.
 아래 원본 대본을 분석하여 소구점(핵심 판매 포인트)을 추출하고, 그 소구점을 바탕으로 완전히 새로운 대본 3개를 작성하세요.
@@ -1997,9 +2093,12 @@ ${script || '(상품명/URL에서 파악)'}
   } catch(e) {
     resultArea.innerHTML = `<div style="background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.3);border-radius:10px;padding:14px;color:var(--red);font-size:13px">⚠️ 오류: ${e.message}<br><br>• API 키를 확인하세요<br>• Gemini 무료 한도를 초과했을 수 있습니다</div>`;
   } finally {
+    clearInterval(window._bcStepAnim);
+    const bp = document.getElementById('bc-progress');
+    if(bp) bp.style.width = '100%';
     btn.disabled = false;
-    btn.textContent = '🧠 소구점 분석 + 새 대본 3개 생성하기';
-    spinner.classList.remove('on');
+    btn.textContent = '🧠 STEP 3→6 자동 실행 · 소구점 분석 + 대본 3개 + 캡션 생성';
+    spinner.style.display = 'none'; spinner.classList.remove('on');
   }
 }
 
