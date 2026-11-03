@@ -866,7 +866,79 @@ function renderPage(p){
   if(p==='matcher'){renderMatcher();return;}
   if(p==='cheatkey'){renderCheatkey();return;}
   if(p==='backcoach'){renderBackcoachSk();return;}
-  c.innerHTML=`<div class="ldg"><div style="font-size:40px;">🏠</div><div style="margin-top:12px;color:var(--muted);">메인 페이지</div></div>`;
+  c.innerHTML=`<div style="padding:16px">
+    <div style="background:linear-gradient(135deg,rgba(108,92,231,.12),rgba(76,175,80,.08));border:1px solid rgba(108,92,231,.25);border-radius:14px;padding:16px;margin-bottom:16px;display:flex;align-items:center;gap:12px">
+      <div style="font-size:36px">🏆</div>
+      <div>
+        <div style="font-size:16px;font-weight:700;color:var(--text)">성사꾼 쇼츠스튜디오</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px">상품 → 바이럴 숏폼 7단계 완전 자동화</div>
+      </div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:14px">
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px">📽️ 숏폼 제작 7단계 워크플로우</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">
+        <div onclick="showPage('wizard')" style="border:1px solid rgba(255,140,0,.3);border-radius:10px;padding:12px;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='#ff8c00';this.style.background='rgba(255,140,0,.07)'" onmouseout="this.style.borderColor='rgba(255,140,0,.3)';this.style.background=''">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <span style="background:#ff8c00;color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">1</span>
+            <span style="font-size:18px">➕</span>
+          </div>
+          <div style="font-size:12px;font-weight:700;color:var(--text)">새 프로젝트</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px">영상 설정 + AI 자동완성</div>
+        </div>
+        <div onclick="showPage('matcher')" style="border:1px solid rgba(255,107,53,.3);border-radius:10px;padding:12px;cursor:pointer" onmouseover="this.style.borderColor='#ff6b35';this.style.background='rgba(255,107,53,.07)'" onmouseout="this.style.borderColor='rgba(255,107,53,.3)';this.style.background=''">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <span style="background:#ff6b35;color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">2</span>
+            <span style="font-size:18px">🛒</span>
+          </div>
+          <div style="font-size:12px;font-weight:700;color:var(--text)">상품매칭+클릭바</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px">URL 등록 → 클릭유도 바 생성</div>
+        </div>
+        <div onclick="showPage('backcoach')" style="border:1px solid rgba(76,175,80,.3);border-radius:10px;padding:12px;cursor:pointer" onmouseover="this.style.borderColor='#4CAF50';this.style.background='rgba(76,175,80,.07)'" onmouseout="this.style.borderColor='rgba(76,175,80,.3)';this.style.background=''">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <span style="background:#4CAF50;color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">3</span>
+            <span style="font-size:18px">🧠</span>
+          </div>
+          <div style="font-size:12px;font-weight:700;color:var(--text)">백코치 대본생성기</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px">상품명 입력 → AI 대본 3종</div>
+        </div>
+        <div onclick="showPage('cheatkey')" style="border:1px solid rgba(255,97,36,.3);border-radius:10px;padding:12px;cursor:pointer" onmouseover="this.style.borderColor='#FF6124';this.style.background='rgba(255,97,36,.07)'" onmouseout="this.style.borderColor='rgba(255,97,36,.3)';this.style.background=''">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <span style="background:#FF6124;color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">4</span>
+            <span style="font-size:18px">⚡</span>
+          </div>
+          <div style="font-size:12px;font-weight:700;color:var(--text)">쇼핑숏폼 치트키 6</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px">6가지 바이럴 훅 공식</div>
+        </div>
+        <div onclick="showPage('videogen')" style="border:1px solid rgba(108,92,231,.3);border-radius:10px;padding:12px;cursor:pointer" onmouseover="this.style.borderColor='#6c5ce7';this.style.background='rgba(108,92,231,.07)'" onmouseout="this.style.borderColor='rgba(108,92,231,.3)';this.style.background=''">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <span style="background:#6c5ce7;color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">5</span>
+            <span style="font-size:18px">🎬</span>
+          </div>
+          <div style="font-size:12px;font-weight:700;color:var(--text)">영상 생성기</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px">자막 → Canvas WebM 렌더링</div>
+        </div>
+        <div onclick="showPage('converter')" style="border:1px solid rgba(0,184,148,.3);border-radius:10px;padding:12px;cursor:pointer" onmouseover="this.style.borderColor='#00b894';this.style.background='rgba(0,184,148,.07)'" onmouseout="this.style.borderColor='rgba(0,184,148,.3)';this.style.background=''">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <span style="background:#00b894;color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">6</span>
+            <span style="font-size:18px">🔄</span>
+          </div>
+          <div style="font-size:12px;font-weight:700;color:var(--text)">영상 변환기</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px">WebM → MP4/GIF 포맷 변환</div>
+        </div>
+        <div onclick="showPage('library')" style="border:1px solid rgba(124,130,160,.3);border-radius:10px;padding:12px;cursor:pointer" onmouseover="this.style.borderColor='#7c82a0';this.style.background='rgba(124,130,160,.07)'" onmouseout="this.style.borderColor='rgba(124,130,160,.3)';this.style.background=''">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <span style="background:#7c82a0;color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">7</span>
+            <span style="font-size:18px">📁</span>
+          </div>
+          <div style="font-size:12px;font-weight:700;color:var(--text)">내 보관함</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px">생성된 프로젝트 저장소</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:rgba(76,175,80,.08);border:1px solid rgba(76,175,80,.2);border-radius:10px;padding:12px;font-size:12px;color:var(--muted)">
+      💡 시작하려면 왼쪽 메뉴에서 <strong style="color:var(--primary)">⚙️ 설정</strong>에서 Gemini API 키를 먼저 입력해주세요. 위 카드를 클릭하면 해당 단계로 바로 이동합니다.
+    </div>
+  </div>`;
 }
 
 /* ===== WIZARD ===== */
@@ -3057,36 +3129,41 @@ function renderBackcoachSk() {
 
     <!-- 6단계 과정 흐름도 -->
     <div style="background:white;border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:14px">
-      <div style="font-size:11px;font-weight:700;color:var(--primary);margin-bottom:12px;letter-spacing:.05em">📌 전체 과정 (6단계 자동 실행)</div>
+      <div style="font-size:11px;font-weight:700;color:var(--primary);margin-bottom:12px;letter-spacing:.05em">📌 전체 과정 (7단계 자동 실행)</div>
       <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
-        <div style="display:flex;align-items:center;gap:4px;background:#f0f4ff;border:1px solid rgba(37,99,235,.2);border-radius:8px;padding:7px 11px;font-size:11px">
+        <div onclick="var e=document.getElementById('sk-bc-product');if(e){e.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>e.focus(),300)}" style="display:flex;align-items:center;gap:4px;background:#f0f4ff;border:1px solid rgba(37,99,235,.2);border-radius:8px;padding:7px 11px;font-size:11px;cursor:pointer" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'" title="클릭→ 상품명 입력으로 이동">
           <span style="background:#2563eb;color:#fff;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">1</span>
           <span>🛍️ 상품명/URL 입력</span>
         </div>
         <span style="color:var(--muted);font-size:14px">→</span>
-        <div style="display:flex;align-items:center;gap:4px;background:#f0f4ff;border:1px solid rgba(37,99,235,.2);border-radius:8px;padding:7px 11px;font-size:11px">
+        <div onclick="var e=document.getElementById('sk-bc-script');if(e){e.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>e.focus(),300)}" style="display:flex;align-items:center;gap:4px;background:#f0f4ff;border:1px solid rgba(37,99,235,.2);border-radius:8px;padding:7px 11px;font-size:11px;cursor:pointer" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'" title="클릭→ 원본 대본 입력으로 이동">
           <span style="background:#2563eb;color:#fff;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">2</span>
           <span>📋 원본 대본 붙여넣기</span>
         </div>
         <span style="color:var(--muted);font-size:14px">→</span>
-        <div style="display:flex;align-items:center;gap:4px;background:#faf0ff;border:1px solid rgba(124,58,237,.2);border-radius:8px;padding:7px 11px;font-size:11px">
+        <div onclick="var b=document.getElementById('sk-bc-gen-btn');if(b&&!b.disabled){b.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>b.click(),300)}else{var e=document.getElementById('sk-bc-result');if(e)e.scrollIntoView({behavior:'smooth',block:'start'})}" style="display:flex;align-items:center;gap:4px;background:#faf0ff;border:1px solid rgba(124,58,237,.2);border-radius:8px;padding:7px 11px;font-size:11px;cursor:pointer" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'" title="클릭→ AI 분석 실행">
           <span style="background:#7c3aed;color:#fff;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">3</span>
           <span>🔍 소구점 자동 분석</span>
         </div>
         <span style="color:var(--muted);font-size:14px">→</span>
-        <div style="display:flex;align-items:center;gap:4px;background:#f0fff4;border:1px solid rgba(22,163,74,.2);border-radius:8px;padding:7px 11px;font-size:11px">
+        <div onclick="var e=document.getElementById('sk-bc-result');if(e)e.scrollIntoView({behavior:'smooth',block:'start'})" style="display:flex;align-items:center;gap:4px;background:#f0fff4;border:1px solid rgba(22,163,74,.2);border-radius:8px;padding:7px 11px;font-size:11px;cursor:pointer" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'" title="클릭→ 생성된 대본 보기">
           <span style="background:#16a34a;color:#fff;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">4</span>
           <span>✏️ 훅 유형별 대본 3개</span>
         </div>
         <span style="color:var(--muted);font-size:14px">→</span>
-        <div style="display:flex;align-items:center;gap:4px;background:#fff7f0;border:1px solid rgba(217,119,6,.2);border-radius:8px;padding:7px 11px;font-size:11px">
+        <div onclick="var e=document.getElementById('sk-bc-result');if(e)e.scrollIntoView({behavior:'smooth',block:'start'})" style="display:flex;align-items:center;gap:4px;background:#fff7f0;border:1px solid rgba(217,119,6,.2);border-radius:8px;padding:7px 11px;font-size:11px;cursor:pointer" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'" title="클릭→ 인스타 캡션 보기">
           <span style="background:#d97706;color:#fff;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">5</span>
           <span>📱 인스타 캡션+해시태그</span>
         </div>
         <span style="color:var(--muted);font-size:14px">→</span>
-        <div style="display:flex;align-items:center;gap:4px;background:#fff0f6;border:1px solid rgba(219,39,119,.2);border-radius:8px;padding:7px 11px;font-size:11px">
+        <div onclick="showPage('videogen')" style="display:flex;align-items:center;gap:4px;background:#fff0f6;border:1px solid rgba(219,39,119,.2);border-radius:8px;padding:7px 11px;font-size:11px;cursor:pointer" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'" title="클릭→ 영상 생성기로 이동">
           <span style="background:#db2777;color:#fff;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">6</span>
           <span>🎬 영상 자동 생성</span>
+        </div>
+        <span style="color:var(--muted);font-size:14px">→</span>
+        <div onclick="skShowCapCutGuide()" style="display:flex;align-items:center;gap:4px;background:#f0fdf4;border:1px solid rgba(0,180,100,.3);border-radius:8px;padding:7px 11px;font-size:11px;cursor:pointer" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'" title="클릭→ CapCut 편집 가이드">
+          <span style="background:#00b464;color:#fff;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">7</span>
+          <span>✂️ CapCut 편집</span>
         </div>
       </div>
     </div>
@@ -3424,6 +3501,67 @@ function skBcToCapCut(sectionId) {
     <button onclick="this.closest('[style*=fixed]').remove()" style="margin-top:16px;width:100%;padding:10px;background:#4CAF50;border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:600;cursor:pointer">확인</button>
   </div></div>`;
 
+  document.body.insertAdjacentHTML('beforeend', guideHtml);
+}
+
+function skShowCapCutGuide() {
+  const guideHtml = `<div style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:9999;display:flex;align-items:center;justify-content:center" onclick="if(event.target===this)this.remove()">
+    <div style="background:#fff;border-radius:16px;padding:20px;max-width:480px;width:90%;max-height:85vh;overflow-y:auto;font-family:inherit">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="font-size:15px;font-weight:700">✂️ CapCut 무료 편집 가이드</div>
+        <button onclick="this.closest('[style*=fixed]').remove()" style="border:none;background:none;font-size:20px;cursor:pointer;color:#666">×</button>
+      </div>
+      <div style="font-size:11px;color:#666;margin-bottom:14px;background:#f8f9ff;border-radius:8px;padding:10px">
+        💡 대본을 영상으로 만든 후 아래 순서로 CapCut 무료 버전에서 편집하세요
+      </div>
+      <div style="margin-bottom:14px">
+        <div style="font-size:11px;font-weight:700;color:#00b464;margin-bottom:8px">📥 STEP 1 — 영상 불러오기</div>
+        <div style="font-size:11px;color:#444;line-height:1.7">
+          • CapCut 실행 → 새 프로젝트 → 갤러리에서 영상 선택<br>
+          • 비율: <strong>9:16</strong> (세로형 숏폼)으로 설정
+        </div>
+      </div>
+      <div style="margin-bottom:14px">
+        <div style="font-size:11px;font-weight:700;color:#2563eb;margin-bottom:8px">📝 STEP 2 — 자막 추가</div>
+        <div style="font-size:11px;color:#444;line-height:1.7">
+          • 텍스트 → 자동 캡션 (AI 자동 자막 생성)<br>
+          • 또는 직접 입력: 텍스트 → 추가<br>
+          • <strong>훅 자막</strong>: Bold + 흰색 + 검정 테두리<br>
+          • <strong>본문 자막</strong>: 일반 + 노란색<br>
+          • <strong>CTA 자막</strong>: Bold + 빨간색 (마지막 1~2초)
+        </div>
+      </div>
+      <div style="margin-bottom:14px">
+        <div style="font-size:11px;font-weight:700;color:#7c3aed;margin-bottom:8px">🔀 STEP 3 — 전환 효과</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">
+          ${['Glitch','Zoom In','Slide Left','Shake','Flash'].map(e=>`<span style="background:#f3f4f6;padding:3px 8px;border-radius:6px;font-size:11px;color:#333">${e}</span>`).join('')}
+        </div>
+        <div style="font-size:11px;color:#666">씬 전환 시 위 효과 중 1~2가지만 사용 (통일감 유지)</div>
+      </div>
+      <div style="margin-bottom:14px">
+        <div style="font-size:11px;font-weight:700;color:#d97706;margin-bottom:8px">🎵 STEP 4 — BGM (CapCut 무료음악)</div>
+        <div style="background:#fffbeb;border-radius:8px;padding:10px;font-size:11px;color:#555">
+          검색: <strong>"upbeat shopping"</strong> 또는 <strong>"trendy pop beat"</strong><br>
+          음량 낮추기 30~40% → 마지막 1초 페이드아웃
+        </div>
+      </div>
+      <div style="margin-bottom:14px">
+        <div style="font-size:11px;font-weight:700;color:#db2777;margin-bottom:8px">⚡ STEP 5 — 속도 효과</div>
+        <div style="font-size:11px;color:#444;line-height:1.7">
+          • 인트로 0~1초: <strong>2배속</strong> (빠른 시작으로 훅 강조)<br>
+          • CTA 마지막 1초: <strong>0.5배속</strong> 슬로우모션
+        </div>
+      </div>
+      <div style="margin-bottom:16px">
+        <div style="font-size:11px;font-weight:700;color:#333;margin-bottom:8px">📤 STEP 6 — 내보내기</div>
+        <div style="font-size:11px;color:#444;line-height:1.7">
+          해상도: <strong>1080p</strong> → 프레임: <strong>30fps</strong> → 내보내기<br>
+          파일명: 상품명_날짜.mp4
+        </div>
+      </div>
+      <button onclick="this.closest('[style*=fixed]').remove()" style="width:100%;padding:11px;background:#00b464;border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer">확인</button>
+    </div>
+  </div>`;
   document.body.insertAdjacentHTML('beforeend', guideHtml);
 }
 
