@@ -3300,7 +3300,11 @@ function skBcRenderResult(text) {
       <div style="display:flex;justify-content:flex-end;gap:6px;margin-top:10px">
         <button onclick="skBcCopy('${sec.id}','${sec.id}-btn')" id="${sec.id}-btn"
           style="padding:5px 12px;background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:11px;cursor:pointer;font-family:inherit">📋 복사</button>
-        ${i >= 1 && i <= 3 ? `<button onclick="skBcToVideo('${sec.id}')"
+        ${i >= 1 && i <= 3 ? `<button onclick="skBcToRemix('${sec.id}')"
+          style="padding:5px 12px;background:rgba(76,175,80,.12);border:1px solid #4CAF50;border-radius:6px;color:#4CAF50;font-size:11px;cursor:pointer;font-family:inherit">✨ 리믹스로</button>
+        <button onclick="skBcToCapCut('${sec.id}')"
+          style="padding:5px 12px;background:rgba(0,0,0,.08);border:1px solid #333;border-radius:6px;color:#333;font-size:11px;cursor:pointer;font-family:inherit">✂️ CapCut</button>
+        <button onclick="skBcToVideo('${sec.id}')"
           style="padding:5px 12px;background:var(--primary-l);border:1px solid var(--primary);border-radius:6px;color:var(--primary);font-size:11px;cursor:pointer;font-family:inherit">▶ 영상으로</button>` : ''}
       </div>
     </div>`;
@@ -3340,6 +3344,87 @@ function skBcToVideo(sectionId) {
     if(e2) e2.scrollIntoView({ behavior:'smooth', block:'center' });
     setTimeout(() => { if(typeof vgGenerate === 'function') vgGenerate(); }, 300);
   }, 200);
+}
+
+function skBcToRemix(sectionId) {
+  const el = document.getElementById(sectionId);
+  if(!el) return;
+  let txt = (el.innerText || el.textContent).trim();
+  const lines = txt.split('\n').filter(l => l.trim());
+  let converted = '[씬] 제품+사람 동시 등장 · 클로즈업 교차\n';
+  let t = 0;
+  lines.forEach(l => { if(l.trim()){ converted += `[${t}초] ${l.trim()}\n`; t += 3; } });
+  const ta = document.getElementById('vgScript');
+  if(ta) ta.value = converted;
+  if(typeof vgParseScript === 'function') vgParseScript();
+  showPage('videogen');
+  setTimeout(() => {
+    const e2 = document.getElementById('vgScript');
+    if(e2) {
+      e2.scrollIntoView({ behavior:'smooth', block:'center' });
+      e2.style.outline = '2px solid #4CAF50';
+      setTimeout(() => { e2.style.outline = ''; }, 1800);
+    }
+  }, 200);
+}
+
+function skBcToCapCut(sectionId) {
+  const el = document.getElementById(sectionId);
+  if(!el) return;
+  const txt = (el.innerText || el.textContent).trim();
+  const lines = txt.split('\n').filter(l => l.trim());
+
+  let guideHtml = `<div style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:9999;display:flex;align-items:center;justify-content:center" onclick="if(event.target===this)this.remove()">
+    <div style="background:#fff;border-radius:16px;padding:20px;max-width:480px;width:90%;max-height:80vh;overflow-y:auto;font-family:inherit">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="font-size:15px;font-weight:700">✂️ CapCut 무료 편집 가이드</div>
+        <button onclick="this.closest('[style*=fixed]').remove()" style="border:none;background:none;font-size:18px;cursor:pointer">×</button>
+      </div>
+      <div style="font-size:11px;color:#666;margin-bottom:14px">아래 순서대로 CapCut 무료 버전에서 편집하세요</div>`;
+
+  let t = 0;
+  guideHtml += `<div style="margin-bottom:12px"><div style="font-size:11px;font-weight:700;color:#333;margin-bottom:6px">⏱ 자막 타이밍</div>`;
+  lines.forEach((l, i) => {
+    const dur = Math.max(2, Math.min(4, Math.ceil(l.length / 10)));
+    guideHtml += `<div style="display:grid;grid-template-columns:70px 1fr;gap:8px;padding:5px 0;border-bottom:1px solid #eee;font-size:11px">
+      <span style="color:#6c5ce7;font-family:monospace;font-weight:600">${t}~${t+dur}초</span>
+      <span style="color:#333">${l.replace(/</g,'&lt;')}</span>
+    </div>`;
+    t += dur;
+  });
+  guideHtml += `</div>`;
+
+  const totalSec = t;
+  guideHtml += `
+    <div style="margin-bottom:12px">
+      <div style="font-size:11px;font-weight:700;color:#333;margin-bottom:6px">🔀 추천 전환 효과</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        ${['Glitch','Zoom In','Slide Left','Shake','Flash'].map(e=>`<span style="background:#f3f4f6;padding:3px 8px;border-radius:6px;font-size:11px;color:#333">${e}</span>`).join('')}
+      </div>
+    </div>
+    <div style="margin-bottom:12px">
+      <div style="font-size:11px;font-weight:700;color:#333;margin-bottom:6px">🎵 BGM (CapCut 무료음악)</div>
+      <div style="background:#f8f9ff;border-radius:8px;padding:10px;font-size:11px;color:#555">
+        검색키워드: <strong>"upbeat shopping"</strong> 또는 <strong>"trendy pop beat"</strong><br>
+        길이 ${totalSec}초에 맞게 자르기 → 페이드아웃 1초
+      </div>
+    </div>
+    <div style="margin-bottom:12px">
+      <div style="font-size:11px;font-weight:700;color:#333;margin-bottom:6px">✏️ 텍스트 오버레이 팁</div>
+      <div style="display:flex;flex-direction:column;gap:5px;font-size:11px;color:#555">
+        <div>• 1번 자막: <strong>Bold + 흰색</strong> + 검정 테두리 (훅 강조)</div>
+        <div>• 중간 자막: <strong>일반 + 노란색</strong> (핵심 스펙)</div>
+        <div>• 마지막 자막: <strong>Bold + 빨간색</strong> (CTA)</div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#333;margin-bottom:6px">⚡ 속도 효과 팁</div>
+      <div style="font-size:11px;color:#555">0~1초 구간 2배속 → 갑작스런 시작으로 눈길 끌기<br>마지막 1초 슬로우모션 0.5배속 → CTA 강조</div>
+    </div>
+    <button onclick="this.closest('[style*=fixed]').remove()" style="margin-top:16px;width:100%;padding:10px;background:#4CAF50;border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:600;cursor:pointer">확인</button>
+  </div></div>`;
+
+  document.body.insertAdjacentHTML('beforeend', guideHtml);
 }
 
 function renderMatcher() {
