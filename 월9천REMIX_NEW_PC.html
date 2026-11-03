@@ -324,23 +324,69 @@ select option{background:var(--bg3)}
   </div>
   <div class="nav">
     <div class="nav-section">메인</div>
-    <button class="nav-item on" onclick="goPanel('home',this)"><span class="icon">🏠</span>홈 대시보드</button>
-    <div class="nav-section">툴</div>
-    <button class="nav-item" onclick="goPanel('api',this)"><span class="icon">🔑</span>API 설정</button>
-    <button class="nav-item" onclick="goPanel('search',this)"><span class="icon">🔍</span>영상 탐색</button>
-    <button class="nav-item" onclick="goPanel('analyzer',this)"><span class="icon">📊</span>바이럴 분석</button>
-    <button class="nav-item" onclick="goPanel('remix',this)"><span class="icon">✨</span>리믹스 스튜디오</button>
-    <button class="nav-item" onclick="goPanel('publish',this)"><span class="icon">📱</span>플랫폼 배포</button>
-    <button class="nav-item" onclick="goPanel('launcher',this)"><span class="icon">🚀</span>플랫폼 런처</button>
-    <button class="nav-item" onclick="goPanel('videogen',this)"><span class="icon">🎬</span>영상 생성기 <span class="nav-badge">NEW</span></button>
-    <button class="nav-item" onclick="goPanel('cheatkey',this)"><span class="icon">⚡</span>쇼핑숏폼 치트키 6 <span class="nav-badge" style="background:#FF6124;color:#fff">HOT</span></button>
-    <button class="nav-item" onclick="goPanel('backcoach',this)"><span class="icon">🧠</span>백코치 대본생성기 <span class="nav-badge" style="background:#4CAF50;color:#fff">AI</span></button>
+    <button class="nav-item on" data-panel="home" onclick="goPanel('home',this)"><span class="icon">🏠</span>홈 대시보드</button>
+    <button class="nav-item" data-panel="api" onclick="goPanel('api',this)"><span class="icon">🔑</span>API 설정</button>
+
+    <div class="nav-section">📽️ 제작 과정</div>
+
+    <button class="nav-item" data-panel="matcher" onclick="goPanel('matcher',this)">
+      <span style="background:#ff6b35;color:#fff;border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0">1</span>
+      <span class="icon">🛒</span>상품매칭 + 클릭바 <span class="nav-badge" style="background:#ff6b35;color:#fff">NEW</span>
+    </button>
+
+    <button class="nav-item" data-panel="search" onclick="goPanel('search',this)">
+      <span style="background:#2563eb;color:#fff;border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0">2</span>
+      <span class="icon">🔍</span>영상 탐색
+    </button>
+
+    <button class="nav-item" data-panel="analyzer" onclick="goPanel('analyzer',this)">
+      <span style="background:#7c3aed;color:#fff;border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0">3</span>
+      <span class="icon">📊</span>바이럴 분석
+    </button>
+
+    <button class="nav-item" data-panel="backcoach" onclick="goPanel('backcoach',this)">
+      <span style="background:#4CAF50;color:#fff;border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0">4</span>
+      <span class="icon">🧠</span>백코치 대본생성기 <span class="nav-badge" style="background:#4CAF50;color:#fff">AI</span>
+    </button>
+
+    <button class="nav-item" data-panel="cheatkey" onclick="goPanel('cheatkey',this)">
+      <span style="background:#FF6124;color:#fff;border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0">5</span>
+      <span class="icon">⚡</span>쇼핑숏폼 치트키 6 <span class="nav-badge" style="background:#FF6124;color:#fff">HOT</span>
+    </button>
+
+    <button class="nav-item" data-panel="remix" onclick="goPanel('remix',this)">
+      <span style="background:#6c5ce7;color:#fff;border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0">6</span>
+      <span class="icon">✨</span>리믹스 스튜디오
+    </button>
+
+    <button class="nav-item" data-panel="imgshorts" onclick="goPanel('imgshorts',this)">
+      <span style="background:#0891b2;color:#fff;border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0">7</span>
+      <span class="icon">🖼️</span>이미지→쇼츠 <span class="nav-badge">NEW</span>
+    </button>
+
+    <button class="nav-item" data-panel="videogen" onclick="goPanel('videogen',this)">
+      <span style="background:var(--accent);color:#fff;border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0">8</span>
+      <span class="icon">🎬</span>영상 생성기 <span class="nav-badge">NEW</span>
+    </button>
+
+    <button class="nav-item" data-panel="converter" onclick="goPanel('converter',this)">
+      <span style="background:#00b894;color:#fff;border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0">9</span>
+      <span class="icon">🔄</span>영상 변환기 <span class="nav-badge" style="background:#00b894;color:#fff">NEW</span>
+    </button>
+
+    <button class="nav-item" data-panel="publish" onclick="goPanel('publish',this)">
+      <span style="background:#db2777;color:#fff;border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0">10</span>
+      <span class="icon">📱</span>플랫폼 배포
+    </button>
+
+    <button class="nav-item" data-panel="launcher" onclick="goPanel('launcher',this)">
+      <span style="background:#d97706;color:#fff;border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0">11</span>
+      <span class="icon">🚀</span>플랫폼 런처
+    </button>
+
     <div class="nav-section">💰 수익화</div>
-    <button class="nav-item" onclick="goPanel('cpa',this)"><span class="icon">💰</span>쿠팡 CPA 대시보드 <span class="nav-badge" style="background:var(--yellow);color:#000">💸</span></button>
-    <button class="nav-item" onclick="goPanel('comments',this)"><span class="icon">💬</span>댓글 트렌드 <span class="nav-badge">NEW</span></button>
-    <button class="nav-item" onclick="goPanel('converter',this)"><span class="icon">🔄</span>영상 변환기 <span class="nav-badge" style="background:var(--green);color:#000">NEW</span></button>
-    <button class="nav-item" onclick="goPanel('imgshorts',this)"><span class="icon">🖼️</span>이미지→쇼츠 <span class="nav-badge">NEW</span></button>
-    <button class="nav-item" onclick="goPanel('matcher',this)"><span class="icon">🛒</span>상품매칭 + 클릭바 <span class="nav-badge" style="background:var(--green);color:#000">NEW</span></button>
+    <button class="nav-item" data-panel="cpa" onclick="goPanel('cpa',this)"><span class="icon">💰</span>쿠팡 CPA 대시보드 <span class="nav-badge" style="background:var(--yellow);color:#000">💸</span></button>
+    <button class="nav-item" data-panel="comments" onclick="goPanel('comments',this)"><span class="icon">💬</span>댓글 트렌드 <span class="nav-badge">NEW</span></button>
   </div>
   <div class="sidebar-footer">
     <div class="yt-status">
@@ -355,8 +401,8 @@ select option{background:var(--bg3)}
   <div class="topbar">
     <div class="topbar-title" id="topTitle">홈 대시보드</div>
     <div class="topbar-sub">숏폼 리믹스 워크플로우 통합 대시보드</div>
-    <button class="tbtn" onclick="goPanel('api',document.querySelector('.nav-item:nth-child(5)'))">🔑 API 설정</button>
-    <button class="tbtn primary" onclick="goPanel('remix',document.querySelector('.nav-item:nth-child(8)'))">✨ 리믹스 시작</button>
+    <button class="tbtn" onclick="goPanel('api',null)">🔑 API 설정</button>
+    <button class="tbtn primary" onclick="goPanel('remix',null)">✨ 리믹스 시작</button>
   </div>
 
   <div class="content">
@@ -2227,7 +2273,9 @@ function goPanel(id, btn) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
   document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('on'));
   document.getElementById('panel-'+id)?.classList.add('on');
-  if(btn) btn.classList.add('on');
+  // data-panel 속성으로 자동 탐색 (nth-child 의존 제거)
+  const activeBtn = btn || document.querySelector(`.nav-item[data-panel="${id}"]`);
+  if(activeBtn) activeBtn.classList.add('on');
   document.getElementById('topTitle').textContent = panelTitles[id] || id;
   if(window.innerWidth <= 900) closeMob();
   if(id === 'cheatkey') renderCheatPanel();
@@ -2324,7 +2372,7 @@ function clearAllKeys() {
 }
 function saveAndStart() {
   saveClaudeKey();
-  setTimeout(()=>goPanel('search',document.querySelector('.nav-item:nth-child(6)')),500);
+  setTimeout(()=>goPanel('search',null),500);
 }
 
 // ══════════════════════════════
@@ -2629,7 +2677,7 @@ function quickSearch(cat, label) {
 function selectVideo(vid, title, ch) {
   document.getElementById('anaUrl').value = 'https://youtube.com/watch?v='+vid;
   document.getElementById('anaScript').focus();
-  goPanel('analyzer', document.querySelector('.nav-item:nth-child(7)'));
+  goPanel('analyzer',null);
   setTimeout(()=>alert(`"${title}" 선택됨!\n자막을 아래 텍스트창에 붙여넣고 분석하세요.`),100);
 }
 
@@ -3967,7 +4015,7 @@ function cpaShowCat(card, name) {
       <div style="font-size:11px;font-weight:600;color:var(--text2);margin:8px 0 5px">✅ 핵심 전략</div>
       ${data.tips.map(t=>`<div style="font-size:11px;color:var(--text2);margin-bottom:4px">• ${t}</div>`).join('')}
       <div style="font-size:11px;font-weight:600;color:var(--text2);margin:8px 0 5px">🔍 추천 키워드</div>
-      <div class="tag-wrap">${data.keywords.map(k=>`<span class="tag" style="cursor:pointer" onclick="document.getElementById('searchQuery').value='${k} 쿠팡';goPanel('search',document.querySelector('.nav-item:nth-child(6)'))">🔍 ${k}</span>`).join('')}</div>
+      <div class="tag-wrap">${data.keywords.map(k=>`<span class="tag" style="cursor:pointer" onclick="document.getElementById('searchQuery').value='${k} 쿠팡';goPanel('search',null)">🔍 ${k}</span>`).join('')}</div>
     </div>`;
 }
 
@@ -4446,7 +4494,7 @@ function cvSendToAnalyzer() {
   const text = document.getElementById('cvSpeechText')?.value;
   if(!text){alert('먼저 음성 인식을 완료해주세요.');return;}
   document.getElementById('anaScript').value = text;
-  goPanel('analyzer', document.querySelector('.nav-item:nth-child(7)'));
+  goPanel('analyzer',null);
   setTimeout(()=>{ document.getElementById('anaScript').scrollIntoView({behavior:'smooth'}); }, 300);
   alert('✅ 바이럴 분석기로 전송됐어요! 분석을 시작하세요.');
 }
@@ -4893,7 +4941,7 @@ function autoSendToVideoGen(i) {
     const m = line.match(/\[(\d+)[~\-～](\d+)초\]\s*(.*)/u);
     if(m && m[3]) vgSubs.push({start:parseInt(m[1]),end:parseInt(m[2]),text:m[3].trim()});
   });
-  goPanel('videogen', document.querySelector('.nav-item:nth-child(12)'));
+  goPanel('videogen',null);
   setTimeout(()=>{
     vgRenderSubs();
     vgDrawFrame(0);
