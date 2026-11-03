@@ -852,7 +852,7 @@ function openM(id){document.getElementById(id).classList.remove('hidden');}
 function showPage(p){
   S.page=p;
   document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('active'));
-  const ts={wizard:'새 프로젝트',library:'내 보관함',home:'메인',videogen:'🎬 영상 생성기',converter:'🔄 영상 변환기',matcher:'🛒 상품매칭+클릭바',cheatkey:'⚡ 쇼핑숏폼 치트키 6',backcoach:'🧠 백코치식 쇼핑쇼츠 대본생성기',videoremix:'🎬 영상 리믹스 (백코치 대본)');
+  const ts={wizard:'새 프로젝트',library:'내 보관함',home:'메인',videogen:'🎬 영상 생성기',converter:'🔄 영상 변환기',matcher:'🛒 상품매칭+클릭바',cheatkey:'⚡ 쇼핑숏폼 치트키 6',backcoach:'🧠 백코치식 쇼핑쇼츠 대본생성기',videoremix:'🎬 영상 리믹스 (백코치 대본)'};
   document.getElementById('topbar-t').textContent=ts[p]||'';
   if(p==='wizard')document.getElementById('nav-new').classList.add('active');
   if(p==='library')document.getElementById('nav-lib').classList.add('active');
