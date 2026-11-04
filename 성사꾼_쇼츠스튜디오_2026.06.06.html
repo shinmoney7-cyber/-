@@ -986,8 +986,13 @@ function renderWiz(){
         <div class="fg">
           <label class="flbl">영상 주제 (Keyword)</label>
           <div style="display:flex;gap:6px;">
-            <input class="finp" id="i-kw" placeholder="예: 소형 공기청정기" value="${S.kw}" style="flex:1;">
+            <input class="finp" id="i-kw" placeholder="예: 소형 공기청정기" value="${S.kw}" style="flex:1;" oninput="S.kw=this.value;document.getElementById('prod-preview').style.display='none'">
             <button class="btn btn-o btn-sm" onclick="openM('m-cat')">✨ AI추천</button>
+          </div>
+          <div id="prod-preview" style="display:${S.selectedProduct?'flex':'none'};align-items:center;gap:8px;margin-top:8px;padding:10px 12px;background:var(--primary-l);border:1px solid var(--primary);border-radius:8px;flex-wrap:wrap;">
+            <span style="font-size:13px;font-weight:600;color:var(--primary);flex:1;min-width:0;">🛒 ${S.selectedProduct||''}</span>
+            <a href="https://www.coupang.com/np/search?q=${encodeURIComponent(S.selectedProduct||'')}" target="_blank" style="font-size:11px;padding:4px 10px;background:#e65c00;color:white;border-radius:6px;text-decoration:none;white-space:nowrap;">쿠팡 확인 🔗</a>
+            <a href="https://search.shopping.naver.com/search/all?query=${encodeURIComponent(S.selectedProduct||'')}" target="_blank" style="font-size:11px;padding:4px 10px;background:#03c75a;color:white;border-radius:6px;text-decoration:none;white-space:nowrap;">네이버 확인 🔗</a>
           </div>
         </div>
         <div class="fg">
@@ -1738,7 +1743,17 @@ function renderPlatProds(plat,prods){
     </div>`;
   }).join('');
 }
-function selProd(n){S.kw=n;S.selectedProduct=n;const el=document.getElementById('i-kw');if(el)el.value=n;closeM('m-cat');}
+function selProd(n){
+  S.kw=n;S.selectedProduct=n;
+  const el=document.getElementById('i-kw');if(el)el.value=n;
+  const pv=document.getElementById('prod-preview');
+  if(pv){
+    const enc=encodeURIComponent(n);
+    pv.innerHTML=`<span style="font-size:13px;font-weight:600;color:var(--primary);flex:1;min-width:0;">🛒 ${n}</span><a href="https://www.coupang.com/np/search?q=${enc}" target="_blank" style="font-size:11px;padding:4px 10px;background:#e65c00;color:white;border-radius:6px;text-decoration:none;white-space:nowrap;">쿠팡 확인 🔗</a><a href="https://search.shopping.naver.com/search/all?query=${enc}" target="_blank" style="font-size:11px;padding:4px 10px;background:#03c75a;color:white;border-radius:6px;text-decoration:none;white-space:nowrap;">네이버 확인 🔗</a>`;
+    pv.style.display='flex';
+  }
+  closeM('m-cat');
+}
 
 /* ===== VOICE ===== */
 function renderVGrid(){
