@@ -3475,8 +3475,14 @@ function renderBackcoachSk() {
         <button onclick="skCpGetDeeplink()"
           style="padding:8px 14px;background:#e65c00;color:white;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">딥링크 생성</button>
       </div>
-      <input id="sk-cp-img" type="text" placeholder="🖼️ 상품 이미지 URL (선택)"
-        style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;outline:none;font-family:inherit;margin-bottom:5px">
+      <div id="sk-cp-img-drop" ondragover="event.preventDefault()" ondrop="skImgDrop(event)" onclick="document.getElementById('sk-cp-img-file').click()"
+        style="border:2px dashed #93c5fd;border-radius:8px;padding:10px;text-align:center;cursor:pointer;font-size:12px;color:var(--muted);margin-bottom:6px">
+        🖼️ 상품 이미지 파일을 드래그하거나 클릭해서 선택 (선택)
+      </div>
+      <input type="file" id="sk-cp-img-file" accept="image/*" style="display:none" onchange="skImgLoad(this.files[0])">
+      <div id="sk-cp-img-prev"></div>
+      <input id="sk-cp-img" type="text" placeholder="또는 상품 이미지 URL (선택)"
+        style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;outline:none;font-family:inherit;margin-bottom:5px;box-sizing:border-box">
       <div id="sk-cp-result"></div>
       <div style="font-size:10px;color:var(--muted);margin-top:5px">💡 쿠팡 URL 입력 후 [딥링크 생성] → 파트너스 제휴 링크 + 가격 자동 표시</div>
     </div>
@@ -3826,6 +3832,29 @@ function skBcToCapCut(sectionId) {
   </div></div>`;
 
   document.body.insertAdjacentHTML('beforeend', guideHtml);
+}
+
+window.skProdImg = null;
+function skImgLoad(file) {
+  if(!file || !file.type.startsWith('image/')) { alert('이미지 파일만 넣을 수 있어요.'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    window.skProdImg = e.target.result;
+    const prev = document.getElementById('sk-cp-img-prev');
+    if(prev) prev.innerHTML = `<div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);margin-bottom:6px"><img src="${window.skProdImg}" style="width:44px;height:44px;object-fit:cover;border-radius:6px;border:1px solid var(--border)"><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${file.name}</span><button onclick="skImgClear()" style="padding:4px 9px;border:1px solid var(--border);border-radius:6px;background:white;font-size:11px;cursor:pointer">삭제</button></div>`;
+  };
+  reader.readAsDataURL(file);
+}
+function skImgDrop(e) {
+  e.preventDefault();
+  skImgLoad(e.dataTransfer.files[0]);
+}
+function skImgClear() {
+  window.skProdImg = null;
+  const prev = document.getElementById('sk-cp-img-prev');
+  if(prev) prev.innerHTML = '';
+  const input = document.getElementById('sk-cp-img-file');
+  if(input) input.value = '';
 }
 
 async function skCpHmac(secret, msg) {
