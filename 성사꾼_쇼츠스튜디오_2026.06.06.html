@@ -2665,6 +2665,7 @@ function renderConverter() {
         </div>
         <div id="cvMp4DlBox" style="display:none;background:rgba(0,184,148,.08);border:1px solid rgba(0,184,148,.3);border-radius:8px;padding:12px;margin-top:10px;text-align:center">
           <div style="font-size:13px;font-weight:700;color:var(--green,#00b894);margin-bottom:6px">✅ 변환 완료!</div>
+          <video id="cvMp4Result" controls playsinline style="width:100%;max-width:260px;border-radius:8px;background:#000;margin-bottom:8px"></video>
           <a id="cvMp4Link"><button class="btn btn-p" style="background:var(--green,#00b894);border-color:var(--green,#00b894)">⬇️ MP4 다운로드</button></a>
           <div style="font-size:10px;color:var(--muted);margin-top:5px" id="cvMp4Info"></div>
         </div>
@@ -2693,6 +2694,7 @@ function renderConverter() {
         </div>
         <div id="cvWebmDlBox" style="display:none;background:rgba(108,92,231,.08);border:1px solid rgba(108,92,231,.3);border-radius:8px;padding:12px;margin-top:10px;text-align:center">
           <div style="font-size:13px;font-weight:700;color:var(--acc);margin-bottom:6px">✅ 변환 완료!</div>
+          <video id="cvWebmResult" controls playsinline style="width:100%;max-width:260px;border-radius:8px;background:#000;margin-bottom:8px"></video>
           <a id="cvWebmLink"><button class="btn btn-p">⬇️ WebM 다운로드</button></a>
           <div style="font-size:10px;color:var(--muted);margin-top:5px" id="cvWebmInfo2"></div>
         </div>
@@ -2877,6 +2879,8 @@ async function cvConvertToMp4() {
       const link = document.getElementById('cvMp4Link');
       link.href = url;
       link.download = `converted_${new Date().toISOString().slice(0,10)}.${ext}`;
+      const mp4Preview = document.getElementById('cvMp4Result');
+      mp4Preview.src = url; mp4Preview.load();
       document.getElementById('cvMp4Info').textContent = `${(blob.size/1024/1024).toFixed(1)}MB · ${ext.toUpperCase()}`;
       document.getElementById('cvMp4DlBox').style.display='block';
       prog.style.display='none';
@@ -2935,6 +2939,8 @@ async function cvConvertToWebm() {
       const url = URL.createObjectURL(blob);
       const link = document.getElementById('cvWebmLink');
       link.href=url; link.download=`converted_${new Date().toISOString().slice(0,10)}.webm`;
+      const webmPreview = document.getElementById('cvWebmResult');
+      webmPreview.src = url; webmPreview.load();
       document.getElementById('cvWebmInfo2').textContent = `${(blob.size/1024/1024).toFixed(1)}MB · WebM`;
       document.getElementById('cvWebmDlBox').style.display='block';
       prog.style.display='none';
