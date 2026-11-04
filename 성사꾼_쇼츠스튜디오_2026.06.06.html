@@ -2262,6 +2262,7 @@ function renderVideogen() {
 
         <div id="vgDlBox" style="display:none;background:rgba(0,184,148,.08);border:1px solid rgba(0,184,148,.3);border-radius:9px;padding:14px;text-align:center">
           <div style="font-size:14px;font-weight:700;color:#00b894;margin-bottom:6px">✅ 영상 생성 완료!</div>
+          <video id="vgPreview" controls playsinline style="width:100%;max-width:260px;border-radius:8px;background:#000;margin-bottom:8px"></video>
           <div id="vgDlInfo" style="font-size:12px;color:var(--muted);margin-bottom:10px"></div>
           <a id="vgDlLink"><button style="padding:9px 18px;border:none;border-radius:8px;background:rgba(0,184,148,.2);color:#00b894;font-size:13px;font-weight:700;cursor:pointer;border:1px solid rgba(0,184,148,.4)">⬇️ WebM 다운로드</button></a>
           <div style="font-size:10px;color:var(--muted);margin-top:8px">MP4 변환: cloudconvert.com (무료)</div>
@@ -2605,6 +2606,9 @@ function vgFinish(){
     const dur=vgGetDur();
     const link=document.getElementById('vgDlLink');
     link.href=url;link.download=`쇼핑쇼츠_${new Date().toISOString().slice(0,10)}.webm`;
+    const preview=document.getElementById('vgPreview');
+    preview.src=url;
+    preview.load();
     document.getElementById('vgDlInfo').textContent=`${size}MB · ${dur}초 · WebM`;
     document.getElementById('vgDlBox').classList.add('show');
     document.getElementById('vgProgWrap').classList.remove('show');
