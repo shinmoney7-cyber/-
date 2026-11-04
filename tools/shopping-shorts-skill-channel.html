@@ -1772,6 +1772,10 @@ input[type=range]{width:100%;accent-color:var(--cy);height:4px;border-radius:4px
       <button class="mimg-cat" onclick="mimgSetCat('스킨케어',this)">✨ 스킨케어</button>
       <button class="mimg-cat" onclick="mimgSetCat('라이프스타일',this)">🌿 라이프스타일</button>
       <button class="mimg-cat" onclick="mimgSetCat('건강',this)">💪 건강</button>
+      <button class="mimg-cat" onclick="mimgSetCat('내추럴',this)">🌸 내추럴</button>
+      <button class="mimg-cat" onclick="mimgSetCat('한국여성',this)">🇰🇷 한국여성</button>
+      <button class="mimg-cat" onclick="mimgSetCat('AI생성',this)">🤖 AI생성</button>
+      <button class="mimg-cat" onclick="mimgSetCat('기타',this)">📂 기타</button>
     </div>
 
     <div class="mimg-grid" id="mimg-grid"></div>
@@ -1779,6 +1783,26 @@ input[type=range]{width:100%;accent-color:var(--cy);height:4px;border-radius:4px
 
   <div class="card">
     <div class="card-title">📁 모델 사진 추가</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+      <div style="flex:1;min-width:140px">
+        <label style="font-size:11px;color:var(--t2);display:block;margin-bottom:4px">카테고리 선택</label>
+        <select id="mimg-upload-cat" style="width:100%;padding:6px 8px;border:1px solid var(--bd);border-radius:6px;background:var(--sf);color:var(--t1);font-size:12px">
+          <option value="내추럴">🌸 내추럴</option>
+          <option value="한국여성">🇰🇷 한국여성</option>
+          <option value="뷰티">💄 뷰티</option>
+          <option value="패션">👗 패션</option>
+          <option value="스킨케어">✨ 스킨케어</option>
+          <option value="라이프스타일">🌿 라이프스타일</option>
+          <option value="건강">💪 건강</option>
+          <option value="AI생성">🤖 AI생성</option>
+          <option value="기타">📂 기타</option>
+        </select>
+      </div>
+      <div style="flex:2;min-width:180px">
+        <label style="font-size:11px;color:var(--t2);display:block;margin-bottom:4px">이름/메모 (선택)</label>
+        <input id="mimg-upload-name" type="text" placeholder="예: 내추럴 갈색머리 크림탑 모델" style="width:100%;padding:6px 8px;border:1px solid var(--bd);border-radius:6px;background:var(--sf);color:var(--t1);font-size:12px;box-sizing:border-box">
+      </div>
+    </div>
     <label class="mimg-upload-zone" id="mimg-drop">
       <input type="file" accept="image/*" multiple id="mimg-file-input" onchange="mimgHandleFiles(this.files)">
       <div style="font-size:28px;margin-bottom:8px">📸</div>
@@ -4791,17 +4815,20 @@ function mimgDeleteUser(idx) {
 }
 
 function mimgHandleFiles(files) {
+  const selCat = document.getElementById('mimg-upload-cat')?.value || '기타';
+  const selName = (document.getElementById('mimg-upload-name')?.value||'').trim();
+  const catTagMap = {'뷰티':'pk','패션':'pu','스킨케어':'gn','라이프스타일':'gn','건강':'cy','내추럴':'wa','한국여성':'pk','AI생성':'cy','기타':'wa'};
   Array.from(files).forEach(file => {
     if(!file.type.startsWith('image/')) return;
     const reader = new FileReader();
     reader.onload = e => {
       const img = {
-        name: '사용자 이미지',
-        style: file.name.replace(/\.[^.]+$/,''),
+        name: selName || file.name.replace(/\.[^.]+$/,''),
+        style: selCat + ' 모델',
         hair: '',
         outfit: '',
-        cats: ['기타'],
-        tag: 'wa',
+        cats: [selCat],
+        tag: catTagMap[selCat] || 'wa',
         use: '사용자 추가 이미지',
         src: e.target.result
       };
