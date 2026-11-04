@@ -611,10 +611,10 @@ textarea.finp{resize:vertical;min-height:80px;}
 
 <!-- CATEGORY MODAL -->
 <div id="m-cat" class="mov hidden">
-  <div class="modal">
+  <div class="modal" style="width:720px;">
     <div class="mhd"><div class="mt">✨ AI 인기상품 추천</div><div style="font-size:12px;color:var(--muted);margin-top:4px;">조사할 카테고리 선택</div></div>
     <div class="mbody" id="cat-list"></div>
-    <div id="prod-res" class="hidden" style="padding:0 20px 12px;">
+    <div id="prod-res" class="hidden" style="padding:0 20px 16px;">
       <div class="ptabs">
         <button class="ptab active" onclick="switchPlatTab('ai',this)">✨ AI추천</button>
         <button class="ptab" onclick="switchPlatTab('daiso',this)">🛍 다이소</button>
@@ -1609,17 +1609,17 @@ function todayStr(){const d=new Date();return `${d.getFullYear()}년 ${d.getMont
 
 /* ===== CATEGORY ===== */
 function renderCatList(){
-  document.getElementById('cat-list').innerHTML=CATS.map((c,i)=>`
-    <div class="catitem ${S.catIdx===i?'sel':''}" onclick="selCat(${i})">
-      <span style="font-size:18px;">${c.e}</span>
-      <div>
+  document.getElementById('cat-list').innerHTML=`<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;">`+CATS.map((c,i)=>`
+    <div class="catitem ${S.catIdx===i?'sel':''}" onclick="selCat(${i})" style="margin-bottom:0;">
+      <span style="font-size:22px;flex-shrink:0;">${c.e}</span>
+      <div style="flex:1;min-width:0;">
         <div style="display:flex;align-items:center;gap:6px;">
           <input type="radio" name="cr" ${S.catIdx===i?'checked':''}>
           <div style="font-weight:600;font-size:13px;">${c.n}</div>
         </div>
-        <div style="font-size:11px;color:var(--muted);">${c.d}</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.3;margin-top:2px;">${c.d}</div>
       </div>
-    </div>`).join('');
+    </div>`).join('')+`</div>`;
 }
 function selCat(i){S.catIdx=i;renderCatList();searchCat();}
 
@@ -1724,16 +1724,16 @@ function getProdEmoji(name,plat){
 function renderPlatProds(plat,prods){
   const el=document.getElementById(`prod-list-${plat}`);
   if(!el)return;
-  el.style.cssText='display:flex;flex-wrap:wrap;gap:8px;padding:4px 0;';
+  el.style.cssText='display:flex;flex-wrap:wrap;gap:10px;padding:6px 0;';
   el.innerHTML=prods.map((p,i)=>{
     const emoji=getProdEmoji(p.name,plat);
     const platBg={ai:'rgba(108,99,255,.15)',daiso:'rgba(255,202,40,.15)',olive:'rgba(76,175,80,.15)',naver:'rgba(3,199,90,.15)'}[plat]||'rgba(108,99,255,.15)';
     const platBrd={ai:'rgba(108,99,255,.35)',daiso:'rgba(255,202,40,.35)',olive:'rgba(76,175,80,.35)',naver:'rgba(3,199,90,.35)'}[plat]||'rgba(108,99,255,.35)';
-    return `<div class="pchip" onclick="selProd('${p.name.replace(/'/g,"&#39;")}')" style="display:flex;align-items:center;gap:8px;padding:6px 10px;min-width:0;flex:1 1 calc(50% - 4px);max-width:calc(50% - 4px);box-sizing:border-box;">
-      <div style="width:38px;height:38px;border-radius:8px;background:${platBg};border:1.5px solid ${platBrd};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">${emoji}</div>
-      <div style="flex:1;min-width:0;overflow:hidden">
-        <div style="font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--txt)">${p.name}</div>
-        <div style="margin-top:2px"><span class="badge ${BC[i%4]}" style="font-size:9px">${p.badge}</span></div>
+    return `<div class="pchip" onclick="selProd('${p.name.replace(/'/g,"&#39;")}')" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;min-width:0;flex:1 1 calc(33.33% - 6px);max-width:calc(33.33% - 6px);box-sizing:border-box;text-align:center;">
+      <div style="width:56px;height:56px;border-radius:12px;background:${platBg};border:2px solid ${platBrd};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:28px">${emoji}</div>
+      <div style="width:100%">
+        <div style="font-size:11px;font-weight:600;color:var(--txt);line-height:1.4;word-break:keep-all;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${p.name}</div>
+        <div style="margin-top:3px"><span class="badge ${BC[i%4]}" style="font-size:9px">${p.badge}</span></div>
       </div>
     </div>`;
   }).join('');
