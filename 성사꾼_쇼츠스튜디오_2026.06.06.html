@@ -1958,7 +1958,6 @@ async function analyzeUrl() {
   const resEl = document.getElementById('url-result');
   const btn = document.getElementById('url-analyze-btn');
   if(!url) { alert('URL을 입력해주세요.'); return; }
-  if(!S.key) { alert('Claude API 키를 먼저 입력해주세요.'); return; }
 
   btn.disabled = true; btn.textContent = '분석 중...';
   resEl.style.display = 'block';
@@ -1967,68 +1966,68 @@ async function analyzeUrl() {
   resEl.textContent = '🔍 URL 분석 중...';
 
   const type = detectUrlType(url);
-  let info = '';
   const kw = extractKwFromUrl(url);
   const platName = {coupang:'쿠팡', naver:'네이버', youtube:'유튜브', tiktok:'틱톡', douyin:'도우인', xhs:'샤오홍슈', instagram:'인스타'}[type] || '쇼핑';
 
-  // YouTube는 API로 제목 가져오기
-  if(type === 'youtube' && S.key) {
-    try {
-      const vidMatch = url.match(/(?:v=|youtu\.be\/|shorts\/)([a-zA-Z0-9_-]{11})/);
-      if(vidMatch) {
-        // YouTube Data API 키가 있으면 사용, 없으면 AI 추론
-        info = `유튜브 영상 URL: ${url}`;
-      }
-    } catch(e) {}
-  } else {
-    info = `${platName} 링크: ${url}\n추출 키워드: ${kw || '없음'}`;
-    if(kw) {
-      const kwEl = document.getElementById('i-kw');
-      if(kwEl) kwEl.value = kw;
-    }
+  // URL에서 키워드 먼저 자동 입력
+  if(kw) {
+    const kwEl = document.getElementById('i-kw');
+    if(kwEl) { kwEl.value = kw; S.kw = kw; }
   }
+  S.refUrl = url;
 
-  try {
+  // Claude API로 풍부한 분석 시도 (API 키 있을 때만)
+  if(S.key) {
+    const info = `${platName} 링크: ${url}\n추출 키워드: ${kw || '없음'}`;
     const prompt = `다음 쇼핑/영상 링크를 분석해서 쇼츠 영상 주제와 상품 정보를 추론해주세요. 순수 JSON만 반환:
 
 ${info}
 
 {"keyword":"영상 주제 키워드 (5단어 이내)","product_name":"추론한 상품명","category":"카테고리","key_features":["특징1","특징2","특징3"],"recommended_style":"정보 전달 (뉴스형) 또는 감성 스토리텔링 또는 비교 리뷰 또는 반전 후킹 또는 가격 충격 또는 비밀 공개 또는 전후 비교 또는 실제 후기 중 하나"}`;
 
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: getHeaders(),
-      body: JSON.stringify({ model: 'claude-sonnet-4-5', max_tokens: 500, messages: [{ role: 'user', content: prompt }] })
-    });
-    const data = await res.json();
-    if(data.error) throw new Error(data.error.message||JSON.stringify(data.error));
-    const d = JSON.parse(data.content.map(i=>i.text||'').join('').replace(/```json|```/g, '').trim());
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify({ model: 'claude-haiku-5-5', max_tokens: 400, messages: [{ role: 'user', content: prompt }] })
+      });
+      const data = await res.json();
+      if(data.error) throw new Error(data.error.message || JSON.stringify(data.error));
+      const d = JSON.parse(data.content.map(i=>i.text||'').join('').replace(/```json|```/g, '').trim());
 
-    // 자동 입력
-    if(d.keyword) { const el = document.getElementById('i-kw'); if(el) el.value = d.keyword; }
-    if(d.recommended_style) {
-      const sel = document.getElementById('i-st');
-      if(sel) {
-        const opt = Array.from(sel.options).find(o => o.value === d.recommended_style);
-        if(opt) sel.value = d.recommended_style;
+      if(d.keyword) { const el = document.getElementById('i-kw'); if(el) { el.value = d.keyword; S.kw = d.keyword; } }
+      if(d.recommended_style) {
+        const sel = document.getElementById('i-st');
+        if(sel) { const opt = Array.from(sel.options).find(o => o.value === d.recommended_style); if(opt) sel.value = d.recommended_style; }
       }
+      S.refProductName = d.product_name || '';
+      S.refFeatures = d.key_features || [];
+
+      resEl.style.background = '#f0fdf4'; resEl.style.color = '#15803d';
+      resEl.innerHTML = `✅ <strong>${d.product_name || d.keyword}</strong> 분석 완료!<br>
+        <span style="font-size:11px">특징: ${(d.key_features||[]).slice(0,2).join(' · ')}</span><br>
+        <span style="font-size:11px;opacity:.7">키워드·스타일이 자동 입력됐어요</span>`;
+      btn.disabled = false; btn.textContent = '🔍 분석';
+      return;
+    } catch(e) {
+      // API 실패 시 URL 기반 분석으로 폴백
     }
+  }
 
-    // URL을 S 상태에 저장
-    S.refUrl = url;
-    S.refProductName = d.product_name || '';
-    S.refFeatures = d.key_features || [];
-
-    resEl.style.background = '#f0fdf4';
-    resEl.style.color = '#15803d';
-    resEl.innerHTML = `✅ <strong>${d.product_name || d.keyword}</strong> 분석 완료!<br>
-      <span style="font-size:11px">특징: ${(d.key_features||[]).slice(0,2).join(' · ')}</span><br>
-      <span style="font-size:11px;opacity:.7">키워드·스타일이 자동 입력됐어요</span>`;
-
-  } catch(e) {
-    resEl.style.background = '#fef2f2';
-    resEl.style.color = '#b91c1c';
-    resEl.textContent = '분석 실패: ' + e.message;
+  // 폴백: URL만으로 분석 (API 없거나 크레딧 부족 시)
+  const prodId = url.match(/\/products\/(\d+)/)?.[1] || '';
+  if(kw) {
+    resEl.style.background = '#f0fdf4'; resEl.style.color = '#15803d';
+    resEl.innerHTML = `✅ URL 키워드 추출: <strong>${kw}</strong><br>
+      <span style="font-size:11px;opacity:.7">키워드 자동 입력됨 · ${platName} URL 등록 완료</span>`;
+  } else if(prodId) {
+    resEl.style.background = '#fffbeb'; resEl.style.color = '#92400e';
+    resEl.innerHTML = `🔗 ${platName} 상품 URL 등록됨<br>
+      <span style="font-size:11px;opacity:.8">상품명을 "영상 주제" 란에 직접 입력해주세요</span>`;
+  } else {
+    resEl.style.background = '#fffbeb'; resEl.style.color = '#92400e';
+    resEl.innerHTML = `🔗 ${platName} URL 등록됨<br>
+      <span style="font-size:11px;opacity:.8">상품명을 "영상 주제" 란에 직접 입력해주세요</span>`;
   }
   btn.disabled = false; btn.textContent = '🔍 분석';
 }
