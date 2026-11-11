@@ -5,7 +5,7 @@ import logging
 from .config import Config
 from .coupang.client import CoupangPartnersClient
 from .coupang.mock_client import MockCoupangClient
-from .browser import launch_browser
+from .browser import launch_persistent_context
 from .inpock.mock_rpa import MockInpockRPAClient
 from .inpock.rpa import InpockRPAClient, product_to_card
 from .facebook.client import FacebookPageClient, MockFacebookPageClient
@@ -90,8 +90,11 @@ def run_inpock_stage(
 
         try:
             card = product_to_card(product, product_state.deeplink, number=number)
-            action = rpa_client.sync_card(product.target_page, card, force_create=force_create)
-            state.record_inpock_sync(product, number=number)
+            cached_link_id = product_state.inpock_link_id if product_state else None
+            action, link_id = rpa_client.sync_card(
+                product.target_page, card, force_create=force_create, link_id=cached_link_id
+            )
+            state.record_inpock_sync(product, number=number, link_id=link_id)
             outcomes.append((product, action, None))
         except Exception as exc:  # noqa: BLE001 - one product's RPA failure must not abort the run
             logger.exception("inpock sync failed for product %s", product.id)
@@ -334,11 +337,13 @@ def run_full_sync(
         state.save()
         return deeplink_outcomes, inpock_outcomes
 
-    with launch_browser(
-        headless=config.inpock_headless, chromium_path=config.playwright_chromium_path
-    ) as browser:
-        page = browser.new_page()
-        rpa_client = InpockRPAClient(page, config.inpock_email, config.inpock_password)
+    with launch_persistent_context(
+        user_data_dir=config.inpock_session_dir,
+        headless=config.inpock_headless,
+        chromium_path=config.playwright_chromium_path,
+    ) as context:
+        page = context.new_page()
+        rpa_client = InpockRPAClient(page, config.inpock_account, config.inpock_password)
         rpa_client.login()
         inpock_outcomes = run_inpock_stage(products, rpa_client, state, force_create=force_create)
 

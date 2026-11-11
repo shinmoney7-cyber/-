@@ -92,14 +92,16 @@ def inpock_sync(input_path, page_filter, dry_run, headed, force_create):
         rpa_client = MockInpockRPAClient()
         outcomes = run_inpock_stage(products, rpa_client, state, force_create=force_create)
     else:
-        from .browser import launch_browser
+        from .browser import launch_persistent_context
         from .inpock.rpa import InpockRPAClient
 
-        with launch_browser(
-            headless=config.inpock_headless, chromium_path=config.playwright_chromium_path
-        ) as browser:
-            page = browser.new_page()
-            rpa_client = InpockRPAClient(page, config.inpock_email, config.inpock_password)
+        with launch_persistent_context(
+            user_data_dir=config.inpock_session_dir,
+            headless=config.inpock_headless,
+            chromium_path=config.playwright_chromium_path,
+        ) as context:
+            page = context.new_page()
+            rpa_client = InpockRPAClient(page, config.inpock_account, config.inpock_password)
             rpa_client.login()
             outcomes = run_inpock_stage(products, rpa_client, state, force_create=force_create)
 

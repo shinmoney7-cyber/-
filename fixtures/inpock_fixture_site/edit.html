@@ -1,0 +1,25 @@
+<!--
+  Fixture that approximates link.inpock.co.kr/admin/block/link/edit?link_id=XXX.
+  The real page has a form for editing an existing link card.
+  "수정 완료" saves and redirects; this fixture just records the save in-page.
+  See docs/CALIBRATION.md for real-site calibration.
+-->
+<!DOCTYPE html>
+<html lang="ko">
+<head><meta charset="utf-8"><title>링크 편집</title></head>
+<body>
+  <form id="edit-form">
+    <label>제목<input type="text" name="title" placeholder="제목"></label>
+    <label>URL<input type="url" name="url" placeholder="https://..."></label>
+    <label>이미지<input type="text" name="thumbnail" placeholder="이미지 URL"></label>
+    <button type="submit">수정 완료</button>
+  </form>
+  <div id="save-result" style="display:none">저장됨</div>
+  <script>
+    document.getElementById('edit-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      document.getElementById('save-result').style.display = 'block';
+    });
+  </script>
+</body>
+</html>
