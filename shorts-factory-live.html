@@ -1,0 +1,1234 @@
+<title>숏츠팩토리</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+
+<style>
+/* ─── tokens ────────────────────────────────────────────── */
+:root {
+  --bg:          #0A0A14;
+  --surf:        #12121E;
+  --surf2:       #1A1A28;
+  --surf3:       #22223A;
+  --border:      #2A2A42;
+  --border2:     #363652;
+  --red:         #FF3C3C;
+  --red-d:       #CC2828;
+  --blue:        #4488FF;
+  --green:       #2ECC71;
+  --yellow:      #F5C518;
+  --txt:         #EEEDFB;
+  --txt2:        #9090B8;
+  --txt3:        #5C5C84;
+  --radius:      10px;
+  --radius-sm:   6px;
+  --mono:        'JetBrains Mono', monospace;
+  --sans:        'Noto Sans KR', sans-serif;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg:     #F2F2F8;
+    --surf:   #FFFFFF;
+    --surf2:  #F7F7FD;
+    --surf3:  #EDEDF8;
+    --border: #DCDCF0;
+    --border2:#C8C8E8;
+    --txt:    #18183A;
+    --txt2:   #5050780;
+    --txt3:   #9090B0;
+  }
+}
+:root[data-theme="light"] {
+  --bg:     #F2F2F8;
+  --surf:   #FFFFFF;
+  --surf2:  #F7F7FD;
+  --surf3:  #EDEDF8;
+  --border: #DCDCF0;
+  --border2:#C8C8E8;
+  --txt:    #18183A;
+  --txt2:   #505078;
+  --txt3:   #9090B0;
+}
+:root[data-theme="dark"] {
+  --bg:     #0A0A14;
+  --surf:   #12121E;
+  --surf2:  #1A1A28;
+  --surf3:  #22223A;
+  --border: #2A2A42;
+  --border2:#363652;
+  --txt:    #EEEDFB;
+  --txt2:   #9090B8;
+  --txt3:   #5C5C84;
+}
+
+/* ─── reset ─────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);min-height:100vh;font-size:14px;line-height:1.6}
+button{font-family:var(--sans);cursor:pointer;border:none;outline:none}
+input,select,textarea{font-family:var(--sans);background:var(--surf2);border:1px solid var(--border);color:var(--txt);border-radius:var(--radius-sm);padding:8px 11px;font-size:13px;width:100%;transition:border-color .2s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue)}
+label{font-size:12px;font-weight:600;color:var(--txt2);display:block;margin-bottom:4px;letter-spacing:.03em}
+h1,h2,h3,h4{font-weight:700;line-height:1.3;text-wrap:balance}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+pre,code{font-family:var(--mono)}
+
+/* ─── header ─────────────────────────────────────────────── */
+.header{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:52px;border-bottom:1px solid var(--border);background:var(--surf);position:sticky;top:0;z-index:100}
+.brand{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
+.brand-icon{width:28px;height:28px;border-radius:8px;background:var(--red);display:grid;place-items:center;font-size:14px;color:#fff;flex-shrink:0}
+.header-actions{display:flex;align-items:center;gap:8px}
+.btn-icon{width:34px;height:34px;border-radius:8px;background:var(--surf2);border:1px solid var(--border);color:var(--txt2);display:grid;place-items:center;font-size:15px;transition:background .15s}
+.btn-icon:hover{background:var(--surf3)}
+
+/* ─── step tabs ──────────────────────────────────────────── */
+.steps{display:flex;align-items:center;padding:0 20px;height:44px;border-bottom:1px solid var(--border);background:var(--surf);gap:4px;overflow-x:auto;scrollbar-width:none}
+.steps::-webkit-scrollbar{display:none}
+.step-btn{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;background:transparent;color:var(--txt3);border:none;cursor:pointer;white-space:nowrap;transition:color .15s,background .15s}
+.step-btn.active{background:var(--surf2);color:var(--txt);border:1px solid var(--border)}
+.step-num{width:18px;height:18px;border-radius:50%;font-size:10px;font-weight:700;display:grid;place-items:center;background:var(--surf3);color:var(--txt3)}
+.step-btn.active .step-num{background:var(--red);color:#fff}
+.step-btn.done .step-num{background:var(--green);color:#fff}
+.step-btn.done{color:var(--txt2)}
+
+/* ─── layout ─────────────────────────────────────────────── */
+.main{display:grid;grid-template-columns:320px 1fr;min-height:calc(100vh - 96px)}
+@media(max-width:768px){.main{grid-template-columns:1fr}}
+.sidebar{border-right:1px solid var(--border);padding:16px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;max-height:calc(100vh - 96px)}
+.content{padding:20px;overflow-y:auto;max-height:calc(100vh - 96px)}
+@media(max-width:768px){.sidebar,.content{max-height:none}}
+
+/* ─── cards ──────────────────────────────────────────────── */
+.card{background:var(--surf);border:1px solid var(--border);border-radius:var(--radius);padding:14px;display:flex;flex-direction:column;gap:10px}
+.card-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--txt3)}
+
+/* ─── form groups ────────────────────────────────────────── */
+.field{display:flex;flex-direction:column;gap:4px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+
+/* ─── buttons ────────────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;transition:opacity .15s,background .15s}
+.btn-primary{background:var(--red);color:#fff}
+.btn-primary:hover{opacity:.88}
+.btn-secondary{background:var(--surf2);border:1px solid var(--border);color:var(--txt)}
+.btn-secondary:hover{background:var(--surf3)}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-blue:hover{opacity:.88}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn-full{width:100%}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* ─── tags ───────────────────────────────────────────────── */
+.tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.tag-red{background:#FF3C3C22;color:var(--red)}
+.tag-blue{background:#4488FF22;color:var(--blue)}
+.tag-green{background:#2ECC7122;color:var(--green)}
+.tag-gray{background:var(--surf3);color:var(--txt2)}
+
+/* ─── output boxes ───────────────────────────────────────── */
+.out-box{background:var(--surf2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;position:relative}
+.out-box pre{font-size:12.5px;line-height:1.7;white-space:pre-wrap;word-break:break-word;color:var(--txt)}
+.out-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--txt3);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.copy-btn{font-size:11px;background:var(--surf3);border:1px solid var(--border);border-radius:4px;padding:3px 8px;color:var(--txt2);cursor:pointer;transition:background .15s}
+.copy-btn:hover{background:var(--border2);color:var(--txt)}
+
+/* ─── scene rows ─────────────────────────────────────────── */
+.scene-row{display:grid;grid-template-columns:90px 1fr;gap:12px;padding:12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surf)}
+.scene-badge{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0}
+.scene-num{font-size:20px;font-weight:700;color:var(--red)}
+.scene-name{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--txt3)}
+.scene-time{font-size:10px;color:var(--txt3)}
+.scene-body{display:flex;flex-direction:column;gap:6px}
+.scene-field{display:flex;flex-direction:column;gap:2px}
+.scene-key{font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.04em}
+.scene-val{font-size:13px;color:var(--txt);line-height:1.5}
+
+/* ─── channel grid ───────────────────────────────────────── */
+.channel-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:600px){.channel-grid{grid-template-columns:1fr}}
+.channel-card{background:var(--surf);border:1px solid var(--border);border-radius:var(--radius);padding:12px;display:flex;flex-direction:column;gap:8px}
+.channel-name{font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px}
+
+/* ─── video gen ──────────────────────────────────────────── */
+.video-panel{display:flex;flex-direction:column;gap:14px}
+.provider-tabs{display:flex;gap:6px;flex-wrap:wrap}
+.ptab{padding:6px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;background:var(--surf2);border:1px solid var(--border);color:var(--txt2);cursor:pointer;transition:all .15s}
+.ptab.active{background:var(--blue);border-color:var(--blue);color:#fff}
+.status-bar{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--radius);background:var(--surf2);border:1px solid var(--border);font-size:13px}
+.status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot-idle{background:var(--txt3)}
+.dot-run{background:var(--yellow);animation:pulse 1.2s infinite}
+.dot-ok{background:var(--green)}
+.dot-err{background:var(--red)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.video-result{display:flex;flex-direction:column;gap:10px}
+video{width:100%;max-height:400px;border-radius:var(--radius);background:#000;object-fit:contain}
+
+/* ─── history badge ──────────────────────────────────────── */
+.badge-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+
+/* ─── divider ────────────────────────────────────────────── */
+.divider{height:1px;background:var(--border);margin:4px 0}
+
+/* ─── section header ─────────────────────────────────────── */
+.section-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.section-title{font-size:16px;font-weight:700}
+.section-sub{font-size:12px;color:var(--txt2);margin-top:2px}
+
+/* ─── scroll hint ────────────────────────────────────────── */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:48px 20px;color:var(--txt3);text-align:center}
+.empty-state .icon{font-size:36px}
+.empty-state p{font-size:13px;max-width:240px;line-height:1.6}
+
+/* ─── toast ──────────────────────────────────────────────── */
+#toast{position:fixed;bottom:20px;right:20px;background:#22CC70;color:#fff;padding:10px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;z-index:9999;opacity:0;transform:translateY(8px);transition:all .2s;pointer-events:none}
+#toast.show{opacity:1;transform:translateY(0)}
+</style>
+
+<!-- ════════════════════════════════════════════════════════ -->
+<div class="header">
+  <div class="brand">
+    <div class="brand-icon">🎬</div>
+    <span>숏츠팩토리</span>
+    <span class="tag tag-red" style="font-size:10px">BETA</span>
+  </div>
+  <div class="header-actions">
+    <button class="btn-icon" onclick="toggleTheme()" title="테마 전환" aria-label="테마 전환">☀</button>
+    <button class="btn btn-secondary btn-sm" onclick="saveHistory()">💾 히스토리 저장</button>
+  </div>
+</div>
+
+<div class="steps" id="stepNav">
+  <button class="step-btn active" onclick="goStep(1)" id="s1"><span class="step-num">1</span> 상품 입력</button>
+  <button class="step-btn" onclick="goStep(2)" id="s2"><span class="step-num">2</span> 대본 생성</button>
+  <button class="step-btn" onclick="goStep(3)" id="s3"><span class="step-num">3</span> 영상 프롬프트</button>
+  <button class="step-btn" onclick="goStep(4)" id="s4"><span class="step-num">4</span> 영상 생성</button>
+  <button class="step-btn" onclick="goStep(5)" id="s5"><span class="step-num">5</span> 채널 배포</button>
+</div>
+
+<div class="main">
+  <!-- ══ SIDEBAR ═══════════════════════════════════════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="card">
+      <div class="card-title">📦 상품 정보</div>
+      <div class="field">
+        <label>판매처</label>
+        <select id="f_source">
+          <option>쿠팡</option><option>올리브영</option><option>네이버</option><option>다이소</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>작성자</label>
+        <select id="f_author">
+          <option>나</option><option>딸</option><option>아들</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>상품명 *</label>
+        <input id="f_name" placeholder="예: 물때 제거 크리너 500ml">
+      </div>
+      <div class="field">
+        <label>카테고리</label>
+        <select id="f_category" onchange="autoCategoryStruct()">
+          <option>욕실/청소/세제</option>
+          <option>주방/리빙</option>
+          <option>뷰티/스킨케어</option>
+          <option>건강/헬스</option>
+          <option>IT/가전</option>
+          <option>육아/유아동</option>
+          <option>패션/잡화</option>
+          <option>식품/신선식품</option>
+        </select>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>정가</label>
+          <input id="f_price" placeholder="29,900">
+        </div>
+        <div class="field">
+          <label>할인가</label>
+          <input id="f_sale" placeholder="19,900">
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>리뷰 수</label>
+          <input id="f_reviews" placeholder="2,341">
+        </div>
+        <div class="field">
+          <label>평점</label>
+          <input id="f_rating" placeholder="4.8">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">💬 Pain & 셀링포인트</div>
+      <div class="field">
+        <label>실제 리뷰 Pain Point *</label>
+        <textarea id="f_pain" rows="2" placeholder="'아무리 닦아도 물때가 안 없어져서 포기했는데...' 등 실제 후기 문구"></textarea>
+      </div>
+      <div class="field">
+        <label>셀링포인트 1 *</label>
+        <input id="f_pt1" placeholder="살균 성분으로 30초 만에 물때 제거">
+      </div>
+      <div class="field">
+        <label>셀링포인트 2</label>
+        <input id="f_pt2" placeholder="향 없음, 식품 성분만 사용">
+      </div>
+      <div class="field">
+        <label>셀링포인트 3</label>
+        <input id="f_pt3" placeholder="잔여물 없이 물로 바로 헹굼">
+      </div>
+      <div class="field">
+        <label>핵심효능 한 단어 (CTA자막)</label>
+        <input id="f_effect" placeholder="물때제거 (비우면 셀링포인트1 자동 추출)">
+      </div>
+      <div class="field">
+        <label>상품 링크</label>
+        <input id="f_link" placeholder="https://coupang.com/...">
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🎬 대본 설정</div>
+      <div class="row2">
+        <div class="field">
+          <label>대본 길이</label>
+          <select id="f_dur">
+            <option>15초</option><option selected>25초</option><option>32초</option><option>45초</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>출연자</label>
+          <select id="f_performer">
+            <option>여성 (손/네일)</option><option>남성 (손)</option><option>양손</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>타겟 나이대</label>
+        <select id="f_persona">
+          <option value="">카테고리 자동 추천</option>
+          <option>10대</option><option>20대 초반</option><option>20대 후반</option>
+          <option>30대 주부</option><option>40대</option><option>50대+</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>대본 B 구조</label>
+        <select id="f_struct_b">
+          <option>AI 자동(카테고리 추천)</option>
+          <option>문제해결형</option><option>기능유도형</option><option>전후비교형</option>
+          <option>솔직리뷰형</option><option>비교우위형</option><option>스토리형</option>
+          <option>꿀팁정보형</option><option>실험검증형</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn btn-primary btn-full" onclick="generate()" style="margin-top:4px">
+      ✨ 전체 생성
+    </button>
+  </aside>
+
+  <!-- ══ CONTENT PANELS ════════════════════════════════════ -->
+  <section class="content" id="mainContent">
+
+    <!-- STEP 1 – 입력 안내 -->
+    <div id="panel1">
+      <div class="section-hd">
+        <div><div class="section-title">상품 입력</div>
+          <div class="section-sub">왼쪽 폼을 채우고 ✨ 전체 생성을 눌러주세요</div></div>
+      </div>
+      <div class="card" style="gap:16px;padding:20px">
+        <div style="font-size:13px;color:var(--txt2);line-height:1.8">
+          <b style="color:var(--txt)">정희 표준 25초 6단계 구조</b>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px">
+            <div class="out-box" style="padding:10px"><b style="font-size:11px;color:var(--red)">① 후킹</b><br><span style="font-size:11px;color:var(--txt2)">0~8% · 문제 상황</span></div>
+            <div class="out-box" style="padding:10px"><b style="font-size:11px;color:var(--red)">② 문제공감</b><br><span style="font-size:11px;color:var(--txt2)">8~20% · 반복 노출</span></div>
+            <div class="out-box" style="padding:10px"><b style="font-size:11px;color:var(--red)">③ 제품등장</b><br><span style="font-size:11px;color:var(--txt2)">20~48% · 해결</span></div>
+            <div class="out-box" style="padding:10px"><b style="font-size:11px;color:var(--red)">④ 베네핏</b><br><span style="font-size:11px;color:var(--txt2)">48~72% · Before→After</span></div>
+            <div class="out-box" style="padding:10px"><b style="font-size:11px;color:var(--red)">⑤ 신뢰요소</b><br><span style="font-size:11px;color:var(--txt2)">72~88% · 리뷰/별점</span></div>
+            <div class="out-box" style="padding:10px"><b style="font-size:11px;color:var(--red)">⑥ CTA</b><br><span style="font-size:11px;color:var(--txt2)">88~100% · 구매 유도</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2 – 대본 -->
+    <div id="panel2" style="display:none">
+      <div class="section-hd">
+        <div><div class="section-title">대본 생성</div>
+          <div class="section-sub" id="scriptMeta">–</div></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-secondary btn-sm" onclick="copyAll('scriptA')">대본 A 복사</button>
+          <button class="btn btn-secondary btn-sm" onclick="copyAll('scriptB')">대본 B 복사</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px" id="scriptPanels">
+        <div>
+          <div class="out-label" style="margin-bottom:8px">대본 A · 표준 6단계 <button class="copy-btn" onclick="copyAll('scriptA')">복사</button></div>
+          <div id="scriptA"></div>
+        </div>
+        <div>
+          <div class="out-label" style="margin-bottom:8px">대본 B · <span id="structBLabel">–</span> <button class="copy-btn" onclick="copyAll('scriptB')">복사</button></div>
+          <div id="scriptB"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3 – 영상 프롬프트 -->
+    <div id="panel3" style="display:none">
+      <div class="section-hd">
+        <div><div class="section-title">영상 프롬프트</div>
+          <div class="section-sub">씬별 AI 영상 프롬프트 (Higgsfield / TopView / Kling 공용)</div></div>
+        <button class="btn btn-secondary btn-sm" onclick="copyAll('promptFull')">전체 복사</button>
+      </div>
+      <div id="promptScenes" style="display:flex;flex-direction:column;gap:10px"></div>
+      <div class="divider" style="margin:16px 0"></div>
+      <div class="out-label">단일 프롬프트 (텍스트→영상 전용) <button class="copy-btn" onclick="copyEl('promptFull')">복사</button></div>
+      <div class="out-box" style="margin-top:6px"><pre id="promptFull" style="font-size:12px"></pre></div>
+    </div>
+
+    <!-- STEP 4 – 영상 생성 -->
+    <div id="panel4" style="display:none">
+      <div class="section-hd">
+        <div><div class="section-title">영상 생성</div>
+          <div class="section-sub">TopView · Higgsfield · 복붙 방식 선택</div></div>
+      </div>
+      <div class="video-panel">
+        <div class="provider-tabs">
+          <button class="ptab active" onclick="setProv('topview',this)">TopView API</button>
+          <button class="ptab" onclick="setProv('higgsfield',this)">Higgsfield API</button>
+          <button class="ptab" onclick="setProv('manual',this)">수동 (URL 붙여넣기)</button>
+        </div>
+
+        <!-- TopView -->
+        <div id="prov_topview">
+          <div class="card" style="gap:10px">
+            <div class="card-title">TopView API 설정</div>
+            <div class="field"><label>API Key</label>
+              <input id="tv_key" type="password" placeholder="TopView API Key (topview.ai → 설정 → API)"></div>
+            <div class="row2">
+              <div class="field"><label>모델</label>
+                <select id="tv_model">
+                  <option value="MiniMax H3">MiniMax H3 (무료쿼터)</option>
+                  <option value="Seedance 2.5">Seedance 2.5</option>
+                  <option value="Kling V3">Kling V3</option>
+                  <option value="Wan 3.0">Wan 3.0</option>
+                </select></div>
+              <div class="field"><label>길이 (초)</label>
+                <select id="tv_dur">
+                  <option value="5">5</option><option value="8">8</option>
+                  <option value="10" selected>10</option><option value="15">15</option>
+                </select></div>
+            </div>
+            <button class="btn btn-blue btn-full" onclick="generateTopView()">🎬 TopView로 영상 생성</button>
+            <div style="font-size:11px;color:var(--txt3)">⚠ TopView API Key는 <a href="https://topview.ai" target="_blank" style="color:var(--blue)">topview.ai</a> → 계정 설정 → API에서 발급받으세요. CORS 오류 시 아래 수동 방식을 사용하세요.</div>
+          </div>
+        </div>
+
+        <!-- Higgsfield -->
+        <div id="prov_higgsfield" style="display:none">
+          <div class="card" style="gap:10px">
+            <div class="card-title">Higgsfield API 설정</div>
+            <div class="field"><label>API Key</label>
+              <input id="hf_key" type="password" placeholder="Higgsfield API Key"></div>
+            <div class="row2">
+              <div class="field"><label>모델</label>
+                <select id="hf_model">
+                  <option value="seedance_2_5">Seedance 2.5</option>
+                  <option value="minimax_h3_max">MiniMax H3 Max</option>
+                  <option value="kling3_0">Kling v3.0</option>
+                </select></div>
+              <div class="field"><label>길이 (초)</label>
+                <select id="hf_dur">
+                  <option value="5">5</option><option value="8">8</option>
+                  <option value="10" selected>10</option>
+                </select></div>
+            </div>
+            <button class="btn btn-blue btn-full" onclick="generateHighgsfield()">🎬 Higgsfield로 영상 생성</button>
+          </div>
+        </div>
+
+        <!-- Manual -->
+        <div id="prov_manual" style="display:none">
+          <div class="card" style="gap:10px">
+            <div class="card-title">수동 방식 — 프롬프트 복사 후 URL 붙여넣기</div>
+            <p style="font-size:12px;color:var(--txt2)">1. 아래 프롬프트를 복사하여 <a href="https://topview.ai" target="_blank" style="color:var(--blue)">topview.ai</a> 또는 <a href="https://higgsfield.ai" target="_blank" style="color:var(--blue)">higgsfield.ai</a>에서 영상을 생성하세요.<br>2. 생성된 영상 URL을 아래에 붙여넣으면 MP4로 다운로드됩니다.</p>
+            <div class="out-box"><pre id="manualPrompt" style="font-size:11.5px;max-height:120px;overflow-y:auto"></pre></div>
+            <button class="copy-btn" style="align-self:flex-start;padding:5px 12px" onclick="copyEl('manualPrompt')">프롬프트 복사</button>
+          </div>
+        </div>
+
+        <!-- Status + Result -->
+        <div class="status-bar">
+          <div class="status-dot dot-idle" id="statusDot"></div>
+          <span id="statusMsg">대기 중 — 위에서 생성을 누르거나 영상 URL을 붙여넣으세요</span>
+        </div>
+
+        <div class="field">
+          <label>영상 URL (직접 붙여넣기 또는 자동 입력)</label>
+          <div style="display:flex;gap:8px">
+            <input id="videoUrl" placeholder="https://... .mp4" oninput="handleVideoUrl(this.value)">
+            <button class="btn btn-secondary" onclick="downloadVideo()">⬇ MP4</button>
+          </div>
+        </div>
+
+        <div class="video-result" id="videoResult" style="display:none">
+          <div class="out-label">생성된 영상 미리보기</div>
+          <video id="videoPreview" controls></video>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-primary" onclick="downloadVideo()">⬇ MP4 다운로드</button>
+            <button class="btn btn-secondary" onclick="copyEl('videoUrl')">URL 복사</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 5 – 채널 배포 -->
+    <div id="panel5" style="display:none">
+      <div class="section-hd">
+        <div><div class="section-title">채널 배포</div>
+          <div class="section-sub">숏폼 6채널 캡션 + 네이버 텍스트 3채널</div></div>
+        <button class="btn btn-secondary btn-sm" onclick="copyAll('allCaptions')">전체 복사</button>
+      </div>
+      <div id="channelOutput"></div>
+    </div>
+
+  </section>
+</div>
+
+<div id="toast">✔ 복사됐습니다</div>
+
+<!-- ════════════════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+// ─── State ───────────────────────────────────────────────
+let state = {
+  cur: 1,
+  scriptA: null,
+  scriptB: null,
+  prompts: null,
+  videoUrl: null,
+  pollTimer: null,
+  provider: 'topview',
+};
+
+// ─── Helpers ──────────────────────────────────────────────
+function v(id){ return (document.getElementById(id)||{}).value || ''; }
+function el(id){ return document.getElementById(id); }
+function toast(msg){ let t=el('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2000); }
+function copyText(txt){ navigator.clipboard.writeText(txt).then(()=>toast('✔ 복사됐습니다')); }
+function copyEl(id){ copyText(el(id).textContent); }
+function copyAll(id){ copyText(el(id).innerText); }
+
+function toggleTheme(){
+  let r=document.documentElement;
+  let cur=r.dataset.theme;
+  r.dataset.theme = cur==='dark'?'light':'dark';
+}
+
+// ─── Step nav ─────────────────────────────────────────────
+function goStep(n){
+  for(let i=1;i<=5;i++){
+    el('panel'+i).style.display = i===n?'':'none';
+    let btn=el('s'+i);
+    btn.classList.remove('active');
+    if(i<n) btn.classList.add('done'); else btn.classList.remove('done');
+  }
+  el('s'+n).classList.add('active');
+  state.cur=n;
+}
+
+// ─── Auto-suggest struct ──────────────────────────────────
+const CAT_STRUCT = {
+  '욕실/청소/세제':'문제해결형','주방/리빙':'기능유도형',
+  '뷰티/스킨케어':'전후비교형','건강/헬스':'실험검증형',
+  'IT/가전':'기능유도형','육아/유아동':'솔직리뷰형',
+  '패션/잡화':'스토리형','식품/신선식품':'꿀팁정보형',
+};
+function autoCategoryStruct(){
+  let cat=v('f_category');
+  let sel=el('f_struct_b');
+  let auto='AI 자동(카테고리 추천)';
+  sel.value=auto;
+}
+
+// ─── Data builder ─────────────────────────────────────────
+function getData(){
+  let dur = parseInt(v('f_dur'));
+  let pts = [v('f_pt1'),v('f_pt2'),v('f_pt3')].filter(Boolean);
+  let effect = v('f_effect') || (pts[0]||'').split(' ').slice(0,2).join('') || '효과';
+  let cat = v('f_category');
+  let structB = v('f_struct_b');
+  if(structB==='AI 자동(카테고리 추천)') structB = CAT_STRUCT[cat]||'문제해결형';
+
+  let price = v('f_price'), sale = v('f_sale');
+  let discount = '';
+  if(price && sale){
+    let p=parseInt(price.replace(/[^0-9]/g,'')), s=parseInt(sale.replace(/[^0-9]/g,''));
+    if(p&&s) discount = Math.round((1-s/p)*100)+'%';
+  }
+
+  return {
+    name: v('f_name')||'상품',
+    cat, source: v('f_source'), author: v('f_author'),
+    pain: v('f_pain')||'불편한 경험이 있었다',
+    pts, effect, link: v('f_link'),
+    price, sale, discount,
+    reviews: v('f_reviews'), rating: v('f_rating'),
+    dur, structB,
+    persona: v('f_persona')||getDefaultPersona(cat),
+    performer: v('f_performer'),
+  };
+}
+
+function getDefaultPersona(cat){
+  const m = {'욕실/청소/세제':'30대 주부','뷰티/스킨케어':'20대 후반',
+    '건강/헬스':'30대','IT/가전':'20대 후반','육아/유아동':'30대 주부',
+    '패션/잡화':'20대 초반','식품/신선식품':'30대 주부','주방/리빙':'30대 주부'};
+  return m[cat]||'30대';
+}
+
+// ─── CTA text builder ─────────────────────────────────────
+function buildCTA(d){
+  let parts = [d.name, d.effect+'효과'];
+  if(d.price) parts.push('정가 '+d.price+'원');
+  if(d.sale) parts.push('지금 '+d.sale+'원'+(d.discount?' ('+d.discount+'↓)':''));
+  parts.push('지금 구매하기');
+  return parts.join(' · ');
+}
+
+// ─── Script A (standard 6-stage) ──────────────────────────
+function genScriptA(d){
+  let sec = d.dur;
+  let stages = [
+    [0, 0.08, '후킹',    hookLine(d)],
+    [0.08,0.20,'문제공감', problemLine(d)],
+    [0.20,0.48,'제품등장', productLine(d)],
+    [0.48,0.72,'베네핏',  benefitLine(d)],
+    [0.72,0.88,'신뢰요소', trustLine(d)],
+    [0.88,1.00,'CTA',    ctaLine(d)],
+  ];
+  return stages.map(([s,e,lbl,txt])=>({
+    label:lbl,
+    start: +(s*sec).toFixed(1),
+    end:   +(e*sec).toFixed(1),
+    text: txt,
+  }));
+}
+
+function hookLine(d){
+  const hooks=[
+    `"${d.pain.slice(0,30)}..." — 저도 같은 경험 했어요`,
+    `혹시 ${d.pts[0]||'이 문제'} 때문에 고민이세요?`,
+    `이거 보고 바로 구매했어요`,
+    `${d.pain.slice(0,25)}... 저 이제 해결했어요`,
+  ];
+  return hooks[Math.abs(d.name.length)%hooks.length];
+}
+function problemLine(d){
+  return `${d.pain} — 아무리 해도 안 되더라고요. 이 제품 쓰기 전까지는요`;
+}
+function productLine(d){
+  let pt = d.pts[0]||'놀라운 효과';
+  return `${d.name} 써봤더니, ${pt}. 처음엔 반신반의했는데...`;
+}
+function benefitLine(d){
+  let pt2 = d.pts[1]||d.pts[0]||'효과가 눈에 보여요';
+  return `${pt2}. 직접 비교해봤는데 차이가 확실해요`;
+}
+function trustLine(d){
+  let r = d.reviews?`리뷰 ${d.reviews}개`:'수천 명이 선택했고';
+  let rt = d.rating?` 평점 ${d.rating}점`:'';
+  return `${r}${rt}. 재구매율도 높더라고요`;
+}
+function ctaLine(d){ return buildCTA(d); }
+
+// ─── Script B structures ──────────────────────────────────
+function genScriptB(d){
+  const fn = {
+    '문제해결형': problemSolving,
+    '기능유도형': featureGuide,
+    '전후비교형': beforeAfter,
+    '솔직리뷰형': honestReview,
+    '비교우위형': comparison,
+    '스토리형': story,
+    '꿀팁정보형': tipInfo,
+    '실험검증형': experiment,
+  }[d.structB] || problemSolving;
+  return fn(d);
+}
+
+function problemSolving(d){
+  return [
+    {label:'문제 제기', text: `${d.pain} — 진짜 너무 힘들지 않으세요?`},
+    {label:'공감',      text: `저도 같은 고민 있었어요. 뭘 써도 해결이 안 됐거든요`},
+    {label:'해결책 소개', text: `${d.name} 써봤더니 달라도 너무 달라요`},
+    {label:'사용법',    text: `${d.pts[0]}. 사용법도 엄청 간단해요`},
+    {label:'결과',      text: `${d.pts[1]||d.pts[0]}. 직접 보여드릴게요`},
+    {label:'CTA',       text: ctaLine(d)},
+  ];
+}
+function featureGuide(d){
+  return [
+    {label:'핵심 기능',  text: `이 기능 보고 바로 구매했어요 — ${d.pts[0]}`},
+    {label:'시연 1',    text: `일단 이렇게 하면... 보세요`},
+    {label:'시연 2',    text: `${d.pts[1]||d.pts[0]}. 이게 진짜 차별점이에요`},
+    {label:'결과',      text: `${d.name} 쓰고 나서 완전 달라졌어요`},
+    {label:'보너스 팁', text: `꿀팁도 있어요 — ${d.pts[2]||d.pts[0]}`},
+    {label:'CTA',       text: ctaLine(d)},
+  ];
+}
+function beforeAfter(d){
+  return [
+    {label:'Before',   text: `${d.pain} — 이게 현실이었어요`},
+    {label:'변화 예고', text: `${d.name}으로 바꿔봤어요`},
+    {label:'사용 과정', text: `${d.pts[0]} — 과정이 이렇게 됩니다`},
+    {label:'After',    text: `결과 보세요. 차이가 확실하죠?`},
+    {label:'소감',     text: `${d.pts[1]||d.pts[0]}까지 확인했어요`},
+    {label:'CTA',      text: ctaLine(d)},
+  ];
+}
+function honestReview(d){
+  return [
+    {label:'솔직 시작', text: `광고 아니고요, 직접 사서 써봤어요`},
+    {label:'첫인상',    text: `처음엔 반신반의했는데...`},
+    {label:'장점',      text: `${d.pts[0]}. 이건 진짜 좋더라고요`},
+    {label:'단점/아쉬운 점', text: `딱 하나 아쉬운 건... 근데 그게 다예요`},
+    {label:'종합',      text: `${d.name}, 추천 드릴 수 있어요`},
+    {label:'CTA',       text: ctaLine(d)},
+  ];
+}
+function comparison(d){
+  return [
+    {label:'비교 시작', text: `${d.name} vs 기존 제품, 직접 비교해봤어요`},
+    {label:'기존 문제', text: `${d.pain} — 기존 제품으로는 안 됐어요`},
+    {label:'차이점 1',  text: `${d.pts[0]}. 이 부분이 완전히 달라요`},
+    {label:'차이점 2',  text: `${d.pts[1]||d.pts[0]}. 가격 대비 압도적이에요`},
+    {label:'결론',      text: `${d.name} 선택이 맞아요`},
+    {label:'CTA',       text: ctaLine(d)},
+  ];
+}
+function story(d){
+  return [
+    {label:'상황 설정', text: `일상에서 항상 신경 쓰였던 게 있었어요`},
+    {label:'갈등',      text: `${d.pain} — 이게 반복됐어요`},
+    {label:'발견',      text: `어쩌다 ${d.name}을 접하게 됐는데`},
+    {label:'전환',      text: `${d.pts[0]} — 이 순간 진짜 달라졌어요`},
+    {label:'현재',      text: `지금은 ${d.pts[1]||d.pts[0]} 덕분에 만족해요`},
+    {label:'CTA',       text: ctaLine(d)},
+  ];
+}
+function tipInfo(d){
+  if(isFruit(d)){
+    return [
+      {label:'꿀팁 예고', text: `이 ${d.name} 먹는 법 모르면 50% 손해예요`},
+      {label:'당도 꿀팁', text: `${d.pts[0]} — 이 타이밍에 먹어야 제일 달아요`},
+      {label:'먹방 연출', text: `껍질 벗기는 순간부터 한 입 베어무는 순간까지 — 즙이 흘러요`},
+      {label:'효능 정보', text: `${d.pts[1]||d.pts[0]} — 식사 후 꼭 챙겨먹는 이유`},
+      {label:'증거',     text: `${d.pain.slice(0,20)} — 직접 먹어보니 확실히 달랐어요`},
+      {label:'CTA',      text: ctaLine(d)},
+    ];
+  }
+  return [
+    {label:'꿀팁 예고', text: `${d.cat} 꿀팁 모르면 손해예요`},
+    {label:'정보 1',   text: `${d.pts[0]} — 이게 핵심이에요`},
+    {label:'정보 2',   text: `${d.pts[1]||d.pts[0]} — 이건 몰랐죠?`},
+    {label:'제품 소개', text: `${d.name}이 이걸 가능하게 해줘요`},
+    {label:'증거',     text: `실제 써보니까 ${d.pain.slice(0,20)} 해결됐어요`},
+    {label:'CTA',      text: ctaLine(d)},
+  ];
+}
+function experiment(d){
+  return [
+    {label:'실험 예고', text: `${d.name} 진짜 효과 있는지 직접 실험해봤어요`},
+    {label:'실험 조건', text: `${d.pain} — 이 상황에서 테스트`},
+    {label:'실험 과정', text: `${d.pts[0]} — 이렇게 해봤어요`},
+    {label:'결과 공개', text: `결과가 이렇게 나왔어요. 놀랍죠?`},
+    {label:'검증',     text: `${d.pts[1]||d.pts[0]}까지 확인 완료`},
+    {label:'CTA',      text: ctaLine(d)},
+  ];
+}
+
+// ─── Video Prompts ────────────────────────────────────────
+const ENV_MAP = {
+  '욕실/청소/세제':'Korean bathroom with white tiles and morning light',
+  '주방/리빙':'Korean kitchen with modern countertop and natural light',
+  '뷰티/스킨케어':'Korean vanity table with soft ring-light and mirror',
+  '건강/헬스':'Korean home, clean gym mat, morning light',
+  'IT/가전':'Korean modern living room, clean backdrop',
+  '육아/유아동':"Korean children's room, pastel tones, safe warm light",
+  '패션/잡화':'Korean urban street, natural daylight',
+  '식품/신선식품':'Korean kitchen counter, wooden board, fresh ingredients',
+};
+
+const FRUIT_KEYWORDS = ['과일','딸기','포도','사과','배','귤','오렌지','망고','수박','참외','블루베리','복숭아','체리','레몬','키위','바나나','멜론','자두'];
+
+function isFruit(d){
+  let text = (d.name+' '+(d.pts||[]).join(' ')).toLowerCase();
+  return FRUIT_KEYWORDS.some(k=>text.includes(k));
+}
+
+function genPrompts(d, scriptA){
+  let env = ENV_MAP[d.cat]||'Korean modern home, clean and bright';
+  let name = d.name;
+  let fruit = isFruit(d);
+  return scriptA.map((sc,i)=>{
+    let visual='';
+    switch(i){
+      case 0:
+        visual = fruit
+          ? `Close-up of a hand picking up fresh ${name} from a bowl. Vibrant colors, glistening surface. ${env}.`
+          : `Close-up of a person's hand reacting to a problem in ${env}. Surprised reaction, problem visible.`;
+        break;
+      case 1:
+        visual = fruit
+          ? `Extreme macro close-up of ${name} texture — juice droplets, rich color, natural light. Slow zoom in, mouth-watering. ${env}.`
+          : `Extreme macro close-up amplifying the problem in ${env}. Slow zoom in, frustration implied.`;
+        break;
+      case 2:
+        visual = fruit
+          ? `Hand cuts or peels ${name} on wooden board in ${env}. Juice flows visible. Quick cut to close-up of the flesh color and aroma. Bright natural light.`
+          : `Hand picks up ${name} from surface in ${env}. Product label clearly visible. Quick usage demo, bright lighting.`;
+        break;
+      case 3:
+        visual = fruit
+          ? `Close-up of a hand holding a piece of ${name} up to the light, then a bite is taken — lips and teeth only, no face. Juice drips in slow motion. Satisfied sigh implied. ${env}.`
+          : `Before-and-after time-lapse of using ${name} in ${env}. Satisfying visible result. Wide angle.`;
+        break;
+      case 4:
+        visual = fruit
+          ? `${name} arranged beautifully on a plate in ${env}. Review star overlay (★★★★★ 재구매 98%) animates in. Sugar content / sweetness grade badge appears.`
+          : `Close-up of ${name} packaging rotating slowly. Review star overlay animates in. Clean ${env} background.`;
+        break;
+      case 5:
+        visual = fruit
+          ? `Final hero shot: ${name} in premium packaging or gift box with price tag. Hand gestures toward camera. Bright, high-energy. ${env}.`
+          : `Final hero shot: ${name} with price tag in ${env}. Hand gestures toward camera. High energy.`;
+        break;
+    }
+    const cameras=['Extreme close-up, slight shake','Macro, slow push-in',
+      'Medium close-up pan to product','Wide angle, natural light',
+      'Slow 360° rotation','Pull-back hero shot'];
+    return {
+      num:i+1, label:sc.label,
+      start:sc.start, end:sc.end,
+      visual, subtitle:sc.text, camera:cameras[i]||'',
+    };
+  });
+}
+
+function buildSinglePrompt(d, prompts){
+  let base = `Korean-style vertical shopping shorts, ${d.dur}s, 9:16 ratio. Product: ${d.name}. Hands and arms only (no face), POV-style. `;
+  return base + prompts.map(p=>`[${p.label} ${p.start}-${p.end}s] ${p.visual}`).join(' | ');
+}
+
+// ─── Channel Captions ─────────────────────────────────────
+function genCaptions(d, scriptA){
+  let mainCaption = buildShortCaption(d, scriptA);
+  let tags = buildHashtags(d);
+  let cta = `👇 ${d.link?d.link:'아래 링크에서 바로 구매'}`;
+
+  return {
+    youtube:`${mainCaption}\n\n${tags}\n\n${cta}`,
+    instagram:`${mainCaption}\n\n${tags}\n\n${cta}`,
+    tiktok:`${mainCaption} ${tags.split('\n').slice(0,3).join(' ')}`,
+    threads:`${mainCaption}\n\n${tags}`,
+    facebook:`${mainCaption}\n\n${d.name} 써보신 분들 공감하죠? 👇\n${tags}\n${cta}`,
+    naverclip:`${mainCaption}\n\n${tags}`,
+    blog: buildBlogPost(d, scriptA),
+    cafe: buildCafePost(d, scriptA),
+    jisik: buildJisikIn(d, scriptA),
+  };
+}
+
+function buildShortCaption(d, sc){
+  let hook = sc[0].text;
+  let benefit = sc[3].text;
+  let cta = sc[5].text;
+  return `${hook}\n\n${benefit}\n\n${cta}`;
+}
+
+function buildHashtags(d){
+  let tags = ['#'+d.name.replace(/\s/g,''), '#'+d.cat.replace(/\//g,''), '#쇼핑추천', '#'+d.source+'추천', '#'+d.effect];
+  if(d.source==='쿠팡') tags.push('#쿠팡파트너스');
+  if(d.source==='올리브영') tags.push('#올리브영추천');
+  return tags.join(' ');
+}
+
+function buildBlogPost(d, sc){
+  let adNotice = '※ 이 포스팅은 제휴 마케팅 활동의 일환으로, 소정의 수수료를 받을 수 있습니다.\n\n';
+  return adNotice +
+`[${d.name} 솔직 사용 후기 — ${d.cat}]
+
+안녕하세요! 오늘은 제가 직접 구매해서 써본 ${d.name} 사용 후기를 솔직하게 공유해드릴게요.
+
+■ 구매 계기
+
+${d.pain}
+
+이 문제 때문에 정말 많이 찾아봤는데, ${d.name}이 눈에 들어왔어요.
+
+■ 핵심 장점
+
+✅ ${d.pts.join('\n✅ ')}
+
+■ 직접 써보니
+
+${sc[2].text}
+
+${sc[3].text}
+
+■ 신뢰도 확인
+
+${sc[4].text}
+
+■ 가격 정보
+
+${d.price?`정가 ${d.price}원`:''}${d.sale?` → 현재 ${d.sale}원`+( d.discount?` (${d.discount}↓)`:'' ):''}
+
+■ 구매 링크
+
+${d.link||'아래 링크를 확인해주세요'}
+
+#${d.name.replace(/\s/g,'')} #${d.source}추천 #${d.cat.replace(/\//g,'')} #쇼핑후기`;
+}
+
+function buildCafePost(d, sc){
+  return `[공유] ${d.name} 써봤어요 — 진짜 솔직 후기
+
+안녕하세요~ ${d.cat} 좋은 제품 있으면 공유해드리려고요 😊
+
+저도 "${d.pain}" 이 문제로 고민이 많았는데
+${d.name} 써보고 완전 해결됐어요!
+
+✨ 좋았던 점
+- ${d.pts.join('\n- ')}
+
+${sc[3].text}
+
+가격도 ${d.sale||d.price||'합리적'} 이라 부담 없어요.
+궁금한 거 있으면 댓글 달아주세요 🙌
+
+${d.link||''}`;
+}
+
+function buildJisikIn(d, sc){
+  return `Q. ${d.cat}에서 "${d.pain.slice(0,30)}" 문제 어떻게 해결하셨나요?
+
+A.
+
+안녕하세요! 저도 같은 문제를 겪다가 ${d.name}으로 해결했습니다.
+
+【사용 후기】
+
+${d.name}을 직접 구매해 써봤는데요,
+
+${d.pts.map((p,i)=>`${i+1}. ${p}`).join('\n')}
+
+특히 "${sc[3].text}" — 이 부분이 가장 인상적이었어요.
+
+현재 ${d.sale||d.price||'합리적인 가격'}으로 구입 가능하고,
+리뷰도 ${d.reviews||'많이'} 쌓여 있어서 참고해보시면 좋을 것 같습니다.
+
+도움이 되셨으면 좋겠습니다 😊
+
+※ 제휴 링크 포함`;
+}
+
+// ─── Render ───────────────────────────────────────────────
+function renderScriptStages(stages, containerId){
+  let cont = el(containerId);
+  cont.innerHTML = stages.map((sc,i)=>
+    `<div class="out-box" style="margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span class="tag tag-red">${sc.label||('씬'+(i+1))}</span>
+        <span style="font-size:11px;color:var(--txt3)">${sc.start!==undefined?sc.start+'s ~ '+sc.end+'s':''}</span>
+      </div>
+      <div style="font-size:13px;line-height:1.7;color:var(--txt)">${sc.text}</div>
+    </div>`
+  ).join('');
+}
+
+function renderScenePrompts(prompts){
+  let cont = el('promptScenes');
+  cont.innerHTML = prompts.map(p=>
+    `<div class="scene-row">
+      <div class="scene-badge">
+        <div class="scene-num">${p.num}</div>
+        <div class="scene-name">${p.label}</div>
+        <div class="scene-time">${p.start}~${p.end}s</div>
+      </div>
+      <div class="scene-body">
+        <div class="scene-field"><div class="scene-key">비주얼</div><div class="scene-val">${p.visual}</div></div>
+        <div class="scene-field"><div class="scene-key">자막</div><div class="scene-val" style="color:var(--blue)">${p.subtitle}</div></div>
+        <div class="scene-field"><div class="scene-key">카메라</div><div class="scene-val" style="color:var(--txt2)">${p.camera}</div></div>
+      </div>
+    </div>`
+  ).join('');
+}
+
+function renderChannels(caps, d){
+  const SHORT_CHANNELS = [
+    {id:'youtube',  icon:'▶', name:'YouTube Shorts',  color:'#FF0000'},
+    {id:'instagram',icon:'📷',name:'Instagram Reels', color:'#E1306C'},
+    {id:'tiktok',   icon:'♪', name:'TikTok',          color:'#69C9D0'},
+    {id:'threads',  icon:'@', name:'Threads',          color:'var(--txt)'},
+    {id:'facebook', icon:'f', name:'Facebook Reels',  color:'#1877F2'},
+    {id:'naverclip',icon:'N', name:'네이버 클립',      color:'#03C75A'},
+  ];
+  const TEXT_CHANNELS = [
+    {id:'blog',  icon:'📝', name:'네이버 블로그'},
+    {id:'cafe',  icon:'☕', name:'네이버 카페'},
+    {id:'jisik', icon:'❓', name:'네이버 지식인'},
+  ];
+
+  let html = '<div class="section-hd" style="margin-bottom:10px"><b style="font-size:13px">숏폼 6채널</b></div>';
+  html += '<div class="channel-grid" style="margin-bottom:20px">';
+  for(let ch of SHORT_CHANNELS){
+    let txt = caps[ch.id]||'';
+    html += `<div class="channel-card">
+      <div class="channel-name"><span style="color:${ch.color}">${ch.icon}</span> ${ch.name}</div>
+      <pre style="font-size:11.5px;white-space:pre-wrap;color:var(--txt);max-height:120px;overflow-y:auto">${txt}</pre>
+      <button class="copy-btn" onclick="copyText(${JSON.stringify(txt)})">복사</button>
+    </div>`;
+  }
+  html += '</div>';
+  html += '<div class="section-hd" style="margin-bottom:10px"><b style="font-size:13px">네이버 텍스트 3채널</b></div>';
+  for(let ch of TEXT_CHANNELS){
+    let txt = caps[ch.id]||'';
+    html += `<div style="margin-bottom:12px"><div class="out-label" style="margin-bottom:6px">${ch.icon} ${ch.name} <button class="copy-btn" onclick="copyText(${JSON.stringify(txt)})">복사</button></div>
+      <div class="out-box"><pre id="cap_${ch.id}" style="font-size:12px;white-space:pre-wrap;max-height:200px;overflow-y:auto">${txt}</pre></div></div>`;
+  }
+  el('channelOutput').innerHTML = html;
+  // build combined for "전체 복사"
+  let allParts = [...SHORT_CHANNELS,...TEXT_CHANNELS].map(ch=>`=== ${ch.name} ===\n${caps[ch.id]||''}`);
+  let allEl = document.createElement('div');
+  allEl.id='allCaptions';
+  allEl.style.display='none';
+  allEl.textContent = allParts.join('\n\n');
+  el('channelOutput').appendChild(allEl);
+}
+
+// ─── Main generate ────────────────────────────────────────
+function generate(){
+  let d = getData();
+  if(!d.name||d.name==='상품'){ toast('⚠ 상품명을 입력해주세요'); return; }
+
+  // Script A
+  let a = genScriptA(d);
+  state.scriptA = a;
+  renderScriptStages(a, 'scriptA');
+
+  // Script B
+  let b = genScriptB(d);
+  state.scriptB = b;
+  renderScriptStages(b, 'scriptB');
+  el('structBLabel').textContent = d.structB;
+  el('scriptMeta').textContent = `${d.name} · ${d.dur}초 · ${d.cat}`;
+
+  // Prompts
+  let prompts = genPrompts(d, a);
+  state.prompts = prompts;
+  renderScenePrompts(prompts);
+  let single = buildSinglePrompt(d, prompts);
+  el('promptFull').textContent = single;
+  el('manualPrompt').textContent = single;
+
+  // Captions
+  let caps = genCaptions(d, a);
+  renderChannels(caps, d);
+
+  // Go to step 2
+  goStep(2);
+  toast('✨ 생성 완료!');
+}
+
+// ─── Video provider switching ─────────────────────────────
+function setProv(p, btn){
+  state.provider = p;
+  document.querySelectorAll('.ptab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  ['topview','higgsfield','manual'].forEach(id=>{
+    el('prov_'+id).style.display = id===p?'':'none';
+  });
+}
+
+function setStatus(cls, msg){
+  let dot=el('statusDot');
+  dot.className='status-dot '+cls;
+  el('statusMsg').textContent=msg;
+}
+
+// ─── TopView API ──────────────────────────────────────────
+async function generateTopView(){
+  let key = v('tv_key');
+  let prompt = el('promptFull').textContent;
+  if(!prompt){ toast('⚠ 먼저 ✨ 전체 생성을 눌러주세요'); return; }
+  if(!key){ toast('⚠ TopView API Key를 입력해주세요'); return; }
+
+  let model = v('tv_model');
+  let dur = parseInt(v('tv_dur'));
+  setStatus('dot-run','영상 생성 요청 중...');
+
+  try {
+    // TopView public API submit
+    let body = {
+      taskType: 'text_to_video', model, prompt,
+      aspectRatio: '9:16', resolution: 1440, duration: dur,
+    };
+    let resp = await fetch('https://topview.ai/openapi/ai_video/submit', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+      body: JSON.stringify(body),
+    });
+    if(!resp.ok) throw new Error('HTTP '+resp.status);
+    let data = await resp.json();
+    let taskId = data?.result?.taskId || data?.taskId;
+    if(!taskId) throw new Error(data?.message||'taskId not found');
+    setStatus('dot-run','생성 중... (보통 1~3분 소요)');
+    pollTopView(key, taskId);
+  } catch(e){
+    if(e.message.includes('Failed to fetch')||e.message.includes('CORS')){
+      setStatus('dot-err','CORS 오류 — 수동 방식을 이용해주세요 (아래 탭 클릭)');
+    } else {
+      setStatus('dot-err','오류: '+e.message);
+    }
+  }
+}
+
+function pollTopView(key, taskId){
+  if(state.pollTimer) clearInterval(state.pollTimer);
+  state.pollTimer = setInterval(async()=>{
+    try{
+      let resp = await fetch(`https://topview.ai/openapi/ai_video/query?taskId=${taskId}`,{
+        headers:{'Authorization':'Bearer '+key},
+      });
+      let data = await resp.json();
+      let status = data?.result?.status||data?.status;
+      if(status==='success'){
+        clearInterval(state.pollTimer);
+        let url = data?.result?.videos?.[0]?.filePath||data?.result?.videoUrl||data?.videoUrl;
+        if(url){ handleVideoUrl(url); setStatus('dot-ok','✔ 영상 생성 완료!'); }
+        else{ setStatus('dot-err','URL을 찾지 못했습니다'); }
+      } else if(status==='failed'){
+        clearInterval(state.pollTimer);
+        setStatus('dot-err','생성 실패: '+(data?.result?.errorMsg||'알 수 없는 오류'));
+      } else {
+        setStatus('dot-run','생성 중... 상태: '+status);
+      }
+    }catch(e){ /* keep polling */ }
+  }, 8000);
+}
+
+// ─── Higgsfield API ───────────────────────────────────────
+async function generateHighgsfield(){
+  let key = v('hf_key');
+  let prompt = el('promptFull').textContent;
+  if(!prompt){ toast('⚠ 먼저 ✨ 전체 생성을 눌러주세요'); return; }
+  if(!key){ toast('⚠ Higgsfield API Key를 입력해주세요'); return; }
+
+  let model = v('hf_model');
+  let dur = parseInt(v('hf_dur'));
+  setStatus('dot-run','Higgsfield 요청 중...');
+
+  try {
+    let resp = await fetch('https://api.higgsfield.ai/v1/video/generate',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+      body:JSON.stringify({model, prompt, aspect_ratio:'9:16', duration:dur}),
+    });
+    if(!resp.ok) throw new Error('HTTP '+resp.status);
+    let data = await resp.json();
+    let jobId = data?.id||data?.job_id;
+    if(!jobId) throw new Error('job_id not found');
+    setStatus('dot-run','생성 중...');
+    pollHighgsfield(key, jobId);
+  } catch(e){
+    if(e.message.includes('Failed to fetch')){
+      setStatus('dot-err','CORS 오류 — 수동 방식을 이용해주세요');
+    } else {
+      setStatus('dot-err','오류: '+e.message);
+    }
+  }
+}
+
+function pollHighgsfield(key, jobId){
+  if(state.pollTimer) clearInterval(state.pollTimer);
+  state.pollTimer = setInterval(async()=>{
+    try{
+      let resp = await fetch('https://api.higgsfield.ai/v1/video/'+jobId,{
+        headers:{'Authorization':'Bearer '+key},
+      });
+      let data = await resp.json();
+      if(data?.status==='completed'||data?.state==='done'){
+        clearInterval(state.pollTimer);
+        let url = data?.url||data?.video_url||data?.output_url;
+        if(url){ handleVideoUrl(url); setStatus('dot-ok','✔ 완료!'); }
+      } else if(data?.status==='failed'){
+        clearInterval(state.pollTimer);
+        setStatus('dot-err','실패: '+(data?.error||'알 수 없는 오류'));
+      }
+    }catch(e){}
+  }, 8000);
+}
+
+// ─── Video URL + download ──────────────────────────────────
+function handleVideoUrl(url){
+  if(!url) return;
+  el('videoUrl').value = url;
+  state.videoUrl = url;
+  let preview = el('videoPreview');
+  preview.src = url;
+  el('videoResult').style.display = '';
+}
+
+async function downloadVideo(){
+  let url = v('videoUrl');
+  if(!url){ toast('⚠ 영상 URL을 먼저 입력해주세요'); return; }
+  try {
+    // Try direct download
+    let resp = await fetch(url);
+    let blob = await resp.blob();
+    let a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = (v('f_name')||'video').replace(/\s+/g,'_')+'_shorts.mp4';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  } catch(e) {
+    // Fallback: open in new tab
+    window.open(url,'_blank');
+  }
+}
+
+// ─── History save ─────────────────────────────────────────
+const HISTORY_WEBHOOK_URL = '';  // Make.com webhook URL here
+
+async function saveHistory(){
+  let d = getData();
+  if(!d.name||d.name==='상품'){ toast('⚠ 상품명을 먼저 입력해주세요'); return; }
+  let payload = {
+    name:d.name, category:d.cat, source:d.source, author:d.author,
+    duration:d.dur, structure_b:d.structB, persona1:d.persona,
+    points:d.pts.join(' | '), pain:d.pain, price:d.price||'',
+    link:d.link||'', thumbnail_text:'', package_text:'',
+    created_at: new Date().toISOString(),
+    video_url: state.videoUrl||'',
+  };
+  if(!HISTORY_WEBHOOK_URL){
+    toast('⚠ HISTORY_WEBHOOK_URL을 설정해주세요');
+    console.log('History payload:', JSON.stringify(payload,null,2));
+    return;
+  }
+  try{
+    await fetch(HISTORY_WEBHOOK_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    toast('✔ 히스토리 저장됐습니다');
+  }catch(e){ toast('오류: '+e.message); }
+}
+
+// ─── Init ─────────────────────────────────────────────────
+goStep(1);
+</script>
