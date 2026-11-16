@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(node:*)",
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(ffmpeg:*)",
+      "Bash(ffprobe:*)",
+      "Bash(yt-dlp:*)",
+      "Bash(curl:*)",
+      "Bash(mkdir:*)",
+      "Bash(ls:*)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "PowerShell(node:*)",
+      "PowerShell(npm:*)",
+      "PowerShell(npx:*)",
+      "PowerShell(ffmpeg:*)",
+      "PowerShell(ffprobe:*)",
+      "PowerShell(yt-dlp:*)",
+      "PowerShell(curl:*)",
+      "PowerShell(Get-ChildItem:*)",
+      "PowerShell(New-Item:*)",
+      "PowerShell(Copy-Item:*)",
+      "WebFetch(domain:www.tikwm.com)"
+    ]
+  }
+}
