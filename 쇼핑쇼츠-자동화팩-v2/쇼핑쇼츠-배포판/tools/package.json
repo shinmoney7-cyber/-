@@ -1,0 +1,10 @@
+{
+  "name": "shopping-shorts-tools",
+  "version": "2.0.0",
+  "private": true,
+  "description": "쇼핑쇼츠 제작 도구 (나레이션·컷편집·검수). Node 전용 — Python 불필요.",
+  "type": "commonjs",
+  "dependencies": {
+    "msedge-tts": "^2.0.7"
+  }
+}

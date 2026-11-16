@@ -1,0 +1,16 @@
+{
+  "brand": "브랜드명",
+  "productName": "상품명",
+  "coupangUrl": "https://link.coupang.com/여기에파트너스링크",
+  "accent": "#2ECC71",
+  "bgm": "",
+  "narrationDuration": 17.0,
+  "captions": [],
+  "scenes": [
+    { "type": "hook", "clip": "clips/01.mp4" },
+    { "type": "feature", "clip": "clips/02.mp4" },
+    { "type": "feature", "clip": "clips/03.mp4" },
+    { "type": "feature", "clip": "clips/04.mp4" },
+    { "type": "cta", "clip": "clips/05.mp4" }
+  ]
+}

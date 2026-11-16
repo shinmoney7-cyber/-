@@ -1,0 +1,7 @@
+node_modules/
+work/
+tools/src/
+tools/cuts.json
+remotion-project/out/
+remotion-project/public/clips/*.mp4
+remotion-project/public/audio/*.mp3
