@@ -1,47 +1,76 @@
 from __future__ import annotations
 
+import logging
+
 from ..browser import launch_browser
 from ..config import Config
 from ..input_loader import upsert_product
 from ..models import Product, derive_product_id
 from .coupang_match import CoupangMatchRPAClient, MockCoupangMatchClient
-from .daiso import DaisoRPAClient
 from .mock import MockSearchClient
-from .models import SearchResult
+from .models import SOURCES, SearchResult
 from .naver import NaverShopClient
-from .oliveyoung import OliveYoungRPAClient
+from .sites import build_rpa_client
+
+
+logger = logging.getLogger(__name__)
+
+
+def _validate_sources(sources) -> tuple[str, ...]:
+    unknown = [s for s in sources if s not in SOURCES]
+    if unknown:
+        raise ValueError(f"unknown search source(s): {unknown!r}")
+    return tuple(sources)
 
 
 def search_all_sources(
-    keyword: str, config: Config, dry_run: bool = True, limit: int = 5
+    keyword: str,
+    config: Config,
+    dry_run: bool = True,
+    limit: int = 5,
+    sources: tuple[str, ...] | list[str] | None = None,
 ) -> dict[str, list[SearchResult]]:
-    """Searches Naver Shopping, Daiso Mall, and Olive Young for `keyword`,
-    `limit` results each. dry_run uses deterministic mock clients for all
-    three (no network, no browser)."""
+    """Searches every mall in `sources` (default: all of SOURCES) for `keyword`,
+    `limit` results each.
+
+    dry_run uses deterministic mock clients (no network, no browser). In live
+    mode a failure in one mall is logged and that mall returns no results, so
+    the other malls still complete.
+    """
+    selected = _validate_sources(sources or SOURCES)
+
     if dry_run:
-        return {
-            source: MockSearchClient(source).search(keyword, limit=limit)
-            for source in ("naver", "daiso", "oliveyoung")
-        }
+        return {s: MockSearchClient(s).search(keyword, limit=limit) for s in selected}
 
-    naver_client = NaverShopClient(config.naver_client_id, config.naver_client_secret)
-    results = {"naver": naver_client.search(keyword, limit=limit)}
+    results: dict[str, list[SearchResult]] = {}
+    if "naver" in selected:
+        try:
+            naver_client = NaverShopClient(config.naver_client_id, config.naver_client_secret)
+            results["naver"] = naver_client.search(keyword, limit=limit)
+        except Exception:
+            logger.exception("naver search failed")
+            results["naver"] = []
 
-    with launch_browser(
-        headless=config.inpock_headless, chromium_path=config.playwright_chromium_path
-    ) as browser:
-        page = browser.new_page()
-        results["daiso"] = DaisoRPAClient(page).search(keyword, limit=limit)
-        results["oliveyoung"] = OliveYoungRPAClient(page).search(keyword, limit=limit)
+    rpa_sources = [s for s in selected if s != "naver"]
+    if rpa_sources:
+        with launch_browser(
+            headless=config.inpock_headless, chromium_path=config.playwright_chromium_path
+        ) as browser:
+            page = browser.new_page()
+            for source in rpa_sources:
+                try:
+                    results[source] = build_rpa_client(source, page).search(keyword, limit=limit)
+                except Exception:
+                    logger.exception("%s search failed", source)
+                    results[source] = []
 
-    return results
+    return {s: results[s] for s in selected}
 
 
 def search_one_source(
     source: str, keyword: str, config: Config, dry_run: bool = True, limit: int = 5
 ) -> list[SearchResult]:
-    if source not in ("naver", "daiso", "oliveyoung"):
-        raise ValueError(f"unknown search source: {source!r}")
+    _validate_sources([source])
 
     if dry_run:
         return MockSearchClient(source).search(keyword, limit=limit)
@@ -51,12 +80,11 @@ def search_one_source(
             keyword, limit=limit
         )
 
-    rpa_client_cls = DaisoRPAClient if source == "daiso" else OliveYoungRPAClient
     with launch_browser(
         headless=config.inpock_headless, chromium_path=config.playwright_chromium_path
     ) as browser:
         page = browser.new_page()
-        return rpa_client_cls(page).search(keyword, limit=limit)
+        return build_rpa_client(source, page).search(keyword, limit=limit)
 
 
 def match_to_coupang(product_name: str, config: Config, dry_run: bool = True) -> str | None:

@@ -14,10 +14,21 @@ def _config():
     return load_config(env_file="/nonexistent/.env")
 
 
-def test_search_all_sources_dry_run_returns_all_three():
+def test_search_all_sources_dry_run_returns_every_mall():
+    from shopping_shorts_sync.search.models import SOURCES
+
     results = search_all_sources("무선 청소기", _config(), dry_run=True, limit=3)
-    assert set(results.keys()) == {"naver", "daiso", "oliveyoung"}
+    assert set(results.keys()) == set(SOURCES)
     assert all(len(v) == 3 for v in results.values())
+
+
+def test_search_all_sources_subset_and_unknown_source():
+    import pytest
+
+    results = search_all_sources("청소기", _config(), dry_run=True, limit=1, sources=["11st", "ssg"])
+    assert set(results.keys()) == {"11st", "ssg"}
+    with pytest.raises(ValueError):
+        search_all_sources("청소기", _config(), dry_run=True, sources=["nope"])
 
 
 def test_search_one_source_dry_run():
