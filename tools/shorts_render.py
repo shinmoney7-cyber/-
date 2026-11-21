@@ -18,10 +18,15 @@ Spec (paths are relative to the spec file):
      "from": {"z": 1.0, "cx": 0.5, "cy": 0.5}, "to": {"z": 1.3, "cx": 0.4, "cy": 0.6},
      "text": "캡션", "text_pos": "bottom",
      "ripple": {"y0": 0.62, "amp": 6}},
+    {"video": "grok_pool.mp4", "start": 0.5, "dur": 3, "text": "Grok 클립"},
     {"card": true, "bg": "pool.jpg", "dur": 3, "title": "제목", "lines": ["줄1", "줄2"]},
     {"end": true, "dur": 2.5, "title": "청귤트립", "lines": ["프로필 링크 #P5"]}
   ]
 }
+
+A "video" scene uses a clip (for example from Grok Imagine image-to-video);
+it is cover-cropped to 9:16, trimmed from "start" for "dur" seconds, and gets
+the same caption, badge and crossfades as photo scenes.
 
 "z" is relative to the largest 9:16 window that fits inside the photo
 (z=1 shows that whole window). "cx"/"cy" are the window centre as fractions
@@ -132,13 +137,38 @@ class Renderer:
         im = Image.fromarray(arr).resize(
             (self.W, self.H), Image.LANCZOS, box=(x, y, x + w, y + h)
         )
+        self.caption(im, sc)
+        return im
+
+    def caption(self, im: Image.Image, sc: dict):
         if sc.get("text"):
             d = ImageDraw.Draw(im)
             pos = {"top": 0.13, "middle": 0.42, "bottom": 0.74}[sc.get("text_pos", "bottom")]
             self.text_center(d, self.H * pos, sc["text"], sc.get("text_size", 56))
             if sc.get("sub"):
                 self.text_center(d, self.H * pos + 80, sc["sub"], 40, fill=ORANGE, stroke=5)
-        return im
+
+    def video_frames(self, sc: dict):
+        """Decode a clip (e.g. a Grok Imagine image-to-video result) to WxH frames.
+
+        The clip is scaled to cover the vertical frame and centre-cropped, then
+        trimmed to [start, start + dur). Short clips hold their last frame.
+        """
+        n = int(round(sc["dur"] * self.fps))
+        cmd = ["ffmpeg", "-v", "error", "-ss", str(sc.get("start", 0)), "-i",
+               str(self.base / sc["video"]), "-t", str(sc["dur"]), "-an",
+               "-vf", f"fps={self.fps},scale={self.W}:{self.H}:force_original_aspect_ratio=increase,crop={self.W}:{self.H}",
+               "-f", "rawvideo", "-pix_fmt", "rgb24", "-"]
+        raw = subprocess.run(cmd, capture_output=True, check=True).stdout
+        size = self.W * self.H * 3
+        frames = [raw[i:i + size] for i in range(0, len(raw) - size + 1, size)]
+        if not frames:
+            raise RuntimeError(f"no frames decoded from {sc['video']}")
+        for i in range(n):
+            buf = frames[min(i, len(frames) - 1)]
+            im = Image.frombytes("RGB", (self.W, self.H), buf)
+            self.caption(im, sc)
+            yield im
 
     def card_frame(self, sc: dict, t: float) -> Image.Image:
         if sc.get("bg"):
@@ -170,6 +200,11 @@ class Renderer:
 
     def scene_frames(self, sc: dict):
         n = int(round(sc["dur"] * self.fps))
+        if sc.get("video"):
+            for im in self.video_frames(sc):
+                self.overlays(im)
+                yield np.asarray(im)
+            return
         for i in range(n):
             t = i / self.fps
             im = self.card_frame(sc, t) if (sc.get("card") or sc.get("end")) else self.photo_frame(sc, t)

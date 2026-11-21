@@ -23,3 +23,26 @@ def test_ripple_only_moves_rows_below_waterline():
     out = sr.ripple(img, 0.5, 0.6, 5)
     assert np.array_equal(out[:60], img[:60])
     assert out.shape == img.shape
+
+
+def test_video_scene_is_cropped_trimmed_and_captioned(tmp_path):
+    import json
+    import subprocess
+
+    clip = tmp_path / "clip.mp4"
+    subprocess.run(["ffmpeg", "-y", "-v", "error", "-f", "lavfi", "-i",
+                    "testsrc=size=320x240:rate=30:duration=2", "-pix_fmt", "yuv420p", str(clip)], check=True)
+    spec_file = tmp_path / "spec.json"
+    spec_file.write_text(json.dumps({
+        "size": [180, 320], "fps": 10, "transition": 0.2, "badge": "광고",
+        "scenes": [
+            {"video": "clip.mp4", "start": 0.5, "dur": 1.0, "text": "Grok"},
+            {"end": True, "dur": 0.5, "title": "청귤트립", "lines": ["#01"]},
+        ],
+    }), encoding="utf-8")
+    out = tmp_path / "out.mp4"
+    r = sr.Renderer(json.loads(spec_file.read_text(encoding="utf-8")), tmp_path)
+    frames = list(r.scene_frames(r.spec["scenes"][0]))
+    assert len(frames) == 10 and frames[0].shape == (320, 180, 3)
+    dur = r.render(out)
+    assert out.exists() and abs(dur - 1.3) < 0.15

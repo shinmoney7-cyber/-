@@ -87,6 +87,8 @@ JSON 파일이라 직접 열어서 수정하면 된다. 수정 후에는 `script
 
 ## 여행 쇼핑쇼츠 운영 가이드
 
+Codex 등 AI 에이전트 안내는 [AGENTS.md](AGENTS.md), 영상(Grok) 제작은 [docs/travel-shorts/CODEX.md](docs/travel-shorts/CODEX.md).
+
 수익화 조건, 만들 것 전체 목록, 첫 4주 캘린더는
 [docs/travel-shorts/MASTER_GUIDE.md](docs/travel-shorts/MASTER_GUIDE.md) 참고.
 

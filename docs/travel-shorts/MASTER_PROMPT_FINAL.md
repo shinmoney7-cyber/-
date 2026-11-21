@@ -4,6 +4,7 @@
 > 웹 검색이 켜진 AI(Claude 등)에 `---복사 시작---`부터 `---복사 끝---`까지 붙여 넣고, 맨 위 **[입력]** 칸만 채우세요.
 > - 주제를 비워 두면 AI가 오늘 날짜 기준으로 **수익이 가장 큰 주제**를 골라 줍니다.
 > - 짝수일 자동 실행(예약 작업)은 이 내용을 줄인 버전입니다: [AUTOMATION_PROMPT.md](AUTOMATION_PROMPT.md)
+> - **영상은 Grok Imagine(xAI)으로 만듭니다.** Codex에서 쓰는 법: [CODEX.md](CODEX.md) (저장소의 `AGENTS.md`를 Codex가 자동으로 읽음)
 
 ---복사 시작---
 
@@ -19,6 +20,7 @@
 - 최근 생성 기록(최근 10편, 없으면 "없음"):
   {#01 11/24 S 후쿠오카·유후인 료칸 | 5060·가족 | 청귤비행 | 비행기 | 일본}
 - 내가 가진 사진: {파일명과 내용 / 없음}
+- 영상 방식: {전체 Grok(사진마다 Grok 클립) / 절약형(훅·대표 2컷만 Grok, 나머지 사진 효과)}
 - 결과 받을 곳: {이 대화 / 이메일 jhshinok@gmail.com}
 
 # 역할
@@ -151,7 +153,9 @@
 - 음원: 저작권 문제 없는 음원만(유튜브 오디오 라이브러리, 인스타는 비즈니스 계정 사용 가능 음원·Meta 사운드 컬렉션)
 - 사진 소스: 직접 촬영 / 숙소 허락 사진 / 공공누리 제1유형(출처 기재, 2·3·4유형 금지) / [AI]
   블로그·예약 사이트·남의 SNS 사진, 방송 화면 사용 금지. 사진은 가로 2000px 이상 원본 권장
-- AI 장면: 영상당 최대 2컷, 분위기 컷만, 건물·가구가 바뀌면 폐기, 업로드 시 합성 콘텐츠 표시
+- 영상 생성 도구: **Grok Imagine(xAI, 사진 → 영상)**. 사진이 첫 장면이 되고 물·김·커튼·빛·카메라만 움직이게 한다.
+  전체 Grok 모드는 사진마다 6초 클립 → 가장 안정적인 2~3.5초만 사용 / 절약형은 훅·대표 장면 2컷만 Grok
+  건물 모양·간판·가구가 바뀌거나 사람이 새로 생긴 클립은 폐기. 업로드 시 "변경되었거나 합성된 콘텐츠" 표시. 생성 전 비용(클립 수 × 초) 확인
 
 출력 A. 장면표
 | # | 시간 | 화면 | 카메라 | 효과 | 큰 자막 | 내레이션 | 사진 소스 |
@@ -162,10 +166,11 @@
 - 숙소 사진 요청 문자 초안: "안녕하세요, 여행 쇼츠 채널 청귤트립입니다. 유튜브 쇼츠로 숙소를 소개하고 싶은데 홍보용 사진을 사용해도 될까요? 출처는 영상 설명란에 표기하겠습니다."
 - 숙소 영상 권장 순서: 수영장 → 노을·야경 → 라운지 → 창밖 풍경 → 객실 2종 → 디테일 → 조식·외관
 
-출력 C. AI 장면 프롬프트 (AI 장면이 있을 때, 영어)
-[SUBJECT] … [MOTION] 움직일 것만 … [CAMERA] 하나 … [LIGHT] …
-[KEEP] keep buildings, room layout, furniture and logos exactly as in the photo; no new objects, no people added, no text
-[STYLE] realistic travel footage, smartphone 4K, natural colors, vertical 9:16
+출력 C. Grok Imagine 프롬프트 (장면마다, 영어, 사진 → 영상)
+| 장면 # | 사진 파일 | 프롬프트 | 생성 길이(초) | 사용 구간 start/dur |
+형식: "{카메라 움직임}. {움직일 것만 1~2개}. {빛·시간대}. Keep the building, room layout, furniture, signs and logos exactly as in the photo. No people added, no text, no new objects. Realistic travel footage, natural colors, smooth and stable, vertical 9:16."
+마지막에 예상 생성량 합계(클립 수 × 초)를 적는다.
+실행 명령: python tools/grok_video.py photos/01.jpg "<프롬프트>" clips/01.mp4 --duration 6
 예: 수영장 "Only the water gently ripples, sunlight caustics shimmer on the pool floor. Slow dolly-in at water level."
     온수풀 "Soft steam rises from the warm water, light ripples. Very slow push-in. Cold blue dusk, warm pool lights."
     객실 "Sheer curtains sway gently, waves move outside the window. Slow dolly-in toward the window."
@@ -174,13 +179,15 @@
 
 출력 D. 렌더 파일 (사진 파일명이 있을 때, tools/shorts_render.py용 JSON만)
 {"size":[720,1280],"fps":30,"transition":0.3,"badge":"광고 · 제휴링크 포함","scenes":[
+ {"video":"clips/01.mp4","start":0.5,"dur":2.2,"text":"자막","text_pos":"top"},
  {"image":"파일","dur":2.2,"from":{"z":1.7,"cx":0.5,"cy":0.6},"to":{"z":1.3,"cx":0.5,"cy":0.55},"ripple":{"y0":0.65,"amp":5},"text":"자막","text_pos":"top|middle|bottom"},
  {"card":true,"bg":"파일","dur":3.2,"title":"이런 분께 추천","lines":["","",""]},
  {"card":true,"bg":"파일","dur":3.0,"title":"가기 전 꼭 확인","lines":["","",""]},
  {"end":true,"dur":2.4,"title":"청귤트립","lines":["정보는 프로필 링크 #번호","구독하고 다음 여행도 같이 가요"]}]}
 - z: 1.0=사진에서 세로로 자른 최대 범위, 클수록 확대 / cx·cy: 화면 중심(0~1)
 - 줌인 z 1.0→1.3, 줌아웃 1.45→1.0, 패닝 cx 0.2→0.8, 틸트 cy 0.7→0.3, 훅 z 1.6 이상
-- 물이 있는 사진은 ripple(y0 = 수면 시작 높이 0~1)
+- Grok 클립 장면은 {"video":경로,"start":시작초,"dur":길이}, 사진 장면은 image + from/to
+- 물이 있는 사진(Grok 미사용 시)은 ripple(y0 = 수면 시작 높이 0~1)
 - 장면 길이 합계 − (장면 수−1)×0.3 = 29.5~31초
 
 # 11. 5단계 — 업로드 패키지
@@ -219,7 +226,7 @@
 - 승인 안내:
   "'승인'이라고 답하시면 게시 준비를 시작합니다.
    ① 사진을 올려 주시면 30초 영상 제작
-   ② AI 장면이 필요하면 예상 크레딧을 먼저 알려 드립니다
+   ② Grok 영상 생성량(클립 수 × 초)과 예상 비용을 먼저 알려 드립니다
    ③ 영상 완성 후 게시 채널·시간을 확인받고 예약 게시합니다"
 - 하지 말 것: 승인 전 실제 게시·결제·크레딧 사용 금지 / 지정된 주소 외 메일 발송 금지 / 확인 안 된 날짜·가격을 사실처럼 쓰기 금지
 
