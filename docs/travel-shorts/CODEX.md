@@ -1,5 +1,7 @@
 # Codex에서 청귤트립 쇼츠 만들기 (영상: Grok)
 
+> 💡 Codex 설정의 **맞춤 지침**에 넣을 공통 규칙: [CODEX_CUSTOM_INSTRUCTIONS.md](CODEX_CUSTOM_INSTRUCTIONS.md)
+
 > OpenAI Codex는 저장소 맨 위의 `AGENTS.md`를 자동으로 읽습니다. 그래서 이 저장소를 Codex로 열면 채널 규칙·영상 방법을 따로 설명할 필요가 없습니다.
 > 영상은 **xAI Grok Imagine**(사진 → 움직이는 영상)으로 만들고, 자막·광고 표시·엔딩은 저장소의 `tools/shorts_render.py`가 붙입니다.
 
