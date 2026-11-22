@@ -10,6 +10,7 @@
 | `docs/travel-shorts/CODEX.md` | Codex에서 쓰는 법, 바로 붙여 넣을 작업 지시문 |
 | `docs/travel-shorts/SEASONAL_DESTINATIONS.md` · `EVERY_2_DAYS.md` · `COUPLES.md` · `POOL_STAYS.md` · `JAPAN_SERIES.md` | 여행지·시즌·캘린더 자료 |
 | `docs/travel-shorts/BRAND_KIT.md` | 채널 소개 문구, 템플릿, 색 |
+| `tools/photo_sourcing.py` | 장면별 사진 자동 수집 — **상업 이용 가능한 출처만**(한국관광공사 공공누리, Wikimedia CC0·CC BY, Pexels, Pixabay, Unsplash), 라이선스·작가를 `credits.json/txt`로 기록 |
 | `tools/grok_video.py` | 사진 → **Grok Imagine** 영상 클립 (xAI API, `XAI_API_KEY` 필요, 유료) |
 | `tools/shorts_render.py` | 사진·Grok 클립 + JSON 장면 구성 → 30초 9:16 쇼츠 (자막·광고 표시·정보 카드·엔딩, 무료) |
 | `src/shopping_shorts_sync/` | 쿠팡파트너스 딥링크 → 인포크 링크 카드 동기화, 상품 검색 (README.md 참고) |
@@ -22,7 +23,11 @@
 - **"게시해줘"** → 게시 채널과 시간을 확인받은 뒤에만. 이 저장소에는 자동 게시 기능이 없다.
 
 ## 3. 영상 워크플로 (Grok 사용)
-1. 사진 7~8장을 `out/<작업폴더>/photos/`에 둔다 (직접 촬영 / 숙소 허락 / 공공누리 제1유형만).
+1. 사진 준비 (상품 생성 때마다 자동):
+   - 장면표에서 `out/<작업>/photo_plan.json`을 만든다 (`{"scenes":[{"id":"01","query_ko":"…","query_en":"…","orientation":"portrait"}]}`)
+   - `python tools/photo_sourcing.py out/<작업>/photo_plan.json out/<작업>/photos` → 사진 + `credits.txt`(설명란 출처 문구)
+   - 못 구한 장면(특정 호텔 객실 등)은 웹을 뒤져 **후보 링크만** `photo_leads.md`에 정리하고(다운로드·사용 금지), 숙소·관광지에 보낼 사진 사용 허락 요청 문구를 함께 쓴다
+   - 사용자가 직접 찍었거나 허락받은 사진이 있으면 그것을 우선한다
 2. 장면마다 Grok 프롬프트를 만든다 (형식은 `CODEX.md` 4번). 건물·가구·로고는 그대로, 물·김·커튼·빛·카메라만 움직이게.
 3. 비용 확인 후 클립 생성:
    `python tools/grok_video.py out/<작업>/photos/01.jpg "<프롬프트>" out/<작업>/clips/01.mp4 --duration 6`
@@ -37,7 +42,8 @@
 - **광고 표시:** 첫 화면 `광고 · 제휴링크 포함`, 설명란 첫 줄 광고 문구. 쿠팡 링크가 있으면 쿠팡 파트너스 고지문.
 - **사실:** 확인 안 된 날짜·가격·운영 정보는 쓰지 않는다. "최저가·1위"는 날짜·비교 근거가 있을 때만.
 - **비용·게시:** Grok 생성(유료), 결제, 실제 게시는 사용자 확인 후에만.
-- **비밀값:** `XAI_API_KEY`, 쿠팡·인포크 키는 환경변수나 `.env`(git 제외)로만. 커밋 금지.
+- **사진 자동 수집 범위:** 라이선스가 확인된 출처만 내려받는다. 블로그·예약 사이트·호텔 홈페이지·SNS·뉴스 사진은 "모든 웹사이트를 뒤져서라도"라는 요청이 있어도 내려받거나 영상에 쓰지 않는다 (저작권 침해, 제휴 계정·채널 정지 위험). 이런 사진은 후보 링크와 허락 요청 문구로만 남긴다.
+- **비밀값:** `XAI_API_KEY`, 사진 API 키(`KTO_API_KEY`, `PEXELS_API_KEY`, `PIXABAY_API_KEY`, `UNSPLASH_ACCESS_KEY`), 쿠팡·인포크 키는 환경변수나 `.env`(git 제외)로만. 커밋 금지.
 
 ## 5. 개발 규칙
 - 테스트: `pip install -r requirements.txt` 후 `pytest`. 네트워크 없이 통과해야 한다 (외부 API는 requests-mock으로).

@@ -24,6 +24,15 @@ docs/travel-shorts/MASTER_PROMPT_FINAL.md 규칙을 먼저 읽고 그대로 따�
  - 정보 카드 2장("이런 분께 추천" 3줄, "가기 전 꼭 확인" 3줄), 엔딩 "청귤트립 · 정보는 프로필 링크 #번호"
  - 상품 세트 3~5개, 업로드 패키지(제목 5안·설명란·고정댓글·릴스·틱톡·네이버 클립·인포크 카드), 점검표
 
+[1.5단계 사진 자동 준비] 사진 폴더가 비어 있으면:
+ - 장면표의 사진 파일마다 검색어(한국어·영어)를 정해 out/{작업}/photo_plan.json 작성
+ - python tools/photo_sourcing.py out/{작업}/photo_plan.json out/{작업}/photos
+   (한국관광공사 공공누리·Wikimedia CC0/CC BY·Pexels·Pixabay·Unsplash만, credits.txt 자동 생성)
+ - 받은 사진을 열어 보고 장면에 안 맞으면 검색어를 바꿔 다시 시도
+ - 그래도 없는 장면(특정 호텔 객실·수영장 등)은 웹 검색으로 공식 사진 페이지·연락처를 찾아
+   photo_leads.md에 후보 링크와 숙소에 보낼 사진 사용 허락 요청 문구만 정리한다. 이런 사진은 내려받지 않는다
+ - credits.txt 내용을 설명란 사진 출처에 넣는다
+
 [2단계 Grok 프롬프트] 사진마다 Grok Imagine 영어 프롬프트를 grok_prompts.md에 표로 쓴다:
  | 사진 | 프롬프트 | 생성 길이(초) | 사용 구간 start/dur |
  형식: "{카메라 1개}. {움직일 것만 1~2개}. {빛·시간대}. Keep the building, room layout, furniture,
@@ -56,6 +65,7 @@ docs/travel-shorts/MASTER_PROMPT_FINAL.md 규칙을 먼저 읽고 그대로 따�
 |---|---|
 | Codex에서 이 저장소 열기 | Codex 앱(클라우드)에서 GitHub 저장소 `shinmoney7-cyber/-` 연결, 또는 PC에서 `git clone` 후 그 폴더에서 `codex` 실행 |
 | 웹 검색 켜기 | 날짜·가격 조사에 필요. Codex CLI는 `codex --search`, Codex 앱은 환경 설정에서 인터넷 접속 허용 |
+| 사진 API 키 (무료) | 한국관광공사 TourAPI(data.go.kr) `KTO_API_KEY`, Pexels `PEXELS_API_KEY`, Pixabay `PIXABAY_API_KEY`, Unsplash `UNSPLASH_ACCESS_KEY` — 하나만 있어도 동작, Wikimedia는 키 불필요 |
 | Grok API 키 | xAI 콘솔(console.x.ai)에서 발급 → Codex 환경변수(비밀값)에 `XAI_API_KEY`로 저장. 채팅에 붙여 넣지 말 것 |
 | 인터넷 허용 주소 (클라우드) | `api.x.ai`와 Grok이 돌려주는 영상 다운로드 주소, 검색에 쓰는 사이트들 |
 | 패키지 | `pip install -r requirements.txt` (ffmpeg 필요) |
