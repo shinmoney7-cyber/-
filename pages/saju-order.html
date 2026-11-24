@@ -1,728 +1,604 @@
-<title>사주 상담 신청</title>
+<title>사주마루 주문</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&family=Inter:wght@400;500;600&display=swap">
+
 <style>
+/*
+  Layout: 상품 카탈로그 → 선택 → 바텀시트 주문 폼
+  다크 신비 톤 / 금색 포인트 / 모바일 우선
+*/
 :root {
-  --bg: #1a0a3e;
-  --card: rgba(255,255,255,0.07);
-  --border: rgba(255,255,255,0.14);
-  --text: #f0e6ff;
-  --dim: #b8a0e0;
-  --accent: #a855f7;
-  --accent-soft: rgba(168,85,247,0.18);
-  --gold: #fbbf24;
-  --gold-soft: rgba(251,191,36,0.1);
-  --input-bg: rgba(255,255,255,0.06);
-  --kakao: #FEE500;
-  --kakao-text: #3C1E1E;
-  --step-done: #22c55e;
-  --step-active: #a855f7;
-  --step-idle: rgba(255,255,255,0.15);
+  --bg: #0C0A14;
+  --surface: #161327;
+  --surface2: #1F1B33;
+  --border: #2A2545;
+  --gold: #C8A84B;
+  --gold-dim: rgba(200,168,75,0.12);
+  --gold-glow: rgba(200,168,75,0.25);
+  --fg: #EDE9FF;
+  --fg2: #9B94BA;
+  --fg3: #5E587A;
+  --success: #52C97A;
+  --r: 12px;
   color-scheme: dark;
 }
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) {
-    --bg: #f5f0ff;
-    --card: #fff;
-    --border: rgba(100,60,200,.14);
-    --text: #1a0a3e;
-    --dim: #6b3fa0;
-    --input-bg: rgba(100,60,200,.05);
-    --step-idle: rgba(100,60,200,.15);
-    color-scheme: light;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #1a0a3e;
-  --card: rgba(255,255,255,.07);
-  --border: rgba(255,255,255,.14);
-  --text: #f0e6ff;
-  --dim: #b8a0e0;
-  --input-bg: rgba(255,255,255,.06);
-  --step-idle: rgba(255,255,255,.15);
-  color-scheme: dark;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
+
+* { box-sizing: border-box; }
+
 body {
-  font-family: 'Noto Sans KR', sans-serif;
   background: var(--bg);
-  background-image: radial-gradient(ellipse at top, #2d1066 0%, #1a0a3e 50%, #0d0520 100%);
-  color: var(--text);
-  min-height: 100vh;
-  padding-top: max(0px, env(safe-area-inset-top, 0px));
-  padding-bottom: max(80px, env(safe-area-inset-bottom, 0px));
+  color: var(--fg);
+  font-family: 'Inter', 'Apple SD Gothic Neo', sans-serif;
+  margin: 0;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0;
 }
 
-/* ── Top fixed header ── */
-.top-header {
-  position: sticky;
-  top: env(safe-area-inset-top, 0px);
-  z-index: 50;
-  background: rgba(26, 10, 62, 0.92);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid var(--border);
-  padding: 12px 16px 10px;
+/* ── Header ── */
+.header {
+  text-align: center;
+  padding: 36px 0 8px;
 }
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0 0 auto;
-  height: env(safe-area-inset-top, 0px);
-  z-index: 51;
-  background: rgba(26,10,62,0.92);
-}
-.header-inner {
-  max-width: 480px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.header-brand {
-  font-size: 16px;
-  font-weight: 900;
-  color: var(--text);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex: 1;
-}
-.header-total {
-  font-size: 15px;
-  font-weight: 900;
+.header .brand {
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
   color: var(--gold);
-  white-space: nowrap;
-  transition: all .2s;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.header h1 {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 1.45rem;
+  font-weight: 600;
+  color: var(--fg);
+  margin: 0 0 6px;
+  text-wrap: balance;
+}
+.header p {
+  font-size: 0.78rem;
+  color: var(--fg3);
+  margin: 0 0 20px;
 }
 
-/* ── Step bar ── */
-.step-bar {
-  max-width: 480px;
-  margin: 0 auto;
+/* ── Tabs ── */
+.tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 16px;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex-shrink: 0;
+  padding: 6px 15px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--fg2);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all .2s;
+  font-family: inherit;
+}
+.tab.active {
+  background: var(--gold-dim);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* ── Product Cards ── */
+.products {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 40px;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 15px;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.card:hover, .card:focus-visible {
+  border-color: var(--gold);
+  background: var(--surface2);
+  outline: none;
+}
+.card-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 10px;
+  background: var(--gold-dim);
   display: flex;
   align-items: center;
-  padding: 10px 0 4px;
-  gap: 0;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
 }
-.step-item {
+.card-info { flex: 1; min-width: 0; }
+.card-cat {
+  font-size: 0.68rem;
+  color: var(--fg3);
+  letter-spacing: 0.04em;
+  margin-bottom: 2px;
+}
+.card-name {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--fg);
+  margin: 0 0 3px;
+}
+.card-desc {
+  font-size: 0.72rem;
+  color: var(--fg2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.card-right { flex-shrink: 0; text-align: right; }
+.card-price {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+.card-arrow {
+  font-size: 0.75rem;
+  color: var(--fg3);
+  margin-top: 2px;
+}
+
+/* ── Form Overlay ── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5,3,12,0.75);
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.sheet {
+  background: var(--surface);
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  max-height: 92vh;
+  overflow-y: auto;
+  padding: 0 max(16px, env(safe-area-inset-right, 0px)) max(28px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+  border-top: 1px solid var(--border);
+}
+.handle-wrap {
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  padding: 14px 0 10px;
+  z-index: 10;
+}
+.handle {
+  width: 36px;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  margin: 0 auto;
+}
+
+/* Selected product mini-header */
+.order-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+.order-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 9px;
+  background: var(--gold-dim);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+.order-title { flex: 1; min-width: 0; }
+.order-title h3 {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0 0 2px;
+}
+.order-title span { font-size: 0.72rem; color: var(--fg3); }
+.order-price {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Form Fields */
+.field { margin-bottom: 15px; }
+.field > label {
   display: flex;
   align-items: center;
   gap: 6px;
-  flex: 1;
-  cursor: pointer;
+  font-size: 0.75rem;
+  color: var(--fg2);
+  margin-bottom: 7px;
+  letter-spacing: 0.02em;
 }
-.step-item:last-child { flex: none; }
-.step-num {
-  width: 26px; height: 26px;
-  border-radius: 50%;
-  background: var(--step-idle);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 900;
-  flex-shrink: 0;
-  transition: all .2s;
-  color: var(--dim);
-}
-.step-item.done .step-num   { background: var(--step-done); color: #fff; }
-.step-item.active .step-num { background: var(--step-active); color: #fff; box-shadow: 0 0 12px rgba(168,85,247,.5); }
-.step-label {
-  font-size: 11px;
-  color: var(--dim);
-  font-weight: 700;
-  transition: color .2s;
-  white-space: nowrap;
-}
-.step-item.active .step-label { color: var(--text); }
-.step-item.done  .step-label  { color: var(--step-done); }
-.step-line {
-  flex: 1;
-  height: 2px;
-  background: var(--step-idle);
-  margin: 0 6px;
-  border-radius: 1px;
-  transition: background .2s;
-}
-.step-line.done { background: var(--step-done); }
+.field .hint { color: var(--fg3); font-size: 0.68rem; }
 
-/* ── Main ── */
-.wrap { max-width: 480px; margin: 0 auto; padding-top: 14px; }
-
-/* ── Step panels ── */
-.step-panel { display: none; }
-.step-panel.active { display: block; }
-
-/* ── Hours badge ── */
-.hours-bar {
-  display: flex; align-items: center; gap: 10px;
-  background: rgba(251,191,36,.1);
-  border: 1px solid rgba(251,191,36,.28);
-  border-radius: 12px;
-  padding: 9px 14px;
-  margin-bottom: 14px;
-}
-.hours-dot {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: #4ade80; box-shadow: 0 0 6px #4ade80;
-  animation: pulse 2s infinite; flex-shrink: 0;
-}
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-.hours-text { font-size: 13px; font-weight: 700; color: var(--gold); }
-.hours-sub  { font-size: 11px; color: var(--dim); }
-
-/* ── Card ── */
-.card {
-  background: var(--card);
+.field input, .field select {
+  width: 100%;
+  background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 18px 16px;
-  margin-bottom: 12px;
-  backdrop-filter: blur(10px);
-}
-.card-title {
-  font-size: 13px; font-weight: 700; color: var(--accent);
-  margin-bottom: 14px;
-  display: flex; align-items: center; gap: 6px;
-  letter-spacing: .04em;
-}
-
-/* ── Menu list ── */
-.menu-list { display: flex; flex-direction: column; gap: 8px; }
-.menu-item {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 10px 13px;
-  background: var(--input-bg);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  cursor: pointer; transition: all .15s; gap: 10px;
-}
-.menu-item input[type="checkbox"] { display: none; }
-.menu-item.selected { border-color: var(--accent); background: var(--accent-soft); }
-.menu-left { display: flex; align-items: center; gap: 8px; min-width: 0; }
-.menu-emoji { font-size: 17px; flex-shrink: 0; }
-.menu-info  { min-width: 0; }
-.menu-name  { font-size: 14px; font-weight: 700; color: var(--text); }
-.menu-desc  { font-size: 11px; color: var(--dim); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.menu-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-.menu-price { font-size: 14px; font-weight: 900; color: var(--gold); }
-.check-icon {
-  width: 22px; height: 22px; border-radius: 50%;
-  border: 2px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 12px; flex-shrink: 0; transition: all .15s;
-  color: transparent;
-}
-.menu-item.selected .check-icon { background: var(--accent); border-color: var(--accent); color: #fff; }
-
-/* ── Form ── */
-.field { margin-bottom: 12px; }
-.field:last-child { margin-bottom: 0; }
-label {
-  display: block; font-size: 11.5px; font-weight: 700;
-  color: var(--dim); margin-bottom: 7px;
-  text-transform: uppercase; letter-spacing: .07em;
-}
-.req::after { content: ' *'; color: #f87171; }
-input[type="text"], select, textarea {
-  width: 100%; padding: 12px 14px;
-  background: var(--input-bg);
-  border: 1.5px solid var(--border);
-  border-radius: 12px; color: var(--text);
-  font-size: 15px; font-family: 'Noto Sans KR', sans-serif;
-  outline: none; transition: border-color .2s;
+  border-radius: 8px;
+  color: var(--fg);
+  font-size: 0.88rem;
+  padding: 10px 12px;
+  outline: none;
+  transition: border-color .2s;
+  font-family: inherit;
   -webkit-appearance: none;
+  appearance: none;
 }
-input:focus, select:focus, textarea:focus { border-color: var(--accent); }
-input::placeholder, textarea::placeholder { color: rgba(255,255,255,.26); }
-select option { background: #1a0a3e; }
-textarea { resize: none; height: 72px; }
-.pills { display: flex; gap: 8px; flex-wrap: wrap; }
-.pill input { display: none; }
-.pill label {
-  display: inline-flex; align-items: center;
-  padding: 9px 15px; border: 1.5px solid var(--border); border-radius: 20px;
-  font-size: 13px; font-weight: 700; color: var(--dim);
-  cursor: pointer; transition: all .15s; background: var(--input-bg);
-  margin: 0; text-transform: none; letter-spacing: normal;
-}
-.pill input:checked + label { border-color: var(--accent); background: var(--accent-soft); color: #e9d5ff; }
-.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.field input:focus, .field select:focus { border-color: var(--gold); }
+.field input::placeholder { color: var(--fg3); }
 
-/* ── Step 3 summary ── */
-.summary-section { margin-bottom: 14px; }
-.summary-label {
-  font-size: 11px; font-weight: 700; color: var(--accent);
-  text-transform: uppercase; letter-spacing: .08em;
-  margin-bottom: 8px; display: flex; align-items: center; gap: 5px;
-}
-.summary-items { display: flex; flex-direction: column; gap: 6px; }
-.summary-row {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 9px 13px;
-  background: var(--input-bg); border-radius: 10px; border: 1px solid var(--border);
-}
-.summary-row-name { font-size: 13px; font-weight: 700; color: var(--text); }
-.summary-row-price { font-size: 13px; font-weight: 900; color: var(--gold); }
-.summary-info-grid {
-  display: grid; grid-template-columns: auto 1fr; gap: 6px 12px;
-  padding: 12px 14px;
-  background: var(--input-bg); border-radius: 12px; border: 1px solid var(--border);
-}
-.info-key { font-size: 12px; color: var(--dim); font-weight: 700; white-space: nowrap; align-self: start; padding-top: 1px; }
-.info-val { font-size: 13px; color: var(--text); font-weight: 500; word-break: break-all; }
-.empty-notice {
-  font-size: 13px; color: var(--dim); text-align: center; padding: 16px;
-  background: var(--input-bg); border-radius: 10px; border: 1px dashed var(--border);
-}
+.row { display: grid; gap: 8px; }
+.row-3 { grid-template-columns: 86px 1fr 1fr; }
+.row-date { grid-template-columns: 1.3fr 1fr 1fr; }
 
-/* ── Total bar ── */
-.total-bar {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 13px 16px;
-  background: var(--gold-soft);
-  border: 1px solid rgba(251,191,36,.28);
-  border-radius: 14px;
-  margin-bottom: 12px;
-}
-.total-label  { font-size: 14px; font-weight: 700; color: var(--dim); }
-.total-amount { font-size: 22px; font-weight: 900; color: var(--gold); }
-
-/* ── Nav buttons ── */
-.nav-row { display: flex; gap: 10px; margin-top: 4px; }
-.btn-prev {
-  flex: 0 0 auto;
-  padding: 15px 20px;
-  background: var(--input-bg);
-  border: 1.5px solid var(--border);
-  border-radius: 14px;
-  color: var(--dim); font-size: 15px; font-weight: 700;
-  font-family: 'Noto Sans KR', sans-serif;
-  cursor: pointer; transition: all .15s;
-}
-.btn-prev:hover { border-color: var(--accent); color: var(--text); }
-.btn-next {
+/* Toggle buttons */
+.btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+.tog {
   flex: 1;
-  padding: 15px;
-  background: var(--accent);
-  border: none; border-radius: 14px;
-  color: #fff; font-size: 15px; font-weight: 900;
-  font-family: 'Noto Sans KR', sans-serif;
-  cursor: pointer; transition: transform .1s;
-  display: flex; align-items: center; justify-content: center; gap: 6px;
-}
-.btn-next:active { transform: scale(.97); }
-.send-btn {
-  width: 100%; padding: 16px;
-  background: var(--kakao); color: var(--kakao-text);
-  border: none; border-radius: 16px;
-  font-size: 16px; font-weight: 900;
-  font-family: 'Noto Sans KR', sans-serif;
+  min-width: 60px;
+  padding: 10px 6px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--fg2);
+  font-size: 0.82rem;
   cursor: pointer;
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  transition: transform .1s; letter-spacing: -.02em;
-}
-.send-btn:active { transform: scale(.97); }
-.hint {
-  text-align: center; font-size: 11.5px;
-  color: var(--dim); margin-top: 10px; line-height: 1.8;
-}
-
-/* ── Empty selection indicator on step 1 ── */
-.select-count-bar {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 8px 14px;
-  background: var(--accent-soft);
-  border: 1px solid rgba(168,85,247,.3);
-  border-radius: 10px; margin-bottom: 12px;
-  font-size: 13px; font-weight: 700;
+  text-align: center;
   transition: all .2s;
+  font-family: inherit;
 }
-.select-count-bar.hidden { display: none; }
-.select-count-items { color: var(--text); }
-.select-count-total { color: var(--gold); }
+.tog.on {
+  border-color: var(--gold);
+  background: var(--gold-dim);
+  color: var(--gold);
+}
 
-/* ── Toast ── */
-.toast {
-  position: fixed;
-  bottom: max(60px, calc(env(safe-area-inset-bottom,0px) + 20px));
-  left: 50%; transform: translateX(-50%) translateY(14px);
-  background: rgba(10,4,30,.94);
-  border: 1px solid var(--border); color: white;
-  padding: 11px 22px; border-radius: 22px;
-  font-size: 13px; font-weight: 700;
-  opacity: 0; transition: all .25s;
-  pointer-events: none; white-space: nowrap; z-index: 999;
+/* Submit */
+.submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--gold);
+  color: #0C0A14;
+  font-weight: 600;
+  font-size: 0.92rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 10px;
+  font-family: inherit;
+  transition: opacity .2s;
+  letter-spacing: 0.02em;
 }
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.submit-btn:active { opacity: 0.85; }
+
+/* Success */
+.done {
+  text-align: center;
+  padding: 28px 8px 8px;
+}
+.done-icon { font-size: 2.8rem; margin-bottom: 14px; }
+.done h3 {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 1.1rem;
+  color: var(--gold);
+  margin: 0 0 8px;
+}
+.done p {
+  font-size: 0.82rem;
+  color: var(--fg2);
+  line-height: 1.65;
+  margin: 0 0 22px;
+}
+.kakao-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  background: #FEE500;
+  color: #191919;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.88rem;
+  text-decoration: none;
+  font-family: inherit;
+}
+.back-btn {
+  display: block;
+  margin: 12px auto 0;
+  background: none;
+  border: none;
+  color: var(--fg3);
+  font-size: 0.78rem;
+  cursor: pointer;
+  font-family: inherit;
+  text-decoration: underline;
+}
+
+[hidden] { display: none !important; }
 </style>
 
-<!-- ── Sticky top ── -->
-<div class="top-header">
-  <div class="header-inner">
-    <div class="header-brand">🔮 사주마루 신청</div>
-    <div class="header-total" id="headerTotal">0원</div>
+<!-- 상품 목록 -->
+<div id="list-view">
+  <div class="header">
+    <div class="brand">사주마루 · 사주보는언니</div>
+    <h1>나의 사주, 지금 풀어봐</h1>
+    <p>원하는 상품을 선택하면 주문 폼이 열려</p>
   </div>
-  <div class="step-bar">
-    <div class="step-item active" id="si1" onclick="goStep(1)">
-      <div class="step-num" id="sn1">1</div>
-      <div class="step-label">메뉴 선택</div>
-    </div>
-    <div class="step-line" id="sl1"></div>
-    <div class="step-item" id="si2" onclick="goStep(2)">
-      <div class="step-num" id="sn2">2</div>
-      <div class="step-label">정보 입력</div>
-    </div>
-    <div class="step-line" id="sl2"></div>
-    <div class="step-item" id="si3" onclick="goStep(3)">
-      <div class="step-num" id="sn3">3</div>
-      <div class="step-label">확인 · 신청</div>
-    </div>
-  </div>
+
+  <div class="tabs" role="tablist" id="tab-bar"></div>
+  <div class="products" id="product-list"></div>
 </div>
 
-<div class="wrap">
-
-<!-- ══════════════ STEP 1 — 메뉴 선택 ══════════════ -->
-<div class="step-panel active" id="panel1">
-
-  <div class="hours-bar">
-    <div class="hours-dot"></div>
-    <div>
-      <div class="hours-text">운영시간 오전 8시 – 오후 7시</div>
-      <div class="hours-sub">운영시간 외 접수 → 다음 날 순서대로 답변</div>
-    </div>
-  </div>
-
-  <div class="select-count-bar hidden" id="selectCountBar">
-    <span class="select-count-items" id="selectCountItems">0개 선택됨</span>
-    <span class="select-count-total" id="selectCountTotal">0원</span>
-  </div>
-
-  <div class="card">
-    <div class="card-title">✨ 원하는 항목을 선택하세요 (복수 가능)</div>
-    <div class="menu-list" id="menuList">
-      <label class="menu-item" data-price="35000"><input type="checkbox" value="종합 분석" data-price="35000"><div class="menu-left"><span class="menu-emoji">🔮</span><div class="menu-info"><div class="menu-name">종합 분석</div><div class="menu-desc">사주 명식·오행·성격·재물·직업·연애운·월별운 전체</div></div></div><div class="menu-right"><div class="menu-price">35,000원</div><div class="check-icon">✓</div></div></label>
-      <label class="menu-item" data-price="29000"><input type="checkbox" value="평생운" data-price="29000"><div class="menu-left"><span class="menu-emoji">🌠</span><div class="menu-info"><div class="menu-name">평생운</div><div class="menu-desc">전반적 평생운·대운 흐름·핵심 기질</div></div></div><div class="menu-right"><div class="menu-price">29,000원</div><div class="check-icon">✓</div></div></label>
-      <label class="menu-item" data-price="18000"><input type="checkbox" value="연애운" data-price="18000"><div class="menu-left"><span class="menu-emoji">💕</span><div class="menu-info"><div class="menu-name">연애운</div><div class="menu-desc">연애·이성 인연·궁합·결혼 시기</div></div></div><div class="menu-right"><div class="menu-price">18,000원</div><div class="check-icon">✓</div></div></label>
-      <label class="menu-item" data-price="18000"><input type="checkbox" value="배우자운·결혼운" data-price="18000"><div class="menu-left"><span class="menu-emoji">💍</span><div class="menu-info"><div class="menu-name">배우자운·결혼운</div><div class="menu-desc">배우자 인연·결혼 시기·부부 궁합</div></div></div><div class="menu-right"><div class="menu-price">18,000원</div><div class="check-icon">✓</div></div></label>
-      <label class="menu-item" data-price="18000"><input type="checkbox" value="재물운" data-price="18000"><div class="menu-left"><span class="menu-emoji">💰</span><div class="menu-info"><div class="menu-name">재물운</div><div class="menu-desc">재물 흐름·투자 시기·사업 재물</div></div></div><div class="menu-right"><div class="menu-price">18,000원</div><div class="check-icon">✓</div></div></label>
-      <label class="menu-item" data-price="18000"><input type="checkbox" value="건강운" data-price="18000"><div class="menu-left"><span class="menu-emoji">🌿</span><div class="menu-info"><div class="menu-name">건강운</div><div class="menu-desc">건강 취약점·주의할 시기·관리법</div></div></div><div class="menu-right"><div class="menu-price">18,000원</div><div class="check-icon">✓</div></div></label>
-      <label class="menu-item" data-price="25000"><input type="checkbox" value="대운·세운" data-price="25000"><div class="menu-left"><span class="menu-emoji">🌊</span><div class="menu-info"><div class="menu-name">대운·세운</div><div class="menu-desc">대운 10년 흐름·올해 세운</div></div></div><div class="menu-right"><div class="menu-price">25,000원</div><div class="check-icon">✓</div></div></label>
-      <label class="menu-item" data-price="18000"><input type="checkbox" value="직장운" data-price="18000"><div class="menu-left"><span class="menu-emoji">💼</span><div class="menu-info"><div class="menu-name">직장·취업운</div><div class="menu-desc">직장운·이직·취업·합격 시기·직업 유형</div></div></div><div class="menu-right"><div class="menu-price">18,000원</div><div class="check-icon">✓</div></div></label>
-      <label class="menu-item" data-price="25000"><input type="checkbox" value="사업운" data-price="25000"><div class="menu-left"><span class="menu-emoji">🏢</span><div class="menu-info"><div class="menu-name">사업운</div><div class="menu-desc">사업 시기·파트너·성패 요인</div></div></div><div class="menu-right"><div class="menu-price">25,000원</div><div class="check-icon">✓</div></div></label>
-      <label class="menu-item" data-price="18000"><input type="checkbox" value="부모운" data-price="18000"><div class="menu-left"><span class="menu-emoji">👨‍👩‍👦</span><div class="menu-info"><div class="menu-name">부모운</div><div class="menu-desc">부모와의 인연·부모 건강·덕</div></div></div><div class="menu-right"><div class="menu-price">18,000원</div><div class="check-icon">✓</div></div></label>
-      <label class="menu-item" data-price="18000"><input type="checkbox" value="자식운" data-price="18000"><div class="menu-left"><span class="menu-emoji">👶</span><div class="menu-info"><div class="menu-name">자식운</div><div class="menu-desc">자식 인연·자녀 수·자녀 성향</div></div></div><div class="menu-right"><div class="menu-price">18,000원</div><div class="check-icon">✓</div></div></label>
-      <label class="menu-item" data-price="18000"><input type="checkbox" value="형제간운" data-price="18000"><div class="menu-left"><span class="menu-emoji">👫</span><div class="menu-info"><div class="menu-name">형제간운</div><div class="menu-desc">형제자매 관계·덕·협력 여부</div></div></div><div class="menu-right"><div class="menu-price">18,000원</div><div class="check-icon">✓</div></div></label>
-      <label class="menu-item" data-price="18000"><input type="checkbox" value="친구·우정운" data-price="18000"><div class="menu-left"><span class="menu-emoji">🤝</span><div class="menu-info"><div class="menu-name">친구·우정운</div><div class="menu-desc">친구 인연·좋은 우정 시기·인간관계 특성</div></div></div><div class="menu-right"><div class="menu-price">18,000원</div><div class="check-icon">✓</div></div></label>
-      <label class="menu-item" data-price="18000"><input type="checkbox" value="새해운세" data-price="18000"><div class="menu-left"><span class="menu-emoji">🎆</span><div class="menu-info"><div class="menu-name">새해운세</div><div class="menu-desc">2026년 전반 운세·월별 핵심</div></div></div><div class="menu-right"><div class="menu-price">18,000원</div><div class="check-icon">✓</div></div></label>
-      <label class="menu-item" data-price="22000"><input type="checkbox" value="월별운세" data-price="22000"><div class="menu-left"><span class="menu-emoji">📅</span><div class="menu-info"><div class="menu-name">월별운세</div><div class="menu-desc">2026년 월별 상세 운세</div></div></div><div class="menu-right"><div class="menu-price">22,000원</div><div class="check-icon">✓</div></div></label>
-      <label class="menu-item" data-price="18000"><input type="checkbox" value="수능·입시운" data-price="18000"><div class="menu-left"><span class="menu-emoji">📚</span><div class="menu-info"><div class="menu-name">수능·입시운</div><div class="menu-desc">학업 운·시험 시기·합격 가능성</div></div></div><div class="menu-right"><div class="menu-price">18,000원</div><div class="check-icon">✓</div></div></label>
-      <label class="menu-item" data-price="18000"><input type="checkbox" value="재회운" data-price="18000"><div class="menu-left"><span class="menu-emoji">🌹</span><div class="menu-info"><div class="menu-name">재회운</div><div class="menu-desc">전 연인 재회 가능성·시기</div></div></div><div class="menu-right"><div class="menu-price">18,000원</div><div class="check-icon">✓</div></div></label>
-      <label class="menu-item" data-price="18000"><input type="checkbox" value="이혼·결별운" data-price="18000"><div class="menu-left"><span class="menu-emoji">💔</span><div class="menu-info"><div class="menu-name">이혼·결별운</div><div class="menu-desc">이별·이혼 시기·원인·향후 운</div></div></div><div class="menu-right"><div class="menu-price">18,000원</div><div class="check-icon">✓</div></div></label>
-      <label class="menu-item" data-price="18000"><input type="checkbox" value="도화살 전문분석" data-price="18000"><div class="menu-left"><span class="menu-emoji">🌸</span><div class="menu-info"><div class="menu-name">도화살 전문분석</div><div class="menu-desc">도화살 종류·발현 시기·활용법</div></div></div><div class="menu-right"><div class="menu-price">18,000원</div><div class="check-icon">✓</div></div></label>
-      <label class="menu-item" data-price="15000"><input type="checkbox" value="이런 사람 만나지 마라" data-price="15000"><div class="menu-left"><span class="menu-emoji">🚫</span><div class="menu-info"><div class="menu-name">이런 사람 만나지 마라</div><div class="menu-desc">피해야 할 인연 유형·특징</div></div></div><div class="menu-right"><div class="menu-price">15,000원</div><div class="check-icon">✓</div></div></label>
-    </div>
-  </div>
-
-  <div class="nav-row">
-    <button class="btn-next" onclick="nextStep(1)">정보 입력하기 →</button>
-  </div>
-</div>
-
-<!-- ══════════════ STEP 2 — 의뢰인 정보 ══════════════ -->
-<div class="step-panel" id="panel2">
-
-  <div class="card">
-    <div class="card-title">👤 의뢰인 정보</div>
-
-    <div class="field">
-      <label class="req">이름 <span style="font-weight:400;font-size:11px;text-transform:none;letter-spacing:0">(실명만 · 닉네임 불가)</span></label>
-      <input type="text" id="name" placeholder="예) 홍길동">
+<!-- 주문 폼 오버레이 -->
+<div class="overlay" id="overlay" hidden>
+  <div class="sheet" id="sheet">
+    <div class="handle-wrap">
+      <div class="handle"></div>
     </div>
 
-    <div class="field">
-      <label class="req">성별</label>
-      <div class="pills">
-        <div class="pill"><input type="radio" name="gender" id="gf" value="여성"><label for="gf">👩 여성</label></div>
-        <div class="pill"><input type="radio" name="gender" id="gm" value="남성"><label for="gm">👨 남성</label></div>
+    <div class="order-header">
+      <div class="order-icon" id="o-icon"></div>
+      <div class="order-title">
+        <h3 id="o-name"></h3>
+        <span id="o-cat"></span>
       </div>
+      <div class="order-price" id="o-price"></div>
     </div>
 
-    <div class="field">
-      <label class="req">생년월일</label>
-      <div class="row2">
-        <input type="text" id="birth" placeholder="예) 19930103">
-        <div class="pills">
-          <div class="pill"><input type="radio" name="cal" id="cy" value="양력" checked><label for="cy">양력</label></div>
-          <div class="pill"><input type="radio" name="cal" id="ce" value="음력"><label for="ce">음력</label></div>
+    <!-- 주문 폼 -->
+    <div id="form-wrap">
+      <form id="order-form" onsubmit="doSubmit(event)" novalidate>
+
+        <div class="field">
+          <label>이름 <span class="hint">(개명하셨다면 개명 후 성함)</span></label>
+          <input type="text" id="f-name" placeholder="홍길동" required>
         </div>
-      </div>
+
+        <div class="field">
+          <label>연락처 <span class="hint">(이 번호 카카오톡으로 풀이를 보내드려)</span></label>
+          <div class="row row-3">
+            <select id="f-p0">
+              <option>010</option><option>011</option><option>016</option><option>017</option><option>019</option>
+            </select>
+            <input type="tel" id="f-p1" placeholder="1234" maxlength="4" inputmode="numeric" required>
+            <input type="tel" id="f-p2" placeholder="5678" maxlength="4" inputmode="numeric" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>생년월일</label>
+          <div class="row row-date" id="dob-row"></div>
+        </div>
+
+        <div class="field">
+          <label>양력 / 음력</label>
+          <div class="btn-group" id="grp-lunar">
+            <button type="button" class="tog on" data-val="양력">양력</button>
+            <button type="button" class="tog" data-val="음력">음력</button>
+            <button type="button" class="tog" data-val="음력(윤달)">음력(윤달)</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>성별</label>
+          <div class="btn-group" id="grp-gender">
+            <button type="button" class="tog on" data-val="여성">여성</button>
+            <button type="button" class="tog" data-val="남성">남성</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>태어난 시간 <span class="hint">(모르시면 비워둬도 돼)</span></label>
+          <select id="f-time">
+            <option value="">모름</option>
+            <option>00시 (자시 초)</option><option>01시</option><option>02시 (축시)</option><option>03시</option>
+            <option>04시 (인시)</option><option>05시</option><option>06시 (묘시)</option><option>07시</option>
+            <option>08시 (진시)</option><option>09시</option><option>10시 (사시)</option><option>11시</option>
+            <option>12시 (오시)</option><option>13시</option><option>14시 (미시)</option><option>15시</option>
+            <option>16시 (신시)</option><option>17시</option><option>18시 (유시)</option><option>19시</option>
+            <option>20시 (술시)</option><option>21시</option><option>22시 (해시)</option><option>23시</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>이메일 <span class="hint">(선택)</span></label>
+          <input type="email" id="f-email" placeholder="email@example.com">
+        </div>
+
+        <button type="submit" class="submit-btn" id="submit-btn">주문하기 →</button>
+      </form>
     </div>
 
-    <div class="field">
-      <label>태어난 시간 <span style="font-weight:400;font-size:11px;text-transform:none;letter-spacing:0">(모르면 생략)</span></label>
-      <select id="btime">
-        <option value="">모름 / 생략</option>
-        <option>子시 (23:30~01:30)</option>
-        <option>丑시 (01:30~03:30)</option>
-        <option>寅시 (03:30~05:30)</option>
-        <option>卯시 (05:30~07:30)</option>
-        <option>辰시 (07:30~09:30)</option>
-        <option>巳시 (09:30~11:30)</option>
-        <option>午시 (11:30~13:30)</option>
-        <option>未시 (13:30~15:30)</option>
-        <option>申시 (15:30~17:30)</option>
-        <option>酉시 (17:30~19:30)</option>
-        <option>戌시 (19:30~21:30)</option>
-        <option>亥시 (21:30~23:30)</option>
-      </select>
+    <!-- 완료 화면 -->
+    <div id="done-wrap" hidden class="done">
+      <div class="done-icon">🌟</div>
+      <h3>주문이 접수됐어!</h3>
+      <p>입금 확인 후 카카오톡으로<br>사주풀이를 보내드릴게.<br><br>
+        <strong style="color:var(--fg)">입금 계좌</strong><br>
+        <span style="color:var(--gold);font-size:0.9rem">카카오채널에서 안내받아줘</span>
+      </p>
+      <a class="kakao-btn" id="kakao-link" href="https://pf.kakao.com/_pixgNn" target="_blank">
+        💬 카카오채널 바로가기
+      </a>
+      <button class="back-btn" onclick="closeOverlay()">다른 상품 보기</button>
     </div>
 
-    <div class="field">
-      <label>출생지 <span style="font-weight:400;font-size:11px;text-transform:none;letter-spacing:0">(선택)</span></label>
-      <input type="text" id="birthplace" placeholder="예) 서울 강남, 부산 해운대, 전남 순천">
-    </div>
-
-    <div class="field">
-      <label>현재 살고 있는 곳 <span style="font-weight:400;font-size:11px;text-transform:none;letter-spacing:0">(선택)</span></label>
-      <input type="text" id="currentCity" placeholder="예) 서울 마포, 경기 수원, 인천 부평">
-    </div>
-
-    <div class="field">
-      <label>결과 받는 방법</label>
-      <div class="pills">
-        <div class="pill"><input type="radio" name="recv" id="rk" value="카카오톡" checked><label for="rk">💬 카카오톡</label></div>
-        <div class="pill"><input type="radio" name="recv" id="rs" value="문자(SMS)"><label for="rs">📱 문자</label></div>
-      </div>
-    </div>
-
-    <div class="field">
-      <label>궁금한 점 <span style="font-weight:400;font-size:11px;text-transform:none;letter-spacing:0">(선택)</span></label>
-      <textarea id="q" placeholder="예) 올해 이직 가능한가요? 궁합이면 상대방 정보도 여기에 적어주세요."></textarea>
-    </div>
-  </div>
-
-  <div class="nav-row">
-    <button class="btn-prev" onclick="goStep(1)">← 이전</button>
-    <button class="btn-next" onclick="nextStep(2)">최종 확인 →</button>
-  </div>
-</div>
-
-<!-- ══════════════ STEP 3 — 최종 확인 & 신청 ══════════════ -->
-<div class="step-panel" id="panel3">
-
-  <div class="card">
-    <div class="card-title">📋 신청 내용 한눈에 보기</div>
-
-    <!-- 선택 메뉴 요약 -->
-    <div class="summary-section">
-      <div class="summary-label">🔮 선택한 항목</div>
-      <div class="summary-items" id="summaryItems">
-        <div class="empty-notice">선택된 항목이 없습니다</div>
-      </div>
-    </div>
-
-    <!-- 의뢰인 정보 요약 -->
-    <div class="summary-section">
-      <div class="summary-label">👤 의뢰인 정보</div>
-      <div class="summary-info-grid" id="summaryInfo">
-        <span class="info-key">이름</span><span class="info-val" id="s-name">—</span>
-        <span class="info-key">성별</span><span class="info-val" id="s-gender">—</span>
-        <span class="info-key">생년월일</span><span class="info-val" id="s-birth">—</span>
-        <span class="info-key">태어난 시</span><span class="info-val" id="s-btime">—</span>
-        <span class="info-key">출생지</span><span class="info-val" id="s-birthplace">—</span>
-        <span class="info-key">현재 거주</span><span class="info-val" id="s-city">—</span>
-        <span class="info-key">전달 방법</span><span class="info-val" id="s-recv">—</span>
-        <span class="info-key">질문</span><span class="info-val" id="s-q">—</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- 합계 -->
-  <div class="total-bar">
-    <span class="total-label">💳 결제 예상 금액</span>
-    <span class="total-amount" id="totalAmt">0원</span>
-  </div>
-
-  <button class="send-btn" onclick="send()">
-    <svg width="22" height="22" viewBox="0 0 24 24"><ellipse cx="12" cy="11" rx="10" ry="7.5" fill="#3C1E1E"/><path d="M8 15l-2 4 8-5" fill="#FEE500"/></svg>
-    카카오톡으로 신청하기
-  </button>
-
-  <p class="hint">
-    버튼을 누르면 메시지가 자동으로 만들어져요<br>
-    @사주마루 채널에 붙여넣기 후 전송하면 끝 🙏
-  </p>
-
-  <div class="nav-row" style="margin-top:14px">
-    <button class="btn-prev" onclick="goStep(2)">← 정보 수정</button>
-    <button class="btn-prev" style="flex:1" onclick="goStep(1)">메뉴 변경</button>
   </div>
 </div>
-
-</div><!-- .wrap -->
-
-<div class="toast" id="toast"></div>
 
 <script>
-const KAKAO_URL = 'https://pf.kakao.com/_xnKExn';
-let currentStep = 1;
+const PRODUCTS = [
+  { id:'종합사주', icon:'🌌', cat:'종합·인생', name:'정통 종합사주', desc:'나의 바탕부터 관계, 생활과 시간의 흐름까지', price:39900, kakao:'https://pf.kakao.com/_pixgNn' },
+  { id:'인생사주', icon:'🌠', cat:'종합·인생', name:'인생사주', desc:'나의 강점과 인생의 전환을 함께 살펴봐요', price:34900, kakao:'https://pf.kakao.com/_pixgNn' },
+  { id:'연애운',  icon:'💕', cat:'사랑·관계', name:'연애운', desc:'나의 연애 성향과 인연의 흐름 분석', price:17000, kakao:'https://pf.kakao.com/_VjvNX' },
+  { id:'결혼운',  icon:'💍', cat:'사랑·관계', name:'결혼운', desc:'인연과 혼인의 시기, 배우자 사주 분석', price:29900, kakao:'https://pf.kakao.com/_VjvNX' },
+  { id:'재물운',  icon:'💰', cat:'돈·일', name:'재물운', desc:'재물의 흐름과 돈이 들어오는 시기', price:17000, kakao:'https://pf.kakao.com/_pixgNn' },
+  { id:'직장운',  icon:'💼', cat:'돈·일', name:'직장·사업운', desc:'직장 적성과 사업 성공의 흐름', price:24900, kakao:'https://pf.kakao.com/_pixgNn' },
+  { id:'건강운',  icon:'🌿', cat:'건강', name:'건강운', desc:'건강 취약 부위와 에너지 흐름 분석', price:19900, kakao:'https://pf.kakao.com/_pixgNn' },
+  { id:'자녀운',  icon:'👶', cat:'사랑·관계', name:'자녀운', desc:'자녀와의 인연과 자녀 성향 분석', price:17000, kakao:'https://pf.kakao.com/_pixgNn' },
+  { id:'수능운',  icon:'📚', cat:'돈·일', name:'수능 합격운', desc:'시험운과 합격 가능성, 목표 대학 분석', price:17000, kakao:'https://pf.kakao.com/_pixgNn' },
+  { id:'재회운',  icon:'💞', cat:'사랑·관계', name:'재회운', desc:'헤어진 인연과의 재회 가능성 분석', price:24900, kakao:'https://pf.kakao.com/_VjvNX' },
+];
 
-/* ── 메뉴 토글 ── */
-document.querySelectorAll('.menu-item').forEach(item => {
-  item.addEventListener('click', () => {
-    const cb = item.querySelector('input[type="checkbox"]');
-    cb.checked = !cb.checked;
-    item.classList.toggle('selected', cb.checked);
-    updateTotal();
+const CATS = ['전체','종합·인생','사랑·관계','돈·일','건강'];
+let activeCat = '전체';
+let selected = null;
+
+// Build tabs
+const tabBar = document.getElementById('tab-bar');
+CATS.forEach(c => {
+  const b = document.createElement('button');
+  b.className = 'tab' + (c==='전체'?' active':'');
+  b.textContent = c;
+  b.onclick = () => {
+    activeCat = c;
+    document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active', CATS[i]===c));
+    renderProducts();
+  };
+  tabBar.appendChild(b);
+});
+
+// Build year/month/day selects
+function buildDOB() {
+  const row = document.getElementById('dob-row');
+  const yr = document.createElement('select'); yr.id='f-y'; yr.required=true;
+  yr.innerHTML = '<option value="">-년-</option>' +
+    Array.from({length:80},(_,i)=>{const y=new Date().getFullYear()-i; return `<option>${y}</option>`;}).join('');
+  const mo = document.createElement('select'); mo.id='f-m'; mo.required=true;
+  mo.innerHTML = '<option value="">-월-</option>' +
+    Array.from({length:12},(_,i)=>`<option value="${i+1}">${i+1}월</option>`).join('');
+  const dy = document.createElement('select'); dy.id='f-d'; dy.required=true;
+  dy.innerHTML = '<option value="">-일-</option>' +
+    Array.from({length:31},(_,i)=>`<option value="${i+1}">${i+1}일</option>`).join('');
+  row.append(yr, mo, dy);
+}
+buildDOB();
+
+function renderProducts() {
+  const list = document.getElementById('product-list');
+  const items = activeCat==='전체' ? PRODUCTS : PRODUCTS.filter(p=>p.cat===activeCat);
+  list.innerHTML = items.map(p=>`
+    <div class="card" tabindex="0" onclick="openForm('${p.id}')" onkeydown="if(event.key==='Enter')openForm('${p.id}')">
+      <div class="card-icon">${p.icon}</div>
+      <div class="card-info">
+        <div class="card-cat">${p.cat}</div>
+        <div class="card-name">${p.name}</div>
+        <div class="card-desc">${p.desc}</div>
+      </div>
+      <div class="card-right">
+        <div class="card-price">${p.price.toLocaleString()}원</div>
+        <div class="card-arrow">→</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openForm(id) {
+  selected = PRODUCTS.find(p=>p.id===id);
+  if (!selected) return;
+  document.getElementById('o-icon').textContent = selected.icon;
+  document.getElementById('o-name').textContent = selected.name;
+  document.getElementById('o-cat').textContent = selected.cat;
+  document.getElementById('o-price').textContent = selected.price.toLocaleString() + '원';
+  document.getElementById('form-wrap').hidden = false;
+  document.getElementById('done-wrap').hidden = true;
+  document.getElementById('order-form').reset();
+  resetToggles();
+  document.getElementById('overlay').hidden = false;
+  document.body.style.overflow = 'hidden';
+  document.getElementById('sheet').scrollTop = 0;
+}
+
+function closeOverlay() {
+  document.getElementById('overlay').hidden = true;
+  document.body.style.overflow = '';
+}
+
+document.getElementById('overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('overlay')) closeOverlay();
+});
+
+function resetToggles() {
+  ['grp-lunar','grp-gender'].forEach(id=>{
+    const btns = document.querySelectorAll(`#${id} .tog`);
+    btns.forEach((b,i)=>b.classList.toggle('on', i===0));
+  });
+}
+
+document.querySelectorAll('.btn-group').forEach(grp=>{
+  grp.addEventListener('click', e=>{
+    const btn = e.target.closest('.tog');
+    if (!btn) return;
+    grp.querySelectorAll('.tog').forEach(b=>b.classList.remove('on'));
+    btn.classList.add('on');
   });
 });
 
-function updateTotal() {
-  const selected = [...document.querySelectorAll('.menu-item.selected')];
-  const total = selected.reduce((s, el) => s + parseInt(el.dataset.price), 0);
-  const fmtTotal = total.toLocaleString() + '원';
-
-  document.getElementById('totalAmt').textContent = fmtTotal;
-  document.getElementById('headerTotal').textContent = fmtTotal;
-
-  const bar = document.getElementById('selectCountBar');
-  const cnt = selected.length;
-  if (cnt > 0) {
-    bar.classList.remove('hidden');
-    document.getElementById('selectCountItems').textContent = cnt + '개 선택됨';
-    document.getElementById('selectCountTotal').textContent = fmtTotal;
-  } else {
-    bar.classList.add('hidden');
-  }
+function getLunar() {
+  return document.querySelector('#grp-lunar .tog.on')?.dataset.val || '양력';
+}
+function getGender() {
+  return document.querySelector('#grp-gender .tog.on')?.dataset.val || '여성';
 }
 
-/* ── 단계 이동 ── */
-function goStep(n) {
-  document.getElementById('panel' + currentStep).classList.remove('active');
-  document.getElementById('panel' + n).classList.add('active');
-
-  // step indicator update
-  for (let i = 1; i <= 3; i++) {
-    const si = document.getElementById('si' + i);
-    const sn = document.getElementById('sn' + i);
-    si.classList.remove('active', 'done');
-    if (i < n)      { si.classList.add('done'); sn.textContent = '✓'; }
-    else if (i === n) { si.classList.add('active'); sn.textContent = i; }
-    else              { sn.textContent = i; }
+function doSubmit(e) {
+  e.preventDefault();
+  const name = document.getElementById('f-name').value.trim();
+  const p1 = document.getElementById('f-p1').value.trim();
+  const p2 = document.getElementById('f-p2').value.trim();
+  if (!name || !p1 || !p2) {
+    document.getElementById('f-name').style.borderColor = name ? '' : 'tomato';
+    document.getElementById('f-p1').style.borderColor = p1 ? '' : 'tomato';
+    document.getElementById('f-p2').style.borderColor = p2 ? '' : 'tomato';
+    return;
   }
-  for (let i = 1; i <= 2; i++) {
-    document.getElementById('sl' + i).classList.toggle('done', i < n);
-  }
-
-  currentStep = n;
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-
-  if (n === 3) buildSummary();
-}
-
-/* ── 단계 유효성 검사 후 이동 ── */
-function nextStep(from) {
-  if (from === 1) {
-    const cnt = document.querySelectorAll('.menu-item.selected').length;
-    if (!cnt) { toast('⚠️ 상담 항목을 하나 이상 선택해줘요'); return; }
-    goStep(2);
-  } else if (from === 2) {
-    const name   = document.getElementById('name').value.trim();
-    const gender = document.querySelector('input[name="gender"]:checked');
-    const birth  = document.getElementById('birth').value.trim();
-    if (!name)   { toast('⚠️ 이름을 입력해줘요'); return; }
-    if (!gender) { toast('⚠️ 성별을 선택해줘요'); return; }
-    if (!birth)  { toast('⚠️ 생년월일을 입력해줘요'); return; }
-    goStep(3);
-  }
-}
-
-/* ── Step 3 요약 빌드 ── */
-function buildSummary() {
-  // 선택 항목
-  const selected = [...document.querySelectorAll('.menu-item.selected')];
-  const container = document.getElementById('summaryItems');
-  if (selected.length === 0) {
-    container.innerHTML = '<div class="empty-notice">선택된 항목이 없습니다</div>';
-  } else {
-    container.innerHTML = selected.map(el => {
-      const name  = el.querySelector('.menu-name').textContent;
-      const emoji = el.querySelector('.menu-emoji').textContent;
-      const price = parseInt(el.dataset.price).toLocaleString() + '원';
-      return `<div class="summary-row"><span class="summary-row-name">${emoji} ${name}</span><span class="summary-row-price">${price}</span></div>`;
-    }).join('');
+  const yr = document.getElementById('f-y').value;
+  const mo = document.getElementById('f-m').value;
+  const dy = document.getElementById('f-d').value;
+  if (!yr || !mo || !dy) {
+    ['f-y','f-m','f-d'].forEach(id=>{
+      document.getElementById(id).style.borderColor = document.getElementById(id).value ? '' : 'tomato';
+    });
+    return;
   }
 
-  // 의뢰인 정보
-  const cal = document.querySelector('input[name="cal"]:checked')?.value || '양력';
-  document.getElementById('s-name').textContent      = document.getElementById('name').value || '—';
-  document.getElementById('s-gender').textContent    = document.querySelector('input[name="gender"]:checked')?.value || '—';
-  document.getElementById('s-birth').textContent     = (document.getElementById('birth').value || '—') + ' (' + cal + ')';
-  document.getElementById('s-btime').textContent     = document.getElementById('btime').value || '모름';
-  document.getElementById('s-birthplace').textContent= document.getElementById('birthplace').value || '—';
-  document.getElementById('s-city').textContent      = document.getElementById('currentCity').value || '—';
-  document.getElementById('s-recv').textContent      = document.querySelector('input[name="recv"]:checked')?.value || '—';
-  document.getElementById('s-q').textContent         = document.getElementById('q').value || '—';
+  document.getElementById('kakao-link').href = selected.kakao;
+  document.getElementById('form-wrap').hidden = true;
+  document.getElementById('done-wrap').hidden = false;
+  document.getElementById('sheet').scrollTop = 0;
 }
 
-/* ── 메시지 빌드 & 발송 ── */
-function fmt() {
-  const selected = [...document.querySelectorAll('.menu-item.selected')];
-  const name     = document.getElementById('name').value.trim();
-  const gender   = document.querySelector('input[name="gender"]:checked')?.value || '';
-  const birth    = document.getElementById('birth').value.trim();
-  const cal      = document.querySelector('input[name="cal"]:checked')?.value || '양력';
-  const btime    = document.getElementById('btime').value;
-  const birthplace  = document.getElementById('birthplace').value.trim();
-  const currentCity = document.getElementById('currentCity').value.trim();
-  const recv     = document.querySelector('input[name="recv"]:checked')?.value || '카카오톡';
-  const q        = document.getElementById('q').value.trim();
-  const prices   = selected.map(el => `  • ${el.querySelector('.menu-name').textContent} ${parseInt(el.dataset.price).toLocaleString()}원`);
-  const total    = selected.reduce((s, el) => s + parseInt(el.dataset.price), 0);
-
-  let m = '📋 사주 상담 신청합니다\n';
-  m += '─────────────────\n';
-  m += `👤 이름: ${name}\n`;
-  m += `⚧ 성별: ${gender}\n`;
-  m += `🎂 생년월일: ${birth} (${cal})\n`;
-  if (btime) m += `⏰ 태어난 시: ${btime}\n`;
-  if (birthplace)  m += `📍 출생지: ${birthplace}\n`;
-  if (currentCity) m += `🏠 현재 거주지: ${currentCity}\n`;
-  m += `📩 결과 방법: ${recv}\n`;
-  m += '─────────────────\n';
-  m += `🔮 신청 메뉴:\n`;
-  prices.forEach(p => m += p + '\n');
-  m += `💳 합계: ${total.toLocaleString()}원\n`;
-  m += '─────────────────';
-  if (q) m += `\n💬 질문:\n${q}`;
-  return m;
-}
-
-async function send() {
-  const selected = [...document.querySelectorAll('.menu-item.selected')];
-  if (!selected.length) { toast('⚠️ 상담 항목을 선택해줘요'); return; }
-  const text = fmt();
-
-  if (navigator.share) {
-    try { await navigator.share({ text }); return; }
-    catch(e) { if (e.name === 'AbortError') return; }
-  }
-  try {
-    await navigator.clipboard.writeText(text);
-  } catch(e) {
-    const ta = Object.assign(document.createElement('textarea'), { value: text, style: 'position:fixed;opacity:0' });
-    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();
-  }
-  toast('📋 복사 완료! 카카오톡에 붙여넣기 후 전송해주세요', 3000);
-  setTimeout(() => window.open(KAKAO_URL, '_blank'), 600);
-}
-
-function toast(msg, dur = 2500) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), dur);
-}
+renderProducts();
 </script>
