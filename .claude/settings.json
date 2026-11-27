@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -c \"import json,sys; p=json.load(sys.stdin)['tool_input'].get('file_path',''); sys.exit(2 if p.endswith('.env') else 0)\""
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "f=$(python3 -c \"import json,sys; print(json.load(sys.stdin)['tool_input'].get('file_path',''))\"); case \"$f\" in *.py) python -m pytest -q --tb=short ;; esac"
+          }
+        ]
+      }
+    ]
+  }
+}
