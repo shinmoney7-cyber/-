@@ -21,6 +21,12 @@ MODELS = [
     ("cardigan_makeup_smile", "ref_cardigan_makeup_smile.webp", "후", "풀어 내린 머리", "하늘색 가디건 · 웃음"),
     ("cardigan_makeup_tied", "ref_cardigan_makeup_tied.webp", "후", "묶은 머리", "라벤더 가디건 · 미소"),
     ("cardigan_makeup_blonde", "ref_cardigan_makeup_blonde.webp", "후", "풀어 내린 머리", "금발 · 하늘색 가디건 · 웃음"),
+    # 2026-11 추가 사진 (사용자 제공) — 고정 뷰티 모델과 얼굴·머리색이 달라 장면 기본값에는 쓰지 않는다
+    ("add_darkhair_bluknit_smile", "ref_add_darkhair_bluknit_smile.webp", "후", "묶은 머리", "흑갈색 머리 · 하늘색 니트 · 활짝 웃음"),
+    ("add_bubblegum", "ref_add_bubblegum.webp", "후", "풀어 내린 머리", "브라운 머리 · 하늘색 니트 · 풍선껌(귀여움)"),
+    ("add_bob_whitetee", "ref_add_bob_whitetee.webp", "후", "풀어 내린 머리", "브라운 단발 · 흰 티셔츠 · 미소"),
+    ("add_full_lavender_skirt", "ref_add_full_lavender_skirt.webp", "후", "풀어 내린 머리", "전신 · 라벤더 카라 니트 · 흰 스커트"),
+    ("add_full_white_jeans", "ref_add_full_white_jeans.webp", "후", "묶은 머리", "전신 · 흰 니트 · 청바지"),
     ("bare_loose", "ref_bare_loose.webp", "전", "풀어 내린 머리", "블라우스 · 정면"),
     ("bare", "ref_bare.webp", "전", "풀어 내린 머리", "블라우스 · 미소"),
     ("bare_tshirt_tied", "ref_bare_tshirt_tied.webp", "전", "묶은 머리", "티셔츠 · 볼에 손"),

@@ -91,3 +91,15 @@ job ID 목록은 `jobs.json` 참고.
 | C4 마무리 | `ref_cardigan_makeup_tied` | 후 |
 
 합성 결과: `examples/photo_<장면>.jpg`, `examples/storyboard_{A,B,C}_photo.jpg`.
+
+## 추가 사진 (2026-11, 사용자 제공)
+
+고정 뷰티 모델(애쉬 브라운 가디건 세트)과 얼굴·머리색이 다른 사진이 섞여 있어 장면 기본값에는 넣지 않고, 모바일 앱 모델 탭에서 골라 쓰게 했다. 함께 보낸 10장 중 이미 있는 사진과 같은 5장(라벤더 가디건 묶은 머리, 하늘색 가디건 긴 머리, 블라우스 생얼·메이크업, 티셔츠 볼에 손)은 넣지 않았다.
+
+| 파일 | 메이크업 | 내용 |
+|---|---|---|
+| `reference/ref_add_darkhair_bluknit_smile.webp` | 후 | 흑갈색 머리 · 하늘색 니트 · 활짝 웃음 |
+| `reference/ref_add_bubblegum.webp` | 후 | 브라운 머리 · 하늘색 니트 · 풍선껌 (귀여움 표정용) |
+| `reference/ref_add_bob_whitetee.webp` | 후 | 브라운 단발 · 흰 티셔츠 · 미소 |
+| `reference/ref_add_full_lavender_skirt.webp` | 후 | 전신 · 라벤더 카라 니트 · 흰 스커트 |
+| `reference/ref_add_full_white_jeans.webp` | 후 | 전신 · 흰 니트 · 청바지 |
