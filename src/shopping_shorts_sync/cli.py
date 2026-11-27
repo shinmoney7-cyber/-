@@ -260,5 +260,43 @@ def state_reset(product_id):
     click.echo(f"removed: {removed}")
 
 
+@cli.group()
+def detailpage():
+    """Build product detail pages (상세페이지) from a JSON spec and product images."""
+
+
+@detailpage.command("build")
+@click.option("--spec", "spec_path", required=True, type=click.Path(exists=True, dir_okay=False))
+@click.option("--out", "out_dir", required=True, type=click.Path(file_okay=False))
+@click.option("--png/--no-png", default=True, help="Also render a full-length PNG via the local Chromium.")
+@click.option("--scale", default=2, show_default=True, type=click.IntRange(1, 3), help="Device scale factor for the PNG.")
+def detailpage_build(spec_path, out_dir, png, scale):
+    from .detailpage import DetailPageSpecError, build_detail_page, load_detail_spec
+
+    config = load_config()
+    _setup_logging(config)
+    try:
+        spec = load_detail_spec(spec_path)
+        result = build_detail_page(spec, out_dir)
+    except DetailPageSpecError as exc:
+        raise click.ClickException(str(exc))
+
+    click.echo(f"html: {result.html_path}")
+    if png:
+        from .detailpage.screenshot import screenshot_detail_page
+
+        png_path = screenshot_detail_page(
+            result.html_path,
+            result.html_path.with_name(f"{spec.product_id}.png"),
+            chromium_path=config.playwright_chromium_path,
+            device_scale_factor=scale,
+        )
+        click.echo(f"png:  {png_path}")
+
+
+if __name__ == "__main__":
+    cli()
+
+
 if __name__ == "__main__":
     cli()
