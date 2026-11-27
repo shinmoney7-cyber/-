@@ -24,7 +24,17 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      # Tests are mock-based and must not need a browser or network.
-      # Do NOT run `playwright install` here.
+      # The RPA tests launch a real headless Chromium against local fixture
+      # pages. A stock runner has no browser at /opt/pw-browsers/chromium, so
+      # install Playwright's Chromium here (CI only) and point
+      # PLAYWRIGHT_CHROMIUM_PATH at the path Playwright resolves.
+      # Local dev machines must NOT run `playwright install` (see CLAUDE.md).
+      - name: Install Chromium for RPA tests
+        run: |
+          python -m playwright install --with-deps chromium
+          EXE=$(python -c "from playwright.sync_api import sync_playwright as s; p=s().start(); print(p.chromium.executable_path); p.stop()")
+          echo "PLAYWRIGHT_CHROMIUM_PATH=$EXE" >> "$GITHUB_ENV"
+          echo "Chromium at $EXE"
+
       - name: Run tests
         run: python -m pytest -q
