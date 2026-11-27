@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 -c \"import json,sys; p=json.load(sys.stdin)['tool_input'].get('file_path',''); sys.exit(2 if p.endswith('.env') else 0)\""
+            "command": "python3 -c \"import json,sys; p=json.load(sys.stdin)['tool_input'].get('file_path',''); sys.exit(2 if p.endswith(('.env', 'state.json')) else 0)\""
           }
         ]
       }
