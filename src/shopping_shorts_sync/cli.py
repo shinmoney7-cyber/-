@@ -8,6 +8,7 @@ import click
 from .config import load_config
 from .input_loader import load_products
 from .script_store import default_script_path, load_script_set
+from .search.models import SOURCES
 from .search.orchestrator import match_and_upsert_product, search_all_sources, search_one_source
 from .state_store import StateStore
 from .sync import (
@@ -137,9 +138,9 @@ def sync_all(input_path, dry_run, headed, force, force_create):
 
 @cli.group()
 def search():
-    """Search Naver/Daiso/Olive Young and auto-match results to a Coupang product.
+    """Search Naver + ~15 shopping malls and auto-match results to a Coupang product.
 
-    Daiso/Olive Young (RPA) and the Coupang matching step all use
+    All RPA malls and the Coupang matching step use
     best-effort, uncalibrated selectors -- see docs/CALIBRATION.md before
     running --live against the real sites.
     """
@@ -148,14 +149,23 @@ def search():
 @search.command("run")
 @click.option("--keyword", required=True)
 @click.option("--limit", default=5, show_default=True)
+@click.option(
+    "--sources",
+    default=None,
+    help="Comma-separated subset of: " + ", ".join(SOURCES) + ". Default: all.",
+)
 @click.option("--dry-run/--live", "dry_run", default=True)
 @click.option("--headed/--headless", "headed", default=False)
-def search_run(keyword, limit, dry_run, headed):
+def search_run(keyword, limit, sources, dry_run, headed):
     config = load_config()
     _setup_logging(config)
     config = dataclasses.replace(config, inpock_headless=not headed)
 
-    results = search_all_sources(keyword, config, dry_run=dry_run, limit=limit)
+    selected = tuple(s.strip() for s in sources.split(",")) if sources else None
+    try:
+        results = search_all_sources(keyword, config, dry_run=dry_run, limit=limit, sources=selected)
+    except ValueError as exc:
+        raise click.ClickException(str(exc))
     for source, items in results.items():
         click.echo(f"-- {source} --")
         for i, item in enumerate(items):
@@ -167,7 +177,7 @@ def search_run(keyword, limit, dry_run, headed):
 
 @search.command("match")
 @click.option("--keyword", required=True, help="Same keyword used with `search run`.")
-@click.option("--source", required=True, type=click.Choice(["naver", "daiso", "oliveyoung"]))
+@click.option("--source", required=True, type=click.Choice(list(SOURCES)))
 @click.option("--index", required=True, type=int, help="0-based index into that source's results.")
 @click.option("--target-page", required=True, type=click.Choice(["harujin", "shinjh"]))
 @click.option("--category", required=True)
